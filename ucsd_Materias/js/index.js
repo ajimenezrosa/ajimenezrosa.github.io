@@ -1,12 +1,12 @@
 $(docReady);
 const JSONURLS = {
-  meta: "https://arigoru.github.io/fcc-curriculum-aggregator/json/meta.json",
-  1: "https://arigoru.github.io/fcc-curriculum-aggregator/json/1.json",
-  2: "https://arigoru.github.io/fcc-curriculum-aggregator/json/2.json",
-  3: "https://arigoru.github.io/fcc-curriculum-aggregator/json/3.json",
-  4: "https://arigoru.github.io/fcc-curriculum-aggregator/json/4.json",
-  5: "https://arigoru.github.io/fcc-curriculum-aggregator/json/5.json",
-  6: "https://arigoru.github.io/fcc-curriculum-aggregator/json/6.json"
+  meta: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/meta.json",
+  1: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/1.json",
+  2: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/2.json",
+  3: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/3.json",
+  4: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/4.json",
+  5: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/5.json",
+  6: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/6.json"
 }
 let $loading = $("<div>");
 const loadingAnimation = {
