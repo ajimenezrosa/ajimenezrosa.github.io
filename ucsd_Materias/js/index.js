@@ -92,7 +92,7 @@ function parseMeta() {
   curriculum = [
     {
       slideId: 1,
-      title: "Analisis y Diseno de Algoritmos",
+      title: "Responsive Web Design",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("responsive-web-design")),
     },
     {
