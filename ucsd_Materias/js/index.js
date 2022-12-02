@@ -12,7 +12,7 @@ let $loading = $("<div>");
 const loadingAnimation = {
   play: function () {
     $("#main-body").append($loading)
-    $loading.addClass("loadingAnimation").attr("id", "loadingAnimation");
+    // $loading.addClass("loadingAnimation").attr("id", "loadingAnimation");
     $loading.append("<h1>Loading, please wait...</h1>");
     $loading.animate({ opacity: 1 }, 2000);
   },
