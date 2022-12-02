@@ -1,12 +1,12 @@
 $(docReady);
 const JSONURLS = {
-  meta: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/meta.json",
-  1: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/1.json",
-  2: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/2.json",
-  3: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/3.json",
-  4: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/4.json",
-  5: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/5.json",
-  6: "https://github.com/ajimenezrosa/ajimenezrosa.github.io/tree/main/ucsd_Materias/json/6.json"
+  meta: "https://ajimenezrosa.github.io/ucsd_Materias/json/meta.json",
+  1: "https://ajimenezrosa.github.io/ucsd_Materias/json/1.json",
+  2: "https://ajimenezrosa.github.io/ucsd_Materias/json/2.json",
+  3: "https://ajimenezrosa.github.io/ucsd_Materias/json/3.json",
+  4: "https://ajimenezrosa.github.io/ucsd_Materias/json/4.json",
+  5: "https://ajimenezrosa.github.io/ucsd_Materias/json/5.json",
+  6: "https://ajimenezrosa.github.io/ucsd_Materias/json/6.json"
 }
 let $loading = $("<div>");
 const loadingAnimation = {
