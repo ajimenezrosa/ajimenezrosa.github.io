@@ -110,27 +110,27 @@ function parseMeta() {
     },
     {
       slideId: 2,
-      title: "Javascript Algorithms And Data Structures",
+      title: "INTRODUCCION A LA PROGRAMACION",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("javascript-algorithms-and-data-structures"))
     },
     {
       slideId: 3,
-      title: "Front End Libraries",
+      title: "LENGUAJE DE PROGRAMACION",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("front-end-libraries"))
     },
     {
       slideId: 4,
-      title: "Data Visualization",
+      title: "Bases de Datos I",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("data-visualization"))
     },
     {
       slideId: 5,
-      title: "Apis And Microservices",
+      title: "Bases de Datos II",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("apis-and-microservices"))
     },
     {
       slideId: 6,
-      title: "Information Security And Quality Assurance",
+      title: "COMPILADORES",
       meta: unparsedData.curriculumMetaRaw.filter(filterMeta("information-security-and-quality-assurance"))
     },
   ]
