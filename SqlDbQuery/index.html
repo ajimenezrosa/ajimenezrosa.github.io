@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>My Project</title>
-	<meta charset="utf-8">
-</head>
-<body>
-	<!-- Contenido del archivo README.md -->
-	<div id="readme-content"></div>
-	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-	<script>
-		fetch('README.md')
-			.then(response => response.text())
-			.then(text => {
-				document.getElementById('readme-content').innerHTML = marked(text);
-			});
-	</script>
-</body>
+  <head>
+    <title>Ejemplo de comentarios de SQL con Prism.js</title>
+    <meta charset="utf-8">
+    <!-- Incluye los archivos CSS y JS de Prism.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/themes/prism.css" integrity="sha384-lzI/5ibN9A0X9SP/G5Q5c5Hu5Iz5Jw47eKjvzwHNGE09+UGBMCtPNjX7V2HcI8+8" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/prism.js" integrity="sha384-kTzT/iT0+N0S45jUEdJyQ+eJP9X/vD4lP4sYlMV/UpPwC6NfQO1H/+jyNry6Ubc9" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="codigo-sql">
+      -- Este es un comentario en SQL
+      SELECT * FROM tabla WHERE columna = 'valor';
+    </div>
+    <!-- Inicializa Prism.js para aplicar los estilos de SQL al elemento -->
+    <script>
+      Prism.highlightAll();
+    </script>
+  </body>
 </html>
