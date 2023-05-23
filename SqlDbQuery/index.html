@@ -1,20 +1,42 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Ejemplo de comentarios de SQL con Prism.js</title>
-    <meta charset="utf-8">
-    <!-- Incluye los archivos CSS y JS de Prism.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/themes/prism.css" integrity="sha384-lzI/5ibN9A0X9SP/G5Q5c5Hu5Iz5Jw47eKjvzwHNGE09+UGBMCtPNjX7V2HcI8+8" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/prism.js" integrity="sha384-kTzT/iT0+N0S45jUEdJyQ+eJP9X/vD4lP4sYlMV/UpPwC6NfQO1H/+jyNry6Ubc9" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div id="codigo-sql">
-      -- Este es un comentario en SQL
-      SELECT * FROM tabla WHERE columna = 'valor';
-    </div>
-    <!-- Inicializa Prism.js para aplicar los estilos de SQL al elemento -->
-    <script>
-      Prism.highlightAll();
-    </script>
-  </body>
+<head>
+  <title>Cargar archivo README</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+</head>
+<body>
+  <div id="readme-container"></div>
+
+  <script>
+    // Función para cargar el archivo README.md y convertirlo a HTML
+    function cargarReadme() {
+      var readmeURL = "/SqlDbQuery/README.md"; // Reemplaza con la ruta correcta
+
+      // Realizar solicitud HTTP para obtener el contenido del archivo README.md
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            var readmeText = xhr.responseText;
+
+            // Utilizar la biblioteca Showdown para convertir el contenido Markdown a HTML
+            var converter = new showdown.Converter();
+            var html = converter.makeHtml(readmeText);
+
+            // Mostrar el contenido HTML en el contenedor
+            var readmeContainer = document.getElementById("readme-container");
+            readmeContainer.innerHTML = html;
+          } else {
+            console.error("Error al cargar el archivo README.md: " + xhr.status);
+          }
+        }
+      };
+      xhr.open("GET", readmeURL, true);
+      xhr.send();
+    }
+
+    // Cargar el archivo README.md al cargar la página
+    window.onload = cargarReadme;
+  </script>
+</body>
 </html>

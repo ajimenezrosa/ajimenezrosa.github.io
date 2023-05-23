@@ -135,21 +135,23 @@
 
 ~~~sql
 EXEC xp_cmdshell 'net use M: \\10.0.0.167\Transaccional px85947#@1/user:INABIMASD\administrador'
+~~~
 
-
+# 
+~~~sql
 EXEC xp_cmdshell 'net use T:  \\10.0.0.167\backups\MSSQL px85947#@1/user:INABIMASD\administrador'
-
+~~~
 
 --exec xp_cmdshell 'net use Y: \\127.0.0.1\Shared aVeRyStR0nGP@s$w0rd@123 /USER:Administrator /PERSISTENT:yes'
 --go
 
-
+~~~sql
 exec xp_cmdshell 'net use'
-
+~~~ 
 	
---exec xp_cmdshell 'net use T: /delete'
-
+ 
 ~~~
+#
 # Crecimiento automático de los ficheros de la base de datos<a name="2"></a>
 
 ![](https://i.ytimg.com/vi/Z9AFnKI7sfI/maxresdefault.jpg)
