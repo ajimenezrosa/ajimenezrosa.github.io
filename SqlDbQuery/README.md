@@ -7565,6 +7565,26 @@ GO
 
 
 
+# 
+
+
+# Para aplicar cambios en la configuración de "autogrow max" en SQL Server 2012, es necesario reiniciar el servicio de SQL Server en lugar de reiniciar todo el servidor de Windows.
+
+### Puedes seguir los pasos a continuación para reiniciar el servicio de SQL Server:
+
+### Abre la ventana de servicios: Puedes hacerlo presionando las teclas "Windows + R", escribiendo "services.msc" y presionando Enter.
+
+### Busca el servicio de SQL Server: En la lista de servicios, busca el servicio de SQL Server que corresponde a la instancia en la que deseas realizar el cambio.
+
+### Detén el servicio: Haz clic derecho en el servicio de SQL Server y selecciona "Detener" en el menú contextual. Espera unos segundos para asegurarte de que el servicio se haya detenido por completo.
+
+### Inicia el servicio: Haz clic derecho en el servicio de SQL Server nuevamente y selecciona "Iniciar" en el menú contextual.
+# 
+##### Después de reiniciar el servicio de SQL Server, la nueva configuración de "autogrow max" se aplicará y estará activa para las bases de datos. No es necesario reiniciar todo el servidor de Windows en este caso.
+
+Recuerda que realizar cambios en la configuración de SQL Server puede tener impacto en la disponibilidad y el rendimiento del servidor, por lo que se recomienda realizar estos cambios en un momento de baja actividad o durante un mantenimiento planificado.
+
+
 
 
 
