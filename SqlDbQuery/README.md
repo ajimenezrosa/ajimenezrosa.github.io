@@ -131,6 +131,7 @@
 # 28 BPD
   - 28.1 [Listar jobs SQL Server](#listajob28)
   - 28.2 [jobs con sus dias de ejecucion por steps](#listajob282)
+  - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
 
 <!-- ConsultasEflowCitas -->
 
@@ -7424,6 +7425,146 @@ ORDER BY
     [StepNo]
 ~~~
 ## ==================================================================
+
+
+# 
+
+# Establecimiento de la opción de configuración del servidor Máximo de subprocesos de trabajo <a name="autogrowmaxime"></a>
+###### Artículo
+###### 21/03/2023
+###### 15 colaboradores
+## En este artículo
+###### Limitaciones y restricciones
+###### Recomendaciones
+###### Permisos
+###### Usar SQL Server Management Studio (SSMS)
+
+
+#### En este artículo se describe cómo establecer la opción de configuración del servidor número máximo de subprocesos de trabajo en SQL Server mediante SQL Server Management Studio o Transact-SQL. La opción max worker threads configura el número de subprocesos de trabajo disponibles en SQL Server para procesar solicitudes de consulta, inicio de sesión, cierre de sesión y solicitudes de aplicación similares.
+
+#### SQL Server utiliza los servicios de subprocesos nativos de los sistemas operativos para garantizar las condiciones siguientes:
+
+ - Uno o más subprocesos admiten simultáneamente cada red que SQL Server admite.
+
+ - Un subproceso controla los puntos de control de base de datos.
+
+ - Un grupo de subprocesos controla todos los usuarios.
+
+#### El valor predeterminado de máximo de subprocesos de trabajo es 0. Esto permite a SQL Server configurar automáticamente el número de subprocesos de trabajo en el inicio. El valor predeterminado es el más adecuado para la mayor parte de los sistemas. No obstante, dependiendo de la configuración del sistema, el uso de un valor concreto para máximo de subprocesos de trabajo en ocasiones puede mejorar el rendimiento.
+
+# Limitaciones y restricciones
+ - El número real de solicitudes de consulta puede superar el número establecido en número máximo de subprocesos de trabajo, en cuyo caso SQL Server agrupa los subprocesos de trabajo de manera que el siguiente subproceso de trabajo disponible pueda administrar la solicitud. Un subproceso de trabajo se asigna solo a las solicitudes activas y se libera una vez que se ha atendido la solicitud. Esto sucede incluso si la sesión de usuario o la conexión en la que se ha realizado la solicitud permanece abierta.
+
+ - La opción de configuración del servidor Máximo de subprocesos de trabajo no limita todos los subprocesos que pueden generarse en el motor. Los subprocesos del sistema necesarios para tareas como Escritura diferida, Punto de control, Escritura de registro, Service Broker, Administrador de bloqueos u otras se generan fuera de este límite. Los grupos de disponibilidad usan algunos de los subprocesos de trabajo en el límite máximo de subprocesos de trabajo, pero también utilizan subprocesos del sistema (vea Uso de subprocesos por parte de los grupos de disponibilidad). Si se supera el número de subprocesos configurados, la siguiente consulta proporciona información sobre las tareas del sistema que han generado los subprocesos adicionales.
+
+    SQL
+~~~sql
+SELECT s.session_id,
+    r.command,
+    r.STATUS,
+    r.wait_type,
+    r.scheduler_id,
+    w.worker_address,
+    w.is_preemptive,
+    w.STATE,
+    t.task_state,
+    t.session_id,
+    t.exec_context_id,
+    t.request_id
+FROM sys.dm_exec_sessions AS s
+INNER JOIN sys.dm_exec_requests AS r
+    ON s.session_id = r.session_id
+INNER JOIN sys.dm_os_tasks AS t
+    ON r.task_address = t.task_address
+INNER JOIN sys.dm_os_workers AS w
+    ON t.worker_address = w.worker_address
+WHERE s.is_user_process = 0;
+~~~
+
+# Recomendaciones
+ - Esta opción es avanzada y solo debe cambiarla un administrador de base de datos con experiencia o un profesional certificado de SQL Server. Si sospecha que hay un problema de rendimiento, probablemente no se deba a la disponibilidad de subprocesos de trabajo. Es más probable que la causa esté relacionada con las actividades que ocupan los subprocesos de trabajo y no los liberan. Entre los ejemplos se incluyen consultas de ejecución prolongada o cuellos de botella en el sistema (E/S, bloqueo, tiempos de espera de bloqueo temporal y esperas de red), que provocan consultas de espera prolongada. Lo mejor es buscar la causa principal de un problema de rendimiento antes de cambiar el valor de configuración de máximo de subprocesos de trabajo. Para obtener más información sobre cómo evaluar el rendimiento, vea Supervisión y optimización del rendimiento.
+
+ - La agrupación de subprocesos permite optimizar el rendimiento cuando un gran número de clientes se conecta al servidor. Normalmente, se crea un subproceso del sistema operativo independiente para cada solicitud de la consulta. Sin embargo, cuando hay cientos de conexiones al servidor, el uso de un subproceso por solicitud de consulta puede consumir grandes cantidades de recursos del sistema. La opción de máximo de subprocesos de trabajo permite que SQL Server cree un grupo de subprocesos de trabajo para atender un gran número de solicitudes de consulta, lo que mejora el rendimiento.
+
+ - n la tabla siguiente se muestra el número configurado automáticamente de número máximo de subprocesos de trabajo (cuando el valor se establece en 0) basado en diferentes combinaciones de CPU lógicas, arquitectura de equipo y versiones de SQL Server, mediante la fórmula: Número máximo predeterminado de trabajos + ((CPU lógicas - 4) * Trabajos por CPU).
+
+
+|Número de CPU lógicas|	Equipo de 32 bits (hasta SQL Server 2014 (12.x))|Equipo de 64 bits (hasta SQL Server 2016 (13.x) SP1)|	Equipo de 64 bits (a partir de SQL Server 2016 (13.x) SP2 y SQL Server 2017 (14.x))|
+|--------------|-----------------|--------------------|-------------------|
+|<= 4	|256	|512	|512|
+|8	|288	|576	|576|
+|16|	352|	704|	704|
+|32|	480|	960|	960|
+|64|	736|	1472|	1472|
+|128|	1248|	2496|	4480|
+|256|	2272|	4544|	8576|
+
+#### Hasta SQL Server 2016 (13.x) con Service Pack 1, los trabajos por CPU solo dependen de la arquitectura (32 bits o 64 bits):
+
+|Número de CPU lógicas|	Equipo de 32 bits 1|	Equipo de 64 bits|
+|---------------------|--------------------|---------------------|
+|<= 4|	256|	512|
+|> 4|	256 + ((CPU lógicas - 4) * 8)|	512 2 + ((CPU lógicas - 4) * 16)|
+#### A partir de SQL Server 2016 (13.x) SP2 y SQL Server 2017 (14.x), los Trabajos por CPU dependen de la arquitectura y el número de procesadores (entre 4 y 64, o superior a 64):
+
+|Número de CPU lógicas|	Equipo de 32 bits 1|	Equipo de 64 bits|
+|---------------------|--------------------|---------------------|
+|<= 4|	256	|512|
+|> 4 y <= 64|	256 + ((CPU lógicas - 4) * 8)|	512 2 + ((CPU lógicas - 4) * 16)|
+|> 64|	256 + ((CPU lógicas - 4) * 32)|	512 2 + ((CPU lógicas - 4) * 32)|
+#### 1 A partir de SQL Server 2016 (13.x), SQL Server ya no se puede instalar en un sistema operativo de 32 bits. Se muestran los valores de equipo de 32 bits como ayuda para los clientes que ejecutan SQL Server 2014 (12.x) y versiones anteriores. Se recomienda 1024 como número máximo de subprocesos de trabajo para una instancia de SQL Server que se ejecuta en un equipo de 32 bits.
+
+#### 2 A partir de SQL Server 2017 (14.x), el valor de trabajos máximos predeterminados se divide por 2 con menos de 2 GB de memoria.
+
+     Sugerencia
+
+    Para más información sobre el uso de más de 64 CPU lógicas, consulte Procedimientos recomendados para ejecutar SQL Server en equipos que tienen más de 64 CPU.
+
+- Si todos los subprocesos de trabajo están activos con consultas de ejecución prolongada, puede parecer que SQL Server no responde hasta que finaliza un subproceso de trabajo y vuelve a estar disponible. Aunque no se trata de un defecto, puede que a veces este comportamiento no sea deseable. Si un proceso parece no responder y no se pueden procesar nuevas consultas, conéctese a SQL Server mediante la conexión de administrador dedicada (DAC) y finalice el proceso. Para impedir este comportamiento, aumente el número máximo de subprocesos de trabajo.
+
+# Permisos
+#### De forma predeterminada, todos los usuarios tienen permisos de ejecución en sp_configure sin ningún parámetro o solo con el primero. Para ejecutar sp_configure con ambos parámetros y cambiar una opción de configuración, o para ejecutar la instrucción RECONFIGURE, un usuario debe tener el permiso ALTER SETTINGS en el servidor. Los roles fijos de servidor sysadmin y serveradmin tienen el permiso ALTER SETTINGS de forma implícita.
+
+# Usar SQL Server Management Studio (SSMS)
+  1  En el Explorador de objetos, haga clic con el botón derecho en un servidor y seleccione Propiedades.
+
+  2 Seleccione el nodo Procesadores.
+
+  3 En el cuadro Máximo de subprocesos de trabajo, escriba o seleccione un valor entre 128 y 65 535.
+
+    Sugerencia
+
+    Utilice la opción max worker threads para configurar el número de subprocesos de trabajo disponibles para procesos de SQL Server . El valor predeterminado de la opción max worker threads es el óptimo para la mayor parte de los sistemas.
+
+    No obstante, dependiendo de la configuración del sistema, el uso de un valor inferior para el máximo de subprocesos de trabajo puede mejorar el rendimiento a veces. Para más información, consulte la sección Recomendaciones de este artículo.
+
+# Uso de Transact-SQL
+  1 Conéctese con el Motor de base de datos.
+
+  2 En la barra Estándar, seleccione Nueva consulta.
+
+  3 Copie y pegue el ejemplo siguiente en la ventana de consulta y seleccione Ejecutar. En este ejemplo se muestra cómo usar sp_configure para configurar la opción max worker threads en 900.
+
+#### SQL
+
+~~~sql
+EXEC sp_configure 'show advanced options', 1;
+GO
+
+RECONFIGURE;
+GO
+
+EXEC sp_configure 'max worker threads', 900;
+GO
+
+RECONFIGURE;
+GO
+~~~
+
+#### El cambio se aplicará inmediatamente después de ejecutar RECONFIGURE, sin necesidad de reiniciar Motor de base de datos.
+
+
+
 
 
 
