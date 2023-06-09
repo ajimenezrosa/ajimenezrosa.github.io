@@ -132,7 +132,7 @@
   - 28.1 [Listar jobs SQL Server](#listajob28)
   - 28.2 [jobs con sus dias de ejecucion por steps](#listajob282)
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
-
+  - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -7585,10 +7585,16 @@ GO
 Recuerda que realizar cambios en la configuración de SQL Server puede tener impacto en la disponibilidad y el rendimiento del servidor, por lo que se recomienda realizar estos cambios en un momento de baja actividad o durante un mantenimiento planificado.
 
 
+# Query para saber la max/memory que esta apliaca a un servidor Sql Server<a name="querymamemory"></a>
+![Max Memory Best Practices](https://straightpathsql.com/wp-content/uploads/2017/02/MaxMemory.png)
+#### La siguiente consulta devuelve información sobre los valores actualmente configurados y el valor actualmente en uso. Esta consulta devolverá resultados independientemente de si la opción "mostrar opciones avanzadas" de sp_configure está habilitada.
 
 
-
-
+~~~sql
+SELECT [name], [value], [value_in_use]
+FROM sys.configurations
+WHERE [name] = 'max server memory (MB)' OR [name] = 'min server memory (MB)';
+~~~
 
 
 #### No existe nada debajo de esta linea
