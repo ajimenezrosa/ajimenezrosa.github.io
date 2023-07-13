@@ -133,6 +133,9 @@
   - 28.2 [jobs con sus dias de ejecucion por steps](#listajob282)
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
   - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
+
+  - 29.5 [ Información sobre los estados de cifrado de las bases de datos ](#cifrado)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -7595,6 +7598,35 @@ SELECT [name], [value], [value_in_use]
 FROM sys.configurations
 WHERE [name] = 'max server memory (MB)' OR [name] = 'min server memory (MB)';
 ~~~
+
+
+
+
+# información sobre los estados de cifrado de las bases de datos<a name="cifrado"></a>
+
+#### Este query fue diseñado para obtener información sobre los estados de cifrado de las bases de datos, con una fecha de extracción del 12 de julio de 2023.
+
+
+~~~sql
+SELECT D.name AS 'Database Name'
+    ,c.name AS 'Cert Name'
+    ,E.encryptor_type AS 'Type'
+    ,case
+        when E.encryption_state = 3 then 'Encrypted'
+        when E.encryption_state = 2 then 'In Progress'
+        else 'Not Encrypted'
+    end as state,
+    E.encryption_state
+    , E.key_algorithm
+    , E.key_length
+FROM sys.dm_database_encryption_keys E
+    right join sys.databases D on D.database_id = E.database_id
+    left join sys.certificates c ON E.encryptor_thumbprint=c.thumbprint
+where C.name is not null
+~~~
+
+# 
+
 
 
 #### No existe nada debajo de esta linea
