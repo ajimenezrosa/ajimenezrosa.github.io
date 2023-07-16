@@ -136,6 +136,9 @@
 
   - 29.5 [ Información sobre los estados de cifrado de las bases de datos ](#cifrado)
 
+  - 29.6 [Shrink DB](#shrinkfilebpd)
+
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -7626,6 +7629,38 @@ where C.name is not null
 ~~~
 
 # 
+
+# Shrink DB<a name="shrinkfilebpd"></a> 
+
+~~~sql
+/*
+Entregado por RAINIERO MARTE.
+ Viernes 14 de julio del 2023.
+ Este query es el mas eficiente que tengo a nivel 
+ reducir el espacio en mdf
+*/
+
+
+SET NOCOUNT ON
+DECLARE @ACTUAL_SIZE INT
+DECLARE @FINAL_SIZE INT
+DECLARE @FILE_NAME NVARCHAR(100)
+
+SET @ACTUAL_SIZE = 155540
+SET @FINAL_SIZE = 104000 --37705
+SET @FILE_NAME = N'MCSRDB'
+
+
+WHILE NOT @ACTUAL_SIZE < @FINAL_SIZE
+     BEGIN
+           DBCC SHRINKFILE (@FILE_NAME, @ACTUAL_SIZE);
+           PRINT 'ACTUAL SIZE: ' + CONVERT(varchar(20),@ACTUAL_SIZE) + ' MB';
+           SET @ACTUAL_SIZE = @ACTUAL_SIZE - 300
+     END
+SET NOCOUNT OFF
+go
+~~~
+
 
 
 
