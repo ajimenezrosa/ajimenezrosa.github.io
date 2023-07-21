@@ -137,7 +137,7 @@
   - 29.5 [ Información sobre los estados de cifrado de las bases de datos ](#cifrado)
 
   - 29.6 [Shrink DB](#shrinkfilebpd)
-  - 29.7 [Ver espacion que ocupan los Mdf y Ldf y cuanto espacio tienen libre los archiviso](#espacioDBLibres)
+  - 29.7 [Ver espacion que ocupan los Mdf y Ldf y cuanto espacio tienen libre los archiviso](#espaciodbLibres)
 
 <!-- ConsultasEflowCitas -->
 
@@ -7662,7 +7662,7 @@ go
 ~~~
 
 
-# cuanto ocupan mis archivos de base de datos y cuanto espacio puedo reducir
+# cuanto ocupan mis archivos de base de datos y cuanto espacio puedo reducir<a name="espaciodbLibres"></a> 
 
 ~~~sql
 select
