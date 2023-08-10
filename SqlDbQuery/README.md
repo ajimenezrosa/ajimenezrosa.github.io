@@ -7740,6 +7740,48 @@ WHERE a2.type != N'S'
 ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 ~~~
 
+#
+
+## **Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**
+
+### **Objetivo:**
+#### Este documento describe los pasos necesarios para habilitar las conexiones a servidores de Internet en los agentes Foglight, permitiendo una comunicación exitosa con recursos en línea. Estos pasos son útiles para resolver problemas de conectividad y deben seguirse con precaución.
+
+**Pasos a Seguir:**
+
+1. **Ubicación del Archivo de Configuración:**
+   Navegue a la ubicación del archivo de configuración `java.security` en su sistema. El archivo se encuentra en la siguiente ruta:
+   ~~~cmd
+   D:\Quest\Foglight Agent Manager\jre\1.8.0.352\jre\lib\security
+   ~~~ 
+
+2. **Modificar el Archivo `java.security`:**
+   - Localice el archivo `java.security` en la ubicación mencionada anteriormente.
+   - Abra el archivo utilizando un editor de texto apropiado.
+
+3. **Habilitar Protocolos de Seguridad Necesarios:**
+   Busque la línea que contiene la configuración de protocolos de seguridad deshabilitados. Debería verse similar a lo siguiente:
+   
+   ~~~java
+   jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1, RC4, DES, MD5withRSA, \
+       DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, \
+       include jdk.disabled.namedCurves
+   ~~~
+   Elimine **TLSv1** y **TLSv1.1** de la lista para permitir conexiones sin utilizar estos protocolos.
+
+4. **Guardar los Cambios y Cerrar el Archivo:**
+   Después de realizar la modificación, guarde los cambios en el archivo **java.security** y cierre el editor de texto.
+
+5. **Reiniciar el Servicio Foglight:**
+   Reinicie el servicio Foglight en los agentes donde realizó la modificación. Esto permitirá que los cambios surtan efecto y se establezcan las conexiones correctamente.
+
+## **Importante:**
+- Estos pasos deben seguirse con precaución y solo deben aplicarse si se enfrenta a problemas de conectividad con servidores de Internet Banking.
+- Realice una copia de seguridad del archivo `java.security` antes de realizar cualquier modificación para evitar pérdida de datos o configuraciones incorrectas.
+- Asegúrese de comprender las implicaciones de seguridad al habilitar protocolos previamente deshabilitados.
+
+## **Conclusion:**
+#### Siguiendo estos pasos, podrá habilitar conexiones a a los servidores de Internet BANKING en los agentes Foglight, mejorando la conectividad y asegurando una comunicación fluida con recursos en línea. Recuerde que estos cambios deben aplicarse con precaución y se recomienda mantener un registro de las modificaciones realizadas para futuras referencias. Ademas los mismos solo afectanran los servidores de INTERNET BANKING  en caso de los mismo no tener comunicacion.
 
 
 
