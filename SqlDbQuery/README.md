@@ -138,7 +138,11 @@
 
   - 29.6 [Shrink DB](#shrinkfilebpd)
   - 29.7 [Ver espacion que ocupan los Mdf y Ldf y cuanto espacio tienen libre los archiviso](#espaciodbLibres)
-     - 30 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
+     - 29.7.1 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
+
+ - 30 [Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight](#foglight1)
+
+
 
 <!-- ConsultasEflowCitas -->
 
@@ -7742,7 +7746,7 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 
 #
 
-## **Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**
+## **Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**<a name="foglight1"></a>
 
 ### **Objetivo:**
 #### Este documento describe los pasos necesarios para habilitar las conexiones a servidores de Internet en los agentes Foglight, permitiendo una comunicación exitosa con recursos en línea. Estos pasos son útiles para resolver problemas de conectividad y deben seguirse con precaución.
@@ -7767,12 +7771,12 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
        DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, \
        include jdk.disabled.namedCurves
    ~~~
-   Elimine **TLSv1** y **TLSv1.1** de la lista para permitir conexiones sin utilizar estos protocolos.
+   Elimine **TLSv1 y TLSv1.1** de la lista para permitir conexiones utilizando estos protocolos.
 
 4. **Guardar los Cambios y Cerrar el Archivo:**
    Después de realizar la modificación, guarde los cambios en el archivo **java.security** y cierre el editor de texto.
 
-5. **Reiniciar el Servicio Foglight:**
+5. **Reiniciar el Agente de Foglight:**
    Reinicie el servicio Foglight en los agentes donde realizó la modificación. Esto permitirá que los cambios surtan efecto y se establezcan las conexiones correctamente.
 
 ## **Importante:**
