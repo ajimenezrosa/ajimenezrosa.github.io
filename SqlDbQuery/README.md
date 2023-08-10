@@ -7747,9 +7747,10 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 #
 
 ## **Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**<a name="foglight1"></a>
+![](https://www.quest.com/images/patterns/ZigZag/6-column/foglight-evolve-monitor.jpg)
 
 ### **Objetivo:**
-#### Este documento describe los pasos necesarios para habilitar las conexiones a servidores de Internet en los agentes Foglight, permitiendo una comunicación exitosa con recursos en línea. Estos pasos son útiles para resolver problemas de conectividad y deben seguirse con precaución.
+#### Este documento describe los pasos necesarios para habilitar las conexiones a servidores de Internet Banking en los agentes Foglight, permitiendo una comunicación exitosa con recursos en línea. Estos pasos son útiles para resolver problemas de conectividad y deben seguirse con precaución.
 
 **Pasos a Seguir:**
 
