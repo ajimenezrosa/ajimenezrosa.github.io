@@ -142,6 +142,7 @@
 
  - 30 [Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight](#foglight1)
  - 31 [Defragmentación, al rescate, Servidores AlwaysOn Interprise Edition](#desfragmentacionalrescate2)
+ - 32 [Para sacar una base de datos de modo restoring solo debemos ejecutar este código.](#sacarrestoring)
 
 
 <!-- ConsultasEflowCitas -->
@@ -7892,6 +7893,14 @@ DROP TABLE #work_to_do;
 GO
 ~~~
 ## ==================================================================
+
+
+# Para sacar una base de datos de modo restoring solo debemos ejecutar este código.<a name="sacarrestoring"></a>
+
+~~~sql
+RESTORE DATABASE nombre WITH RECOVERY;
+~~~
+
 
 
 
