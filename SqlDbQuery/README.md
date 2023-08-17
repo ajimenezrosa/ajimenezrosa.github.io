@@ -143,7 +143,7 @@
  - 30 [Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight](#foglight1)
  - 31 [Defragmentación, al rescate, Servidores AlwaysOn Interprise Edition](#desfragmentacionalrescate2)
  - 32 [Para sacar una base de datos de modo restoring solo debemos ejecutar este código.](#sacarrestoring)
-
+ - 33 [Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell](#powershellsqlserver)
 
 <!-- ConsultasEflowCitas -->
 
@@ -7902,7 +7902,7 @@ RESTORE DATABASE nombre WITH RECOVERY;
 ~~~
 
 # 
-## Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell:
+## Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell:<a name="powershellsqlserver"></a>
 
 1. Crea tres archivos de texto: uno para las instancias de servidor (`server_instances.txt`), otro para las bases de datos (`databases.txt`) y otro para las consultas (`queries.txt`).
 
