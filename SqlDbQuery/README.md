@@ -7901,6 +7901,35 @@ GO
 RESTORE DATABASE nombre WITH RECOVERY;
 ~~~
 
+# 
+## Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell:
+
+1. Crea tres archivos de texto: uno para las instancias de servidor (`server_instances.txt`), otro para las bases de datos (`databases.txt`) y otro para las consultas (`queries.txt`).
+
+2. En cada archivo, coloca un valor por línea correspondiente a las instancias de servidor, bases de datos y consultas respectivamente.
+
+3. Luego, puedes usar el siguiente script en PowerShell para leer los valores de los archivos y ejecutar las consultas:
+
+```powershell
+$serverInstances = Get-Content -Path "server_instances.txt"
+$databases = Get-Content -Path "databases.txt"
+$queries = Get-Content -Path "queries.txt"
+
+for ($i = 0; $i -lt $serverInstances.Length; $i++) {
+    $serverInstance = $serverInstances[$i]
+    $database = $databases[$i]
+    $query = $queries[$i]
+
+    Write-Host "Executing query on ServerInstance: $serverInstance, Database: $database"
+    
+    Invoke-Sqlcmd -ServerInstance $serverInstance -Database $database -Query $query
+}
+```
+
+#### Este script lee los valores de los archivos de texto línea por línea y ejecuta las consultas con los valores correspondientes de `-ServerInstance`, `-Database` y `-Query`. Asegúrate de que los archivos de texto tengan el mismo número de líneas y que las líneas correspondientes en los archivos contengan información coherente entre sí.
+
+#### Recuerda que este script asume que las rutas a los archivos de texto son los mismos directorios desde donde se ejecuta el script. Si los archivos están en diferentes ubicaciones, asegúrate de ajustar las rutas en la función `Get-Content`.
+
 
 
 
