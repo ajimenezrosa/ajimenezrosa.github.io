@@ -3,61 +3,6 @@
 <head>
   <title>Cargar archivo README</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
-  <style>
-    body {
-      background-color: #0d1117;
-      color: #c9d1d9;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    
-    #page-container {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    #readme-container {
-      max-width: 800px;
-      margin: 0 auto;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-      background-color: #161b22;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      color: #58a6ff;
-    }
-    
-    a {
-      color: #79c0ff;
-    }
-    
-    pre {
-      background-color: #1f2428;
-      color: #d9d7ce;
-      padding: 10px;
-      border-radius: 5px;
-      overflow: auto;
-    }
-    
-    code {
-      background-color: #1f2428;
-      color: #d9d7ce;
-      padding: 3px 5px;
-      border-radius: 3px;
-    }
-    
-    blockquote {
-      border-left: 4px solid #8b949e;
-      padding: 0 15px;
-      color: #8b949e;
-    }
-    
-    /* Agregar más estilos aquí para formato oscuro */
-  </style>
 </head>
 <body>
   <div id="page-container">
@@ -83,6 +28,20 @@
             // Mostrar el contenido HTML en el contenedor
             var readmeContainer = document.getElementById("readme-container");
             readmeContainer.innerHTML = html;
+
+            // Agregar botones de copiar con estilo
+            var sqlCodeBlocks = readmeContainer.querySelectorAll("pre code.language-sql");
+            sqlCodeBlocks.forEach(function(sqlCodeBlock) {
+              var copyButton = document.createElement("button");
+              copyButton.textContent = "Copiar";
+              copyButton.classList.add("copy-button");
+              copyButton.addEventListener("click", function() {
+                copiarCodigo(sqlCodeBlock);
+              });
+              var codeContainer = sqlCodeBlock.parentNode;
+              codeContainer.classList.add("code-container");
+              codeContainer.appendChild(copyButton);
+            });
           } else {
             console.error("Error al cargar el archivo README.md: " + xhr.status);
           }
@@ -92,8 +51,62 @@
       xhr.send();
     }
 
+    // Función para copiar el contenido del código al portapapeles
+    function copiarCodigo(codeBlock) {
+      var textArea = document.createElement("textarea");
+      textArea.value = codeBlock.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+
     // Cargar el archivo README.md al cargar la página
     window.onload = cargarReadme;
   </script>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #page-container {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #readme-container {
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      background-color: #161b22;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .copy-button {
+      background-color: #79c0ff;
+      color: #0d1117;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .copy-button:hover {
+      background-color: #58a6ff;
+    }
+
+    .code-container {
+      position: relative;
+    }
+  </style>
 </body>
 </html>
