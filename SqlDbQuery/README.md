@@ -3,7 +3,7 @@
 ## Alejandro Jimenez Rosa
 
 |![](https://avatars.githubusercontent.com/u/7384546?v=4)|![](https://pbs.twimg.com/profile_images/901546652091252736/6Clcdv1L_400x400.jpg)
-## ==========================================================
+# 
 
 # Sql server Commpendio de querys.
 ![](https://licendi.com/media/magefan_blog/2022/07/210904-Blog-Post-SQL-Server-2-e1630753848251-1.jpg)
@@ -167,7 +167,7 @@ exec xp_cmdshell 'net use'
 #
 # Crecimiento automático de los ficheros de la base de datos<a name="2"></a>
 
-![](https://i.ytimg.com/vi/Z9AFnKI7sfI/maxresdefault.jpg)
+![](https://www.campusmvp.es/recursos/image.axd?picture=/2022/2T/sql-server-tamano/tamano-sql-server-management-archivos.jpg)
 
 # DBCC CHECKDB (Transact-SQL)  <a name="5"></a>
 #### Checks the logical and physical integrity of all the objects in the specified database by performing the following operations:
@@ -250,7 +250,7 @@ DBCC CHECKDB(N'TA100SQL')  WITH NO_INFOMSGS
 
   - Los eventos de crecimiento ocurran con poca frecuencia
   - No nos excedamos en la cantidad de disco reservada a los ficheros de una base de datos, ya que podría no ser necesario y estaríamos consumiendo recursos útiles para otras bases de datos en el mismo disco o sistema de discos.
-### =======================================================================
+# 
 
 ~~~sql
 /*
@@ -305,7 +305,7 @@ GROUP BY [database_name], format(backup_start_date, 'yyyy-MM-dd') --DATEPART(mm,
 order by date desc
 ~~~
 
-### =======================================================================
+#
 
 
 # Tempdb: Reducir Tamaño <a name="6"></a>
@@ -332,7 +332,7 @@ exec sp_spaceused
 
  - Realizar la limpieza de varios cache y un checkpoint
 
-### =======================================================================
+
 
 
 ~~~sql
@@ -349,13 +349,13 @@ GO
 DBCC FREESESSIONCACHE;
 GO
 ~~~
-### =======================================================================
+# 
 
 
 
 
 #### La siguiente acción no es necesariamente obligatoria, pero hay ocaciones en las que me ha servido, y es configurar el archivo de datos de la tempdb al tamaño deseado antes de darle el shrink. Para esto se debe ejecutar el siguiente comando ejemplo en el cual la estoy configurando a 100 MB:
-### =======================================================================
+# 
 
 ~~~sql
 use master
@@ -364,24 +364,24 @@ MODIFY FILE
 (name=tempdev
 ,size=100M)
 ~~~
-### =======================================================================
+# 
 # 
 #### Finalmente reducir el tamaño del archivo de datos de la tempdb, en este caso lo reduzco a 100 MB
 # 
-### =======================================================================
+# 
 
 ~~~sql
 use tempdb
 dbcc shrinkfile ('tempdev',100,TRUNCATEONLY)
 ~~~
 # 
-### =======================================================================
+# 
 
 # 
 
 
 # La conexión de administración dedicada: por qué la quiere, cuándo la necesita y cómo saber quién la está usando <a name="7"></a>
-![](https://anyonconsulting.com/wp-content/uploads/2021/12/Dedicated-administrator-connections-are-not-supported.png)
+![](https://www.acens.com/comunicacion/wp-content/images/2015/12/conexion-escritorio-remoto-white-paper-acens-12.jpg)
 
 # CAD? ¿Qué es eso?
 - Primero, un poco de desambiguación. El acrónimo 'DAC' es demasiado popular.
@@ -439,7 +439,7 @@ dbcc shrinkfile ('tempdev',100,TRUNCATEONLY)
 
 #### ***No se pudo conectar porque ya existe el número máximo de conexiones de administrador dedicadas '1'. Antes de que se pueda realizar una nueva conexión, se debe eliminar la conexión de administrador dedicada existente, ya sea cerrando la sesión o finalizando el proceso.***
 
-### =======================================================================
+# 
 
 
 ~~~sql
@@ -458,7 +458,7 @@ en.endpoint_id=ses.endpoint_id
 where en.name='Dedicated Admin Connection'
 ~~~
 
-### =======================================================================
+
 
 #
 
@@ -472,9 +472,9 @@ where en.name='Dedicated Admin Connection'
 <!-- insertar publicacion de mover Tempdb  -->
 
 # Cómo mover TempDB a otra unidad y carpeta<a name="2_1"><a/>
-![](https://www.dotnetcr.com/wp-content/uploads/2018/05/sql-mover-tempdb.png)
+![](https://blog.sqlauthority.com/wp-content/uploads/2016/06/tempdbmove-800x552.jpg)
 #
-### =======================================================================
+# 
 
 ~~~sql
 SELECT 'ALTER DATABASE tempdb MODIFY FILE (NAME = [' + f.name + '],'
@@ -484,7 +484,7 @@ SELECT 'ALTER DATABASE tempdb MODIFY FILE (NAME = [' + f.name + '],'
 FROM sys.master_files f
 WHERE f.database_id = DB_ID(N'tempdb');
 ~~~
-### =======================================================================
+# 
 #
 
 ### El Resultado de esta consulta seria lo siguiente.
@@ -551,7 +551,7 @@ WHERE f.database_id = DB_ID(N'tempdb');
 
 
 #  Eliminar corroes del servidor de correos Sql Server<a name="3"><a/>
-![](https://live.mrf.io/statics/i/ps/cdn.zmescience.com/wp-content/uploads/2019/11/How-to-organize-and-filter-emails-in-Gmail-with-labels.png?width=1200&enable=upscale)
+![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOkenEQH0-zNGFyFke0vcGbu3LqRt9jfDtAA&usqp=CAU)
 ## Observaciones
 #### Correo electrónico de base de datos mensajes y sus datos adjuntos se almacenan en la base de datos msdb . Los mensajes deben eliminarse periódicamente para evitar que msdb crezca más de lo esperado y cumplir con el programa de retención de documentos de las organizaciones. Utilice el sysmail_delete_mailitems_sp procedimiento almacenado para eliminar de forma permanente los mensajes de correo electrónico de las tablas de correo electrónico de base de datos. Un argumento opcional permite eliminar solo los mensajes de correo electrónico antiguos indicando la fecha y la hora. Se eliminarán los mensajes de correo electrónico anteriores al valor de ese argumento. Otro argumento opcional permite eliminar solo los mensajes de correo electrónico de un tipo determinado, especificado como el argumento sent_status . Debe proporcionar un argumento para ** @ sent_before** o ** @ sent_status**. Para eliminar todos los mensajes, utilice ** @ sent_before = getDate ()**.
 #### Si se eliminan mensajes de correo electrónico, se eliminarán también los archivos adjuntos relacionados con los mismos. Al eliminar el correo electrónico, no se eliminan las entradas correspondientes en sysmail_event_log. Use sysmail_delete_log_sp para eliminar elementos del registro.
@@ -559,7 +559,7 @@ WHERE f.database_id = DB_ID(N'tempdb');
 #### De forma predeterminada, este procedimiento almacenado se concede para la ejecución a los miembros del rol fijo de servidor sysadmin y de DatabaseMailUserRole. Los miembros del rol fijo de servidor sysadmin pueden ejecutar este procedimiento para eliminar los mensajes de correo electrónico enviados por todos los usuarios. Los miembros de DatabaseMailUserRole solo pueden eliminar los mensajes de correo electrónico enviados por ese usuario.
 # Ejemplos
 # 
-### =======================================================================
+#
 
 ~~~sql
 DECLARE @GETDATE datetime  
@@ -575,7 +575,7 @@ EXECUTE dbo.sysmail_start_sp ;
 GO
 ~~~
 
-### =======================================================================
+
 
 #
 
@@ -597,7 +597,7 @@ C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\Binn\DatabaseMai
 #### Para obtener esta información yo suelo usar la siguiente consulta SQL que devuelve el servidor,
  #### la base de datos, el usuario, el número de conexiones y la marca temporal de cuando se ejecuto la consulta.
 #
-## =======================================================================
+
 ~~~sql
 /*
  Alejandro Jimenez 
@@ -614,14 +614,14 @@ WHERE database_id NOT BETWEEN 1 AND 4
 AND LOGINAME IS NOT NULL
 GROUP BY NAME,LOGINAME;
 ~~~
-## =======================================================================
+# 
 #
 
 <!-- Iniciamos aqui con las Memorias y paginaciones en Sql server -->
 
 
 # Una vista dentro de la caché del búfer de SQL Server<a name="8"></a>
-![](https://jorgesanchez.net/manuales/abd/arquitectura-oracle-web-resources/image/Memoria-Oracle.png)
+![](https://learn.microsoft.com/es-es/sql/database-engine/configure-windows/media/ssdbufferpoolextensionarchitecture.gif?view=sql-server-ver16)
 ## Datos de Manejo de Memoria y paginacion en el Servidor sql server 
 ### Alejandro Jimenez Febrero 5 del 2021
 #### original December 29, 2016 by Ed Pollack
@@ -638,7 +638,7 @@ GROUP BY NAME,LOGINAME;
 
 #### Usted puede ver una vista general del estado actual del uso de la memoria en SQL Server revisando la DMV sys.dm_os_sys_info DMV:<a name="8-1"></a>
 # 
-## =======================================================================
+# 
 ~~~sql
 
 SELECT
@@ -648,7 +648,7 @@ SELECT
 	committed_target_kb
 FROM sys.dm_os_sys_info;
 ~~~
-## =======================================================================
+# 
 #
 
 #### Los resultados de esta consulta me dicen algo acerca del uso de la memoria en mi servidor:
@@ -666,7 +666,7 @@ FROM sys.dm_os_sys_info;
 
 #### Una métrica útil que es fácil de obtener es la medida del uso de la caché del búfer por la base de datos en el servidor:<a name="metricausocachequery"></a>
 # 
-## =======================================================================
+# 
 ~~~sql
 SELECT
     databases.name AS database_name,
@@ -677,7 +677,7 @@ ON databases.database_id = dm_os_buffer_descriptors.database_id
 GROUP BY databases.name
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+
 # 
 #### Esta consulta retorna, ordenada desde más páginas a menos, la cantidad de memoria consumida por cada base de datos en la caché del búfer:
 ####
@@ -688,7 +688,7 @@ ORDER BY COUNT(*) DESC;
 #### Mientras que no enloquecí aquí, mi consulta al azar sí incrementó la cantidad de datos en la caché del búfer para AdventureWorks2014 en 27MB. Esta consulta puede ser una manera útil de determinar rápidamente qué base de datos cuenta con el mayor uso de memoria en la caché del búfer. En una arquitectura multiusuario, o en un servidor en el cual hay muchas bases de datos clave compartiendo recursos, este puede ser un método rápido para hallar la base de datos que está desempeñándose pobremente o acaparando la memoria en cualquier momento.
 
 #### **De forma similar, podemos ver los totales como una página o un conteo de bytes:**<a name="totalespaginasconteo"></a>
-## =======================================================================
+# 
 
 ~~~sql
 
@@ -697,7 +697,7 @@ SELECT
 	COUNT(*) * 8 / 1024 AS buffer_cache_used_MB
 FROM sys.dm_os_buffer_descriptors;
 ~~~
-## =======================================================================
+# 
 
 
 #### Esto retorna una sola fila conteniendo el número de páginas en la caché del búfer, así como la memoria consumida por ellas:
@@ -706,7 +706,7 @@ FROM sys.dm_os_buffer_descriptors;
 #### Dado que una página es de 8KB, podemos convertir el número de páginas en megabytes multiplicando por 8 para obtener KB, y luego dividir por 1024 para llegar a MB.
 #### 
 #### Podemos subdividir esto más allá y ver cómo la caché del búfer es usada por objetos específicos. Esto puede proveer mucha más información acerca del uso de la memoria, ya que podemos determinar qué tablas son acaparadoras de memoria. Adicionalmente, podemos verificar algunas métricas interesantes, como qué porcentaje de una tabla está en la memoria actualmente, o qué tablas son infrecuentemente usadas (o no). La siguiente consulta retornará las páginas en búfer y el tamaño por tabla:
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	objects.name AS object_name,
@@ -729,7 +729,7 @@ GROUP BY objects.name,
 ORDER BY COUNT(*) DESC;
 ~~~
 
-## =======================================================================
+# 
 
 #### 
 #### Las tablas de sistema son excluidas, y esto sólo jalará datos para la base de datos actual. Las vistas indexadas no serán incluidas, ya que sus índices son entidades distintas de las tablas de las que derivan- La combinación en sys.partitions contiene dos partes para manejar los índices, así como las pilas. Los datos mostrados aquí incluyen todos los índices en la tabla, así como la pila, si no hay ninguna definida.
@@ -741,7 +741,7 @@ C:\Users\epollack\Dropbox\SQL\Articles\Searching the SQL Server Buffer Cache\5. 
 #### 
 #### De forma similar, podemos dividir los datos por índice en lugar de por tabla, proveyendo incluso más granularidad en el uso de la caché del búfer:
 #### 
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -769,7 +769,7 @@ GROUP BY indexes.name,
 ORDER BY COUNT(*) DESC;
 ~~~
 
-## =======================================================================
+# 
 #### Esta consulta es casi la misma que nuestra última, excepto que hacemos una combinación adicional a sys.indexes, y agrupamos en el nombre del índice en adición al nombre de la tabla/vista. Los resultados proveen incluso más detalles acerca de cómo la caché del búfer está siendo usada, y pueden ser valiosos en tablas con muchos índices de uso variado:
 
 #### 
@@ -779,7 +779,7 @@ ORDER BY COUNT(*) DESC;
 #### 
 #### Para recolectar el porcentaje de cada tabla que está en la memoria, podemos poner esa consulta en un CTE y comparar las páginas en memoria versus el total para cada tabla:
 #### 
-## =======================================================================
+# 
 ~~~sql
 WITH CTE_BUFFER_CACHE AS (
 	SELECT
@@ -809,7 +809,9 @@ SELECT
 	CTE_BUFFER_CACHE.buffer_cache_used_MB,
 	PARTITION_STATS.total_number_of_used_pages,
 	PARTITION_STATS.total_number_of_used_pages * 8 / 1024 AS total_mb_used_by_object,
-	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) /
+     CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL)
+      * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
 FROM CTE_BUFFER_CACHE
 INNER JOIN (
 	SELECT 
@@ -825,7 +827,7 @@ ON PARTITION_STATS.object_id = CTE_BUFFER_CACHE.object_id
 ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.
 total_number_of_used_pages AS DECIMAL) DESC;
 ~~~
-## =======================================================================
+# 
 # 
 
 
@@ -840,7 +842,7 @@ total_number_of_used_pages AS DECIMAL) DESC;
 
 #### Esta consulta puede ser modificada para proveer el porcentaje de un índice que está siendo usado también, de forma similar a cómo recolectamos el porcentaje de una tabla usada:
 #### 
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -850,7 +852,8 @@ SELECT
 	COUNT(*) * 8 / 1024  AS buffer_cache_used_MB,
 	SUM(allocation_units.used_pages) AS pages_in_index,
 	SUM(allocation_units.used_pages) * 8 /1024 AS total_index_size_MB,
-	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.
+    used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units
 ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
@@ -868,9 +871,10 @@ AND dm_os_buffer_descriptors.database_id = DB_ID()
 GROUP BY indexes.name,
 		 objects.name,
 		 objects.type_desc
-ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
+ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM
+(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
 ~~~
-## =======================================================================
+# 
 #### 
 
 #### Dado que sys.allocation_units provee algo de información acerca del tamaño de nuestros índices, evitamos la necesidad de CTEs y conjuntos de datos adicionales de dm_db_partition_stats. Aquí está un pedazo de los resultados, mostrando el tamaño del índice (MB y páginas) y el espacio usado de la caché del búfer (MB y páginas):
@@ -881,25 +885,27 @@ ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages)
 
 #### Una columna interesante en dm_os_buffer_descriptors es free_space_in_bytes. Esta columna nos dice cuán llena está cada página en la caché del búfer, y por lo tanto provee un indicador del espacio potencial desperdiciado o la ineficiencia. Podemos determinar el porcentaje de páginas que han sido tomadas por el espacio libre, en lugar de datos, para cada base de datos en nuestro servidor:
 ####  
-## =======================================================================
+# 
 ~~~sql
 WITH CTE_BUFFER_CACHE AS
 ( SELECT
   databases.name AS database_name,
   COUNT(*) AS total_number_of_used_pages,
   CAST(COUNT(*) * 8 AS DECIMAL) / 1024 AS buffer_cache_total_MB,
-  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
+  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS
+   DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
  FROM sys.dm_os_buffer_descriptors
  INNER JOIN sys.databases
  ON databases.database_id = dm_os_buffer_descriptors.database_id
  GROUP BY databases.name)
 SELECT
  *,
- CAST((buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS buffer_cache_percent_free_space
+ CAST((buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS
+  buffer_cache_percent_free_space
 FROM CTE_BUFFER_CACHE
 ORDER BY buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0) DESC
 ~~~
-## =======================================================================
+# 
 # 
 #### 
 #### Esto retorna una fila por base de datos que muestra la agregación de espacio libre por base de datos, sumada a través de todas las páginas en la caché del búfer para esa base de datos particular:
@@ -911,7 +917,7 @@ ORDER BY buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0) DESC
 <!-- final de memoria -->
 #### De forma similar, podemos dividir los datos por índice en lugar de por tabla, proveyendo incluso más granularidad en el uso de la caché del búfer:
 #### 
-## =======================================================================
+# 
 
 ~~~sql
 SELECT
@@ -939,7 +945,7 @@ GROUP BY indexes.name,
 		 objects.type_desc
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+## 
 # 
 
 #### 
@@ -951,7 +957,7 @@ ORDER BY COUNT(*) DESC;
 #### 
 #### Para recolectar el porcentaje de cada tabla que está en la memoria, podemos poner esa consulta en un CTE y comparar las páginas en memoria versus el total para cada tabla:<a name="percentajecadapagina"></a>
 # 
-## =======================================================================
+# 
 ~~~sql
 WITH CTE_BUFFER_CACHE AS (
 	SELECT
@@ -980,8 +986,11 @@ SELECT
 	CTE_BUFFER_CACHE.buffer_cache_pages,
 	CTE_BUFFER_CACHE.buffer_cache_used_MB,
 	PARTITION_STATS.total_number_of_used_pages,
-	PARTITION_STATS.total_number_of_used_pages * 8 / 1024 AS total_mb_used_by_object,
-	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	PARTITION_STATS.total_number_of_used_pages * 8 / 1024 AS 
+    total_mb_used_by_object,
+	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / 
+    CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL)
+     * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
 FROM CTE_BUFFER_CACHE
 INNER JOIN (
 	SELECT 
@@ -994,10 +1003,11 @@ INNER JOIN (
 	WHERE objects.is_ms_shipped = 0
 	GROUP BY objects.name, objects.object_id) PARTITION_STATS
 ON PARTITION_STATS.object_id = CTE_BUFFER_CACHE.object_id
-ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) DESC;
+ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / 
+CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) DESC;
 ~~~
 
-## =======================================================================
+
 # 
 #### Esta consulta combina nuestro conjunto previo de datos con una consulta en sys.dm_db_partition_stats para comparar lo que está actualmente en la caché del búfer versus el espacio total usado por cualquier tabla dada. Las muchas operaciones CAST al final ayudan a evitar el truncado y hacen al resultado final fácil de leer. Los resultados en mi servidor local son los siguientes:
 # 
@@ -1009,7 +1019,7 @@ ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_S
 
 #### Esta consulta puede ser modificada para proveer el porcentaje de un índice que está siendo usado también, de forma similar a cómo recolectamos el porcentaje de una tabla usada:
 # 
-## =======================================================================
+
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -1019,7 +1029,8 @@ SELECT
 	COUNT(*) * 8 / 1024  AS buffer_cache_used_MB,
 	SUM(allocation_units.used_pages) AS pages_in_index,
 	SUM(allocation_units.used_pages) * 8 /1024 AS total_index_size_MB,
-	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.
+    used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units
 ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
@@ -1037,9 +1048,10 @@ AND dm_os_buffer_descriptors.database_id = DB_ID()
 GROUP BY indexes.name,
 		 objects.name,
 		 objects.type_desc
-ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
+ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM
+(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
 ~~~
-## =======================================================================
+
 # 
 #### Dado que sys.allocation_units provee algo de información acerca del tamaño de nuestros índices, evitamos la necesidad de CTEs y conjuntos de datos adicionales de dm_db_partition_stats. Aquí está un pedazo de los resultados, mostrando el tamaño del índice (MB y páginas) y el espacio usado de la caché del búfer (MB y páginas):
 
@@ -1049,25 +1061,28 @@ ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages)
 
 #### Una columna interesante en dm_os_buffer_descriptors es free_space_in_bytes. Esta columna nos dice cuán llena está cada página en la caché del búfer, y por lo tanto provee un indicador del espacio potencial desperdiciado o la ineficiencia. Podemos determinar el porcentaje de páginas que han sido tomadas por el espacio libre, en lugar de datos, para cada base de datos en nuestro servidor:
 # 
-## =======================================================================
+
 ~~~sql
 WITH CTE_BUFFER_CACHE AS
 ( SELECT
   databases.name AS database_name,
   COUNT(*) AS total_number_of_used_pages,
   CAST(COUNT(*) * 8 AS DECIMAL) / 1024 AS buffer_cache_total_MB,
-  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
+  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS 
+  DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
  FROM sys.dm_os_buffer_descriptors
  INNER JOIN sys.databases
  ON databases.database_id = dm_os_buffer_descriptors.database_id
  GROUP BY databases.name)
 SELECT
  *,
- CAST((buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS buffer_cache_percent_free_space
+ CAST((buffer_cache_free_space_in_MB / NULLIF
+ (buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS 
+ buffer_cache_percent_free_space
 FROM CTE_BUFFER_CACHE
 ORDER BY buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0) DESC
 ~~~
-## =======================================================================
+
 
 #### Esto retorna una fila por base de datos que muestra la agregación de espacio libre por base de datos, sumada a través de todas las páginas en la caché del búfer para esa base de datos particular:
 
@@ -1075,15 +1090,19 @@ ORDER BY buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0) DESC
 
 #### Esto es interesante, pero no muy útil todavía debido a que estos resultados no son muy específicos. Nos dicen que una base de datos puede tener un poco de espacio desperdiciado, pero no mucho sobre qué tablas son las causantes. Tomemos el mismo enfoque que hicimos anteriormente y devolvemos espacio libre por tabla en una base de datos dada:
 # 
-## =======================================================================
+
 ~~~sql
 SELECT
 	objects.name AS object_name,
 	objects.type_desc AS object_type_description,
 	COUNT(*) AS buffer_cache_pages,
 	CAST(COUNT(*) * 8 AS DECIMAL) / 1024  AS buffer_cache_total_MB,
-	CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024 AS buffer_cache_free_space_in_MB,
-	CAST((CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024) / (CAST(COUNT(*) * 8 AS DECIMAL) / 1024) * 100 AS DECIMAL(5,2)) AS buffer_cache_percent_free_space
+	CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes 
+    AS BIGINT)) AS DECIMAL) / 1024 / 1024 AS 
+    buffer_cache_free_space_in_MB,
+	CAST((CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024) / 
+    (CAST(COUNT(*) * 8 AS DECIMAL) / 1024) * 100 AS DECIMAL(5,
+    2)) AS buffer_cache_percent_free_space
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units
 ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
@@ -1101,7 +1120,7 @@ GROUP BY objects.name,
 HAVING COUNT(*) > 0
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+
 # 
 #### Esto devuelve una fila por tabla o vista indexada que tiene al menos una página en la memoria caché del búfer ordenada primeramente por aquellos que tienen la mayor cantidad de páginas en memoria.
 
@@ -1115,7 +1134,7 @@ ORDER BY COUNT(*) DESC;
 
 #### Al principio de este artículo, discutimos brevemente qué páginas sucias y limpias son y su correlación con las operaciones de escritura dentro de una base de datos. Dentro de dm_os_buffer_descriptors podemos verificar si una página está limpia o no está usando la columna is_modified. Esta nos dice si una página ha sido modificada por una operación de escritura, pero aún no se ha escrito en disco. Podemos usar esta información para contar las páginas limpias y sucias en la caché del búfer para una base de datos determinada:
 # 
-## =======================================================================
+
 ~~~sql
 SELECT
     databases.name AS database_name,
@@ -1142,7 +1161,7 @@ ON dm_os_buffer_descriptors.database_id = databases.database_id
 GROUP BY databases.name;
 ~~~
 
-## =======================================================================
+
 
 # 
 #### Esta consulta devuelve el número de páginas y el tamaño de los datos en MB:<a name="numerodepaginas"></a>
@@ -1150,12 +1169,12 @@ GROUP BY databases.name;
 
 
 #### Mi servidor no tiene mucho por el momento. Si corriera una gran sentencia de actualización, podríamos ilustrar qué veríamos cuando más operaciones de escritura están ocurriendo. Corramos la siguiente consulta:
-## =======================================================================
+# 
 ~~~sql
 UPDATE Sales.SalesOrderDetail
 	SET OrderQty = OrderQty
 ~~~  
-## =======================================================================
+# 
 #### Esto es esencialmente una no-operación y no resultará en ningún cambio real a la tabla SalesOrderDetail – pero SQL Server aún pasará por el problema de actualizar cada fila en la tabla para esta columna particular. Si corremos el conteo de páginas sucias/limpias desde arriba, obtendremos algunos resultados interesantes:
 
 
@@ -1163,7 +1182,7 @@ UPDATE Sales.SalesOrderDetail
 #### Cerca de 2/3 de las páginas para AdventureWorks2014 en la caché del búfer están sucios. Adicionalmente, TempDB también tiene bastante actividad, lo cual es indicativo del desencadenador update/insert/delete en la tabla, lo que causó que se ejecutara una gran cantidad de T-SQL adicional. El desencadenador causó que haya bastantes lecturas contra AdventureWorks2014, así como la necesidad de trabajo de tablas en TempDB para procesar esas operaciones adicionales.
 
 #### Como antes, podemos dividir esta tabla o índice para recolectar datos más granulares acerca del uso de la caché del búfer:
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -1205,7 +1224,8 @@ GROUP BY indexes.name,
 		 objects.type_desc
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+#
+
 #### Los resultados muestran el uso de la caché del búfer por índice, mostrando cuántas páginas en la memoria están limpias o sucias:
 
 #
@@ -1213,7 +1233,7 @@ ORDER BY COUNT(*) DESC;
 #### Estos datos proveen una idea de la actividad de escritura en un índice dado en este punto del tiempo. Si fuera rastrado en un periodo de días o semanas, podríamos comenzar a estimar la actividad de escritura general del índice y proyectar una tendencia. Esta investigación podría ser útil si usted estuviera buscando entender el mejor nivel posible de aislamiento para usarse en una base de datos, o si esos reportes que siempre son corridos con READ UNCOMMITED podrían ser más susceptibles a lecturas sucias que lo pensado originalmente. En este caso específico, las páginas sucias todas se relacionan con la consulta de actualización que corrimos previamente, y por lo tanto abarcan un conjunto algo limitado.
 
 ## DBCC DROPCLEANBUFFERS<a name="dbccdropcleanbuffers"></a>
-![](https://blog.sqlauthority.com/wp-content/uploads/2019/06/dirtycleanimage.jpg)
+![](https://blog.sqlauthority.com/wp-content/uploads/2019/03/cleanbuffer-800x351.jpg)
 #### Un comando DBCC que es a menudo usado como una forma de probar una consulta y estimar de forma precisa la velocidad de ejecución, es DBCC DROPCLEANBUFFERS. Cuando se corre, este comando remueve todas las páginas limpias de la memoria para un servidor entero de base de datos, dejando atrás solamente páginas sucias, las cuales serán típicamente una pequeña minoría de datos.
 
 #### DBCC DROPCLEANBUFFERS es un comando que típicamente debería ser corrido sólo en un ambiente que no sea de producción, e incluso entonces, sólo cuando no se está realizando pruebas de desempeño o carga. El resultado de este comando es que la caché del búfer terminará mayormente vacía. Cualquier consulta corrida después de este punto necesitará usar lecturas físicas para traer de vuelta los datos a la caché desde su sistema de almacenamiento, lo cual es, como dijimos antes, mucho más lento que la memoria.
@@ -1235,7 +1255,7 @@ ORDER BY COUNT(*) DESC;
 #### Cuando se discute acerca del desempeño de la memoria en SQL Server, es poco probable que avancemos unos minutos antes de que alguien pregunte acerca de la expectativa de vida de las páginas (PLE, por sus siglas en inglés). PLE es una medida de, en promedio, cuánto tiempo (en segundos) permanecerá una página en la memoria sin ser accedida, punto después del cual es removida. Esta es una métrica que deseamos que sea más alta en la medida que deseamos que nuestros datos importantes permanezcan en la caché del búfer por tanto tiempo como sea posible. Cuando la PLE se ralentiza, los datos están siendo constantemente leídos desde el disco (alias ‘lento’) a la caché del búfer, removidos desde la caché y probablemente leídos desde el disco de nuevo en un futuro cercano. ¡Esta es la receta para un SQL Server lento (y frustrante)!
 
 #### Para ver la PLE actual en un servidor, usted puede correr la siguiente consulta, la cual pondrá el valor actual desde la vista de administración dinámica de conteo de desempeño:
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	*
@@ -1243,7 +1263,7 @@ FROM sys.dm_os_performance_counters
 WHERE dm_os_performance_counters.object_name LIKE '%Buffer Manager%'
 AND dm_os_performance_counters.counter_name = 'Page life expectancy';
 ~~~
-## =======================================================================
+# 
 # 
 #### Los resultados se ven así:
 
@@ -1251,7 +1271,7 @@ AND dm_os_performance_counters.counter_name = 'Page life expectancy';
 #### ***cntr_value*** es el valor del contador de desempeño, y en mi silencioso servidor local es 210,275 segundos. Dado que muy pocos datos son leídos o escritos en mi SQL Server, la necesidad de remover datos desde la caché del búfer es baja, y por tanto la ***PLE*** es absurdamente alta. En un servidor de producción altamente usado, la PLE sería casi con seguridad más baja.
 
 #### Si su servidor tiene una arquitectura NUMA (acceso de memoria no uniforme), entonces usted deseará considerar una PLE para cada nodo separadamente, lo cual puede ser hecho con la siguiente consulta:
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	*
@@ -1260,7 +1280,7 @@ WHERE dm_os_performance_counters.object_name LIKE '%Buffer Node%'
 AND dm_os_performance_counters.counter_name = 'Page life expectancy';
 ~~~
 # 
-## =======================================================================
+
 #### En un servidor sin **NUMA**, estos valores serán idénticos. En un servidor con una arquitectura NUMA, habrá múltiples filas PLE retornadas, todas ellas se sumarán al total dado para el administrador del búfer como un todo. Si usted está trabajando con NUMA, asegúrese de considerar PLE en cada nodo, en adición al total, ya que es posible que un nodo sea un cuello de botella, mientras que el total general se ve aceptable.
 
 #### La pregunta más obvia ahora es, “¿Cuál es un buen valor para la PLE?” Para responder esta pregunta, necesitamos revisar más profundamente en el servidor para ver cuánta memoria tiene, y cuál debería ser el volumen esperado de datos siendo escritos o leídos. 300 segundos es a menudo citado como un buen valor para la PLE, pero como muchas respuestas fáciles y rápidas, esta seguramente es incorrecta.
@@ -1278,7 +1298,7 @@ AND dm_os_performance_counters.counter_name = 'Page life expectancy';
 
 <!-- C:\Users\epollack\Dropbox\SQL\Articles\Searching the SQL Server Buffer Cache\5. Buffer Cache by Table.jpg -->
 #### De forma similar, podemos dividir los datos por índice en lugar de por tabla, proveyendo incluso más granularidad en el uso de la caché del búfer:
-## =======================================================================
+# 
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -1305,7 +1325,8 @@ GROUP BY indexes.name,
 		 objects.type_desc
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+#
+
 #### Esta consulta es casi la misma que nuestra última, excepto que hacemos una combinación adicional a sys.indexes, y agrupamos en el nombre del índice en adición al nombre de la tabla/vista. Los resultados proveen incluso más detalles acerca de cómo la caché del búfer está siendo usada, y pueden ser valiosos en tablas con muchos índices de uso variado:
 
 
@@ -1313,7 +1334,7 @@ ORDER BY COUNT(*) DESC;
 #### Los resultados pueden ser útiles cuando se trata de determinar el nivel general de uso para un índice específico en cualquier momento. Adicionalmente, nos permite estimar cuánto de un índice está siendo leído, comparado con su tamaño general.
 
 #### Para recolectar el porcentaje de cada tabla que está en la memoria, podemos poner esa consulta en un CTE y comparar las páginas en memoria versus el total para cada tabla:
-## =======================================================================
+# 
 ~~~sql
 WITH CTE_BUFFER_CACHE AS (
 	SELECT
@@ -1342,8 +1363,11 @@ SELECT
 	CTE_BUFFER_CACHE.buffer_cache_pages,
 	CTE_BUFFER_CACHE.buffer_cache_used_MB,
 	PARTITION_STATS.total_number_of_used_pages,
-	PARTITION_STATS.total_number_of_used_pages * 8 / 1024 AS total_mb_used_by_object,
-	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	PARTITION_STATS.total_number_of_used_pages * 8 / 1024 AS 
+    total_mb_used_by_object,
+	CAST((CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / 
+    CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) 
+    * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
 FROM CTE_BUFFER_CACHE
 INNER JOIN (
 	SELECT 
@@ -1356,10 +1380,12 @@ INNER JOIN (
 	WHERE objects.is_ms_shipped = 0
 	GROUP BY objects.name, objects.object_id) PARTITION_STATS
 ON PARTITION_STATS.object_id = CTE_BUFFER_CACHE.object_id
-ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) DESC;
+ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / 
+CAST(PARTITION_STATS.total_number_of_used_pages AS DECIMAL) DESC;
 ~~~
-## =======================================================================
-#
+# 
+
+# 
 #### Esta consulta combina nuestro conjunto previo de datos con una consulta en sys.dm_db_partition_stats para comparar lo que está actualmente en la caché del búfer versus el espacio total usado por cualquier tabla dada. Las muchas operaciones CAST al final ayudan a evitar el truncado y hacen al resultado final fácil de leer. Los resultados en mi servidor local son los siguientes:
 
 
@@ -1369,7 +1395,8 @@ ORDER BY CAST(CTE_BUFFER_CACHE.buffer_cache_pages AS DECIMAL) / CAST(PARTITION_S
 #### Por otra parte, estos datos nos dicen que ¾ de SalesOrderDetail está en la caché del búfer. Si esto pareciera inusual, consultaría la caché del plan de consultas y determinaría si hay alguna consulta ineficiente en la tabla que está seleccionando *, o una cantidad excesivamente grande de datos. Combinando nuestras métricas desde la caché del búfer y la caché del plan, podemos idear nuevas maneras de determinar con precisión mañas consultas o aplicaciones que están jalando muchos más datos de lo que requieren.
 
 #### Esta consulta puede ser modificada para proveer el porcentaje de un índice que está siendo usado también, de forma similar a cómo recolectamos el porcentaje de una tabla usada:
-## =======================================================================
+## 
+# 
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -1378,8 +1405,11 @@ SELECT
 	COUNT(*) AS buffer_cache_pages,
 	COUNT(*) * 8 / 1024  AS buffer_cache_used_MB,
 	SUM(allocation_units.used_pages) AS pages_in_index,
-	SUM(allocation_units.used_pages) * 8 /1024 AS total_index_size_MB,
-	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS percent_of_pages_in_memory
+	SUM(allocation_units.used_pages) * 8 /1024 AS 
+    total_index_size_MB,
+	CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.
+    used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) AS 
+    percent_of_pages_in_memory
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units
 ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
@@ -1397,10 +1427,12 @@ AND dm_os_buffer_descriptors.database_id = DB_ID()
 GROUP BY indexes.name,
 		 objects.name,
 		 objects.type_desc
-ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
+ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM
+(allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,
+2)) DESC;
 ~~~
 #
-## =======================================================================
+
 #### Dado que ***sys.allocation_units*** provee algo de información acerca del tamaño de nuestros índices, evitamos la necesidad de **CTEs** y conjuntos de datos adicionales de dm_db_partition_stats. Aquí está un pedazo de los resultados, mostrando el tamaño del índice (MB y páginas) y el espacio usado de la caché del búfer (MB y páginas):
 
 
@@ -1409,41 +1441,52 @@ ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM(allocation_units.used_pages)
 
 #### Una columna interesante en dm_os_buffer_descriptors es free_space_in_bytes. Esta columna nos dice cuán llena está cada página en la caché del búfer, y por lo tanto provee un indicador del espacio potencial desperdiciado o la ineficiencia. Podemos determinar el porcentaje de páginas que han sido tomadas por el espacio libre, en lugar de datos, para cada base de datos en nuestro servidor:
 #
-## =======================================================================
+
 ~~~sql
 WITH CTE_BUFFER_CACHE AS
 ( SELECT
   databases.name AS database_name,
   COUNT(*) AS total_number_of_used_pages,
   CAST(COUNT(*) * 8 AS DECIMAL) / 1024 AS buffer_cache_total_MB,
-  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
+  CAST(CAST(SUM(CAST(dm_os_buffer_descriptors.
+  free_space_in_bytes AS BIGINT)) AS DECIMAL) / (1024 * 1024) AS 
+  DECIMAL(20,2))  AS buffer_cache_free_space_in_MB
  FROM sys.dm_os_buffer_descriptors
  INNER JOIN sys.databases
  ON databases.database_id = dm_os_buffer_descriptors.database_id
  GROUP BY databases.name)
 SELECT
  *,
- CAST((buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS buffer_cache_percent_free_space
+ CAST((buffer_cache_free_space_in_MB / NULLIF
+ (buffer_cache_total_MB, 0)) * 100 AS DECIMAL(5,2)) AS 
+ buffer_cache_percent_free_space
 FROM CTE_BUFFER_CACHE
-ORDER BY buffer_cache_free_space_in_MB / NULLIF(buffer_cache_total_MB, 0) DESC
+ORDER BY buffer_cache_free_space_in_MB / NULLIF
+(buffer_cache_total_MB, 0) DESC
 ~~~ 
 #
-## =======================================================================
+
 #### Esto retorna una fila por base de datos que muestra la agregación de espacio libre por base de datos, sumada a través de todas las páginas en la caché del búfer para esa base de datos particular:
 
 
 
 #### Esto es interesante, pero no muy útil todavía debido a que estos resultados no son muy específicos. Nos dicen que una base de datos puede tener un poco de espacio desperdiciado, pero no mucho sobre qué tablas son las causantes. Tomemos el mismo enfoque que hicimos anteriormente y devolvemos espacio libre por tabla en una base de datos dada:
 #
-## =======================================================================
+
 ~~~sql
 SELECT
 	objects.name AS object_name,
 	objects.type_desc AS object_type_description,
 	COUNT(*) AS buffer_cache_pages,
-	CAST(COUNT(*) * 8 AS DECIMAL) / 1024  AS buffer_cache_total_MB,
-	CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024 AS buffer_cache_free_space_in_MB,
-	CAST((CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024) / (CAST(COUNT(*) * 8 AS DECIMAL) / 1024) * 100 AS DECIMAL(5,2)) AS buffer_cache_percent_free_space
+	CAST(COUNT(*) * 8 AS DECIMAL) / 1024  AS 
+    buffer_cache_total_MB,
+	CAST(SUM(CAST(dm_os_buffer_descriptors.free_space_in_bytes 
+    AS BIGINT)) AS DECIMAL) / 1024 / 1024 AS 
+    buffer_cache_free_space_in_MB,
+	CAST((CAST(SUM(CAST(dm_os_buffer_descriptors.
+    free_space_in_bytes AS BIGINT)) AS DECIMAL) / 1024 / 1024) / 
+    (CAST(COUNT(*) * 8 AS DECIMAL) / 1024) * 100 AS DECIMAL(5,
+    2)) AS buffer_cache_percent_free_space
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units
 ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
@@ -1461,7 +1504,8 @@ GROUP BY objects.name,
 HAVING COUNT(*) > 0
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+# 
+
 #### Esto devuelve una fila por tabla o vista indexada que tiene al menos una página en la memoria caché del búfer ordenada primeramente por aquellos que tienen la mayor cantidad de páginas en memoria.
 
 
@@ -1474,7 +1518,7 @@ ORDER BY COUNT(*) DESC;
 
 #### Al principio de este artículo, discutimos brevemente qué páginas sucias y limpias son y su correlación con las operaciones de escritura dentro de una base de datos. Dentro de dm_os_buffer_descriptors podemos verificar si una página está limpia o no está usando la columna is_modified. Esta nos dice si una página ha sido modificada por una operación de escritura, pero aún no se ha escrito en disco. Podemos usar esta información para contar las páginas limpias y sucias en la caché del búfer para una base de datos determinada:
 # 
-## =======================================================================
+
 ~~~sql
 SELECT
     databases.name AS database_name,
@@ -1500,19 +1544,19 @@ INNER JOIN sys.databases
 ON dm_os_buffer_descriptors.database_id = databases.database_id
 GROUP BY databases.name;
 ~~~
-## =======================================================================
+# 
 #### Esta consulta devuelve el número de páginas y el tamaño de los datos en MB:
 
 
 
 #### Mi servidor no tiene mucho por el momento. Si corriera una gran sentencia de actualización, podríamos ilustrar qué veríamos cuando más operaciones de escritura están ocurriendo. Corramos la siguiente consulta:
 #
-## =======================================================================
+
 ~~~sql
 UPDATE Sales.SalesOrderDetail
 	SET OrderQty = OrderQty
 ~~~
-## =======================================================================
+# 
 #### Esto es esencialmente una no-operación y no resultará en ningún cambio real a la tabla SalesOrderDetail – pero SQL Server aún pasará por el problema de actualizar cada fila en la tabla para esta columna particular. Si corremos el conteo de páginas sucias/limpias desde arriba, obtendremos algunos resultados interesantes:
 
 
@@ -1521,7 +1565,7 @@ UPDATE Sales.SalesOrderDetail
 
 #### Como antes, podemos dividir esta tabla o índice para recolectar datos más granulares acerca del uso de la caché del búfer:
 # 
-## =======================================================================
+
 ~~~sql
 SELECT
 	indexes.name AS index_name,
@@ -1563,7 +1607,7 @@ GROUP BY indexes.name,
 		 objects.type_desc
 ORDER BY COUNT(*) DESC;
 ~~~
-## =======================================================================
+
 # 
 
 #### Los resultados muestran el uso de la caché del búfer por índice, mostrando cuántas páginas en la memoria están limpias o sucias:
@@ -1589,7 +1633,7 @@ ORDER BY COUNT(*) DESC;
 
 # Información general de mantenimiento del índice SQL<a name="inf_mant_indices"><a/>
 
-[![IMAGE ALT TEXT](https://i.ytimg.com/vi/8iI3ejZCbk4/maxresdefault.jpg)](https://www.youtube.com/watch?v=y1TxR53RlYU=YOUTUBE_VIDEO_ID_HERE "Video Title")
+[![IMAGE ALT TEXT](https://learn.microsoft.com/es-es/sql/relational-databases/media/sql-server-index-design-guide/hash-index-buckets.png?view=sql-server-ver16)
 
 #### El problema en un mantenimiento de índices y del rendimiento es la fragmentación del índice. Es posible que ya estés familiarizado con el término de fragmentación del sistema operativo y del disco duro. La fragmentación es lo que arruina nuestros índices y, claro, los discos duros en el entorno del sistema operativo (No tanto desde que salen las unidades físicamente). A medida que los datos entran y salen, se modifica, etc. las cosas deben moverse. Esto implica una gran cantidad de actividad de lecturas y escrituras en nuestros discos duros.
 
@@ -1606,7 +1650,7 @@ ORDER BY COUNT(*) DESC;
 # Procedimiento para localizar tablas sin Closther Index en las bases de datos.<a name="tablasinclusterindex"></a>
 
 ![](https://s33046.pcdn.co/wp-content/uploads/2018/11/word-image-339.png)
-## =======================================================================
+# 
 ~~~sql
 /*
 Alejandro Jimenez lunes 4 de Febrero 2019
@@ -1635,10 +1679,10 @@ AND   o.is_ms_shipped = 0
 AND   o.type <> 'S'
 ORDER BY (ius.user_seeks + ius.user_scans + ius.user_lookups + ius.user_updates) DESC, o.name;
 ~~~
-## =======================================================================
+# 
 ### La responsabilidad más importante de un Administrador de bases de datos es el poder garantizar que las bases de datos trabajen de una forma óptima. La manera más eficiente de hacerlo es por medio de índices. Los índices en SQL son uno de los recursos más efectivos a la hora de obtener una ganancia en el rendimiento. Sin embargo, lo que sucede con los índices es que estos se deterioran con el tiempo.
 ### -- Missing Index Script
-## =======================================================================
+# 
 ~~~sql
 -- Missing Index Script
 -- Original Author: Pinal Dave 
@@ -1673,8 +1717,8 @@ WHERE dm_mid.database_ID = DB_ID()
 ORDER BY Avg_Estimated_Impact DESC
 GO
 ~~~
+# 
 
-## =======================================================================
 # 
 
 
@@ -1687,7 +1731,7 @@ GO
 #### Leyendo el libro Relational Database Index Design and the Optimizers pude ver cuantificado las demoras que puede ocasionar el tener indices de mas en tablas con millones de registros.
 
 #### Por suerte los muchachos de Microsoft, en SQL Server 2005,2008,2012,2014, mejoraron muchisimo la metadata que se mantiene para ver que indices se utilizan y cuales no. Por ejemplo con la consulta
-## =======================================================================
+# 
 
 ~~~sql
 --Indices no usados ***
@@ -1702,9 +1746,9 @@ WHERE objectproperty(o.object_id,'IsUserTable') = 1 AND s.index_id IS NULL
 ORDER BY objectname,i.index_id,indexname ASC
 
 ~~~
-## =======================================================================
 # 
-## =======================================================================
+# 
+
 
 ~~~sql
 DECLARE @JobName VARCHAR(255) = null -- 'TablasFechasAccesos'
@@ -1740,7 +1784,7 @@ FROM
         ,[18],[19],[20],[21],[22],[23])
   ) AS p
 ~~~
-## =======================================================================
+
 # 
 
 # Tablas de montón<a name="tablasmonton"><a/>
@@ -1757,13 +1801,17 @@ FROM
 
 #### He utilizado las siguientes consultas añado las fuentes para poder obtener más información.
 #### Esta primera indica aquellos indices que no se realizan consultas de lectura solo de escritura actualizaciones y inserciones, por lo que es una sobrecarga del sistema por lo que son candidatos a ser eliminados.
-## =======================================================================
+# 
 ~~~sql
 USE [tuBBDD] /* Replace with your Database Name */
 GO
 --TOTALLY UN-USED INDEXES
-SELECT DB_NAME(s.database_id) as [DB Name], OBJECT_NAME(s.[object_id]) AS [Table Name], i.name AS [Index Name], i.index_id,
-i.is_disabled, i.is_hypothetical, i.has_filter, i.fill_factor, i.is_unique,
+SELECT DB_NAME(s.database_id) as [DB Name], 
+OBJECT_NAME(s.[object_id]) AS [Table Name]
+, i.name AS [Index Name], i.index_id,
+i.is_disabled, i.is_hypothetical, i.has_filter
+, i.fill_factor
+, i.is_unique,
 s.user_updates AS [Total Writes],
 (s.user_seeks + s.user_scans + s.user_lookups) AS [Total Reads],
 s.user_updates - (s.user_seeks + s.user_scans + s.user_lookups) AS [Difference],
@@ -1782,19 +1830,22 @@ AND i.index_id > 1
 ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOMPILE);
 GO
 ~~~
-## =======================================================================
+# 
 # 
 #### La siguiente consulta, muestra aquellos indices que tengan mas consultas de escritura que de lectura.
 #### Debes estudiar cada indice si es candidato a ser eliminado.
 # 
-## =======================================================================
+
 
 ~~~sql
 USE [tuBBDD] /* Replace with your Database Name */
 GO
 --INDEXES WITH WRITES > READS
-SELECT DB_NAME(s.database_id) as [DB Name], OBJECT_NAME(s.[object_id]) AS [Table Name], i.name AS [Index Name], i.index_id,
-i.is_disabled, i.is_hypothetical, i.has_filter, i.fill_factor, i.is_unique,
+SELECT DB_NAME(s.database_id) as [DB Name]
+, OBJECT_NAME(s.[object_id]) AS [Table Name]
+, i.name AS [Index Name], i.index_id,
+i.is_disabled, i.is_hypothetical
+, i.has_filter, i.fill_factor, i.is_unique,
 s.user_updates AS [Total Writes],
 (s.user_seeks + s.user_scans + s.user_lookups) AS [Total Reads],
 s.user_updates - (s.user_seeks + s.user_scans + s.user_lookups) AS [Difference],
@@ -1814,13 +1865,13 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOM
 GO
 ~~~
 Fuente: thesqldude.com
-## =======================================================================
+
 # 
 #### Esta consulta complementa la anterior para decir que indices podrías eliminar.
 #### Se debe prestar atención User Scan, User Lookup y User Update antes de eliminar el Index.
 #### Si el valor de User Scan, User Lookup y User Update es alto y de User Seek bajo necesitas revisar el Indice
 # 
-## =======================================================================
+
 ~~~sql
 -- Unused Index Script
 -- Original Author: Pinal Dave 
@@ -1855,10 +1906,9 @@ GO
 Fuente: blog.sqlauthority.com
 
 # 
-## =======================================================================
+
 # 
 
-## =======================================================================
 ~~~sql
 /*
 Insertado por Alejandro Jimenez 
@@ -1873,7 +1923,7 @@ INNER JOIN sys.indexes IDX ON PAR.object_id = IDX.object_id  AND PAR.index_id = 
 INNER JOIN sys.tables TBL
 ON TBL.object_id = IDX.object_id and TBL.type ='U'
 ~~~
-## =======================================================================
+
 # 
 
 # How Bad Are Your Indexes?<a name="badnc"><a/>
@@ -1883,7 +1933,7 @@ ON TBL.object_id = IDX.object_id and TBL.type ='U'
 
 ## Posibles índices NC incorrectos<a name="escrituraslecturas"></a>
 # 
-## =======================================================================
+
 ~~~sql
 -- Possible Bad NC Indexes (writes > reads)  (Query 47) (Bad NC Indexes)
 SELECT OBJECT_NAME(s.[object_id]) AS [Table Name], i.name AS [Index Name], i.index_id,
@@ -1903,13 +1953,13 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOM
 -- Consider your complete workload, and how long your instance has been running
 -- Investigate further before dropping an index!
 ~~~
-## =======================================================================
+
 # 
 ### La consulta se basa en tablas/vistas específicas de la base de datos (como sys.indexes) y, por lo tanto, devuelve resultados para el contexto de la base de datos actual.
 # 
 ### Lo primero que quería hacer era envolver la consulta en mi pequeño amigo indocumentado sp_msforeachdb.
 # 
-## =======================================================================
+
 
 ~~~sql
 EXEC sp_msforeachdb '
@@ -1933,7 +1983,7 @@ AND user_updates - (user_seeks + user_scans + user_lookups) >75000
 ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC;
 '
 ~~~
-## =======================================================================
+
 # 
 
 #### La consulta tiene todos los artefactos estándar de sp_msforeachdb, como el marcador de posición del signo de interrogación para el nombre de la base de datos esparcido por todas partes para establecer el contexto adecuado para todas las tablas y vistas específicas de la base de datos (como [?].sys.indexes).
@@ -1947,7 +1997,7 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC;
 #### Aquí está la versión verificada del script Bad Indexes For All Databases:
 
 #
-## =======================================================================
+
 ~~~sql
 /*
 Bad Indexes DMV For All Databases
@@ -2015,7 +2065,7 @@ BEGIN
  END
 END
 ~~~
-## =======================================================================
+
 # 
 #### Esto hizo exactamente lo que quería, devolviendo todos los índices no agrupados con al menos 75 000 escrituras más que lecturas (mi umbral elegido) en todas las bases de datos en la instancia de SQL Server 2005+.
 
@@ -2024,18 +2074,24 @@ END
 
 # 
 # Identificando índices duplicados en SQL Server<a name="indicesduplicados"><a/>
-![](https://javiersql.files.wordpress.com/2017/12/keychain.jpg)
+![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn518FNxZ9TzIFTj0hEBKuCkWQUDuq3LpFBQ&usqp=CAU)
 
 #### Un problema común que se puede encontrar en SQL Server son los índices duplicados parcial o totalmente. Los índices son por regla general buenos para mejorar el rendimiento de una base de datos, pero el exceso de índices en una base de datos puede causar que SQL Server gaste mucho tiempo actualizándolos cuando no necesariamente hará uso de ellos.
 
 
 #### Este es el caso de los índices duplicados, estos nos pueden causar los siguientes problemas:
 
-    Degradación del rendimiento que proviene del overhead causado por el mantenimiento de updates, inserts y deletes
+    Degradación del rendimiento que proviene del overhead 
+    causado por el mantenimiento de updates, inserts y deletes
 
-    Incremento en las actividades del log de transacciones (llenando los logs, discos y haciendo que Log Shipping falle)
+    Incremento en las actividades del log de transacciones
+     (llenando los logs, discos y haciendo que Log Shipping falle)
 
-    Incremento en el tamaño de los backups (los índices hacen los backups mas grandes, requiriendo mas espacio en disco, creando tiempos de mantenimiento mas altos y consumiendo más energía para poder realizarlos, además de impactar el rendimiento del servidor mientras este se realiza).
+       Incremento en el tamaño de los backups (los índices hacen
+     los backups mas grandes, requiriendo mas espacio en disco,
+    creando tiempos de mantenimiento mas altos y consumiendo
+    más energía para poder realizarlos, además de impactar el
+    rendimiento del servidor mientras este se realiza).
 
 
 ## ¿Pero que es un índice duplicado y como lo detecto?
@@ -2057,7 +2113,7 @@ END
 
 ## El siguiente procedimiento le ayudará a identificar los índices duplicados en su base de datos:
 # 
-## ==================================================================
+
 ~~~sql
 
 create procedure [dbo].[usp_duplicateindexes]
@@ -2176,11 +2232,11 @@ exec sp_MSForEachTable 'usp_duplicateindexes''?'''
 ~~~
 
 
-## ==================================================================
+# 
 
 # 
 # Conceptos básicos del diseño de índices<a name="disenoindices"><a/>
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/ApexSQL_Defrag.png)
+![](https://learn.microsoft.com/es-es/sql/relational-databases/media/sql-server-index-design-guide/hash-index-buckets.png?view=sql-server-ver16)
 #### Piense en un libro corriente: al final del libro hay un índice en el que puede localizar rápidamente la información del libro. El índice es una lista ordenada de palabras clave y, junto a cada palabra clave, hay un conjunto de números de página que redirigen a las páginas en las que aparece cada palabra clave. Un índice de SQL Server es parecido: es una lista ordenada de valores y para cada valor hay punteros a las páginas de datos en las que se encuentran estos valores. El propio índice se almacena en páginas, lo que conforma las páginas de índice de SQL Server. En un libro corriente, si el índice abarca varias páginas y tiene que buscar punteros a todas las páginas que contienen, por ejemplo, la palabra "SQL", tendría que pasar las páginas hasta encontrar la página de índice que contiene la palabra clave "SQL". Desde allí, seguiría los punteros a todas las páginas del libro. Esto se podría optimizar aún más si al principio del índice se crea una sola página que contiene una lista alfabética de dónde se puede encontrar cada letra. Por ejemplo: "De la A a la D - página 121", "De la E a la G - página 122", y así sucesivamente. Esta página adicional eliminaría el paso de tener que pasar las páginas por el índice para encontrar la posición de inicio. Esta página no existe en los libros corrientes, pero sí en un índice de SQL Server. Esta página se denomina "página raíz" del índice. La página raíz es la página inicial de la estructura de árbol que se usa en un índice de SQL Server. Siguiendo la analogía del árbol, las páginas finales que contienen punteros a los datos reales se conocen como "páginas hoja" del árbol.
 #### Un índice de SQL Server es una estructura en disco o en memoria asociada con una tabla o vista que acelera la recuperación de filas de la tabla o vista. Un índice contiene claves generadas a partir de una o varias columnas de la tabla o la vista. En el caso de los índices en disco, dichas claves están almacenadas en una estructura de árbol (árbol B) que permite que SQL Server busque de forma rápida y eficiente la fila o las filas asociadas a los valores de cada clave.
 #### Los índices almacenan los datos organizados de forma lógica como una tabla con filas y columnas, y físicamente almacenados en un formato de datos por fila llamado almacén de filas 1, o bien en un formato de datos por columna llamado almacén de columnas .
@@ -2236,9 +2292,13 @@ exec sp_MSForEachTable 'usp_duplicateindexes''?'''
 #### ¿Son sus copias de seguridad menos perfectas de lo que pensaba? Chequea aquí.?
 #### Para ver cuántos datos podría perder por base de datos durante las últimas semanas,
 ## ejecutar esta consulta:
-## ==================================================================
+# 
 ~~~sql
-CREATE TABLE #backupset (backup_set_id INT, database_name NVARCHAR(128), backup_finish_date DATETIME, type CHAR(1), next_backup_finish_date DATETIME);
+CREATE TABLE #backupset (backup_set_id INT, 
+database_name NVARCHAR(128), backup_finish_date DATETIME
+, type CHAR(1), 
+next_backup_finish_date DATETIME);
+
 INSERT INTO #backupset (backup_set_id, database_name, backup_finish_date, type)
 SELECT backup_set_id, database_name, backup_finish_date, type
 FROM msdb.dbo.backupset WITH (NOLOCK)
@@ -2254,8 +2314,25 @@ AND bs.backup_finish_date = bsNext.backup_finish_date
 ORDER BY bsNext.backup_finish_date)
 FROM #backupset bs;
  
-SELECT bs1.database_name, MAX(DATEDIFF(mi, bs1.backup_finish_date, bs1.next_backup_finish_date)) AS max_minutes_of_data_loss,
-'SELECT bs.database_name, bs.type, bs.backup_start_date, bs.backup_finish_date, DATEDIFF(mi, COALESCE((SELECT TOP 1 bsPrior.backup_finish_date FROM msdb.dbo.backupset bsPrior WHERE bs.database_name = bsPrior.database_name AND bs.backup_finish_date &gt; bsPrior.backup_finish_date ORDER BY bsPrior.backup_finish_date DESC), ''1900/1/1''), bs.backup_finish_date) AS minutes_since_last_backup, DATEDIFF(mi, bs.backup_start_date, bs.backup_finish_date) AS backup_duration_minutes, CASE DATEDIFF(ss, bs.backup_start_date, bs.backup_finish_date) WHEN 0 THEN 0 ELSE CAST(( bs.backup_size / ( DATEDIFF(ss, bs.backup_start_date, bs.backup_finish_date) ) / 1048576 ) AS INT) END AS throughput_mb_sec FROM msdb.dbo.backupset bs WHERE database_name = ''' + database_name + ''' AND bs.backup_start_date &gt; DATEADD(dd, -14, GETDATE()) ORDER BY bs.backup_start_date' AS more_info_query
+SELECT bs1.database_name, MAX(DATEDIFF(mi, bs1.
+backup_finish_date, bs1.next_backup_finish_date)) AS 
+max_minutes_of_data_loss,
+'SELECT bs.database_name, bs.type, bs.backup_start_date, bs.
+backup_finish_date, DATEDIFF(mi, COALESCE((SELECT TOP 1 bsPrior.
+backup_finish_date FROM msdb.dbo.backupset bsPrior WHERE bs.
+database_name = bsPrior.database_name AND bs.backup_finish_date &
+gt; bsPrior.backup_finish_date ORDER BY bsPrior.
+backup_finish_date DESC), ''1900/1/1''), bs.backup_finish_date) 
+AS minutes_since_last_backup, DATEDIFF(mi, bs.backup_start_date,
+ bs.backup_finish_date) AS backup_duration_minutes, CASE DATEDIFF
+ (ss, bs.backup_start_date, bs.backup_finish_date) WHEN 0 THEN 0
+  ELSE CAST(( bs.backup_size / ( DATEDIFF(ss, bs.
+  backup_start_date, bs.backup_finish_date) ) / 1048576 ) AS 
+  INT) END AS throughput_mb_sec FROM msdb.dbo.backupset bs WHERE 
+  database_name = ''' + database_name + ''' AND bs.
+  backup_start_date &gt; DATEADD(dd, -14, GETDATE()) ORDER BY bs
+  backup_start_date' AS more_info_query
+
 FROM #backupset bs1
 GROUP BY bs1.database_name
 ORDER BY bs1.database_name
@@ -2263,13 +2340,13 @@ ORDER BY bs1.database_name
 DROP TABLE #backupset;
 GO
 ~~~
-## ==================================================================
+
 #
 
 # Query de los tamanos de los backup de base de datos<a name="querybackup"><a/>
-![](https://miro.medium.com/max/3200/0*nhNVHVQVeZPBArwY.png)
+![](https://docs.oracle.com/es/solutions/back-up-oracle-databases-into-government-cloud/img/oci-db-cloud-backup-module-architecture.png)
 #### Query que nos muestra el tamano de os backup de base de datos ralizados en un tiempo dado
-## ==================================================================
+# 
 ~~~sql
 
 /*
@@ -2296,10 +2373,10 @@ select
 
  order by database_name, Full_Termino
 ~~~
-## ==================================================================
+
 # 
 # Query Envio por correo Electronico del  tamanos de los backup de base de datos<a name="querybackup2"><a/>
-## ==================================================================
+# 
 ~~~sql
 
 /*
@@ -2411,8 +2488,12 @@ UNION ALL
     WHERE
         Name Not In(SELECT DISTINCT Database_Name FROM msdb.dbo.backupset)
     And Name Not In ('tempdb','pubs','northwind'
-	,'model','bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk'
-	,'RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'ponches','TA100SQL_new','TA100SQL', 'DW','dbINABIMA2','RegistroActivos','Ponches')
+
+	,'model','bima','DB_Ponches','Ponches_old1','PonchesOld',
+    'RRHHbk'
+	,'RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,
+    'ponches','TA100SQL_new','TA100SQL', 'DW','dbINABIMA2',
+    'RegistroActivos','Ponches')
     ORDER BY
         1, 2
 
@@ -2435,10 +2516,17 @@ declare @Body NVARCHAR(MAX),
 
 
 SET @TableTail = '</table></body></html>' ;
+
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Backup del Sql Server : ' + @Server+ ' en Fecha :' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+
+    + '</style>' + '</head>' + '<body>' + '<h1>Backup del Sql
+     Server : ' + @Server+ ' en Fecha :' + @fecha +'  </h1> '
+
 	+ '<b>Modificaciones al Padron Electroral del INABIMA</b>' 
+
 	--+ '<b> no Comprendidos entre las 7:00 AM y 18:00 PM </b>'
 	--+'<b>(No contempla los usuarios de transdoc...) </b>'
 	--+'<br>'
@@ -2500,11 +2588,11 @@ EXEC sp_send_dbmail
 
 
 ~~~
+# 
 
 
-## ==================================================================
 # Query de los ultimos Backup realizados  en un Servidor de Bases de datos.<a name="ultimobackup"></a>
-## ==================================================================
+# 
 ~~~sql
 
 /*
@@ -2573,8 +2661,14 @@ BEGIN TRY
             WHERE B2.Database_Name = FR.Database_Name 
             And   B2.Type = 'D'
         )
-    And FR.Database_Name In (SELECT name FROM master.dbo.sysdatabases) 
-    And FR.Database_Name Not In ('tempdb','pubs','northwind','model','bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk','RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'ponches','TA100SQL_new','TA100SQL22')
+    And FR.Database_Name In (SELECT name FROM master.dbo.
+    sysdatabases) 
+
+    And FR.Database_Name Not In ('tempdb','pubs','northwind',
+    'model','bima','DB_Ponches','Ponches_old1','PonchesOld',
+    'RRHHbk','RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,
+    'ponches','TA100SQL_new','TA100SQL22')
+
  
 UNION ALL
  
@@ -2595,7 +2689,10 @@ UNION ALL
         master.dbo.sysdatabases As Record
     WHERE
         Name Not In(SELECT DISTINCT Database_Name FROM msdb.dbo.backupset)
-    And Name Not In ('tempdb','pubs','northwind','model','bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk','RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'ponches','TA100SQL_new','TA100SQL22')
+    And Name Not In ('tempdb','pubs','northwind','model','bima',
+    'DB_Ponches','Ponches_old1','PonchesOld','RRHHbk','RRHH',
+    'WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'ponches',
+    'TA100SQL_new','TA100SQL22')
     ORDER BY
         1, 2
 END TRY
@@ -2603,16 +2700,16 @@ BEGIN CATCH
     SELECT message_id, text FROM sys.messages WHERE message_id = @@ERROR AND language_id = 1033
 END CATCH
 ~~~
-## ==================================================================
+
 #
 
 # Query Que muestra la ultimos Restore realizados a un Servidor de Bases de datos.<a name="queryrestoresql"></a>
-![](https://www.sqlshack.com/wp-content/uploads/2019/04/db-restore.png)
+![](https://learn.microsoft.com/es-es/sql/relational-databases/backup-restore/media/bnrr-rmfull1-db-failure-pt.gif?view=sql-server-ver16)
 
 #### El mismo es utilizado para ver las restauraciones que hacemos en el servidor de restauracion.  Mas puede ser utilizado para lo que queramos. 
 
 #### en realidad solo nos muestra un listado de restauraciones con sus respectivas fecha.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT rs.destination_database_name, 
@@ -2628,14 +2725,13 @@ SELECT rs.destination_database_name,
 		ON bs.media_set_id = bmf.media_set_id 
 		ORDER BY rs.restore_date DESC
 ~~~
-## ==================================================================
-# 
+#  
 
 # Limpiar y Reducir el Log de Transacciones SQL Server. [Fuente SoporteSQL](https://soportesql.wordpress.com/2014/04/22/limpiar-y-reducir-el-log-de-transacciones-sql-server/)  <a name="limpiarlog"></a>
 ![](https://soportesql.files.wordpress.com/2014/04/fa932-log.png?w=1400&h=9999)
 ## Script de Ejemplo que permite limpiar y reducir el log de transacciones de una base de datos, no es posible limpiar el log sin realizar primero un backup del log, realizaremos nuestro ejemplo con una base de datos a la que llamaremos PrimaveraNew
 # 
-## ==================================================================
+
 
 ~~~sql
 --Para Limpiar el Log de Transacciones es necesario realizar un Backup del Log
@@ -2646,19 +2742,19 @@ to disk  =‘C:\test\BackupLog.bak’
 --–Una vez hecho el backup consultamos el nombre lógico de los archivos del log
 sp_helpdb PrimaveraNeW
 ~~~
-## ==================================================================
+# 
 
 #### Resultado:
 ![](https://soportesql.files.wordpress.com/2014/04/fa932-log.png?w=640&h=83)
 
 
 #### El Siguiente Código nos permite realizar la reduccion de los log de la base de datos.  El mismo puede ser utilizado como ejemplo para nuestros trabajos
-## ==================================================================
+# 
 
 ~~~sql
 --- Alejandro Jimenez Rosa
 --- 11 de Marzo 2022
----===========================================================================
+
 ---— Antes de truncar el log cambiamos el modelo de recuperación a SIMPLE.
 ALTER DATABASE PrimaveraNeW
 SET RECOVERY SIMPLE;
@@ -2671,7 +2767,7 @@ ALTER DATABASE PrimaveraNeW
 SET RECOVERY FULL;
 GO
 ~~~
-## ==================================================================
+# 
 
 # 
 
@@ -2699,7 +2795,7 @@ GO
 
 
 #### El Monitor de actividad generalmente ha sido una de las herramientas de acceso si algo sale mal de repente con SQL Server. Lo primero que vemos, cuando activamos el Monitor de actividad es el panel Información general. También, esta herramienta tiene los siguientes paneles expandibles y colapsables: Esperas de recursos, I/O de archivos de datos, Consultas valiosas recientes y Consultas valiosas activas:
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-154.png)
+![](https://i.blogs.es/b40d07/monitor-de-actividad/1366_2000.jpg)
 
 #### **Procesos**: nos brindan la capacidad de ver los procesos que se ejecutan actualmente para que podamos gestionarlos. Al hacer clic con el botón derecho aparece el menú contextual desde el cual se pueden finalizar, rastrear en el Analizador de SQL Server (más información sobre este tema más adelante), verlo como un plan de ejecución, y por último, pero no menos importante, los detalles de la sesión que muestra un diálogo que muestra la última T -Secuencia de comandos de SQL:
 ![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-155.png)
@@ -2721,7 +2817,7 @@ GO
 ## Principales DMV para el administrador
 
 #### Vamos a echar un vistazo a los principales DMV que todos los administradores de BDs deberían saber. Estos son los DMV que siempre deberías tener en tu bolsillo. Para obtener una lista rápida de todos los DMO (DMV y DMF), simplemente consúltela siguiente lista:
-## ==================================================================
+# 
 
 ~~~sql
 -- List of all DMOs (DMVs & DMFs)
@@ -2732,7 +2828,7 @@ FROM sys.system_objects so
 WHERE so.name LIKE 'dm_%'
 ORDER BY so.name;
 ~~~
-## ==================================================================
+# 
 
 #### Esto devolverá todos los DMV y DMF en SQL Server. Mire la columna de tipo y observe que “V” significa una vista y “IF” para una función:
 
@@ -2793,7 +2889,7 @@ ORDER BY so.name;
 
 
 ###### query 1
-## ==================================================================
+# 
 
 ~~~SQL
 
@@ -2814,10 +2910,10 @@ SELECT -- [id]
 
 GO
 ~~~
-## ==================================================================
+# 
 
 ###### query 2
-## ==================================================================
+# 
 
 ~~~SQL
 -- Comprobamos los accesos
@@ -2829,12 +2925,12 @@ INNER JOIN sys.tables tab ON (tab.object_id = ius.object_id)
 WHERE database_id = DB_ID(N'AdventureWorks')
   AND tab.name = 'Employee'
 ~~~
-## ==================================================================
+# 
 
 
 # B.Devolver agregados de recuentos de filas para una consulta
 #### En el ejemplo siguiente se devuelve información de agregado de recuento de filas (filas totales, filas mínimas, filas máximas y últimas filas) para las consultas.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT qs.execution_count,  
@@ -2853,7 +2949,7 @@ WHERE qt.text like '%SELECT%'
 --and objectid = 562153098
 ORDER BY qs.execution_count DESC;  
 ~~~
-## ==================================================================
+# 
 
 # 
 
@@ -2870,7 +2966,7 @@ ORDER BY qs.execution_count DESC;
 #### Way back in SQL Server 2005, Microsoft introduced the sys.dm_io_virtual_file_stats Dynamic Management View (DMV). This DMV reports disk read and write activities for data and log files.
 
 #### For many years, I’ve used a query based on one from SQLSkills’ Paul Randal. I’ve simply added a column to help quickly categorize/interpret the latency values. This query can be very helpful when troubleshooting what you suspect to be a disk I/O bottleneck.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT
@@ -2921,7 +3017,7 @@ ORDER BY [Latency] DESC
 -- ORDER BY [WriteLatency] DESC;
 GO
 ~~~
-## ==================================================================
+# 
 
 #### When I run this query against a docker-based SQL Server 2017 instance, I receive the following results
 ![](https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png)
@@ -2972,7 +3068,7 @@ Test-DbaDiskSpeed -SqlInstance localhost -SqlCredential sa | Format-Table -Prope
 ## Solution
 #### A Dynamic Management View (DMV) introduced in SQL Server 2005, called sys.dm_os_buffer_descriptors, contains a row for every page that has been cached in the buffer pool. Using this DMV, you can quickly determine which database(s) are utilizing the majority of your buffer pool memory. Once you have identified the databases that are occupying much of the buffer pool, you can drill into them individually. In the following query, I first find out exactly how big the buffer pool currently is (from the DMV sys.dm_os_performance_counters), allowing me to calculate the percentage of the buffer pool being used by each database:
 # 
-## ==================================================================
+# 
 
 ~~~sql
 -- Note: querying sys.dm_os_buffer_descriptors
@@ -3004,7 +3100,7 @@ db_buffer_pages * 100.0 / @total_buffer)
 FROM src
 ORDER BY db_buffer_MB DESC; 
 ~~~
-## ==================================================================
+# 
 # 
 
 
@@ -3016,7 +3112,7 @@ ORDER BY db_buffer_MB DESC;
 
 #### Clearly, the SQLSentry database - while only representing 258 MB - occupies about 70% of my buffer pool for this instance. So now I know that I can drill into that database specifically if I want to track down the objects that are taking up most of that memory. You can once again use the sys.dm_os_buffer_descriptors only this time, instead of aggregating the page counts at the database level, we can utilize a set of catalog views to determine the number of pages (and therefore amount of memory) dedicated to each object.
 # 
-## ==================================================================
+# 
 
 ~~~sql
 USE SQLSentry;
@@ -3059,7 +3155,7 @@ src.Index_Type
 ORDER BY
 buffer_pages DESC;
 ~~~
-## ==================================================================
+# 
 # 
 #### Here are the results from this database. Notice that I've captured both clustered and non-clustered indexes, for clustered tables and heaps, and for illustrative purposes I have also created an indexed view.
 
@@ -3070,7 +3166,7 @@ buffer_pages DESC;
 
 # 
 # Listar todos los Procedimientos Almacenados de una Base de Datos<a name="procalmacenados"></a>
-## ==================================================================
+# 
 
 ~~~sql
 SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES 
@@ -3078,11 +3174,11 @@ SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES
    ORDER BY ROUTINE_NAME
 ~~~
 # 
-## ==================================================================
+# 
 
 # A.Buscar las consultas TOP N<a name="buscarconsultatop"></a>
 #### En el siguiente ejemplo se devuelve información acerca de las cinco primeras consultas clasificadas por el promedio de tiempo de CPU. Este ejemplo agrega las consultas según su hash de consulta para que las consultas lógicamente equivalentes se agrupen según su consumo acumulado de los recursos.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT TOP 5 query_stats.query_hash AS "Query Hash",   @@SERVERNAME ,
@@ -3100,11 +3196,11 @@ FROM
 GROUP BY query_stats.query_hash  
 ORDER BY 2 DESC; 
 ~~~
-## ==================================================================
+# 
 
 # 
 # Espacios en disco y ocupados por db<a name="espacioendiscodb"></a>
-## ==================================================================
+# 
 
 ~~~sql
 /*
@@ -3151,7 +3247,7 @@ ORDER BY FreeSpaceInMB ASC
 GO
 ~~~
 # 
-## ==================================================================
+# 
 
 # Vía 2: Rendimiento de las consultas<a name="rendimientoconsultas2"></a>
 # Seguimiento de SP
@@ -3159,7 +3255,7 @@ GO
 
 #### Si puede usar procedimientos almacenados en su seguimiento, este valor puede reducirse a la mitad.
 #### Cuando sé que el sistema tiene un cuello de botella en algún lugar y deseo determinar qué instrucciones SQL  actuales están probando problemas en el servidor, ejecuto la consulta siguiente. Esta consulta me permite  ver las distintas instrucciones y los recursos que están usando actualmente, así como instrucciones que  necesitan ser revisadas para mejorar el rendimiento. Para obtener más información acerca de los seguimientos  de SQL, consulte msdn2.microsoft.com/ms191006.aspx.
-## ==================================================================
+# 
 
 ~~~sql
 
@@ -3199,12 +3295,12 @@ FROM sys.dm_exec_query_stats qs
 ORDER BY 3 DESC 
 ~~~
 # 
-## ==================================================================
+# 
 
 # 10 procedimientos almacenados con mayor tiempo transcurrido<a name="10procmayortiemeje"></a>
 
 #### procedimientos almacenados identificados con el mayor promedio de tiempo transcurrido.
-## ==================================================================
+# 
 
 ~~~sql
 /*
@@ -3223,14 +3319,14 @@ SELECT TOP 10 d.object_id, d.database_id,DB_NAME(database_id) DB ,  OBJECT_NAME(
 FROM sys.dm_exec_procedure_stats AS d  
 ORDER BY [total_worker_time] DESC;  
 ~~~
-## ==================================================================
+# 
 
 # Las consultas SQL más ejecutadas.<a name="lasconsultassqlmasejecutadas"></a>
 ![](https://mundo-tips.com/wp-content/uploads/2020/05/SQL-Query-Optimization.jpg)
 #### En las tareas de administración de SQL Server, es necesario recabar información; especialmente a fin de conocer las sentencias que más hacen trabajar al servidor. Por ello, es de gran utilidad conocer cuáles son las consultas SQL que más se ejecutan y cuál es su consumo de CPU. SQL Server es un sistema que ayuda a la gestión de las bases de datos. Un producto de Microsoft que está basado en el modelo relacional, pero que además, se utiliza para el rendimiento de instancias en el motor de la base de datos. Esto es, depurar procedimientos o llevar a cabo pruebas de esfuerzo.
 
 #### Lo habitual es que, entre las consultas en SQL Server que más se ejecutan, se encuentren consultas de selección o básicas. Pero también pueden darse cualquiera de los otros tipos de consultas, como consultas de descripción, con predicado o de acción.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT TOP 10
@@ -3248,14 +3344,14 @@ ORDER BY
 qs.execution_count DESC
 ~~~
 # 
-## ==================================================================
+# 
 
 # Consultas SQL con mayor consumo de CPU.<a name="consultassqlmayorconsumodecpu"></a>
 ![](https://linube.com/blog/wp-content/uploads/consultas-sql-min.png)
 #### En ocasiones, es posible que nuestro SQL Server tenga un gran consumo de CPU. Una buena forma de saber de dónde viene ese consumo excesivo de CPU es realizar consultas. De esta forma podremos saber cuáles son las que más sobrecargan, de media, nuestro servidor. Este consumo elevado de CPU en el servidor puede deberse a diferentes motivos; desde fallos en la memoria del servidor a espacio insuficiente. También es posible que esto se deba a la presencia de algún elemento malicioso que ejecuta demasiada actividad aunque no sea visible.En cualquier caso, el consumo de CPU es un aspecto que no debe descuidarse en un servidor. Ya que esto podría afectar al rendimiento del servidor y provocar problemas de operatividad
 # 
 ##### Para conocer dónde se encuentra el problema, podemos recurrir a un script. De esta forma podremos saber cuáles son las consultas en SQL con un consumo más elevado de CPU. Unas consultas que pueden estar sobrecargando la CPU de nuestro servidor.
-## ==================================================================
+# 
 
 ~~~sql
 SELECT TOP 10
@@ -3272,7 +3368,7 @@ cross apply sys.dm_exec_sql_text(qs.sql_handle) as qt
 ORDER BY
 [Avg CPU Time] DESC
 ~~~
-## ==================================================================
+# 
 
 
 #
@@ -3282,7 +3378,7 @@ ORDER BY
 #### Es posible que quieres saber en cuales tablas esta el campo SocialSecurity , iva ect. Pero seria ineficiente por no decir (una locura ) buscarlos Uno por uno.
 
 #### anexo un query que puede resultarte util.
-## ==================================================================
+# 
 
 ~~~sql
 declare @Campo varchar(50) = 'his'
@@ -3303,18 +3399,25 @@ where Column_name like '%'+  @Campo + '%'
 
 order by TABLE_NAME
 ~~~
-## ==================================================================
+# 
 
 
 # Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.<a name="tablasesquemascons"></a>
-## ==================================================================
+# 
 
 ~~~sql
 
 /*
-En un artículo anterior mostraba un Script para Listar todas las tablas de una base de datos con sus respectivos tamaños. 
-Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.
+En un artículo anterior mostraba un Script para Listar todas las 
+tablas de una base de datos con sus respectivos tamaños. 
+
+Aquí una forma mas simple en el supuesto caso que solo 
+quisiéramos ver las tablas y sus respectivos esquemas.
 */
+
+
+
+
 SELECT * FROM INFORMATION_SCHEMA.TABLES 
 WHERE table_type='BASE TABLE' 
 
@@ -3327,14 +3430,14 @@ WHERE table_type='BASE TABLE'
 and  table_schema in ('dbo')
 ORDER BY table_name
 ~~~
-## ==================================================================
+# 
 
 #
 # Query de la ultima vez que se ejecuto en procedimiento<a name="ultejecproc1"></a>
 
 #### Query para determiner la ultima vez que se ejecuto un procedimiento en una base de datos
 #### Para esto buscamos en la tabla sys.dm.exec_procedure_stats
-## ==================================================================
+# 
 
 ~~~sql
 /*
@@ -3354,7 +3457,7 @@ FROM sys.dm_exec_procedure_stats AS d
 where OBJECT_NAME(object_id, database_id)  = @procedimiento 
 ORDER BY last_execution_time desc
 ~~~
-## ==================================================================
+# 
 
 
 #
@@ -3364,7 +3467,7 @@ ORDER BY last_execution_time desc
 
 #### La respuesta  a la pregunta del titulo me ha servido muchas veces como administrador de una base de datos a lo largo de los años.
 #### Esta consulta esta basada en una vista de systema que analiza el uso de los indices de nuestras tablas.
-## ==================================================================
+# 
 
 ~~~sql
 declare @dbname VARCHAR(50) = 'INABIMA'
@@ -3386,11 +3489,11 @@ GROUP BY a.database_id ,
 ORDER BY a.database_id ,
         b.name 
 ~~~
-## ==================================================================
+# 
 
 
 # Utilizando este mismo codigo podemos determinar cuando fue la ultima vez que se utilizo uno de nuestros indices<a name="ultejecproc2"></a>
-## ==================================================================
+# 
 
 ~~~sql
 SELECT  DB_NAME(a.database_id) Database_Name ,
@@ -3412,7 +3515,7 @@ ORDER BY a.database_id ,
         b.name ,
         c.name;
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -3433,7 +3536,7 @@ ORDER BY a.database_id ,
 #### Por último, volvemos a poner la base de datos en «multi_user«.
 
 #### Recuerda acordar una ventana de mantenimiento si esta base de datos está en producción.
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3446,27 +3549,27 @@ GO
 ALTER DATABASE PRODB SET MULTI_USER;
 GO
 ~~~
-## ==================================================================
+# 
 
 
 # Cambio del Esquema de una tabla por Query<a name="cambiarsquemad"></a>
 
 #### El codigó para cambiar el esquema de una tabla es el siguente:
-## ==================================================================
+# 
 
 
 ~~~sql
 ALTER SCHEMA esquema_nuevo TRANSFER esquema_viejo.Tabla;
 ~~~
-## ==================================================================
+# 
 
 
 
 # Cuanto Ocupan mis tablas<a name="cuantoocupantablas"></a> 
 
-![](https://conocelahistoria.com/wp-content/uploads/2018/09/Historia-de-base-de-datos-01.png)
+![](https://1.bp.blogspot.com/-V5aQzyPZa8k/XkHd2064YtI/AAAAAAAACmw/_me-o2Wq7BQ0r-RDNeeWaPQ68aJU_iPMQCLcBGAsYHQ/s640/tama%25C3%25B1o-base-de-datos-sql-server.png)
 ###### espacio fisico  Alejadnro Jimenez
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3485,7 +3588,7 @@ from sys.tables s
 where type_desc = 'USER_TABLE'
 order by PESO_TABLA desc
 ~~~
-## ==================================================================
+# 
 
 
 # Defragmentación, al rescate<a name="desfragmentacionalrescate"></a>
@@ -3493,14 +3596,17 @@ order by PESO_TABLA desc
 #### Para evitar el deterioro del rendimiento en nuestro servidor, deberemos mantener nuestros índices en un estado de fragmentación óptimo. Lo podremos lograr sencillamente siguiendo estos pasos.
 
 #### Primer paso: detectar fragmentación en los índices de tu base de datos. Para ello, nos basaremos en la vista de sistema sys.dm_db_index_physical_stats, que encapsularemos en la siguiente query:
-## ==================================================================
+# 
 
 
 ~~~sql
 SELECT DB_NAME(database_id) AS DatabaseName, database_id, 
 OBJECT_NAME(ips.object_id) AS TableName, ips.object_id,
+
 i.name AS IndexName, i.index_id, p.rows,
-ips.partition_number, index_type_desc, alloc_unit_type_desc, index_depth, index_level,
+
+ips.partition_number, index_type_desc, alloc_unit_type_desc, 
+index_depth, index_level,
 avg_fragmentation_in_percent, fragment_count, avg_fragment_size_in_pages, page_count,
 avg_page_space_used_in_percent, record_count, ghost_record_count, version_ghost_record_count, min_record_size_in_bytes,
 max_record_size_in_bytes, avg_record_size_in_bytes, forwarded_record_count
@@ -3510,11 +3616,11 @@ INNER JOIN sys.partitions p ON p.object_id = i.object_id AND p.index_id = i.inde
 WHERE avg_fragmentation_in_percent > 10.0 AND ips.index_id > 0 AND page_count > 1000
 ORDER BY avg_fragmentation_in_percent DESC
 ~~~
-## ==================================================================
+# 
 
 
 #### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3538,8 +3644,10 @@ SELECT
     partition_number AS partitionnum,
     avg_fragmentation_in_percent AS frag
 INTO #work_to_do
-FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED')
-WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND page_count > 1000;
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 
+'LIMITED')
+WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND 
+page_count > 1000;
 
 -- Declare the cursor for the list of partitions to be processed.
 DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
@@ -3566,12 +3674,15 @@ WHILE (1=1)
         WHERE object_id = @objectid AND index_id = @indexid;
 
 -- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
-        IF @frag < 30.0
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REORGANIZE';
-        IF @frag >= 30.0
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REBUILD';
-        IF @partitioncount > 1
-            SET @command = @command + N' PARTITION=' + CAST(@partitionnum AS nvarchar(10));
+     IF @frag < 30.0
+       SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+       @schemaname + N'.' + @objectname + N' REORGANIZE';
+     IF @frag >= 30.0
+         SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+         @schemaname + N'.' + @objectname + N' REBUILD';
+     IF @partitioncount > 1
+            SET @command = @command + N' PARTITION=' + CAST
+            (@partitionnum AS nvarchar(10));
         EXEC (@command);
         PRINT N'Executed: ' + @command;
     END;
@@ -3584,13 +3695,13 @@ DEALLOCATE partitions;
 DROP TABLE #work_to_do;
 GO
 ~~~
-## ==================================================================
+# 
 
 
 
 # Detectando actividad del servidor.<a name="dectectandoactenservidor"></a>
 ![](https://i.pinimg.com/originals/56/99/84/569984584af7d9c9224bd4a1a8ab7039.jpg)
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3627,17 +3738,18 @@ and login_time >'2019-09-11 01:00:00'
 --ORDER BY es.cpu_time DESC 
 ORDER BY login_time desc
 ~~~
-## ==================================================================
+# 
 
 
 #### Nota este proceso fue creado por mi para enviar las actividades del serviro via correo electronico desde la base de datos Sql server en formatos HTML.
-## ==================================================================
+# 
 
 
 ~~~sql
 USE [msdb]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_EnviarActividad_Servidor10_0_0_252]    Script Date: 29/10/2020 03:51:55 p.m. ******/
+/****** Object:  StoredProcedure [dbo].[sp_EnviarActividad_Servidor10_0_0_252]   
+ Script Date: 29/10/2020 03:51:55 p.m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3647,7 +3759,8 @@ NOTIFICACION
 actividad del servidor del ultimo dia 
 enviado por correo .
 tenemos una tabla llamada notificacionesCorreos
- desde la misma controlamos las personas a las que se le enviara el reporte en html
+ desde la misma controlamos las personas a las que se le enviara
+  el reporte en html
 
  Alejandro Jimenez 
  2019-10-16
@@ -3751,13 +3864,13 @@ EXEC sp_send_dbmail
   @body=@Body ,
   @body_format = 'HTML' ;
 ~~~
-## ==================================================================
+# 
 
 
 
 # Fecha Ultima restauracion de Un Backup<a name ="ultimarestauracion"></a>
-![](https://www.maquinasvirtuales.eu/ipsoapoo/2018/11/programacion-backups-sql.png)
-## ==================================================================
+![](https://2.bp.blogspot.com/-3PA74bncZU4/Vq9r-ULqrcI/AAAAAAAAAds/g5cD6s5JEr0/s640/copia-seguridad-windows-recuperacion-sistema.jpg)
+# 
 
 
 ~~~sql
@@ -3774,16 +3887,16 @@ SELECT rs.destination_database_name,
 		ON bs.media_set_id = bmf.media_set_id 
 		ORDER BY rs.restore_date DESC
 ~~~
-## ==================================================================
+# 
 
 
 # Ultiimos Backup realizados en una base de datos.<a name ="ultimosbackup3"></a>
-![](https://www.en-red.mx/wp-content/uploads/2020/01/almacenamiento-para-backup-1080x656.jpg)
+![](https://smoothcloud.co/wp-content/uploads/2022/06/nubeprivada.png)
 # 
 #### Las copias de seguridad de SQL Server proveen una importante solución para proteger datos críticos que están almacenados en bases de datos SQL. Y para minimizar el riego de pérdida de datos, usted necesita asegurarse de que respalda sus bases de datos regularmente tomando en consideración los cambios aplicados a sus datos. Es una buena práctica probar sus copias de seguridad restaurando archivos de copias de seguridad al azar a un ambiente de pruebas y verificar que los archivos no estén corruptos.
 #### 
 #### En adición al desastre normal de pérdida de datos, el DBA puede beneficiarse de copias de seguridad si hay un fallo de medios en uno de los discos o cualquier daño de hardware, un borrado o eliminación accidental aplicados por uno de los usuarios o usualmente copiar los datos desde un servidor a otro para propósitos como configurar un sitio con reflejo o Grupos de Disponibilidad AlwaysOn.
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3861,10 +3974,15 @@ BEGIN TRY
             And   B2.Type = 'D'
         )
     And FR.Database_Name In (SELECT name FROM master.dbo.sysdatabases) 
-    And FR.Database_Name Not In ('tempdb','pubs','northwind','model'
-	,'bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk','RRHH'
-	,'WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'Pruebas','BD1','CONTDESA' 
-	,'MINERD_V2', 'PruebaMVC','INABIMA_V2','RegistroActivos','Ponches')
+    And FR.Database_Name Not In ('tempdb','pubs','northwind',
+    'model'
+
+	,'bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk',
+    'RRHH'
+	,'WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'Pruebas','BD1',
+    'CONTDESA' 
+	,'MINERD_V2', 'PruebaMVC','INABIMA_V2','RegistroActivos',
+    'Ponches')
  
 UNION ALL
  
@@ -3886,8 +4004,12 @@ UNION ALL
     WHERE
         Name Not In(SELECT DISTINCT Database_Name FROM msdb.dbo.backupset)
     And Name Not In ('tempdb','pubs','northwind'
-	,'model','bima','DB_Ponches','Ponches_old1','PonchesOld','RRHHbk'
-	,'RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,'ponches','TA100SQL_new','TA100SQL', 'DW','dbINABIMA2','RegistroActivos','Ponches')
+
+	,'model','bima','DB_Ponches','Ponches_old1','PonchesOld',
+    'RRHHbk'
+	,'RRHH','WebDb','UNIPAGODB','Prestamos','DatosIMP' ,
+    'ponches','TA100SQL_new','TA100SQL', 'DW','dbINABIMA2',
+    'RegistroActivos','Ponches')
     ORDER BY
         1, 2
 END TRY
@@ -3895,11 +4017,11 @@ BEGIN CATCH
     SELECT message_id, text FROM sys.messages WHERE message_id = @@ERROR AND language_id = 1033
 END CATCH
 ~~~
-## ==================================================================
+# 
 
 
 # Cuantos Core Tiene mi base de datos<a name="cuantoscoretengo"></a>
-## ==================================================================
+# 
 
 
 ![](https://hardzone.es/app/uploads/2019/07/Sistema-01.jpg)
@@ -3913,7 +4035,7 @@ xp_cmdshell 'WMIC CPU Get DeviceID,NumberOfCores,NumberOfLogicalProcessors'
 go
 ~~~
 
-## ==================================================================
+# 
 
 
 #
@@ -3921,15 +4043,18 @@ go
 # USUARIOS<a name="usuarios"></a>
 ![](https://www.osi.es/sites/default/files/images/imagen-decorativa-infografia-cuentas-usuario.png)
 # Query de los usuarios y sus roles en una Base de Datos
-## ==================================================================
+# 
 
 
 ~~~sql
 
 /*Querys that display the users and Roles from Sql server 2012.
 
-I make this Query in order of an Store Procedure tha appears on TRANSDOC Database on june 22 2016
-It is not supose to be there , Bbut aparently the sistem need to have a owner database user, in order to proces his will
+
+I make this Query in order of an Store Procedure tha appears on
+ TRANSDOC Database on june 22 2016
+It is not supose to be there , Bbut aparently the sistem need to 
+have a owner database user, in order to proces his will
 */
 SELECT
   p.name rol,
@@ -3948,13 +4073,13 @@ SELECT a.name, a.type_desc, a.is_disabled , a.principal_id
 FROM sys.server_principals a
 WHERE type_desc IN('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP');
 ~~~
-## ==================================================================
+# 
 
 
 
 
 # Lista de permisos por Usuario<a name="listausuariosdb"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3968,12 +4093,12 @@ inner   JOIN sys.database_principals dp on  p.grantee_principal_id
 order by
 usuario
 ~~~
-## ==================================================================
+# 
 
 
 
 # Número de sesiones de cada usuario  sql server<a name="numeroseccionessqlserver"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3985,7 +4110,7 @@ GROUP BY login_name;
 ~~~
 
 # Objetos Modificacos en los ultimos 10 Dias<a name="objectosmodificadosultimosdias"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -3998,7 +4123,7 @@ FROM sys.objects
 WHERE modify_date > GETDATE() - 10
 ORDER BY modify_date;
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -4011,7 +4136,7 @@ ORDER BY modify_date;
 
 
 # Ejecutar procesure que Actualiza las tablas con los datos de los ponches para poder ejecutar el reporte de RRHH.<a name="genesiscargadatosreloj1"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -4020,13 +4145,13 @@ select @fecha from
 openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE SPA_ACTUALIZA_PONCHESRELOJ ( ''2021-08-01'' , ''2021-10-07'')')
 ~~~
 
-## ==================================================================
+# 
 
 
 
 
 # Cargar Datos Reloj<a name="genesiscargadatosreloj"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -4097,13 +4222,13 @@ left join [Genesis].[PonchesDB].[DatosReloj_Cargar] b
  )
 where b.NOMBRE is null and a.FECHA is not null
 ~~~
-## ==================================================================
+# 
 
 
 # 
 
 # Horas de Almuerzo<a name="genesishorasdealmuerzo"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -4146,6 +4271,7 @@ Cedula
 )
 select a.cedula, p.Nombre
 	,ROW_NUMBER() over(order by a.cedula) as row#
+
  from [Genesis].PonchesDB.horarioEmpleados a
 join [Genesis].PonchesDB.DescripcionHoratios b
 		on a.idTipoPonche = b.id
@@ -4158,7 +4284,7 @@ join [Genesis].[PonchesDB].[PersonalDB] P
 
 
 /*
-=====================================================================================================
+=====
 */
 
 
@@ -4175,19 +4301,23 @@ select
 	,IsNull(B.HORA,'00:00:00' ) Hora --, ''
 	,isNull(B.COD_RELOJ,'') Reloj --, ''
 	--,td = 'No Definido', ''
-	,ROW_NUMBER() over(partition by a.cedula order by b.hora) NumeroPonche  -- ,''
+	,ROW_NUMBER() over(partition by a.cedula order by b.hora) 
+    NumeroPonche  -- ,''
 from [Genesis].[PonchesDB].[horarioEmpleados] A
 left join (
-SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) AS NOMBRE
+SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) 
+AS NOMBRE
       , REPLACE(USER1,'-','') AS CEDULA  
       ,badge COD_RELOJ, CAST(DATE AS DATE) AS FECHA
-     , min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)) AS HORA
+     , min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'
+     +SUBSTRING(TIME,5,2) AS TIME)) AS HORA
        , CLOCKID
        ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN 'ENTRADA NORMAL'   
               WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 'ENTRADA TARDE' 
               WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 'ALMUERZO' 
               WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
-	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
+	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,
+    SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
 FROM [Genesis].[dbo].rawdata A 
 RIGHT 
 --left
@@ -4239,11 +4369,20 @@ SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) AS NOMBRE
       ,badge COD_RELOJ, CAST(DATE AS DATE) AS FECHA
      , min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)) AS HORA
        , CLOCKID
-       ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN 'ENTRADA NORMAL'   
-              WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 'ENTRADA TARDE' 
-              WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 'ALMUERZO' 
-              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
-	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
+       ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN
+        'ENTRADA NORMAL'   
+              WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 
+              'ENTRADA TARDE' 
+              WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 
+              'ALMUERZO' 
+              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 
+              'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
+
+	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','') 
+     order  by REPLACE(USER1,'-','')
+      ,SUBSTRING(TIME,1,2)+':'+SUBSTRING
+
+    (TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
 FROM [Genesis].[dbo].rawdata A 
 RIGHT 
 --left
@@ -4275,19 +4414,25 @@ select
 	,IsNull(B.HORA,'00:00:00' ) Hora --, ''
 	,isNull(B.COD_RELOJ,'') Reloj --, ''
 	--,td = 'No Definido', ''
-	,ROW_NUMBER() over(partition by a.cedula order by b.hora) NumeroPonche  -- ,''
+	,ROW_NUMBER() over(partition by a.cedula order by b.hora) 
+    NumeroPonche  -- ,''
 from [Genesis].[PonchesDB].[horarioEmpleados] A
 left join (
 SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) AS NOMBRE
       , REPLACE(USER1,'-','') AS CEDULA  
       ,badge COD_RELOJ, CAST(DATE AS DATE) AS FECHA
-     , ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)),'00:00:00') AS HORA
+
+     , ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,
+     2)+':'+SUBSTRING(TIME,5,2) AS TIME)),'00:00:00') AS HORA
+
        , CLOCKID
        ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN 'ENTRADA NORMAL'   
               WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 'ENTRADA TARDE' 
               WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 'ALMUERZO' 
               WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
-	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
+	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order 
+    by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING
+    (TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
 FROM [Genesis].[dbo].rawdata A 
 RIGHT 
 --left
@@ -4326,13 +4471,19 @@ left join (
 SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) AS NOMBRE
       , REPLACE(USER1,'-','') AS CEDULA  
       ,badge COD_RELOJ, CAST(DATE AS DATE) AS FECHA
-     , ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)),'00:00:00') AS HORA
+
+     , ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,
+     2)+':'+SUBSTRING(TIME,5,2) AS TIME)),'00:00:00') AS HORA
+
        , CLOCKID
        ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN 'ENTRADA NORMAL'   
               WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 'ENTRADA TARDE' 
               WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 'ALMUERZO' 
-              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
-	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
+              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 
+              'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
+
+	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order 
+    by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
 FROM [Genesis].[dbo].rawdata A 
 RIGHT 
 --left
@@ -4365,19 +4516,23 @@ select
 	,IsNull(B.HORA,'00:00:00' ) Hora --, ''
 	,isNull(B.COD_RELOJ,'') Reloj --, ''
 	--,td = 'No Definido', ''
-	,ROW_NUMBER() over(partition by a.cedula order by b.hora) NumeroPonche  -- ,''
+	,ROW_NUMBER() over(partition by a.cedula order by b.hora) 
+    NumeroPonche  -- ,''
 from [Genesis].[PonchesDB].[horarioEmpleados] A
 left join (
 SELECT  RTRIM(LTRIM(B.FIRSTNAME))+' '+ RTRIM(LTRIM(B.LASTNAME)) AS NOMBRE
       , REPLACE(USER1,'-','') AS CEDULA  
       ,badge COD_RELOJ, CAST(DATE AS DATE) AS FECHA
-     ,ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)) ,'00:00:00')AS HORA
+     ,ISNULL( min(CAST(SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) AS TIME)) 
+     ,'00:00:00')AS HORA
        , CLOCKID
        ,CASE WHEN   A.TIME BETWEEN '060000' AND '091000' THEN 'ENTRADA NORMAL'   
               WHEN   A.TIME BETWEEN '091000' AND '103000' THEN 'ENTRADA TARDE' 
               WHEN   A.TIME BETWEEN '110000' AND '150000' THEN 'ALMUERZO' 
-              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
-	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
+              WHEN   A.TIME BETWEEN '160000' AND '230000' THEN 
+              'SALIDA' ELSE  'NO AUTORIZADO' END TIPO_PONCHE
+	,ROW_NUMBER() Over(partition by REPLACE(USER1,'-','')  
+    order by REPLACE(USER1,'-','') ,SUBSTRING(TIME,1,2)+':'+SUBSTRING(TIME,3,2)+':'+SUBSTRING(TIME,5,2) ) Row#
 FROM [Genesis].[dbo].rawdata A 
 RIGHT 
 --left
@@ -4420,7 +4575,9 @@ begin
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
     + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos horas de Almuerzo del: ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -4516,7 +4673,8 @@ set @email =
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
+    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
     + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos horas de Almuerzo del: ' + @fecha +   '   </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -4559,7 +4717,7 @@ select
 				)
 
 
-/*=======================================================================================================================*/
+/*===========================*/
 
 	order by nombres
  
@@ -4595,12 +4753,12 @@ EXEC sp_send_dbmail
 
 end
 ~~~
-## ==================================================================
+# 
 
 
 
 # Persona que deben Ponchas Salida y no Ponchan
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -4646,8 +4804,10 @@ order by fecha asc
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Personas No Poncharon En el Dia el: ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Eventos Personas No Poncharon En el Dia el: ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
     + '<tr> <td bgcolor=#E6E6FA><b>Cédula</b></td>'
@@ -4733,12 +4893,12 @@ EXEC sp_send_dbmail
 
 end 
 ~~~
-## ==================================================================
+# 
 
 
 #
 # personas que deben ponchas y no ponchan con envio a supervisores<a name="genesispersonasdebenponcharynoponc"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -4795,8 +4955,11 @@ order by fecha asc
 --set @fecha = '2019-05-27'
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de 
+    Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
     + '<tr> <td bgcolor=#E6E6FA><b>Cédula</b></td>'
@@ -4892,14 +5055,23 @@ set @Correo =
 =============================================================================================================
 */
 set @mensaje = ''
-Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
-Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull([SUPERVISOR],'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
+Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'') 
+from [genesis].[PonchesDB].[SupervisoresCorreos] 
+where [EMAILSUPERVISOR]  = @Correo)
+
+Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull
+([SUPERVISOR],'') 
+from [genesis].[PonchesDB].[SupervisoresCorreos] 
+where [EMAILSUPERVISOR]  = @Correo)
 --print @correo
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h2 Color="darkblue">Reporte de Eventos Personas No Poncharon el ' +@fecha + '</h2>'+
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + '<h2 
+    Color="darkblue">Reporte de Eventos Personas No Poncharon el ' +@fecha + '</h2>'+
 							'<h4>' + @Mensaje+ '</h4>'
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -4996,7 +5168,7 @@ end
 ~~~
 
 # Ponches Entrada Fuera del Horario
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -5035,14 +5207,17 @@ DECLARE @Body NVARCHAR(MAX),
 	/*
 	Asignar fecha a enviar al personal de resursos humanos
 	*/
-set @fecha = (select distinct top 1 fecha from [Genesis].PonchesDB.[DatosReloj_Cargar]
+set @fecha = (select distinct top 1 fecha 
+from [Genesis].PonchesDB.[DatosReloj_Cargar]
 where enviado = 1 AND HORA < '11:00:00'
 order by fecha asc
 )
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
     + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Entrada Tardias : ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -5106,17 +5281,17 @@ EXEC sp_send_dbmail
 
 end 
 ~~~
-## ==================================================================
+# 
 
 
 # query Insertar datos reloj a soluflex<a name="queryinsertardatossoluflex25"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
 
 /*
-===============================================================================================================================
+=================================================================
 */
 
 declare @fecha varchar(10) ;
@@ -5198,12 +5373,12 @@ select * from  openquery( [SOLUFLEX RRHH],
  )
 where b.NOMBRE is null and a.FECHA is not null
 ~~~
-## ==================================================================
+# 
 
 
 # 
 # Salida de ************ verificaciones<a name="geneissalidasinabiama"></a>
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -5235,8 +5410,10 @@ where enviado = 0 AND HORA >  '14:00:00'
 
 
 while exists (
-select distinct top 1 fecha, enviado from [Genesis].[PonchesDB].[DatosReloj_Cargar]
-where  (HORA <  '14:00:00' and fecha  = convert(Varchar(10), dateadd(DAY,1,@fecha1),120) )  --or @fecha1 is not null
+select distinct top 1 fecha, enviado 
+from [Genesis].[PonchesDB].[DatosReloj_Cargar]
+where  (HORA <  '14:00:00' and fecha  = convert(Varchar(10),
+ dateadd(DAY,1,@fecha1),120) )  --or @fecha1 is not null
 
 )
 begin
@@ -5259,7 +5436,9 @@ order by fecha asc
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
     + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Salidas : ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -5363,14 +5542,21 @@ set @Correo =
 ============================================================================
 */
 set @mensaje = ''
-Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
-Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull([SUPERVISOR],'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
+Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'')
+ from [genesis].[PonchesDB].[SupervisoresCorreos] 
+ where [EMAILSUPERVISOR]  = @Correo)
+Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull([SUPERVISOR],'') 
+from [genesis].[PonchesDB].[SupervisoresCorreos]
+ where [EMAILSUPERVISOR]  = @Correo)
 --print @correo
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
 	+ '<h4>' + @Mensaje+ '</h4>'
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -5489,8 +5675,11 @@ envios de Correos personas que no poncharon salidas en el dia
 */
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Eventos Personas No Poncharon el: ' + @fecha +'  </h1> '
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
     + '<tr> <td bgcolor=#E6E6FA><b>Cédula</b></td>'
@@ -5599,14 +5788,20 @@ set @Correo =
 ===========================================================================
 */
 set @mensaje = ''
-Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
-Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull([SUPERVISOR],'') from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
+Set @Mensaje ='' + ( select distinct top 1 isnull(Depto,'') 
+from [genesis].[PonchesDB].[SupervisoresCorreos]
+ where [EMAILSUPERVISOR]  = @Correo)
+Set @Mensaje += '</br> SUPERVISOR: '+ ( select top 1 isnull([SUPERVISOR],'') 
+from [genesis].[PonchesDB].[SupervisoresCorreos] where [EMAILSUPERVISOR]  = @Correo)
 --print @correo
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Eventos Salidas : ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Eventos Salidas : ' + @fecha +'  </h1> '
 	+ '<h4>' + @Mensaje+ '</h4>'
     + CONVERT(VARCHAR(50), GETDATE(), 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -5684,7 +5879,7 @@ EXEC sp_send_dbmail
 
 end 
 ~~~
-## ==================================================================
+# 
 
 
 # 
@@ -5694,33 +5889,36 @@ end
 #### La ejecucion de este procedure al momento de realizar esta documentacion fue para cargar los datos del reloj de ponches correspondientes al periodo Marzo 1 al Marzo 31 del 2021
 
 ## Para esto Ejecutamos lo siguiente.
-## ==================================================================
+# 
 
 
 ~~~sql
 declare @fecha varchar(10)
 
 select @fecha from
-openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE SPA_ACTUALIZA_PONCHESRELOJ ( ''2021-03-01'' , ''2021-03-31'')')
+openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE
+ SPA_ACTUALIZA_PONCHESRELOJ ( ''2021-03-01'' , ''2021-03-31'')')
 ~~~
-## ==================================================================
+# 
 
 
 
 
 
 ### Ademas tenemos el procedimiento original el cual es utilizado para cargar los ponches de  reloj a partir de la ultima fecha de carga de ponches.
-## ==================================================================
+# 
 
 
 ~~~sql
 declare @fecha varchar(10)
 
 select @fecha from
-openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE SPA_ACTUALIZA_PONCHESRELOJ ( (select Max(fecha_ponche)+1 from ta_ponchesReloj) ,current_date-2)')
+openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE 
+SPA_ACTUALIZA_PONCHESRELOJ ( (select Max(fecha_ponche)+1 from 
+ta_ponchesReloj) ,current_date-2)')
 
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -5733,7 +5931,7 @@ openquery( [SOLUFLEX RRHH], N'EXECUTE PROCEDURE SPA_ACTUALIZA_PONCHESRELOJ ( (se
 #### Para cargar los datos del informe de ponches creado por el Sr. Jorge Villalona, se procederá a crear un proceso de sincronización de datos entre los registros de tomados de Soluflex y la base de datos Sql.
 ![](https://www.tecnologia-informatica.com/wp-content/uploads/2018/09/que-es-sincronizacion-1-2.jpeg)
 
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -5756,7 +5954,7 @@ openquery( [SOLUFLEX RRHH], N'Select * from TA_PONCHESRELOJ')
 
 
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -5774,7 +5972,7 @@ openquery( [SOLUFLEX RRHH], N'Select * from TA_PONCHESRELOJ')
 #### Decidimos crear una consulta a partir de la base de datos soluflex e insertarla en la base de datos de genesis.
 
 #### Nos permitirá obtener los nuevos empleados de la base de datos de Recursos Humanos. Por tanto, no será necesario insertar nuevos empleados en de Db.
-## ==================================================================
+# 
 
 
 
@@ -5827,12 +6025,12 @@ GO
 
 
 ~~~
-## ==================================================================
+# 
 
 
 #### Este código sería parte de un código mucho más grande que describiremos a continuación, debe ejecutarse en un trabajo todos los días a las 6:00 a.m.
 #### para asegurarnos de que nuestros datos estén sincronizados
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -5967,14 +6165,14 @@ b
 where a.cedula = b.CEDULA and a.idTipoPonche != b.horarioID
 
 ~~~
-## ==================================================================
+# 
 
 
 
 # Sincronizar Vacaciones
 
 ### primera parte carga de vacaciones
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -6020,13 +6218,15 @@ from [PonchesDB].[VacacionesRH]
 
 ### Segunda parte Cargar Vacaciones soluflex.
 
-## ==================================================================
+# 
 
 
 ~~~sql
 USE [Genesis]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Sincronizar_Soluflex_VacacionesPermisos]    Script Date: 13/07/2021 10:15:10 a.m. ******/
+/****** Object:  StoredProcedure [dbo].[sp_Sincronizar_Soluflex_VacacionesPermisos]   
+
+ Script Date: 13/07/2021 10:15:10 a.m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6050,11 +6250,14 @@ insert into  [PonchesDB].[VacacionesRH]
 	,Localidad
 	,idSoluflex
 )
-select FECHAi,FECHAF,fecha_trabajo,replace(cedula,'-',''),NOMBRE,DEPARTAMENTO,SUCURSAL,nUMERO  from  openquery( [SOLUFLEX RRHH],
+select FECHAi,FECHAF,fecha_trabajo,replace(cedula,'-',''),NOMBRE,
+
+DEPARTAMENTO,SUCURSAL,nUMERO  
+from  openquery( [SOLUFLEX RRHH],
 'select * from spa_licenciasponches')
 
 ~~~
-## ==================================================================
+# 
 
 
 # 
@@ -6079,8 +6282,7 @@ select FECHAi,FECHAF,fecha_trabajo,replace(cedula,'-',''),NOMBRE,DEPARTAMENTO,SU
 # Notificar cambios en el padron Electoral<a name="notificarcambios2"></a>
 #
 ![](https://www.diariolibre.com/binrepository/546x292/0c0/0d0/none/10904/BKBP/image-content-5565560-20150923132934_14617159_20200821143255.jpg)
-## ==================================================================
-
+# 
 
 ~~~sql
 /****** Object:  StoredProcedure [dbo].[sp_ModificacionesPadron]    Script Date: 04/11/2020 08:36:21 a.m. ******/
@@ -6170,8 +6372,11 @@ DECLARE @Body NVARCHAR(MAX),
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Registros Modificados en el Padron dia : ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Registros Modificados en el Padron dia : ' + @fecha +'  </h1> '
 	+ '<b>Modificaciones al Padron Electroral del INABIMA</b>' 
 	--+ '<b> no Comprendidos entre las 7:00 AM y 18:00 PM </b>'
 	--+'<b>(No contempla los usuarios de transdoc...) </b>'
@@ -6228,12 +6433,12 @@ EXEC sp_send_dbmail
 
 end
 ~~~
-## ==================================================================
+# 
 
 
 
 # Consulta para enviar por correo de e-Flow citas<a name="consultaseflowcitas"></a>
-![](https://media-exp1.licdn.com/dms/image/C4D1BAQEtQLCI8tp3Fw/company-background_10000/0/1519801214001?e=2159024400&v=beta&t=R43loZeVUu3YagVRu2EXKzACLtjkAUgqhkMLTVDoV6w)
+![](https://gdm-catalog-fmapi-prod.imgix.net/ProductScreenshot/a6161d80-6b28-4106-9fe3-970967401140.png?w=600&h=450&fit=fill&fill=blur&auto=format&q=50)
 #### Crearemos una consulta de las Citas del Sistema **E-FLOW** para ser enviadas via Correo electronico al personal de servicio al Cliente tanto de Plaza Aurora como de la CEDE CENTRAL.
 
 #### Inicialmente la idea es que esta consulta se envíe de lunes a viernes a las 3:00 p.m., en lo que estamos en pruebas, que me llegue a mí, luego incluimos al personal de atención al usuario de Plaza Aurora, yo te suministraría los correos a los que esto debe llegar.
@@ -6244,20 +6449,25 @@ end
 #### Esta solicitud de información fue realizada originalmente por el Sr. Teodoro Mejía quien está coordinando la parte de atención al usuario en plaza aurora. Lamentablemente el sistema que se utiliza para citas no provee esta información, no de esta forma, por lo que tuvimos que recurrir a hacerla directa desde las bases de datos.
 # 
 #### procederemoa a realizar un procedure que inserte los datos en el Servidor de produccion desde el servidor de E-FLOW.
-## ==================================================================
+# 
 
 
 ~~~SQL
 ALTER procedure sp_enviarCitasSedna
 as
-/*Eliminamos los registros en caso de que el proceso se ejecute varias veces */
-delete  [10.0.0.252].[AuditoriaDB].[dbo].[notificacionSEDNA] where convert(varchar(10), fechaHoraCita, 120) = convert(varchar(10), getdate()+1, 120)
+/*Eliminamos los registros en caso de que el proceso 
+se ejecute varias veces */
+delete  [10.0.0.252].[AuditoriaDB].[dbo].[notificacionSEDNA] 
+where convert(varchar(10), fechaHoraCita, 120)
+ = convert(varchar(10), getdate()+1, 120)
 
 /*
 Alejandro JImenez 
 2021.4.15
 Insertamos los datos en el servidor sql de produccion
+
 esto para poder realizar el envio de los datos desde el 
+
 servidor Mail de Sql server.
 */
 INSERT INTO [10.0.0.252].[AuditoriaDB].[dbo].[notificacionSEDNA]
@@ -6295,7 +6505,7 @@ select fecha = convert(varchar(10), getdate(),120)
 
 go
 ~~~
-## ==================================================================
+# 
 
 
 #### Como se podra notar para que esto funcione debemos tener un LinkServer hacia el servidor 10.0.0.252 que seria en este caso el servidor de produccion.
@@ -6307,7 +6517,7 @@ go
 
 ### Creacion de Store Procedure que Envia las notificaciones de las citas via SqlMail.
 
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -6328,8 +6538,10 @@ if exists
 )
 begin
 
--- en este lugar colocaremos una lista que se encuentra en una tabla creado para estos fines.
---   dicha lista de correos debera ser consumida por el sql y asi podremos actualizarla a gusto sin tener que modificar el codigo.
+-- en este lugar colocaremos una lista que se encuentra en una 
+tabla creado para estos fines.
+--   dicha lista de correos debera ser consumida por el sql y 
+asi podremos actualizarla a gusto sin tener que modificar el codigo.
 declare @email varchar(1000) = 'jose.jimenez@inabima.gob.do'
 -- ============================================================================================
 DECLARE @Body NVARCHAR(MAX),
@@ -6340,8 +6552,11 @@ DECLARE @Body NVARCHAR(MAX),
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Consulta para enviar por correo de e-Flow citas: ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' +
+     '<h1>Consulta para enviar por correo de e-Flow citas: ' + @fecha +'  </h1> '
 	+ '<b>Registros de citas de e-Flow</b>' 
     + '<br><b>Fecha y hora de envio: </b>'+ CONVERT(VARCHAR(50), GETDATE()+1, 100) 
     + ' <br> <table cellpadding=0 cellspacing=0 border=0>' 
@@ -6394,14 +6609,13 @@ update AuditoriaDB.dbo.enviarSEDNA
 
 end
 ~~~
-## ==================================================================
+# 
 
 
 
 para disparar este store procedure lo haremos a travez del siguiente codigo.
 el mismo se colocar en el servidor de produccion en la tabla **[enviarSEDNA]** 
-## ==================================================================
-
+# 
 
 ~~~sql
 -- the definition of the function.
@@ -6421,13 +6635,13 @@ as
 EXEC msdb.dbo.sp_EnviarCitasSEDNA
 GO
 ~~~
-## ==================================================================
+# 
 
 
 
 ## Disparar una Tarea Automatica del servidor 10.0.0.168 **(Sql Express no tinene Ni job ni sql Mail)**
 # 
-![](https://caridadenlaverdad.files.wordpress.com/2015/07/problemas.jpg)
+![](https://img.freepik.com/vector-premium/icono-lampara-idea-glifo-linea-contorno-relleno-version-colorida-contorno-bombilla-abstracto-relleno_662353-164.jpg)
 # 
 
 #### Para estos propósitos podemos crear una conexión al servidor SQL usando los comandos cmd.
@@ -6438,7 +6652,7 @@ GO
 
 #### Luego solo tenemos que crear una tarea programada de Windows Server 2016 para este caso y dispararla en los períodos que queramos.
 
-## ==================================================================
+# 
 
 
 ~~~cmd
@@ -6457,7 +6671,7 @@ CLS
 ECHO successfully finished....
 ECHO exit /b 0
 ~~~
-## ==================================================================
+# 
 
 
 Este codigo realiza la conexion al Servidor y dispara el procedure que queremos para este caso.
@@ -6470,7 +6684,7 @@ Este codigo realiza la conexion al Servidor y dispara el procedure que queremos 
 
 ### este reporte nos muestra el espacio disponible en el disco de en el cual se ecuentra la base de datos TRANSDOC.
 
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -6489,8 +6703,11 @@ DECLARE @Body NVARCHAR(MAX),
 
 SET @TableTail = '</table></body></html>' ;
 SET @TableHead = '<html><head>' + '<style>'
-    + 'td {border: solid black;border-width: 1px;padding-left:5px;padding-right:5px;padding-top:1px;padding-bottom:1px;font: 11px arial} '
-    + '</style>' + '</head>' + '<body>' + '<h1>Reporte de Variacion Espacio en Disco K:\ Servidor 10.0.0.252 de fecha : ' + @fecha +'  </h1> '
+    + 'td {border: solid black;border-width: 1px;
+    padding-left:5px;padding-right:5px;padding-top:1px;
+    padding-bottom:1px;font: 11px arial} '
+    + '</style>' + '</head>' + '<body>' + 
+    '<h1>Reporte de Variacion Espacio en Disco K:\ Servidor 10.0.0.252 de fecha : ' + @fecha +'  </h1> '
 	+ '<b>Variaciones de Espacio en disco K:\ Servidor 10.0.0.252</b>' 
 	--+ '<b> no Comprendidos entre las 7:00 AM y 18:00 PM </b>'
 	--+'<b>(No contempla los usuarios de transdoc...) </b>'
@@ -6529,7 +6746,10 @@ SELECT top 20
   FROM [AuditoriaDB].[dbo].[Db_Space_ServerDisk_Pdr] a
   join
   (
-  select FreeSpaceInGB,  convert(varchar(10), dateadd(d,1, convert(date, Date_verif)),120) fecha, Date_verif FechaReal ,Drive from [AuditoriaDB].[dbo].[Db_Space_ServerDisk_Pdr] 
+  select FreeSpaceInGB,  convert(varchar(10), dateadd(d,1, 
+  convert(date, Date_verif)),120) fecha, Date_verif FechaReal ,
+  Drive from [AuditoriaDB].[dbo].[Db_Space_ServerDisk_Pdr] 
+
   ) b on a.Drive = b.drive  and a.Date_verif = b.fecha
 
   where a.drive = 'k:\'
@@ -6563,7 +6783,7 @@ EXEC sp_send_dbmail
 
 
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -6583,7 +6803,7 @@ EXEC sp_send_dbmail
 
 ##  Realizar el envio de las encuestas a los encargados.
 #### Para Esto ejecutamos el siguiente codigo.
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -6591,13 +6811,15 @@ EXEC sp_send_dbmail
 Alejandro Jimenez Rosa
 
 */
-declare @listaCorreos varchar(max) = (SELECT listamail from  AuditoriaDB.DBO.mensajeria_mail where id = 1)
+declare @listaCorreos varchar(max) = 
+(SELECT listamail from  AuditoriaDB.DBO.mensajeria_mail 
+where id = 1)
 
 
 exec [dbo].[sp_CorreoEncuestaMensajeria] @listaCorreos
 
 ~~~
-## ==================================================================
+# 
 
 
 #  
@@ -6607,13 +6829,14 @@ exec [dbo].[sp_CorreoEncuestaMensajeria] @listaCorreos
 
 #### Anexo el procedimiento que realiza el envio del  HTML  utilizando sql server para realizar las encuestas de satisfaccion de mensajeria.
 
-## ==================================================================
+# 
 
 
 ~~~sql
 USE [msdb]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_CorreoEncuestaMensajeria]    Script Date: 14/07/2021 07:33:16 a.m. ******/
+/****** Object:  StoredProcedure [dbo].[sp_CorreoEncuestaMensajeria]   
+ Script Date: 14/07/2021 07:33:16 a.m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6718,7 +6941,7 @@ EXEC sp_send_dbmail
   @body_format = 'HTML' ;
 
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -6736,13 +6959,14 @@ Saludos cordiales,
 #### Reporte de notificacion de las modificaciones en la tabla de Afiliados al Plan de retiro de **************.
 
 ![](imagenes/reporteAfiliados.jpg)
-## ==================================================================
+# 
 
 
 ~~~sql
 USE [msdb]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_NotificarCambiosAfiliados]    Script Date: 31/08/2021 12:14:31 p.m. ******/
+/****** Object:  StoredProcedure [dbo].[sp_NotificarCambiosAfiliados]    
+Script Date: 31/08/2021 12:14:31 p.m. ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6757,7 +6981,11 @@ Declare Variables for DML
 
 while exists (
 SELECT 
-  'Registro modificado para la Cedula numero :'  +  [Cag_Cedula]+' Con los nombres : '+ ''+ ' Apellidos : '  + [cag_APELLIDO1] + ' ' + ISNULL([cag_APELLIDO2],'') + ' '+ '' + ' ' + ' Desde la Computadora : ' + '' + ' Con el Usuario de Sistemas:  ' 
+  'Registro modificado para la Cedula numero :' 
+   +  [Cag_Cedula]+' Con los nombres : '+ ''+ ' Apellidos : ' 
+    + [cag_APELLIDO1] + ' ' + ISNULL([cag_APELLIDO2],'') + ' '
+    + '' + ' ' + ' Desde la Computadora : ' + '' 
+    + ' Con el Usuario de Sistemas:  ' 
   FROM [AuditoriaDB].[dbo].[tblAfiliados_Audit] 
   WHERE ENVIADO IS NULL or enviado = 0
 
@@ -6790,9 +7018,21 @@ DECLARE @Style NVARCHAR(MAX)= '';
 Define CSS for html to use
 */
 SET @Style += +N'<style type="text/css">' + N'.tg  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}'
-    + N'.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fafafa;}'
-    + N'.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#0039cb;}'
-    + N'.tg .tg-9ajh{font-weight:bold;background-color:#0039cb; color:#FFF}' + N'.tg .tg-hgcj{font-weight:bold;text-align:center}'
+
+    + N'.tg td{font-family:Arial, sans-serif;font-size:14px;
+    padding:10px 5px;border-style:solid;border-width:1px;
+    overflow:hidden;word-break:normal;border-color:#aaa;
+    color:#333;background-color:#fafafa;}'
+
+    + N'.tg th{font-family:Arial, sans-serif;font-size:14px;
+    font-weight:normal;padding:10px 5px;border-style:solid;
+    border-width:1px;overflow:hidden;word-break:normal;
+    border-color:#aaa;color:#fff;background-color:#0039cb;}'
+
+    + N'.tg .tg-9ajh{font-weight:bold;background-color:#0039cb; 
+    color:#FFF}' + N'.tg .tg-hgcj{font-weight:bold;
+    text-align:center}'
+
     + N'</style>';
 
 
@@ -6804,14 +7044,20 @@ Declare Variables for HTML
 DECLARE @tableHTML NVARCHAR(MAX)= '';
 
 DECLARE @IMAGENTHML NVARCHAR(1000) =		   
-'<div style="margin-bottom: 50px; " ><img src="https://lh3.googleusercontent.com/proxy/5BGJvOMR_Vsub62ydbn2peBSjRjSLnNvuTuV_Ar9p3esa6KnNB1e9inbajHN4bME-QJW7kaeUJANLs-QG0GHVeF7wl8LG73g4MTFwVk"alt="HTML5 Icon"></div>'   
+'<div style="margin-bottom: 50px; " ><img src="https://lh3.
+googleusercontent.com/proxy/5BGJvOMR_Vsub62ydbn2peBSjRjSLnNvuTuV_Ar9p3esa6KnNB1e9inbajHN4bME-
+QJW7kaeUJANLs-QG0GHVeF7wl8LG73g4MTFwVk"alt="HTML5 Icon"></
+div>'   
    
 		   ;
 
 
 
  
-SET @tableHTML += @Style + @tableHTML + N'<H2>Reporte de Registros Modificados en las tablas de Afiliados del INABIMA.' + CAST(@ReportingDate  AS CHAR(10)) + '</H2>'
+SET @tableHTML += @Style + @tableHTML + N'<H2>Reporte de 
+Registros Modificados en las tablas de Afiliados del INABIMA.' + 
+CAST(@ReportingDate  AS CHAR(10)) + '</H2>'
+
 
 +  N'<table class="tg">' --DEFINE TABLE
 
@@ -6846,11 +7092,15 @@ Define data for table and cast to xml
 */
     + CAST(( SELECT --a.[Id]
 	 td=		 'Cedula: ' +a.[Cag_Cedula] , ''
-	  ,td=		  a.[Cag_Nombre1] + ' '+ isnull(a.[Cag_Nombre2],'') + ' ' + isnull( [Cag_Apellido1],'') + ' ' + isnull( [Cag_Apellido2],'')  , ''
-	  ,td=		 Case a.[Cag_Sexo] when 'M' then 'Masculino' when 'F' then 'Femenino' else '-------' end , ''
+	  ,td=		  a.[Cag_Nombre1] + ' '+ isnull(a.[Cag_Nombre2],
+      '') + ' ' + isnull( [Cag_Apellido1],'') + ' ' + isnull( 
+        [Cag_Apellido2],'')  , ''
+	  ,td=		 Case a.[Cag_Sexo] when 'M' then 'Masculino' 
+      when 'F' then 'Femenino' else '-------' end , ''
       ,td=		 a.[Cag_Sueldo] , ''
       ,td=		 a.[Cag_FIngreso] , ''
-	  ,td=		 Case a.[cag_esdocente] when 1 then 'Docente' else 'No Docente' end , ''
+	  ,td=		 Case a.[cag_esdocente] when 1 then 'Docente' 
+      else 'No Docente' end , ''
       ,td=		 substring( a.[audit_Action],0,17) , ''
       ,td=		 a.[FechaRegistroAudi]  , ''
       ,td=		 a.[Computername] , ''
@@ -6889,7 +7139,7 @@ where ENVIADO != 1
 
 end
 ~~~
-## ==================================================================
+# 
 
 
 ###  Este reporte tiene la particularidad de tener un archivo de Css integrado en el es decir los estilos se manejan a traves de una variable Styles.
@@ -6900,7 +7150,7 @@ end
 
 
 procedimiento Sp_CDRReportTotal2 se ejecuta para colocar los datos de forma que puedan ser consumidos por el excel 
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -6976,7 +7226,7 @@ go
 
 
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -7012,7 +7262,7 @@ SELECT [Date]
 
 GO
 ~~~
-## ==================================================================
+# 
 
 
 
@@ -7021,17 +7271,24 @@ GO
 
 ## Crear Linked Server
 #### Lo primero que haremos será crear nuestro Linked Server, la interfaz de servicio de Active Directory, también conocida como ASDI, a Active Directory usando el siguiente código:
-## ==================================================================
+# 
 
 
 ~~~sql
 USE [master]
 GO
 
-/****** Object:  LinkedServer [ADSI]    Script Date: 28/11/2022 11:12:50 a.m. ******/
-EXEC master.dbo.sp_addlinkedserver @server = N'ADSI', @srvproduct=N'Active Directory Service Interfaces', @provider=N'ADSDSOObject', @datasrc=N'adsdatasource'
+/****** Object:  LinkedServer [ADSI]    
+Script Date: 28/11/2022 11:12:50 a.m. ******/
+EXEC master.dbo.sp_addlinkedserver @server = N'ADSI', 
+@srvproduct=N'Active Directory Service Interfaces', 
+@provider=N'ADSDSOObject', @datasrc=N'adsdatasource'
+
  /* For security reasons the linked server remote logins password is changed with ######## */
-EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname=N'ADSI',@useself=N'False',@locallogin=NULL,@rmtuser=N'INABIMASD\Administrator',@rmtpassword='########'
+EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname=N'ADSI',
+@useself=N'False',@locallogin=NULL,
+@rmtuser=N'INABIMASD\Administrator',@rmtpassword='########'
+
 GO
 
 EXEC master.dbo.sp_serveroption @server=N'ADSI', @optname=N'collation compatible', @optvalue=N'false'
@@ -7073,7 +7330,7 @@ GO
 EXEC master.dbo.sp_serveroption @server=N'ADSI', @optname=N'remote proc transaction promotion', @optvalue=N'true'
 GO
 ~~~
-## ==================================================================
+# 
 
 
 #
@@ -7088,7 +7345,7 @@ GO
 #### **/OU=Jugadores** - esta es la Unidad de Organización, en nuestro caso (Jugadores)
 #### ,**DC**: este es el nombre de dominio dividido por nombre de dominio y extensión
 #### Entonces... LDAP://DomainControllerName.com/OU=OrganizationalUnit,DC=DOMINIO,DC=NOMBRE
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -7126,7 +7383,7 @@ FROM  ''LDAP://inabimasd.local/CN=Users,DC=inabimasd,DC=local''
 --WHERE objectClass =  ''''
 ~~~
 #
-## ==================================================================
+# 
 
 
 # Listar jobs SQL Server<a name="listajob28"></a>
@@ -7293,7 +7550,7 @@ WHERE Next_run_time <> 0
 
 ORDER BY [Start Date],[Start Time]
 ~~~
-## ==================================================================
+# 
 
 
 #
@@ -7303,7 +7560,7 @@ ORDER BY [Start Date],[Start Time]
 #### En esta publicación, le mostraré una consulta que le permite enumerar varias propiedades de los trabajos del Agente SQL Server, incluidos horarios, pasos, comandos ejecutados, categorías y mucho más. Esto es especialmente útil para la auditoría y el inventario de rutina.
 
 #### Traté de crear un script completo, enumerando prácticamente todas las propiedades de Trabajos, Pasos y Horarios, donde el trabajo aparecerá más de una vez en la lista si tiene más de 1 paso u horario.
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -7337,12 +7594,17 @@ SELECT
     END AS [StepType] ,
     [sPROX].[name] AS [RunAs] ,
     [sJSTP].[database_name] AS [Database] ,
-    REPLACE(REPLACE(REPLACE([sJSTP].[command], CHAR(10) + CHAR(13), ' '), CHAR(13), ' '), CHAR(10), ' ') AS [ExecutableCommand] ,
+    REPLACE(REPLACE(REPLACE([sJSTP].[command], 
+    CHAR(10) + CHAR(13), ' '), CHAR(13), ' '), 
+    CHAR(10), ' ') AS [ExecutableCommand] ,
     CASE [sJSTP].[on_success_action]
       WHEN 1 THEN 'Quit the job reporting success'
       WHEN 2 THEN 'Quit the job reporting failure'
       WHEN 3 THEN 'Go to the next step'
-      WHEN 4 THEN 'Go to Step: ' + QUOTENAME(CAST([sJSTP].[on_success_step_id] AS VARCHAR(3))) + ' ' + [sOSSTP].[step_name]
+      WHEN 4 THEN 'Go to Step: ' +
+       QUOTENAME(CAST([sJSTP].[on_success_step_id]
+       
+       AS VARCHAR(3))) + ' ' + [sOSSTP].[step_name]
     END AS [OnSuccessAction] ,
     [sJSTP].[retry_attempts] AS [RetryAttempts] ,
     [sJSTP].[retry_interval] AS [RetryInterval (Minutes)] ,
@@ -7350,7 +7612,9 @@ SELECT
       WHEN 1 THEN 'Quit the job reporting success'
       WHEN 2 THEN 'Quit the job reporting failure'
       WHEN 3 THEN 'Go to the next step'
-      WHEN 4 THEN 'Go to Step: ' + QUOTENAME(CAST([sJSTP].[on_fail_step_id] AS VARCHAR(3))) + ' ' + [sOFSTP].[step_name]
+      WHEN 4 THEN 'Go to Step: ' + QUOTENAME(CAST([sJSTP].
+      [on_fail_step_id] AS VARCHAR(3))) + ' ' + [sOFSTP].
+      [step_name]
     END AS [OnFailureAction],
     CASE
         WHEN [sSCH].[schedule_uid] IS NULL THEN 'No'
@@ -7382,7 +7646,10 @@ SELECT
                 + CASE WHEN [sSCH].[freq_interval] & 16 = 16 THEN ', Thursday' ELSE '' END
                 + CASE WHEN [sSCH].[freq_interval] & 32 = 32 THEN ', Friday' ELSE '' END
                 + CASE WHEN [sSCH].[freq_interval] & 64 = 64 THEN ', Saturday' ELSE '' END
-        WHEN 16 THEN 'Occurs on Day ' + CAST([freq_interval] AS VARCHAR(3)) + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+        WHEN 16 THEN 'Occurs on Day ' + CAST([freq_interval] AS
+         VARCHAR(3)) + ' of every ' + CAST([sSCH].
+         [freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+
         WHEN 32 THEN 'Occurs on '
                  + CASE [sSCH].[freq_relative_interval]
                     WHEN 1 THEN 'First'
@@ -7407,10 +7674,38 @@ SELECT
                  + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
     END AS [Recurrence], 
     CASE [sSCH].[freq_subday_type]
-        WHEN 1 THEN 'Occurs once at ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_start_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
-        WHEN 2 THEN 'Occurs every ' + CAST([sSCH].[freq_subday_interval] AS VARCHAR(3)) + ' Second(s) between ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_start_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')+ ' & ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_end_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
-        WHEN 4 THEN 'Occurs every ' + CAST([sSCH].[freq_subday_interval] AS VARCHAR(3)) + ' Minute(s) between ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_start_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')+ ' & ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_end_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
-        WHEN 8 THEN 'Occurs every ' + CAST([sSCH].[freq_subday_interval] AS VARCHAR(3)) + ' Hour(s) between ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_start_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')+ ' & ' + STUFF(STUFF(RIGHT('000000' + CAST([sSCH].[active_end_time] AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
+        WHEN 1 THEN 'Occurs once at ' + STUFF(STUFF(RIGHT
+        ('000000' + CAST([sSCH].[active_start_time] 
+        AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
+        WHEN 2 THEN 'Occurs every ' +
+         CAST([sSCH].[freq_subday_interval] AS VARCHAR(3))
+          + ' Second(s) between ' 
+          + STUFF(STUFF(RIGHT('000000' 
+          + CAST([sSCH].[active_start_time] 
+          AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
+          + ' & ' + STUFF(STUFF(RIGHT('000000' 
+          + CAST([sSCH].[active_end_time] 
+          AS VARCHAR(6)), 6), 3, 0, ':')
+          , 6, 0, ':')
+        WHEN 4 THEN 'Occurs every ' 
+        + CAST([sSCH].[freq_subday_interval] 
+        AS VARCHAR(3)) + ' Minute(s) between ' 
+        + STUFF(STUFF(RIGHT('000000' 
+        + CAST([sSCH].[active_start_time] 
+        AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
+        + ' & ' + STUFF(STUFF(RIGHT('000000' 
+        + CAST([sSCH].[active_end_time] 
+        AS VARCHAR(6)), 6), 3, 0, ':')
+        , 6, 0, ':')
+        WHEN 8 THEN 'Occurs every ' 
+        + CAST([sSCH].[freq_subday_interval] 
+        AS VARCHAR(3)) + ' Hour(s) between ' 
+        + STUFF(STUFF(RIGHT('000000' 
+        + CAST([sSCH].[active_start_time] 
+        AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
+        + ' & ' + STUFF(STUFF(RIGHT('000000' 
+        + CAST([sSCH].[active_end_time] 
+        AS VARCHAR(6)), 6), 3, 0, ':'), 6, 0, ':')
     END [Frequency], 
     STUFF(STUFF(CAST([sSCH].[active_start_date] AS VARCHAR(8)), 5, 0, '-'), 8, 0, '-') AS [ScheduleUsageStartDate], 
     STUFF(STUFF(CAST([sSCH].[active_end_date] AS VARCHAR(8)), 5, 0, '-'), 8, 0, '-') AS [ScheduleUsageEndDate], 
@@ -7425,18 +7720,27 @@ SELECT
 FROM
     [msdb].[dbo].[sysjobsteps] AS [sJSTP]
     INNER JOIN [msdb].[dbo].[sysjobs] AS [sJOB] ON [sJSTP].[job_id] = [sJOB].[job_id]
-    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOSSTP] ON [sJSTP].[job_id] = [sOSSTP].[job_id] AND [sJSTP].[on_success_step_id] = [sOSSTP].[step_id]
-    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOFSTP] ON [sJSTP].[job_id] = [sOFSTP].[job_id] AND [sJSTP].[on_fail_step_id] = [sOFSTP].[step_id]
-    LEFT JOIN [msdb].[dbo].[sysproxies] AS [sPROX] ON [sJSTP].[proxy_id] = [sPROX].[proxy_id]
-    LEFT JOIN [msdb].[dbo].[syscategories] AS [sCAT] ON [sJOB].[category_id] = [sCAT].[category_id]
-    LEFT JOIN [msdb].[sys].[database_principals] AS [sDBP] ON [sJOB].[owner_sid] = [sDBP].[sid]
-    LEFT JOIN [msdb].[dbo].[sysjobschedules] AS [sJOBSCH] ON [sJOB].[job_id] = [sJOBSCH].[job_id]
-    LEFT JOIN [msdb].[dbo].[sysschedules] AS [sSCH] ON [sJOBSCH].[schedule_id] = [sSCH].[schedule_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] 
+    AS [sOSSTP] ON [sJSTP].[job_id] = [sOSSTP].[job_id] AND 
+    [sJSTP].[on_success_step_id] = [sOSSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] 
+    AS [sOFSTP] ON [sJSTP].[job_id] = [sOFSTP].[job_id] 
+    AND [sJSTP].[on_fail_step_id] = [sOFSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysproxies] 
+    AS [sPROX] ON [sJSTP].[proxy_id] = [sPROX].[proxy_id]
+    LEFT JOIN [msdb].[dbo].[syscategories] 
+    AS [sCAT] ON [sJOB].[category_id] = [sCAT].[category_id]
+    LEFT JOIN [msdb].[sys].[database_principals] 
+    AS [sDBP] ON [sJOB].[owner_sid] = [sDBP].[sid]
+    LEFT JOIN [msdb].[dbo].[sysjobschedules] 
+    AS [sJOBSCH] ON [sJOB].[job_id] = [sJOBSCH].[job_id]
+    LEFT JOIN [msdb].[dbo].[sysschedules] 
+    AS [sSCH] ON [sJOBSCH].[schedule_id] = [sSCH].[schedule_id]
 ORDER BY
     [JobName] ,
     [StepNo]
 ~~~
-## ==================================================================
+# 
 
 
 # 
@@ -7530,7 +7834,9 @@ WHERE s.is_user_process = 0;
 
      Sugerencia
 
-    Para más información sobre el uso de más de 64 CPU lógicas, consulte Procedimientos recomendados para ejecutar SQL Server en equipos que tienen más de 64 CPU.
+    Para más información sobre el uso de más de 64 CPU lógicas,
+     consulte Procedimientos recomendados para ejecutar SQL 
+     Server en equipos que tienen más de 64 CPU.
 
 - Si todos los subprocesos de trabajo están activos con consultas de ejecución prolongada, puede parecer que SQL Server no responde hasta que finaliza un subproceso de trabajo y vuelve a estar disponible. Aunque no se trata de un defecto, puede que a veces este comportamiento no sea deseable. Si un proceso parece no responder y no se pueden procesar nuevas consultas, conéctese a SQL Server mediante la conexión de administrador dedicada (DAC) y finalice el proceso. Para impedir este comportamiento, aumente el número máximo de subprocesos de trabajo.
 
@@ -7546,9 +7852,15 @@ WHERE s.is_user_process = 0;
 
     Sugerencia
 
-    Utilice la opción max worker threads para configurar el número de subprocesos de trabajo disponibles para procesos de SQL Server . El valor predeterminado de la opción max worker threads es el óptimo para la mayor parte de los sistemas.
+    Utilice la opción max worker threads para configurar el 
+    número de subprocesos de trabajo disponibles para procesos 
+    de SQL Server . El valor predeterminado de la opción max 
+    worker threads es el óptimo para la mayor parte de los sistemas.
 
-    No obstante, dependiendo de la configuración del sistema, el uso de un valor inferior para el máximo de subprocesos de trabajo puede mejorar el rendimiento a veces. Para más información, consulte la sección Recomendaciones de este artículo.
+    No obstante, dependiendo de la configuración del sistema,
+     el uso de un valor inferior para el máximo de subprocesos
+      de trabajo puede mejorar el rendimiento a veces. Para más 
+      información, consulte la sección Recomendaciones de este artículo.
 
 # Uso de Transact-SQL
   1 Conéctese con el Motor de base de datos.
@@ -7598,7 +7910,7 @@ Recuerda que realizar cambios en la configuración de SQL Server puede tener imp
 
 
 # Query para saber la max/memory que esta apliaca a un servidor Sql Server<a name="querymamemory"></a>
-![Max Memory Best Practices](https://straightpathsql.com/wp-content/uploads/2017/02/MaxMemory.png)
+![Max Memory Best Practices](https://soundtrax.typepad.com/.a/6a00d834539b6d69e201a73e0cc9d8970d-pi)
 #### La siguiente consulta devuelve información sobre los valores actualmente configurados y el valor actualmente en uso. Esta consulta devolverá resultados independientemente de si la opción "mostrar opciones avanzadas" de sp_configure está habilitada.
 
 
@@ -7695,20 +8007,25 @@ SELECT a3.name + '.' + a2.name AS [name],
    (a1.reserved + ISNULL(a4.reserved, 0)) * 8 AS [Reserved KB], 
    a1.data * 8 AS [Data KB], 
    (CASE
+
         WHEN(a1.used + ISNULL(a4.used, 0)) > a1.data
+
         THEN(a1.used + ISNULL(a4.used, 0)) - a1.data
+
         ELSE 0
     END) * 8 AS [Index_size KB], 
    (CASE
         WHEN(a1.reserved + ISNULL(a4.reserved, 0)) > a1.used
+
+
         THEN(a1.reserved + ISNULL(a4.reserved, 0)) - a1.used
         ELSE 0
     END) * 8 AS [unused KB], 
    CONVERT(DECIMAL(18, 2), (((a1.reserved + ISNULL(a4.reserved, 0)) * 8) - ((CASE
-                                                                                 WHEN(a1.reserved + ISNULL(a4.reserved, 0)) > a1.used
-                                                                                 THEN(a1.reserved + ISNULL(a4.reserved, 0)) - a1.used
-                                                                                 ELSE 0
-                                                                             END) * 8)) / 1024.0 / 1024.0) AS [Table_used_Space GB]
+    WHEN(a1.reserved + ISNULL(a4.reserved, 0)) > a1.used
+    THEN(a1.reserved + ISNULL(a4.reserved, 0)) - a1.used
+    ELSE 0
+    END) * 8)) / 1024.0 / 1024.0) AS [Table_used_Space GB]
 FROM
 (
 SELECT ps.object_id, 
@@ -7799,7 +8116,7 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 #### Para evitar el deterioro del rendimiento en nuestro servidor, deberemos mantener nuestros índices en un estado de fragmentación óptimo. Lo podremos lograr sencillamente siguiendo estos pasos.
 
 #### Primer paso: detectar fragmentación en los índices de tu base de datos. Para ello, nos basaremos en la vista de sistema sys.dm_db_index_physical_stats, que encapsularemos en la siguiente query:
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -7807,20 +8124,25 @@ SELECT DB_NAME(database_id) AS DatabaseName, database_id,
 OBJECT_NAME(ips.object_id) AS TableName, ips.object_id,
 i.name AS IndexName, i.index_id, p.rows,
 ips.partition_number, index_type_desc, alloc_unit_type_desc, index_depth, index_level,
-avg_fragmentation_in_percent, fragment_count, avg_fragment_size_in_pages, page_count,
-avg_page_space_used_in_percent, record_count, ghost_record_count, version_ghost_record_count, min_record_size_in_bytes,
-max_record_size_in_bytes, avg_record_size_in_bytes, forwarded_record_count
+avg_fragmentation_in_percent, fragment_count, 
+avg_fragment_size_in_pages, page_count,
+
+avg_page_space_used_in_percent, record_count, 
+ghost_record_count, version_ghost_record_count, 
+min_record_size_in_bytes,
+max_record_size_in_bytes, avg_record_size_in_bytes, 
+forwarded_record_count
 FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED') ips
 INNER JOIN sys.indexes i ON i.object_id = ips.object_id AND i.index_id = ips.index_id
 INNER JOIN sys.partitions p ON p.object_id = i.object_id AND p.index_id = i.index_id
 WHERE avg_fragmentation_in_percent > 10.0 AND ips.index_id > 0 AND page_count > 1000
 ORDER BY avg_fragmentation_in_percent DESC
 ~~~
-## ==================================================================
+# 
 
 
 #### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
-## ==================================================================
+# 
 
 
 ~~~sql
@@ -7874,11 +8196,14 @@ WHILE (1=1)
 
 -- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
         IF @frag < 30.0
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REORGANIZE';
+            SET @command = N'ALTER INDEX ' 
+            + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REORGANIZE';
         IF @frag >= 30.0
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE=ON)';
+            SET @command = N'ALTER INDEX ' 
+            + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE=ON)';
         IF @partitioncount > 1
-            SET @command = @command + N' PARTITION=' + CAST(@partitionnum AS nvarchar(10));
+            SET @command = @command + N' PARTITION=' 
+            + CAST(@partitionnum AS nvarchar(10));
         EXEC (@command);
         PRINT N'Executed: ' + @command;
     END;
@@ -7892,7 +8217,7 @@ DEALLOCATE partitions;
 DROP TABLE #work_to_do;
 GO
 ~~~
-## ==================================================================
+# 
 
 
 # Para sacar una base de datos de modo restoring solo debemos ejecutar este código.<a name="sacarrestoring"></a>
