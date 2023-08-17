@@ -141,7 +141,7 @@
      - 29.7.1 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
 
  - 30 [Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight](#foglight1)
-
+ - 31 [Defragmentación, al rescate, Servidores AlwaysOn Interprise Edition](#desfragmentacionalrescate2)
 
 
 <!-- ConsultasEflowCitas -->
@@ -7787,6 +7787,111 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 
 ## **Conclusion:**
 #### Siguiendo estos pasos, podrá habilitar conexiones a a los servidores de Internet BANKING en los agentes Foglight, mejorando la conectividad y asegurando una comunicación fluida con recursos en línea. Recuerde que estos cambios deben aplicarse con precaución y se recomienda mantener un registro de las modificaciones realizadas para futuras referencias. Ademas los mismos solo afectanran los servidores de INTERNET BANKING  en caso de los mismo no tener comunicacion.
+
+
+
+
+# 
+
+# Defragmentación, al rescate (ONLINE=ON)<a name="desfragmentacionalrescate2"></a>
+![](https://greyphillips.com/Guides/assets/img/Database_Maintenance.png)
+#### Para evitar el deterioro del rendimiento en nuestro servidor, deberemos mantener nuestros índices en un estado de fragmentación óptimo. Lo podremos lograr sencillamente siguiendo estos pasos.
+
+#### Primer paso: detectar fragmentación en los índices de tu base de datos. Para ello, nos basaremos en la vista de sistema sys.dm_db_index_physical_stats, que encapsularemos en la siguiente query:
+## ==================================================================
+
+
+~~~sql
+SELECT DB_NAME(database_id) AS DatabaseName, database_id, 
+OBJECT_NAME(ips.object_id) AS TableName, ips.object_id,
+i.name AS IndexName, i.index_id, p.rows,
+ips.partition_number, index_type_desc, alloc_unit_type_desc, index_depth, index_level,
+avg_fragmentation_in_percent, fragment_count, avg_fragment_size_in_pages, page_count,
+avg_page_space_used_in_percent, record_count, ghost_record_count, version_ghost_record_count, min_record_size_in_bytes,
+max_record_size_in_bytes, avg_record_size_in_bytes, forwarded_record_count
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED') ips
+INNER JOIN sys.indexes i ON i.object_id = ips.object_id AND i.index_id = ips.index_id
+INNER JOIN sys.partitions p ON p.object_id = i.object_id AND p.index_id = i.index_id
+WHERE avg_fragmentation_in_percent > 10.0 AND ips.index_id > 0 AND page_count > 1000
+ORDER BY avg_fragmentation_in_percent DESC
+~~~
+## ==================================================================
+
+
+#### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
+## ==================================================================
+
+
+~~~sql
+-- Ensure a USE  statement has been executed first.
+SET NOCOUNT ON;
+DECLARE @objectid int;
+DECLARE @indexid int;
+DECLARE @partitioncount bigint;
+DECLARE @schemaname nvarchar(130);
+DECLARE @objectname nvarchar(130);
+DECLARE @indexname nvarchar(130);
+DECLARE @partitionnum bigint;
+DECLARE @partitions bigint;
+DECLARE @frag float;
+DECLARE @command nvarchar(4000);
+
+-- Conditionally select tables and indexes from the sys.dm_db_index_physical_stats function
+-- and convert object and index IDs to names.
+SELECT
+    object_id AS objectid,
+    index_id AS indexid,
+    partition_number AS partitionnum,
+    avg_fragmentation_in_percent AS frag
+INTO #work_to_do
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED')
+WHERE avg_fragmentation_in_percent >  10.0 AND index_id > 0 AND page_count > 1000;
+
+-- Declare the cursor for the list of partitions to be processed.
+DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
+
+-- Open the cursor.
+OPEN partitions;
+
+-- Loop through the partitions.
+WHILE (1=1)
+    BEGIN;
+        FETCH NEXT
+           FROM partitions
+           INTO @objectid, @indexid, @partitionnum, @frag;
+        IF @@FETCH_STATUS < 0 BREAK;
+        SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
+        FROM sys.objects AS o
+        JOIN sys.schemas as s ON s.schema_id = o.schema_id
+        WHERE o.object_id = @objectid;
+        SELECT @indexname = QUOTENAME(name)
+        FROM sys.indexes
+        WHERE  object_id = @objectid AND index_id = @indexid;
+        SELECT @partitioncount = count (*)
+        FROM sys.partitions
+        WHERE object_id = @objectid AND index_id = @indexid;
+
+-- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
+        IF @frag < 30.0
+            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REORGANIZE';
+        IF @frag >= 30.0
+            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE=ON)';
+        IF @partitioncount > 1
+            SET @command = @command + N' PARTITION=' + CAST(@partitionnum AS nvarchar(10));
+        EXEC (@command);
+        PRINT N'Executed: ' + @command;
+    END;
+
+
+-- Close and deallocate the cursor.
+CLOSE partitions;
+
+DEALLOCATE partitions;
+-- Drop the temporary table.
+DROP TABLE #work_to_do;
+GO
+~~~
+## ==================================================================
 
 
 
