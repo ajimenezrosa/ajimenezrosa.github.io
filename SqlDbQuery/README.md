@@ -8280,11 +8280,15 @@ for ($i = 0; $i -lt $serverInstances.Length; $i++) {
 
 # 
 ~~~sql
+DECLARE @ServerName NVARCHAR(128) = 'NombreDelServidor'
+DECLARE @InstanceName NVARCHAR(128) = 'NombreDeLaInstancia'
 DECLARE @DatabaseName NVARCHAR(128)
 DECLARE @SQL NVARCHAR(MAX)
 
 -- Crear una tabla temporal para almacenar los resultados
 CREATE TABLE #TableList (
+    ServerName NVARCHAR(128),
+    InstanceName NVARCHAR(128),
     DatabaseName NVARCHAR(128),
     SchemaName NVARCHAR(128),
     TableName NVARCHAR(128)
@@ -8303,8 +8307,8 @@ FETCH NEXT FROM db_cursor INTO @DatabaseName
 WHILE @@FETCH_STATUS = 0
 BEGIN
     SET @SQL = 'USE [' + @DatabaseName + '];
-                INSERT INTO #TableList (DatabaseName, SchemaName, TableName)
-                SELECT ''' + @DatabaseName + ''', s.name, t.name
+                INSERT INTO #TableList (ServerName, InstanceName, DatabaseName, SchemaName, TableName)
+                SELECT ''' + @ServerName + ''', ''' + @InstanceName + ''', ''' + @DatabaseName + ''', s.name, t.name
                 FROM [' + @DatabaseName + '].sys.tables t
                 INNER JOIN [' + @DatabaseName + '].sys.schemas s ON t.schema_id = s.schema_id;'
 
@@ -8319,9 +8323,11 @@ DEALLOCATE db_cursor
 
 -- Obtener los resultados
 SELECT * FROM #TableList
+ORDER BY ServerName, DatabaseName, TableName
 
 -- Eliminar la tabla temporal
 DROP TABLE #TableList
+
 ~~~
 # 
 ### Esta consulta utiliza un cursor para recorrer todas las bases de datos en el servidor (excluyendo las bases de datos del sistema) y luego ejecuta una consulta dinámica en cada base de datos para obtener las tablas y sus nombres de esquema. Los resultados se almacenan en una tabla temporal `#TableList` y finalmente se muestran. Recuerda que el uso excesivo de cursores y consultas dinámicas puede afectar el rendimiento, por lo que debes considerar esta consulta con cuidado, especialmente en entornos de producción con muchas bases de datos y tablas.
