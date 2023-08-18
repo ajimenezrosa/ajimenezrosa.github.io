@@ -8282,12 +8282,6 @@ for ($i = 0; $i -lt $serverInstances.Length; $i++) {
 ~~~sql
 DECLARE @DatabaseName NVARCHAR(128)
 DECLARE @SQL NVARCHAR(MAX)
-DECLARE @ServerName NVARCHAR(128)
-DECLARE @InstanceName NVARCHAR(128)
-
--- Obtener el nombre del servidor y la instancia
-SELECT @ServerName = CAST(SERVERPROPERTY('MachineName') AS NVARCHAR(128))
-SELECT @InstanceName = CAST(SERVERPROPERTY('InstanceName') AS NVARCHAR(128))
 
 -- Crear una tabla temporal para almacenar los resultados
 CREATE TABLE #TableList (
@@ -8312,7 +8306,7 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
     SET @SQL = 'USE [' + @DatabaseName + '];
                 INSERT INTO #TableList (ServerName, InstanceName, DatabaseName, SchemaName, TableName)
-                SELECT ''' + @ServerName + ''', ''' + @InstanceName + ''', ''' + @DatabaseName + ''', s.name, t.name
+                SELECT @@SERVERNAME, CAST(SERVERPROPERTY(''InstanceName'') AS NVARCHAR(128)), ''' + @DatabaseName + ''', s.name, t.name
                 FROM [' + @DatabaseName + '].sys.tables t
                 INNER JOIN [' + @DatabaseName + '].sys.schemas s ON t.schema_id = s.schema_id;'
 
