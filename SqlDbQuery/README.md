@@ -150,6 +150,8 @@
  - 35 [Aquí tenemos  una consulta simple que lista todas las bases de datos en un servidor SQL Server:](#listabasedatos)
 
 
+ - [Sacar servidores con sus bases de datos usando PowerShell](#powershellserverydbhtml)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8347,6 +8349,119 @@ ORDER BY name;
 ~~~
 # 
 #### Esta consulta selecciona el nombre de todas las bases de datos en el sistema que estén en estado en línea (`state_desc = 'ONLINE'`) y tengan un `database_id` mayor que 4. Los valores de `database_id` 1 a 4 corresponden a bases de datos del sistema, por lo que se excluyen de la lista.
+
+
+
+# 
+
+## Sacar servidores con sus bases de datos usando PowerShell<a name="powershellserverydbhtml"></a>
+# 
+#### Este código ejecutará la consulta proporcionada en cada uno de los servidores en el archivo server_instances.txt y mostrará los resultados. Cabe mencionar que este código solo muestra los resultados en la consola de PowerShell. Si deseas adaptarlo para generar archivos HTML como antes, puedes usar la estructura y el estilo que hemos discutido en las respuestas anteriores.
+# 
+~~~sql
+$serverInstances = Get-Content -Path "C:\PWtablas\server_instances.txt"
+
+$databases = "master"
+
+$queries = "DECLARE @ServerName NVARCHAR(128) = @@SERVERNAME DECLARE @InstanceName NVARCHAR(128) = CAST(SERVERPROPERTY('InstanceName') AS NVARCHAR(128))  SELECT @ServerName AS ServerName, @InstanceName AS InstanceName, name AS DatabaseName FROM sys.databases WHERE state_desc = 'ONLINE' AND database_id > 4 ORDER BY name;"
+
+$htmlFilePath = "C:\PWtablas\html\ServidoresyBasedatosytablasHtml_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+$notFoundFilePath = "C:\PWtablas\html\ServidoresNoEncontrados_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+
+$blueColor = "#1E3D5C"
+$whiteColor = "#FFFFFF"
+
+$htmlHeader = @"
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    h2 {
+        color: $whiteColor;
+        background-color: $blueColor;
+        padding: 10px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        background-color: $blueColor;
+        color: $whiteColor;
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+"@
+
+$htmlFooter = @"
+</body>
+</html>
+"@
+
+$htmlResults = @()
+
+for ($i = 0; $i -lt $serverInstances.Length; $i++) {
+    $serverInstance = $serverInstances[$i]
+    
+    $result = Invoke-Sqlcmd -ServerInstance $serverInstance -Database $databases -Query $queries -ErrorAction SilentlyContinue
+    if ($result) {
+        $htmlResults += $result
+    }
+    else {
+        Write-Host "Failed to execute query on ServerInstance: $serverInstance"
+    }
+}
+
+# Remove duplicates from $htmlResults
+$htmlResults = $htmlResults | Select-Object -Property ServerName, InstanceName, DatabaseName -Unique
+
+# Find servers not read
+$notFoundServers = Compare-Object $serverInstances $htmlResults.ServerName | Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
+
+$htmlContent = $htmlHeader
+$htmlContent += "<h2>Bases de datos Por Servidor del Banco Popular Dominicano</h2>"
+$htmlContent += "<table>"
+$htmlContent += "<tr><th>Servidor</th><th>Instancia</th><th>Base de Datos</th></tr>"
+$htmlContent += $htmlResults | ForEach-Object {
+    "<tr><td>$($_.ServerName)</td><td>$($_.InstanceName)</td><td>$($_.DatabaseName)</td></tr>"
+}
+$htmlContent += "</table>"
+$htmlContent += $htmlFooter
+
+$notFoundContent = $htmlHeader
+$notFoundContent += "<h2>Servidores no encontrados</h2>"
+if ($notFoundServers.Count -gt 0) {
+    $notFoundContent += "<ul>"
+    foreach ($server in $notFoundServers) {
+        $notFoundContent += "<li>$server</li>"
+    }
+    $notFoundContent += "</ul>"
+} else {
+    $notFoundContent += "<p>No se encontraron servidores no leídos.</p>"
+}
+$notFoundContent += $htmlFooter
+
+$htmlContent | Set-Content -Path $htmlFilePath -Force
+$notFoundContent | Set-Content -Path $notFoundFilePath -Force
+
+Write-Host "Proceso finalizado. Archivos HTML generados:"
+Write-Host $htmlFilePath
+Write-Host $notFoundFilePath
+
+~~~
+# 
 
 
 
