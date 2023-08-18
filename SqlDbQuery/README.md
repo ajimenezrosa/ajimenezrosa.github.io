@@ -145,6 +145,11 @@
  - 32 [Para sacar una base de datos de modo restoring solo debemos ejecutar este código.](#sacarrestoring)
  - 33 [Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell](#powershellsqlserver)
 
+ - 34 [ lista de todas las tablas de todas las bases de datos en un servidor SQL Server](#listadbytablasserver)
+
+ - 35 [Aquí tenemos  una consulta simple que lista todas las bases de datos en un servidor SQL Server:](#listabasedatos)
+
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8245,7 +8250,7 @@ RESTORE DATABASE nombre WITH RECOVERY;
 
 3. Luego, puedes usar el siguiente script en PowerShell para leer los valores de los archivos y ejecutar las consultas:
 
-```powershell
+~~~Powershell
 $serverInstances = Get-Content -Path "server_instances.txt"
 $databases = Get-Content -Path "databases.txt"
 $queries = Get-Content -Path "queries.txt"
@@ -8259,12 +8264,79 @@ for ($i = 0; $i -lt $serverInstances.Length; $i++) {
     
     Invoke-Sqlcmd -ServerInstance $serverInstance -Database $database -Query $query
 }
-```
+~~~
 
 #### Este script lee los valores de los archivos de texto línea por línea y ejecuta las consultas con los valores correspondientes de `-ServerInstance`, `-Database` y `-Query`. Asegúrate de que los archivos de texto tengan el mismo número de líneas y que las líneas correspondientes en los archivos contengan información coherente entre sí.
 
 #### Recuerda que este script asume que las rutas a los archivos de texto son los mismos directorios desde donde se ejecuta el script. Si los archivos están en diferentes ubicaciones, asegúrate de ajustar las rutas en la función `Get-Content`.
 
+
+# 
+
+
+## Para obtener una lista de todas las tablas de todas las bases de datos en un servidor SQL Server, puedes utilizar la siguiente consulta:<a name="listadbytablasserver"></a>
+# 
+![](https://allmastersolutions.com/wp-content/uploads/2017/01/2017-01-19-Ejecutar-consultas-SQL-Din%C3%A1micas.png)
+
+# 
+~~~sql
+DECLARE @DatabaseName NVARCHAR(128)
+DECLARE @SQL NVARCHAR(MAX)
+
+-- Crear una tabla temporal para almacenar los resultados
+CREATE TABLE #TableList (
+    DatabaseName NVARCHAR(128),
+    SchemaName NVARCHAR(128),
+    TableName NVARCHAR(128)
+)
+
+-- Cursor para recorrer todas las bases de datos
+DECLARE db_cursor CURSOR FOR
+SELECT name
+FROM sys.databases
+WHERE state_desc = 'ONLINE' AND database_id > 4
+
+-- Recorrer las bases de datos y obtener las tablas
+OPEN db_cursor
+FETCH NEXT FROM db_cursor INTO @DatabaseName
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @SQL = 'USE [' + @DatabaseName + '];
+                INSERT INTO #TableList (DatabaseName, SchemaName, TableName)
+                SELECT ''' + @DatabaseName + ''', s.name, t.name
+                FROM [' + @DatabaseName + '].sys.tables t
+                INNER JOIN [' + @DatabaseName + '].sys.schemas s ON t.schema_id = s.schema_id;'
+
+    EXEC sp_executesql @SQL
+
+    FETCH NEXT FROM db_cursor INTO @DatabaseName
+END
+
+-- Cerrar el cursor y eliminarlo
+CLOSE db_cursor
+DEALLOCATE db_cursor
+
+-- Obtener los resultados
+SELECT * FROM #TableList
+
+-- Eliminar la tabla temporal
+DROP TABLE #TableList
+~~~
+# 
+### Esta consulta utiliza un cursor para recorrer todas las bases de datos en el servidor (excluyendo las bases de datos del sistema) y luego ejecuta una consulta dinámica en cada base de datos para obtener las tablas y sus nombres de esquema. Los resultados se almacenan en una tabla temporal `#TableList` y finalmente se muestran. Recuerda que el uso excesivo de cursores y consultas dinámicas puede afectar el rendimiento, por lo que debes considerar esta consulta con cuidado, especialmente en entornos de producción con muchas bases de datos y tablas.
+
+# 
+
+## Aquí tenemos  una consulta simple que lista todas las bases de datos en un servidor SQL Server:<a name="listabasedatos"></a>
+
+~~~sql
+SELECT name
+FROM sys.databases
+WHERE state_desc = 'ONLINE' AND database_id > 4
+~~~
+
+#### Esta consulta selecciona el nombre de todas las bases de datos en el sistema que estén en estado en línea (`state_desc = 'ONLINE'`) y tengan un `database_id` mayor que 4. Los valores de `database_id` 1 a 4 corresponden a bases de datos del sistema, por lo que se excluyen de la lista.
 
 
 
