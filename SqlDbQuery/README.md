@@ -8359,6 +8359,14 @@ ORDER BY name;
 #### Este código ejecutará la consulta proporcionada en cada uno de los servidores en el archivo server_instances.txt y mostrará los resultados. Cabe mencionar que este código solo muestra los resultados en la consola de PowerShell. Si deseas adaptarlo para generar archivos HTML como antes, puedes usar la estructura y el estilo que hemos discutido en las respuestas anteriores.
 # 
 ~~~sql
+#==========================================================================================================#
+#Creado por Alejandro Jimenez Rosa                                                                         #
+#Fecha inicio Agosto 18 2023                                                                               #
+#Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
+#con su respectivas bases de datos.                                                                        #
+#Esta tarea duraria mas o menos 20 dias dedicando 10 horas diarias se se realiza de forma manual.          #
+#==========================================================================================================#
+
 $serverInstances = Get-Content -Path "C:\PWtablas\server_instances.txt"
 
 $databases = "master"
