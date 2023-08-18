@@ -8142,11 +8142,18 @@ ORDER BY avg_fragmentation_in_percent DESC
 
 
 #### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
+
+#### En esta versión modificada del script, se ha agregado la opción WITH (ONLINE = ON) en las instrucciones ALTER INDEX para que las operaciones se realicen en línea, lo que minimizará el bloqueo de las tablas y permitirá que las consultas y las inserciones continúen sin interrupciones. 
+
+####  También se ha incluido una condición adicional para decidir si se realiza una reconstrucción en línea basada en el tamaño de la tabla y el nivel de fragmentación. Las reorganizaciones se seguirán realizando en línea. 
+
+#### ***Debemos tener en cuenta que la disponibilidad de la opción ONLINE puede depender de la edición de SQL Server que estemos utilizando.***
+#####   ***Este query solo funciona con Sql Server Interprise Edition.***
 # 
 
 
 ~~~sql
--- Ensure a USE  statement has been executed first.
+-- Ensure a USE statement has been executed first.
 SET NOCOUNT ON;
 DECLARE @objectid int;
 DECLARE @indexid int;
@@ -8168,7 +8175,8 @@ SELECT
     avg_fragmentation_in_percent AS frag
 INTO #work_to_do
 FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED')
-WHERE avg_fragmentation_in_percent >  10.0 AND index_id > 0 AND page_count > 1000;
+WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+page_count > 1000;
 
 -- Declare the cursor for the list of partitions to be processed.
 DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
@@ -8194,28 +8202,30 @@ WHILE (1=1)
         FROM sys.partitions
         WHERE object_id = @objectid AND index_id = @indexid;
 
--- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
+        -- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
         IF @frag < 30.0
-            SET @command = N'ALTER INDEX ' 
-            + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REORGANIZE';
-        IF @frag >= 30.0
-            SET @command = N'ALTER INDEX ' 
-            + @indexname + N' ON ' + @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE=ON)';
-        IF @partitioncount > 1
-            SET @command = @command + N' PARTITION=' 
-            + CAST(@partitionnum AS nvarchar(10));
+            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+            @schemaname + N'.' + @objectname + N' REORGANIZE';
+        ELSE IF @frag >= 30.0 AND @partitioncount <= 1
+            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+            @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE = ON)';
+        ELSE IF @frag >= 30.0 AND @partitioncount > 1
+            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+            @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' + 
+            CAST(@partitionnum AS nvarchar(10)) + N' WITH (ONLINE = ON)';
+            
         EXEC (@command);
         PRINT N'Executed: ' + @command;
     END;
 
-
 -- Close and deallocate the cursor.
 CLOSE partitions;
-
 DEALLOCATE partitions;
+
 -- Drop the temporary table.
 DROP TABLE #work_to_do;
 GO
+
 ~~~
 # 
 
