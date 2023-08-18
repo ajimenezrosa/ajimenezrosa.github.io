@@ -8280,10 +8280,14 @@ for ($i = 0; $i -lt $serverInstances.Length; $i++) {
 
 # 
 ~~~sql
-DECLARE @ServerName NVARCHAR(128) = 'NombreDelServidor'
-DECLARE @InstanceName NVARCHAR(128) = 'NombreDeLaInstancia'
 DECLARE @DatabaseName NVARCHAR(128)
 DECLARE @SQL NVARCHAR(MAX)
+DECLARE @ServerName NVARCHAR(128)
+DECLARE @InstanceName NVARCHAR(128)
+
+-- Obtener el nombre del servidor y la instancia
+SELECT @ServerName = CAST(SERVERPROPERTY('MachineName') AS NVARCHAR(128))
+SELECT @InstanceName = CAST(SERVERPROPERTY('InstanceName') AS NVARCHAR(128))
 
 -- Crear una tabla temporal para almacenar los resultados
 CREATE TABLE #TableList (
@@ -8323,7 +8327,7 @@ DEALLOCATE db_cursor
 
 -- Obtener los resultados
 SELECT * FROM #TableList
-ORDER BY ServerName, DatabaseName, TableName
+ORDER BY ServerName, InstanceName, DatabaseName, TableName
 
 -- Eliminar la tabla temporal
 DROP TABLE #TableList
