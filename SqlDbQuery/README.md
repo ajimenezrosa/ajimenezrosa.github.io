@@ -8329,13 +8329,14 @@ DROP TABLE #TableList
 # 
 
 ## Aquí tenemos  una consulta simple que lista todas las bases de datos en un servidor SQL Server:<a name="listabasedatos"></a>
-
+![](https://4.bp.blogspot.com/-VetwnKIZI_g/U6WJWoQ4m3I/AAAAAAAAAXI/r2tB34lk6bU/s1600/db.jpg)
+# 
 ~~~sql
 SELECT name
 FROM sys.databases
 WHERE state_desc = 'ONLINE' AND database_id > 4
 ~~~
-
+# 
 #### Esta consulta selecciona el nombre de todas las bases de datos en el sistema que estén en estado en línea (`state_desc = 'ONLINE'`) y tengan un `database_id` mayor que 4. Los valores de `database_id` 1 a 4 corresponden a bases de datos del sistema, por lo que se excluyen de la lista.
 
 
