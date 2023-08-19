@@ -8491,8 +8491,9 @@ SELECT @Script = @Script +
     '@step_name=N''Step 1'', ' +
     -- Aquí puedes agregar más parámetros de paso según tus necesidades
     ' @subsystem=N''TSQL'', ' +
-    '@command=N''' + REPLACE(command_executesql, '''', '''''') + ''';' + CHAR(13) + CHAR(10)
-FROM dbo.sysjobs;
+    '@command=N''' + REPLACE(command, '''', '''''') + ''';' + CHAR(13) + CHAR(10)
+FROM dbo.sysjobs
+JOIN dbo.sysjobsteps ON sysjobs.job_id = sysjobsteps.job_id;
 
 -- Imprimir o guardar el script generado
 PRINT @Script;
