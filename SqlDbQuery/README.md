@@ -152,6 +152,8 @@
 
  - [Sacar servidores con sus bases de datos usando PowerShell](#powershellserverydbhtml)
 
+ - [Extraer todos los jobs de un servidor SQL server](#extraerjobssql)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8471,8 +8473,35 @@ Write-Host $notFoundFilePath
 ~~~
 # 
 
+##  Generar los scripts de los trabajos en tu servidor SQL Server. Recuerda siempre realizar pruebas en un entorno controlado antes de aplicar cambios en un entorno de producción.
+# 
+~~~sql
+USE msdb;
 
+DECLARE @Script NVARCHAR(MAX) = '';
 
+SELECT @Script = @Script + 
+    'EXEC msdb.dbo.sp_add_job ' +
+    '@job_name=N''' + name + ''', ' +
+    '@enabled=' + CASE WHEN enabled = 1 THEN '1' ELSE '0' END + ';' + CHAR(13) + CHAR(10) +
+    -- Aquí puedes agregar más parámetros según tus necesidades
+    -- ...
+    'EXEC msdb.dbo.sp_add_jobstep ' +
+    '@job_name=N''' + name + ''', ' +
+    '@step_name=N''Step 1'', ' +
+    -- Aquí puedes agregar más parámetros de paso según tus necesidades
+    ' @subsystem=N''TSQL'', ' +
+    '@command=N''' + REPLACE(command_executesql, '''', '''''') + ''';' + CHAR(13) + CHAR(10)
+FROM dbo.sysjobs;
+
+-- Imprimir o guardar el script generado
+PRINT @Script;
+-- Para guardar en un archivo, usa la siguiente línea:
+-- EXEC xp_cmdshell 'echo ' + @Script + ' > C:\Ruta\Archivo.sql'
+
+~~~
+
+#### Recuerda que ejecutar consultas dinámicas y manipular objetos del sistema debe hacerse con precaución en un entorno de producción. Realiza pruebas en un entorno controlado antes de aplicar este tipo de scripts en un entorno de producción y asegúrate de comprender completamente el impacto que puedan tener en tu sistema.<a name="extraerjobssql"></a>
 
 #### No existe nada debajo de esta linea
 
