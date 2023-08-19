@@ -150,9 +150,9 @@
  - 35 [Aquí tenemos  una consulta simple que lista todas las bases de datos en un servidor SQL Server:](#listabasedatos)
 
 
- - [Sacar servidores con sus bases de datos usando PowerShell](#powershellserverydbhtml)
+ - 36 [Sacar servidores con sus bases de datos usando PowerShell](#powershellserverydbhtml)
 
- - [Extraer todos los jobs de un servidor SQL server](#extraerjobssql)
+ - 37 [Extraer todos los jobs de un servidor SQL server, para ser migrados a otro servidor](#extraerjobssql)
 
 <!-- ConsultasEflowCitas -->
 
@@ -8503,6 +8503,40 @@ PRINT @Script;
 ~~~
 
 #### Recuerda que ejecutar consultas dinámicas y manipular objetos del sistema debe hacerse con precaución en un entorno de producción. Realiza pruebas en un entorno controlado antes de aplicar este tipo de scripts en un entorno de producción y asegúrate de comprender completamente el impacto que puedan tener en tu sistema.<a name="extraerjobssql"></a>
+# 
+
+## Determinar si un Nodo es primario o secundario en un AlwaysOn<a name="queestestenodoAO"></a>
+#### En un grupo de disponibilidad de AlwaysOn en SQL Server, los roles de los servidores se denominan "nodo primario" y "nodo secundario". Puedes utilizar la siguiente consulta en el servidor SQL para determinar si un servidor específico es el nodo primario o el nodo secundario en un grupo de disponibilidad AlwaysOn:
+# 
+![](https://docs.vmware.com/es/vRealize-Operations/8.10/com.vmware.vcom.refarch.doc/images/GUID-8B25CDAE-3FC0-4F16-A271-838BFD3B7DDE-high.png)
+~~~sql
+SELECT 
+    ags.name AS [AvailabilityGroupName],
+    ar.replica_server_name AS [ServerName],
+    CASE 
+        WHEN adr.role_desc = 'PRIMARY' THEN 'Nodo Primario'
+        WHEN adr.role_desc = 'SECONDARY' THEN 'Nodo Secundario'
+        ELSE 'Desconocido'
+    END AS [Role]
+FROM sys.availability_groups AS ags
+INNER JOIN sys.dm_hadr_availability_replica_states AS ar
+    ON ags.group_id = ar.group_id
+INNER JOIN sys.dm_hadr_availability_replica_cluster_states AS arcs
+    ON ar.replica_id = arcs.replica_id
+INNER JOIN sys.dm_hadr_availability_replica_states AS adr
+    ON ar.replica_id = adr.replica_id
+    AND ar.replica_server_name = adr.replica_server_name;
+~~~
+
+#### Esta consulta consulta las vistas del sistema relacionadas con AlwaysOn para obtener información sobre el estado y el rol de las réplicas en el grupo de disponibilidad. La columna "Role" mostrará si el servidor es el nodo primario o secundario.
+
+
+
+
+
+
+
+
 
 #### No existe nada debajo de esta linea
 
