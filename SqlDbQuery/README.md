@@ -8557,6 +8557,22 @@ SELECT
 FROM sys.dm_hadr_availability_replica_states;
 ~~~
 
+
+~~~sql 
+SELECT
+    ag.name AS [Nombre del Grupo de Disponibilidad],
+    ar.replica_server_name AS [Nombre de la Réplica],
+    adc.database_name AS [Nombre de la Base de Datos],
+    adr.role_desc AS [Rol de la Réplica],
+    adr.synchronization_health_desc AS [Estado de Sincronización],
+    ag.create_date AS [Fecha de Creación del Grupo]
+FROM sys.dm_hadr_availability_replica_states adr
+INNER JOIN sys.availability_replicas ar ON adr.replica_id = ar.replica_id
+INNER JOIN sys.availability_databases_cluster adc ON adr.group_id = adc.group_id
+INNER JOIN sys.availability_groups ag ON adc.group_id = ag.group_id;
+~~~
+
+
 #### La columna role_desc te indicará si el servidor es el principal ("PRIMARY") o el secundario ("SECONDARY"), y la columna failure_state_desc te dará información sobre cualquier estado de falla.
 
 ### ***Visor de Eventos de Windows:***
