@@ -154,6 +154,8 @@
 
  - 37 [Extraer todos los jobs de un servidor SQL server, para ser migrados a otro servidor](#extraerjobssql)
 
+ - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8366,7 +8368,7 @@ ORDER BY name;
 #Fecha inicio Agosto 18 2023                                                                               #
 #Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
 #con su respectivas bases de datos.                                                                        #
-#Esta tarea duraria mas o menos 20 dias dedicando 10 horas diarias se se realiza de forma manual.          #
+#Esta tarea duraria mas o menos 20 dias dedicando 10 horas diarias si se realiza de forma manual.          #
 #==========================================================================================================#
 
 $serverInstances = Get-Content -Path "C:\PWtablas\server_instances.txt"
@@ -8471,7 +8473,7 @@ Write-Host $htmlFilePath
 Write-Host $notFoundFilePath
 
 ~~~
-# 
+# Sacar todos los Jobs de un sevidor Sql Server para migralos a otro<a name="migrarjobs"><a/>
 
 ##  Generar los scripts de los trabajos en tu servidor SQL Server. Recuerda siempre realizar pruebas en un entorno controlado antes de aplicar cambios en un entorno de producción.
 # 
