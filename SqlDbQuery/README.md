@@ -156,6 +156,8 @@
 
  - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
 
+ - 39 [como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo](#failover)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8532,6 +8534,43 @@ INNER JOIN sys.dm_hadr_availability_replica_states AS adr
 
 #### Esta consulta consulta las vistas del sistema relacionadas con AlwaysOn para obtener información sobre el estado y el rol de las réplicas en el grupo de disponibilidad. La columna "Role" mostrará si el servidor es el nodo primario o secundario.
 
+# 
+## como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo<a name="failover"></a>
+# 
+![](https://i.ytimg.com/vi/8fRARjppq2k/maxresdefault.jpg)
+#### Para saber si un servidor SQL Server Always On ha realizado un failover y cuándo lo hizo, puedes utilizar varias opciones, que incluyen el uso de consultas en SQL Server Management Studio (SSMS) y el monitoreo de eventos en el Visor de Eventos de Windows. Aquí hay un enfoque general para lograrlo:
+#
+### Consulta en SSMS:
+
+#### Puedes utilizar consultas en SQL Server Management Studio para obtener información sobre el estado de la réplica y detectar si ha ocurrido un failover. Esto te proporcionará detalles sobre la última vez que ocurrió un failover. Ejecuta las siguientes consultas en la base de datos maestra del servidor Always On:
+
+#  
+~~~sql
+SELECT
+    replica_server_name,
+    availability_group_name,
+    role_desc,
+    synchronization_health_desc,
+    database_state_desc,
+    failure_state_desc,
+    last_hardened_lsn
+FROM sys.dm_hadr_availability_replica_states;
+~~~
+
+#### La columna role_desc te indicará si el servidor es el principal ("PRIMARY") o el secundario ("SECONDARY"), y la columna failure_state_desc te dará información sobre cualquier estado de falla.
+
+### ***Visor de Eventos de Windows:***
+
+#### También puedes verificar el Visor de Eventos de Windows para detectar eventos relacionados con los cambios de estado y los failovers de Always On. Los eventos relevantes se registrarán en el registro de aplicaciones.
+
+### ***Abre el Visor de Eventos de Windows.***
+ -  Navega a "Registros de Windows" > "Aplicación".
+ - En la vista "Detalles", busca eventos con la fuente "SQLSERVERAGENT" y el ID de evento 208.
+- Los eventos con ID 208 indican cambios de estado en grupos de disponibilidad, lo que incluye los eventos de failover. Estos eventos también contendrán información sobre la fecha y hora en que ocurrió el failover.
+
+####  Es importante tener en cuenta que el acceso y la comprensión de estos registros pueden variar según la versión de SQL Server que estés utilizando y cómo esté configurado tu entorno. Si estás utilizando herramientas de monitorización de terceros, también podrías obtener información más detallada sobre los cambios de estado y los failovers.
+
+#### Recuerda que la configuración exacta puede variar según tu entorno y la versión de SQL Server que estés utilizando. Siempre es recomendable consultar la documentación oficial de SQL Server para obtener instrucciones específicas para tu caso.
 
 
 
