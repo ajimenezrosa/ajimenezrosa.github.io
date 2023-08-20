@@ -8572,6 +8572,7 @@ INNER JOIN sys.availability_replicas ar ON adr.replica_id = ar.replica_id
 INNER JOIN sys.availability_databases_cluster adc ON adr.group_id = adc.group_id
 INNER JOIN sys.availability_groups ag ON adc.group_id = ag.group_id;
 
+
 ~~~
 
 
