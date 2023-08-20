@@ -8558,7 +8558,8 @@ FROM sys.dm_hadr_availability_replica_states;
 ~~~
 
 
-~~~sql 
+~~~sql
+
 SELECT
     ag.name AS [Nombre del Grupo de Disponibilidad],
     ar.replica_server_name AS [Nombre de la Réplica],
@@ -8570,6 +8571,7 @@ FROM sys.dm_hadr_availability_replica_states adr
 INNER JOIN sys.availability_replicas ar ON adr.replica_id = ar.replica_id
 INNER JOIN sys.availability_databases_cluster adc ON adr.group_id = adc.group_id
 INNER JOIN sys.availability_groups ag ON adc.group_id = ag.group_id;
+
 ~~~
 
 
