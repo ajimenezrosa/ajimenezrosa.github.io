@@ -8514,10 +8514,10 @@ PRINT @Script;
 # 
 ![](https://docs.vmware.com/es/vRealize-Operations/8.10/com.vmware.vcom.refarch.doc/images/GUID-8B25CDAE-3FC0-4F16-A271-838BFD3B7DDE-high.png)
 ~~~sql
-SELECT 
+SELECT
     ags.name AS [AvailabilityGroupName],
-    ar.replica_server_name AS [ServerName],
-    CASE 
+    --ar.replica_server_name AS [ServerName],
+    CASE
         WHEN adr.role_desc = 'PRIMARY' THEN 'Nodo Primario'
         WHEN adr.role_desc = 'SECONDARY' THEN 'Nodo Secundario'
         ELSE 'Desconocido'
@@ -8529,7 +8529,6 @@ INNER JOIN sys.dm_hadr_availability_replica_cluster_states AS arcs
     ON ar.replica_id = arcs.replica_id
 INNER JOIN sys.dm_hadr_availability_replica_states AS adr
     ON ar.replica_id = adr.replica_id
-    AND ar.replica_server_name = adr.replica_server_name;
 ~~~
 
 #### Esta consulta consulta las vistas del sistema relacionadas con AlwaysOn para obtener información sobre el estado y el rol de las réplicas en el grupo de disponibilidad. La columna "Role" mostrará si el servidor es el nodo primario o secundario.
