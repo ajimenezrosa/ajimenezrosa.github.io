@@ -8536,7 +8536,7 @@ INNER JOIN sys.dm_hadr_availability_replica_states AS adr
 # 
 ## como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo<a name="failover"></a>
 # 
-![](https://i0.wp.com/kindsonthegenius.com/mssql/wp-content/uploads/2020/10/How-to-Configure-SQL-Server-Failover-Cluster.jpg?resize=1400%2C748&ssl=1)
+![](https://www.manageengine.com/privileged-access-management/help/images/Failover-service.png)
 #### Para saber si un servidor SQL Server Always On ha realizado un failover y cuándo lo hizo, puedes utilizar varias opciones, que incluyen el uso de consultas en SQL Server Management Studio (SSMS) y el monitoreo de eventos en el Visor de Eventos de Windows. Aquí hay un enfoque general para lograrlo:
 #
 ### Consulta en SSMS:
