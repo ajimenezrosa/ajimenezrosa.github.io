@@ -8546,32 +8546,18 @@ INNER JOIN sys.dm_hadr_availability_replica_states AS adr
 #  
 ~~~sql
 SELECT
-    replica_server_name,
-    availability_group_name,
-    role_desc,
-    synchronization_health_desc,
-    database_state_desc,
-    failure_state_desc,
-    last_hardened_lsn
-FROM sys.dm_hadr_availability_replica_states;
-~~~
-
-
-~~~sql
-
-SELECT
-    ag.name AS [Nombre del Grupo de Disponibilidad],
-    ar.replica_server_name AS [Nombre de la Réplica],
-    adc.database_name AS [Nombre de la Base de Datos],
-    adr.role_desc AS [Rol de la Réplica],
-    adr.synchronization_health_desc AS [Estado de Sincronización],
-    ag.create_date AS [Fecha de Creación del Grupo]
-FROM sys.dm_hadr_availability_replica_states adr
-INNER JOIN sys.availability_replicas ar ON adr.replica_id = ar.replica_id
-INNER JOIN sys.availability_databases_cluster adc ON adr.group_id = adc.group_id
-INNER JOIN sys.availability_groups ag ON adc.group_id = ag.group_id;
-
-
+    ag.name AS 'AvailabilityGroupName',
+       adc.is_primary_replica, adc.synchronization_health_desc,adc.database_state_desc,
+    --ar.replica_server_name AS 'CurrentPrimaryReplica',
+       ar.operational_state_desc,
+    adc1.database_name AS 'DatabaseName',
+    --adc1.synchronization_state_desc AS 'SyncState'
+       adc.synchronization_state_desc
+FROM sys.dm_hadr_database_replica_states AS adc
+JOIN sys.availability_databases_cluster AS adc1 ON adc.group_id = adc.group_id
+JOIN sys.availability_groups AS ag ON adc.group_id = ag.group_id
+JOIN sys.dm_hadr_availability_replica_states AS ar ON adc.replica_id = ar.replica_id
+WHERE adc.is_local = 1;
 ~~~
 
 
