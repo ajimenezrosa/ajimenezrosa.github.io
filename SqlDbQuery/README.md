@@ -8516,7 +8516,7 @@ PRINT @Script;
 ~~~sql
 SELECT
     ags.name AS [AvailabilityGroupName],
-    --ar.replica_server_name AS [ServerName],
+       arcs.replica_server_name,
     CASE
         WHEN adr.role_desc = 'PRIMARY' THEN 'Nodo Primario'
         WHEN adr.role_desc = 'SECONDARY' THEN 'Nodo Secundario'
