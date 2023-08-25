@@ -6,64 +6,18 @@
 </head>
 <body>
   <div id="page-container">
-    <div id="readme-container"></div>
+    <div id="authentication-container">
+      <input type="password" id="password-input" placeholder="Ingrese la contraseña">
+      <button id="submit-button">Ingresar</button>
+      <p id="error-message" style="color: red;"></p>
+    </div>
+    <div id="readme-container" style="display: none;"></div>
   </div>
 
   <script>
-    // Función para cargar el archivo README.md y convertirlo a HTML
-    function cargarReadme() {
-      var readmeURL = "/SqlDbQuery/README.md"; // Reemplaza con la ruta correcta
-
-      // Realizar solicitud HTTP para obtener el contenido del archivo README.md
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            var readmeText = xhr.responseText;
-
-            // Utilizar la biblioteca Showdown para convertir el contenido Markdown a HTML
-            var converter = new showdown.Converter();
-            var html = converter.makeHtml(readmeText);
-
-            // Mostrar el contenido HTML en el contenedor
-            var readmeContainer = document.getElementById("readme-container");
-            readmeContainer.innerHTML = html;
-
-            // Agregar botones de copiar con estilo
-            var sqlCodeBlocks = readmeContainer.querySelectorAll("pre code.language-sql");
-            sqlCodeBlocks.forEach(function(sqlCodeBlock) {
-              var copyButton = document.createElement("button");
-              copyButton.textContent = "Copiar";
-              copyButton.classList.add("copy-button");
-              copyButton.addEventListener("click", function() {
-                copiarCodigo(sqlCodeBlock);
-              });
-              var codeContainer = sqlCodeBlock.parentNode;
-              codeContainer.classList.add("code-container");
-              codeContainer.appendChild(copyButton);
-            });
-          } else {
-            console.error("Error al cargar el archivo README.md: " + xhr.status);
-          }
-        }
-      };
-      xhr.open("GET", readmeURL, true);
-      xhr.send();
-    }
-
-    // Función para copiar el contenido del código al portapapeles
-    function copiarCodigo(codeBlock) {
-      var textArea = document.createElement("textarea");
-      textArea.value = codeBlock.textContent;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-    }
-
-    // Cargar el archivo README.md al cargar la página
-    window.onload = cargarReadme;
+    // ... (tu código JavaScript aquí)
   </script>
+  
   <style>
     body {
       background-color: #1e2227;
@@ -76,8 +30,11 @@
     #page-container {
       display: flex;
       justify-content: center;
-      padding: 20px;
+      align-items: center; /* Agregamos centrado vertical */
+      height: 100vh; /* Centrado vertical */
     }
+
+    /* ... (otros estilos) */
 
     #readme-container {
       max-width: 800px;
@@ -86,27 +43,12 @@
       background-color: #161b22;
       border-radius: 10px;
       padding: 20px;
+      display: none;
+      text-align: center; /* Centramos el contenido dentro */
     }
 
-    .copy-button {
-      background-color: #79c0ff;
-      color: #0d1117;
-      border: none;
-      cursor: pointer;
-      margin-top: 5px;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
+    /* ... (otros estilos) */
 
-    .copy-button:hover {
-      background-color: #58a6ff;
-    }
-
-    .code-container {
-      position: relative;
-    }
   </style>
 </body>
 </html>
