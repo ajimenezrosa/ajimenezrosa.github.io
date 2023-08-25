@@ -15,7 +15,60 @@
   </div>
 
   <script>
-    // ... (tu código JavaScript aquí)
+    var attempts = 0;
+    var maxAttempts = 3;
+    var correctPassword = "la biblia de los caidos";
+
+    var authenticationContainer = document.getElementById("authentication-container");
+    var readmeContainer = document.getElementById("readme-container");
+    var passwordInput = document.getElementById("password-input");
+    var submitButton = document.getElementById("submit-button");
+    var errorMessage = document.getElementById("error-message");
+
+    submitButton.addEventListener("click", function() {
+      var enteredPassword = passwordInput.value;
+      if (enteredPassword === correctPassword) {
+        authenticationContainer.style.display = "none";
+        readmeContainer.style.display = "block";
+        cargarReadme();
+      } else {
+        attempts++;
+        errorMessage.textContent = "Contraseña incorrecta. Intento " + attempts + " de " + maxAttempts;
+        if (attempts >= maxAttempts) {
+          submitButton.disabled = true;
+          errorMessage.textContent = "Has excedido el número máximo de intentos.";
+        }
+      }
+    });
+
+    // Función para cargar el archivo README.md y convertirlo a HTML
+    function cargarReadme() {
+      var readmeURL = "/SqlDbQuery/README.md"; // Reemplaza con la ruta correcta
+
+      // Realizar solicitud HTTP para obtener el contenido del archivo README.md
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            var readmeText = xhr.responseText;
+
+            // Utilizar la biblioteca Showdown para convertir el contenido Markdown a HTML
+            var converter = new showdown.Converter();
+            var html = converter.makeHtml(readmeText);
+
+            // Mostrar el contenido HTML en el contenedor
+            readmeContainer.innerHTML = html;
+
+            // Agregar botones de copiar con estilo...
+          } else {
+            console.error("Error al cargar el archivo README.md: " + xhr.status);
+          }
+        }
+      };
+      xhr.open("GET", readmeURL, true);
+      xhr.send();
+    }
+
   </script>
   
   <style>
@@ -30,11 +83,16 @@
     #page-container {
       display: flex;
       justify-content: center;
-      align-items: center; /* Agregamos centrado vertical */
-      height: 100vh; /* Centrado vertical */
+      padding: 20px;
     }
 
-    /* ... (otros estilos) */
+    #authentication-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-content: center;
+      padding-top: 400px;
+    }
 
     #readme-container {
       max-width: 800px;
@@ -44,11 +102,27 @@
       border-radius: 10px;
       padding: 20px;
       display: none;
-      text-align: center; /* Centramos el contenido dentro */
     }
 
-    /* ... (otros estilos) */
+    .copy-button {
+      background-color: #79c0ff;
+      color: #0d1117;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
 
+    .copy-button:hover {
+      background-color: #58a6ff;
+    }
+
+    .code-container {
+      position: relative;
+    }
   </style>
 </body>
 </html>
