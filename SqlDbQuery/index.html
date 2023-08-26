@@ -71,6 +71,7 @@
             readmeContainer.innerHTML = html;
 
             // Agregar botones de copiar con estilo...
+
             var codeBlocks = document.querySelectorAll('pre code.language-sql');
             codeBlocks.forEach(function(codeBlock) {
               var copyButton = document.createElement('button');
@@ -84,6 +85,7 @@
               codeContainer.classList.add('code-container');
               codeContainer.appendChild(copyButton);
             });
+
           } else {
             console.error("Error al cargar el archivo README.md: " + xhr.status);
           }
