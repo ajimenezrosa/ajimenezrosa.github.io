@@ -16,14 +16,29 @@
   </script>
 </head>
 <body>
-  <div id="page-container">
+  <!-- <div id="page-container">
     <div id="authentication-container">
       <input type="password" id="password-input" placeholder="Ingrese la contraseña">
       <button id="submit-button">Ingresar</button>
       <p id="error-message" style="color: red;"></p>
     </div>
     <div id="readme-container" style="display: none;"></div>
+  </div> -->
+
+
+  <div id="page-container">
+    <div id="authentication-container">
+      <h1>Welcome to the Book of Secrets </h1>
+      <h2>by Alejandro Jiménez</h2>
+      <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Imagen de bienvenida" width="200">
+      <input type="password" id="password-input" placeholder="Ingrese la contraseña">
+      <button id="submit-button">Ingresar</button>
+      <p id="error-message"></p>
+    </div>
+    <div id="readme-container"></div>
   </div>
+
+
 
   <script>
     var attempts = 0;
@@ -149,6 +164,30 @@
     .code-container {
       position: relative;
     }
+    #submit-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+
+  #submit-button:hover {
+    background-color: #0056b3;
+  }
+
+
+  #password-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   </style>
 </body>
 </html>
