@@ -3,13 +3,55 @@
 <head>
   <title>Cargar archivo README</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+  <script>
+    // Agregar la función para copiar el contenido al portapapeles
+    function copyCodeToClipboard(codeContainer) {
+      const textArea = document.createElement('textarea');
+      textArea.value = codeContainer.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  </script>
 </head>
 <body>
   <div id="page-container">
-    <div id="readme-container"></div>
+    <div id="authentication-container">
+      <input type="password" id="password-input" placeholder="Ingrese la contraseña">
+      <button id="submit-button">Ingresar</button>
+      <p id="error-message" style="color: red;"></p>
+    </div>
+    <div id="readme-container" style="display: none;"></div>
   </div>
 
   <script>
+    var attempts = 0;
+    var maxAttempts = 3;
+    var correctPassword = "la biblia de los caidos";
+
+    var authenticationContainer = document.getElementById("authentication-container");
+    var readmeContainer = document.getElementById("readme-container");
+    var passwordInput = document.getElementById("password-input");
+    var submitButton = document.getElementById("submit-button");
+    var errorMessage = document.getElementById("error-message");
+
+    submitButton.addEventListener("click", function() {
+      var enteredPassword = passwordInput.value;
+      if (enteredPassword === correctPassword) {
+        authenticationContainer.style.display = "none";
+        readmeContainer.style.display = "block";
+        cargarReadme();
+      } else {
+        attempts++;
+        errorMessage.textContent = "Contraseña incorrecta. Intento " + attempts + " de " + maxAttempts;
+        if (attempts >= maxAttempts) {
+          submitButton.disabled = true;
+          errorMessage.textContent = "Has excedido el número máximo de intentos.";
+        }
+      }
+    });
+
     // Función para cargar el archivo README.md y convertirlo a HTML
     function cargarReadme() {
       var readmeURL = "/SqlDbQuery/README.md"; // Reemplaza con la ruta correcta
@@ -26,20 +68,20 @@
             var html = converter.makeHtml(readmeText);
 
             // Mostrar el contenido HTML en el contenedor
-            var readmeContainer = document.getElementById("readme-container");
             readmeContainer.innerHTML = html;
 
-            // Agregar botones de copiar con estilo
-            var sqlCodeBlocks = readmeContainer.querySelectorAll("pre code.language-sql");
-            sqlCodeBlocks.forEach(function(sqlCodeBlock) {
-              var copyButton = document.createElement("button");
-              copyButton.textContent = "Copiar";
-              copyButton.classList.add("copy-button");
-              copyButton.addEventListener("click", function() {
-                copiarCodigo(sqlCodeBlock);
+            // Agregar botones de copiar con estilo...
+            var codeBlocks = document.querySelectorAll('pre code.language-sql');
+            codeBlocks.forEach(function(codeBlock) {
+              var copyButton = document.createElement('button');
+              copyButton.className = 'copy-button';
+              copyButton.textContent = 'Copiar';
+              copyButton.addEventListener('click', function() {
+                copyCodeToClipboard(codeBlock);
               });
-              var codeContainer = sqlCodeBlock.parentNode;
-              codeContainer.classList.add("code-container");
+
+              var codeContainer = codeBlock.parentNode;
+              codeContainer.classList.add('code-container');
               codeContainer.appendChild(copyButton);
             });
           } else {
@@ -51,19 +93,8 @@
       xhr.send();
     }
 
-    // Función para copiar el contenido del código al portapapeles
-    function copiarCodigo(codeBlock) {
-      var textArea = document.createElement("textarea");
-      textArea.value = codeBlock.textContent;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-    }
-
-    // Cargar el archivo README.md al cargar la página
-    window.onload = cargarReadme;
   </script>
+  
   <style>
     body {
       background-color: #1e2227;
@@ -79,6 +110,14 @@
       padding: 20px;
     }
 
+    #authentication-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-content: center;
+      padding-top: 400px;
+    }
+
     #readme-container {
       max-width: 800px;
       margin: 0 auto;
@@ -86,6 +125,7 @@
       background-color: #161b22;
       border-radius: 10px;
       padding: 20px;
+      display: none;
     }
 
     .copy-button {

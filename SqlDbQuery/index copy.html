@@ -5,7 +5,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
 </head>
 <body>
-  <div id="readme-container"></div>
+  <div id="page-container">
+    <div id="readme-container"></div>
+  </div>
 
   <script>
     // Función para cargar el archivo README.md y convertirlo a HTML
@@ -26,6 +28,20 @@
             // Mostrar el contenido HTML en el contenedor
             var readmeContainer = document.getElementById("readme-container");
             readmeContainer.innerHTML = html;
+
+            // Agregar botones de copiar con estilo
+            var sqlCodeBlocks = readmeContainer.querySelectorAll("pre code.language-sql");
+            sqlCodeBlocks.forEach(function(sqlCodeBlock) {
+              var copyButton = document.createElement("button");
+              copyButton.textContent = "Copiar";
+              copyButton.classList.add("copy-button");
+              copyButton.addEventListener("click", function() {
+                copiarCodigo(sqlCodeBlock);
+              });
+              var codeContainer = sqlCodeBlock.parentNode;
+              codeContainer.classList.add("code-container");
+              codeContainer.appendChild(copyButton);
+            });
           } else {
             console.error("Error al cargar el archivo README.md: " + xhr.status);
           }
@@ -35,8 +51,62 @@
       xhr.send();
     }
 
+    // Función para copiar el contenido del código al portapapeles
+    function copiarCodigo(codeBlock) {
+      var textArea = document.createElement("textarea");
+      textArea.value = codeBlock.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+
     // Cargar el archivo README.md al cargar la página
     window.onload = cargarReadme;
   </script>
+  <style>
+    body {
+      background-color: #1e2227;
+      color: #c9d1d9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #page-container {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #readme-container {
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0px 0px 10px rgba(13, 13, 13, 0.2);
+      background-color: #161b22;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .copy-button {
+      background-color: #79c0ff;
+      color: #0d1117;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .copy-button:hover {
+      background-color: #58a6ff;
+    }
+
+    .code-container {
+      position: relative;
+    }
+  </style>
 </body>
 </html>
