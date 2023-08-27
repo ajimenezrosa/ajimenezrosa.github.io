@@ -205,6 +205,8 @@ on every table and view in the database.
     DBCC CHECKCATALOG 
 ~~~
 
+
+
 on the database.
 
 #### Validates the contents of every indexed view in the database.
