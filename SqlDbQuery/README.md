@@ -11,7 +11,7 @@
 
 1. [Conectar  una unidad de red a un servidor sql Server](#1)
 2. [Crecimiento automático de los ficheros de la base de datos](#2)
-    2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)
+- 2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)
 3. [Eliminar corroes del servidor de correos Sql Server](#3)
 4. [Conexiones Activas del Servidor de SQL SERVER](#4)
 5. [DBCC CHECKDB ](#5)
