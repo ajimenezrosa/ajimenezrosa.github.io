@@ -8508,6 +8508,32 @@ PRINT @Script;
 
 ~~~
 
+
+## Esto es otro query, en al cual podremos sacar todos los jobs
+
+
+~~~sql
+USE msdb;
+set nocount on;
+SELECT
+    'EXEC msdb.dbo.sp_add_job ' +
+    '@job_name=N''' + name + ''', ' +
+    '@enabled=' + CASE WHEN enabled = 1 THEN '1' ELSE '0' END + ';' + CHAR(13) + CHAR(10) +
+    -- Aquí puedes agregar más parámetros según tus necesidades
+    -- ...
+    'EXEC msdb.dbo.sp_add_jobstep ' +
+    '@job_name=N''' + name + ''', ' +
+    '@step_name=N''Step 1'', ' +
+    -- Aquí puedes agregar más parámetros de paso según tus necesidades
+    ' @subsystem=N''TSQL'', ' +
+    '@command=N''' + REPLACE(command, '''', '''''') + ''';' + CHAR(13) + CHAR(10)
+FROM dbo.sysjobs
+JOIN dbo.sysjobsteps ON sysjobs.job_id = sysjobsteps.job_id
+--where name not like '%STOS%'
+order by name
+~~~
+
+
 #### Recuerda que ejecutar consultas dinámicas y manipular objetos del sistema debe hacerse con precaución en un entorno de producción. Realiza pruebas en un entorno controlado antes de aplicar este tipo de scripts en un entorno de producción y asegúrate de comprender completamente el impacto que puedan tener en tu sistema.<a name="extraerjobssql"></a>
 # 
 
