@@ -8614,6 +8614,14 @@ WHERE adc.is_local = 1;
 
 # 
 ~~~sql
+/*
+Creado por Alejandro Jimenez Miercoles 20 de Agosto 2023
+Este query cambia los Collettion de todas las bases de datos de un servidor.
+
+Nota: el mismo debe ser probado antes de ejecutarlo.
+Estado de pruebas. y confirmacion.
+*/
+
 DECLARE @DatabaseName NVARCHAR(128)
 DECLARE @NewCollation NVARCHAR(128) = 'NewCollationName'  -- Cambia al nuevo "collation" que deseas aplicar
 
