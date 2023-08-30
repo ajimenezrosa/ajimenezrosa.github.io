@@ -157,7 +157,7 @@
  - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
 
  - 39 [como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo](#failover)
-
+- [Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server](#collectionchange)
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8606,6 +8606,41 @@ WHERE adc.is_local = 1;
 
 
 
+# 
+## Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server<a name="collectionchange"></a>
+
+![](https://www.mssqltips.com/images_newsletter/3519_NewsletterImage.png)
+#### Si estás buscando cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server, aquí tienes un script que puedes utilizar como punto de partida. Ten en cuenta que cambiar el "collation" de una base de datos es un proceso delicado y debe hacerse con precaución, ya que puede afectar la forma en que los datos se comparan y ordenan en las consultas. Asegúrate de realizar pruebas exhaustivas en un entorno de desarrollo antes de aplicar estos cambios en un entorno de producción.
+
+# 
+~~~sql
+DECLARE @DatabaseName NVARCHAR(128)
+DECLARE @NewCollation NVARCHAR(128) = 'NewCollationName'  -- Cambia al nuevo "collation" que deseas aplicar
+
+DECLARE db_cursor CURSOR FOR
+SELECT name
+FROM sys.databases
+WHERE state_desc = 'ONLINE' AND name NOT IN ('master', 'tempdb', 'model', 'msdb') -- Filtra las bases de datos del sistema
+
+OPEN db_cursor
+FETCH NEXT FROM db_cursor INTO @DatabaseName
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    DECLARE @sql NVARCHAR(MAX)
+    SET @sql = N'ALTER DATABASE [' + @DatabaseName + N'] COLLATE ' + @NewCollation + N';'
+
+    EXEC sp_executesql @sql
+
+    FETCH NEXT FROM db_cursor INTO @DatabaseName
+END
+
+CLOSE db_cursor
+DEALLOCATE db_cursor
+
+~~~
+
+# 
 
 
 
