@@ -157,7 +157,7 @@
  - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
 
  - 39 [como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo](#failover)
-- [Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server](#collectionchange)
+ - 40 [Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server](#collectionchange)
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8607,10 +8607,12 @@ WHERE adc.is_local = 1;
 
 
 # 
-## Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server<a name="collectionchange"></a>
+## Cambiar el "collation"  de todas las bases de datos en un servidor SQL Server<a name="collectionchange"></a>
 
 ![](https://www.mssqltips.com/images_newsletter/3519_NewsletterImage.png)
-#### Si estás buscando cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server, aquí tienes un script que puedes utilizar como punto de partida. Ten en cuenta que cambiar el "collation" de una base de datos es un proceso delicado y debe hacerse con precaución, ya que puede afectar la forma en que los datos se comparan y ordenan en las consultas. Asegúrate de realizar pruebas exhaustivas en un entorno de desarrollo antes de aplicar estos cambios en un entorno de producción.
+#### Si estás buscando cambiar el "collation" de todas las bases de datos en un servidor SQL Server, aquí tienes un script que puedes utilizar para estos fines.
+
+ #### Ten en cuenta que cambiar el "collation" de una base de datos es un proceso delicado y debe hacerse con precaución, ya que puede afectar la forma en que los datos se comparan y ordenan en las consultas. Asegúrate de realizar pruebas exhaustivas en un entorno de desarrollo antes de aplicar estos cambios en un entorno de producción.
 
 # 
 ~~~sql
@@ -8647,6 +8649,10 @@ CLOSE db_cursor
 DEALLOCATE db_cursor
 
 ~~~
+# 
+#### En este script, @NewCollation es la variable que debes cambiar para especificar el nuevo ***"collation"*** que deseas aplicar a todas las bases de datos. El script utiliza un cursor para recorrer todas las bases de datos en el servidor ***(excluyendo las bases de datos del sistema)*** y ejecuta una declaración ***ALTER DATABASE*** para cambiar el "collation".
+
+#### Recuerda que cambiar el "collation" de una base de datos puede tener implicaciones significativas, como cambios en la forma en que se comparan y ordenan los datos en las consultas. Asegúrate de comprender completamente los efectos de este cambio y realizar pruebas adecuadas antes de aplicarlo en un entorno de producción.
 
 # 
 
