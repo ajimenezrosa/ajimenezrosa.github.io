@@ -184,9 +184,8 @@
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
 
-![](https://www.softzone.es/app/uploads-softzone.es/2019/01/almacenamiento-en-la-nube.jpg)
 
-
+<img src="https://www.softzone.es/app/uploads-softzone.es/2019/01/almacenamiento-en-la-nube.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
 ~~~sql
 EXEC xp_cmdshell 'net use M: \\10.0.0.167\Transaccional px85947#@1/user:INABIMASD\administrador'
