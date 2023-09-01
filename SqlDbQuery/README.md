@@ -2744,7 +2744,9 @@ SELECT rs.destination_database_name,
 #  
 
 # Limpiar y Reducir el Log de Transacciones SQL Server. [Fuente SoporteSQL](https://soportesql.wordpress.com/2014/04/22/limpiar-y-reducir-el-log-de-transacciones-sql-server/)  <a name="limpiarlog"></a>
-![](https://soportesql.files.wordpress.com/2014/04/fa932-log.png?w=1400&h=9999)
+
+<img src="https://soportesql.files.wordpress.com/2014/04/fa932-log.png?format=jpg&name=large" alt="JuveR" width="800px">
+
 ## Script de Ejemplo que permite limpiar y reducir el log de transacciones de una base de datos, no es posible limpiar el log sin realizar primero un backup del log, realizaremos nuestro ejemplo con una base de datos a la que llamaremos PrimaveraNew
 # 
 
@@ -2761,7 +2763,7 @@ sp_helpdb PrimaveraNeW
 # 
 
 #### Resultado:
-![](https://soportesql.files.wordpress.com/2014/04/fa932-log.png?w=640&h=83)
+<img src="https://soportesql.files.wordpress.com/2014/04/fa932-log.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 #### El Siguiente Código nos permite realizar la reduccion de los log de la base de datos.  El mismo puede ser utilizado como ejemplo para nuestros trabajos
@@ -2793,7 +2795,7 @@ GO
 
 #### Vamos al SQL Server Management Studio (SSMS) y lo primero es que te voy a llevar a través de los informes del panel de control listos para usar de todos los niveles. Puedes encontrarlos haciendo clic con el botón derecho en la instancia de SQL Server en el Explorador de objetos y, en el menú contextual, encontrará Informes > Informes estándar:
 
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-149.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-149.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 
@@ -2801,7 +2803,7 @@ GO
 #
 #### Adicionalmente, en el nivel de la base de datos, si hacemos clic con el botón derecho en una base de datos y accedemos a los informes, tenemos todo tipo de informes de uso de disco, eventos de copia de seguridad y restauración, principales transacciones, estadísticas de índices, etc.
 
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-152.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-152.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### Entonces, todos estos informes del panel de control son excelentes, son fáciles de consumir y trabajar con ellos.
 
@@ -2809,35 +2811,35 @@ GO
 
 #### Ahora, vamos a ver el Monitor de actividad el cual es un monitor en tiempo real dentro de SQL Server que podemos utilizar para poder monitorear todo, desde el rendimiento hasta los costos de I/O hasta consultas más complejas, etc. Para iniciar el Monitor de actividad, haga clic con el botón derecho en la instancia de SQL Server en el Explorador de objetos y desde el menú contextual, seleccione Monitor de actividad. También puede iniciarlo desde la barra de herramientas Estándar, haciendo clic en el icono del Monitor de actividad:
 
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-153.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-153.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### El Monitor de actividad generalmente ha sido una de las herramientas de acceso si algo sale mal de repente con SQL Server. Lo primero que vemos, cuando activamos el Monitor de actividad es el panel Información general. También, esta herramienta tiene los siguientes paneles expandibles y colapsables: Esperas de recursos, I/O de archivos de datos, Consultas valiosas recientes y Consultas valiosas activas:
 ![]()
-<img src="https://i.blogs.es/b40d07/monitor-de-actividad/1366_2000.jpg?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://i.blogs.es/b40d07/monitor-de-actividad/1366_2000.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 #### **Procesos**: nos brindan la capacidad de ver los procesos que se ejecutan actualmente para que podamos gestionarlos. Al hacer clic con el botón derecho aparece el menú contextual desde el cual se pueden finalizar, rastrear en el Analizador de SQL Server (más información sobre este tema más adelante), verlo como un plan de ejecución, y por último, pero no menos importante, los detalles de la sesión que muestra un diálogo que muestra la última T -Secuencia de comandos de SQL:
 ![]()
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-155.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-155.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### **Espera de recursos** – muestra información sobre las espera de recursos:
 
 ![]()
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-156.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-156.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 #### **I/O del archivo de datos** – muestra la información del I/O del archivo de datos actual que se produce a nivel de archivo:
 ![]()
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-157.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-157.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### Consultas valiosas recientes/activas – muestra consultas valiosas recientes/activas que utilizan muchos recursos (memoria, actividad del disco, red):
 
 ![]()
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-158.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-158.png?format=jpg&name=large" alt="JuveR" width="800px">
 #### Es un excelente punto de partida para poder encontrar qué consultas están causando problemas, ocupando demasiados recursos, etc., porque una vez que se encuentran, se pueden ver como el plan de ejecución para que se puedan encontrar fácilmente los puntos calientes:
 
 ![]()
-<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-159.png?format=jpg&name=large" alt="JuveR" width="600px">
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-159.png?format=jpg&name=large" alt="JuveR" width="800px">
 ## Principales DMV para el administrador
 
 #### Vamos a echar un vistazo a los principales DMV que todos los administradores de BDs deberían saber. Estos son los DMV que siempre deberías tener en tu bolsillo. Para obtener una lista rápida de todos los DMO (DMV y DMF), simplemente consúltela siguiente lista:
@@ -2979,7 +2981,7 @@ ORDER BY qs.execution_count DESC;
 
 # Identifying SQL Server Disk Latency<a name="disklatency"></a>
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqldiskiotrafficjam.jpg?format=jpg&name=large" alt="JuveR" width="700px">
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqldiskiotrafficjam.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### When SQL Server is not as fast as users think it ought to be, how can you tell where the slowdown is? Where’s the performance bottleneck? Where’s the traffic jam? Is it waiting on CPU? Does it needs memory? What about the disks? Could SQL Server be slow because of disk latency? Could be. But how can we know for sure? Fortunately, we can ask SQL Server what it’s waiting on when it’s waiting for a resource.
 
@@ -3045,7 +3047,7 @@ GO
 
 #### When I run this query against a docker-based SQL Server 2017 instance, I receive the following results
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png?format=jpg&name=large" alt="JuveR" width="700px">
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 #### The Latency Desc column helps to interpret the results. Latency can be classified as shown in the following table. Of course, this is a rule of thumb and your needs may vary.
@@ -3070,7 +3072,7 @@ Test-DbaDiskSpeed -SqlInstance localhost -SqlCredential sa | Format-Table -Prope
 
 #### Running the PowerShell script on my docker-based SQL Server 2017 instance provides the following output file.
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/diskspeedoutputsqlserverdbatools-1024x354.png?format=jpg&name=large" alt="JuveR" width="700px">
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/diskspeedoutputsqlserverdbatools-1024x354.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 ## Let’s not ask SQL Server about disk latency
 #### Of course, there will be those who mistrust the results from either of these methods, because, well, of course SQL Server wouldn’t fess up to being the bottleneck. It’s obviously going to point the finger elsewhere.
@@ -3137,7 +3139,7 @@ ORDER BY db_buffer_MB DESC;
 #### That all said, here are partial results from an instance on my local virtual machine:
 
 
-<img src="https://www.mssqltips.com/tipImages2/2393_memory_a.png?format=jpg&name=large" alt="JuveR" width="700px">
+<img src="https://www.mssqltips.com/tipImages2/2393_memory_a.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### Clearly, the SQLSentry database - while only representing 258 MB - occupies about 70% of my buffer pool for this instance. So now I know that I can drill into that database specifically if I want to track down the objects that are taking up most of that memory. You can once again use the sys.dm_os_buffer_descriptors only this time, instead of aggregating the page counts at the database level, we can utilize a set of catalog views to determine the number of pages (and therefore amount of memory) dedicated to each object.
 # 
@@ -3188,7 +3190,8 @@ buffer_pages DESC;
 # 
 #### Here are the results from this database. Notice that I've captured both clustered and non-clustered indexes, for clustered tables and heaps, and for illustrative purposes I have also created an indexed view.
 
-![](https://www.mssqltips.com/tipImages2/2393_memory_b.png)
+<img src="https://www.mssqltips.com/tipImages2/2393_memory_b.png?format=jpg&name=large" alt="JuveR" width="800px">
+
 #### Please keep in mind that the buffer pool is in constant flux, and that this latter query has explicitly filtered out system objects, so the numbers won't always add up nicely. Still, this should give you a fairly good idea of which objects are using your buffer pool the most.
 
 #### When investigating the performance of your servers, buffer pool data is only a part of the picture, but it's one that is often overlooked. Including this data will help you to make better and more informed decisions about direction and scale.
@@ -3378,7 +3381,7 @@ qs.execution_count DESC
 # 
 
 # Consultas SQL con mayor consumo de CPU.<a name="consultassqlmayorconsumodecpu"></a>
-<img src="https://linube.com/blog/wp-content/uploads/consultas-sql-min.png?format=jpg&name=large" alt="JuveR" width="700px">
+<img src="https://linube.com/blog/wp-content/uploads/consultas-sql-min.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### En ocasiones, es posible que nuestro SQL Server tenga un gran consumo de CPU. Una buena forma de saber de dónde viene ese consumo excesivo de CPU es realizar consultas. De esta forma podremos saber cuáles son las que más sobrecargan, de media, nuestro servidor. Este consumo elevado de CPU en el servidor puede deberse a diferentes motivos; desde fallos en la memoria del servidor a espacio insuficiente. También es posible que esto se deba a la presencia de algún elemento malicioso que ejecuta demasiada actividad aunque no sea visible.En cualquier caso, el consumo de CPU es un aspecto que no debe descuidarse en un servidor. Ya que esto podría afectar al rendimiento del servidor y provocar problemas de operatividad
 # 
@@ -3599,7 +3602,9 @@ ALTER SCHEMA esquema_nuevo TRANSFER esquema_viejo.Tabla;
 
 # Cuanto Ocupan mis tablas<a name="cuantoocupantablas"></a> 
 
-![](https://1.bp.blogspot.com/-V5aQzyPZa8k/XkHd2064YtI/AAAAAAAACmw/_me-o2Wq7BQ0r-RDNeeWaPQ68aJU_iPMQCLcBGAsYHQ/s640/tama%25C3%25B1o-base-de-datos-sql-server.png)
+
+<img src="https://1.bp.blogspot.com/-V5aQzyPZa8k/XkHd2064YtI/AAAAAAAACmw/_me-o2Wq7BQ0r-RDNeeWaPQ68aJU_iPMQCLcBGAsYHQ/s640/tama%25C3%25B1o-base-de-datos-sql-server.png?format=jpg&name=large" alt="JuveR" width="800px">
+
 ###### espacio fisico  Alejadnro Jimenez
 # 
 
@@ -3625,6 +3630,10 @@ order by PESO_TABLA desc
 
 # Defragmentación, al rescate<a name="desfragmentacionalrescate"></a>
 ![](https://greyphillips.com/Guides/assets/img/Database_Maintenance.png)
+
+
+
+
 #### Para evitar el deterioro del rendimiento en nuestro servidor, deberemos mantener nuestros índices en un estado de fragmentación óptimo. Lo podremos lograr sencillamente siguiendo estos pasos.
 
 #### Primer paso: detectar fragmentación en los índices de tu base de datos. Para ello, nos basaremos en la vista de sistema sys.dm_db_index_physical_stats, que encapsularemos en la siguiente query:
@@ -4159,7 +4168,7 @@ ORDER BY modify_date;
 
 
 # GENESIS<a name="sistemaponchesgenesis"></a>
-![](https://hitek.com.do/wp-content/uploads/2019/10/reloj-hitek-1024x400.png)
+<img src="https://hitek.com.do/wp-content/uploads/2019/10/reloj-hitek-1024x400.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 #### Esta base de datos corresponde al sistema de ponches del INABIMA.
 
