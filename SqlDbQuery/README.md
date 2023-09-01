@@ -1664,7 +1664,8 @@ ORDER BY COUNT(*) DESC;
 
 # Procedimiento para localizar tablas sin Closther Index en las bases de datos.<a name="tablasinclusterindex"></a>
 
-![](https://s33046.pcdn.co/wp-content/uploads/2018/11/word-image-339.png)
+<img src="https://s33046.pcdn.co/wp-content/uploads/2018/11/word-image-339.png?format=jpg&name=large" alt="JuveR" width="600px">
+
 # 
 ~~~sql
 /*
@@ -2792,13 +2793,15 @@ GO
 
 #### Vamos al SQL Server Management Studio (SSMS) y lo primero es que te voy a llevar a través de los informes del panel de control listos para usar de todos los niveles. Puedes encontrarlos haciendo clic con el botón derecho en la instancia de SQL Server en el Explorador de objetos y, en el menú contextual, encontrará Informes > Informes estándar:
 
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-149.png)
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-149.png?format=jpg&name=large" alt="JuveR" width="600px">
+
+
 
 #### Todos los informes del panel de control son bastante útiles, y no los revisaremos todos, ya que esto requeriría mucho tiempo/ palabras, aunque puedes revisarlos todos cuando tengas la oportunidad. Para mostrar un ejemplo, escoge el Panel del servidor en el menú contextual. Este informe nos brinda mucha información sobre el estado actual de la instancia de SQL Server, incluida su configuración, versión, servicios y actividad:
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-150.png)
-
+#
 #### Adicionalmente, en el nivel de la base de datos, si hacemos clic con el botón derecho en una base de datos y accedemos a los informes, tenemos todo tipo de informes de uso de disco, eventos de copia de seguridad y restauración, principales transacciones, estadísticas de índices, etc.
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-152.png)
+
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-152.png?format=jpg&name=large" alt="JuveR" width="600px">
 
 #### Entonces, todos estos informes del panel de control son excelentes, son fáciles de consumir y trabajar con ellos.
 
@@ -2806,29 +2809,35 @@ GO
 
 #### Ahora, vamos a ver el Monitor de actividad el cual es un monitor en tiempo real dentro de SQL Server que podemos utilizar para poder monitorear todo, desde el rendimiento hasta los costos de I/O hasta consultas más complejas, etc. Para iniciar el Monitor de actividad, haga clic con el botón derecho en la instancia de SQL Server en el Explorador de objetos y desde el menú contextual, seleccione Monitor de actividad. También puede iniciarlo desde la barra de herramientas Estándar, haciendo clic en el icono del Monitor de actividad:
 
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-153.png)
-
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-153.png?format=jpg&name=large" alt="JuveR" width="600px">
 
 #### El Monitor de actividad generalmente ha sido una de las herramientas de acceso si algo sale mal de repente con SQL Server. Lo primero que vemos, cuando activamos el Monitor de actividad es el panel Información general. También, esta herramienta tiene los siguientes paneles expandibles y colapsables: Esperas de recursos, I/O de archivos de datos, Consultas valiosas recientes y Consultas valiosas activas:
-![](https://i.blogs.es/b40d07/monitor-de-actividad/1366_2000.jpg)
+![]()
+<img src="https://i.blogs.es/b40d07/monitor-de-actividad/1366_2000.jpg?format=jpg&name=large" alt="JuveR" width="600px">
+
 
 #### **Procesos**: nos brindan la capacidad de ver los procesos que se ejecutan actualmente para que podamos gestionarlos. Al hacer clic con el botón derecho aparece el menú contextual desde el cual se pueden finalizar, rastrear en el Analizador de SQL Server (más información sobre este tema más adelante), verlo como un plan de ejecución, y por último, pero no menos importante, los detalles de la sesión que muestra un diálogo que muestra la última T -Secuencia de comandos de SQL:
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-155.png)
+![]()
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-155.png?format=jpg&name=large" alt="JuveR" width="600px">
 
 #### **Espera de recursos** – muestra información sobre las espera de recursos:
 
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-156.png)
+![]()
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-156.png?format=jpg&name=large" alt="JuveR" width="600px">
+
 
 #### **I/O del archivo de datos** – muestra la información del I/O del archivo de datos actual que se produce a nivel de archivo:
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-157.png)
+![]()
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-157.png?format=jpg&name=large" alt="JuveR" width="600px">
 
 #### Consultas valiosas recientes/activas – muestra consultas valiosas recientes/activas que utilizan muchos recursos (memoria, actividad del disco, red):
 
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-158.png)
+![]()
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-158.png?format=jpg&name=large" alt="JuveR" width="600px">
 #### Es un excelente punto de partida para poder encontrar qué consultas están causando problemas, ocupando demasiados recursos, etc., porque una vez que se encuentran, se pueden ver como el plan de ejecución para que se puedan encontrar fácilmente los puntos calientes:
 
-![](https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-159.png)
-
+![]()
+<img src="https://www.sqlshack.com/wp-content/uploads/2018/08/word-image-159.png?format=jpg&name=large" alt="JuveR" width="600px">
 ## Principales DMV para el administrador
 
 #### Vamos a echar un vistazo a los principales DMV que todos los administradores de BDs deberían saber. Estos son los DMV que siempre deberías tener en tu bolsillo. Para obtener una lista rápida de todos los DMO (DMV y DMF), simplemente consúltela siguiente lista:
@@ -2970,7 +2979,7 @@ ORDER BY qs.execution_count DESC;
 
 # Identifying SQL Server Disk Latency<a name="disklatency"></a>
 
-![](https://theserogroup.com/wp-content/uploads/2021/05/sqldiskiotrafficjam.jpg)
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqldiskiotrafficjam.jpg?format=jpg&name=large" alt="JuveR" width="700px">
 
 #### When SQL Server is not as fast as users think it ought to be, how can you tell where the slowdown is? Where’s the performance bottleneck? Where’s the traffic jam? Is it waiting on CPU? Does it needs memory? What about the disks? Could SQL Server be slow because of disk latency? Could be. But how can we know for sure? Fortunately, we can ask SQL Server what it’s waiting on when it’s waiting for a resource.
 
@@ -3035,7 +3044,10 @@ GO
 # 
 
 #### When I run this query against a docker-based SQL Server 2017 instance, I receive the following results
-![](https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png)
+
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png?format=jpg&name=large" alt="JuveR" width="700px">
+
+
 #### The Latency Desc column helps to interpret the results. Latency can be classified as shown in the following table. Of course, this is a rule of thumb and your needs may vary.
 |||
 |--------|-----------------|
@@ -3057,7 +3069,8 @@ Test-DbaDiskSpeed -SqlInstance localhost -SqlCredential sa | Format-Table -Prope
 ~~~
 
 #### Running the PowerShell script on my docker-based SQL Server 2017 instance provides the following output file.
-![](https://theserogroup.com/wp-content/uploads/2021/05/diskspeedoutputsqlserverdbatools-1024x354.png)
+
+<img src="https://theserogroup.com/wp-content/uploads/2021/05/diskspeedoutputsqlserverdbatools-1024x354.png?format=jpg&name=large" alt="JuveR" width="700px">
 
 ## Let’s not ask SQL Server about disk latency
 #### Of course, there will be those who mistrust the results from either of these methods, because, well, of course SQL Server wouldn’t fess up to being the bottleneck. It’s obviously going to point the finger elsewhere.
@@ -3123,7 +3136,8 @@ ORDER BY db_buffer_MB DESC;
 
 #### That all said, here are partial results from an instance on my local virtual machine:
 
-![](https://www.mssqltips.com/tipImages2/2393_memory_a.png)
+
+<img src="https://www.mssqltips.com/tipImages2/2393_memory_a.png?format=jpg&name=large" alt="JuveR" width="700px">
 
 #### Clearly, the SQLSentry database - while only representing 258 MB - occupies about 70% of my buffer pool for this instance. So now I know that I can drill into that database specifically if I want to track down the objects that are taking up most of that memory. You can once again use the sys.dm_os_buffer_descriptors only this time, instead of aggregating the page counts at the database level, we can utilize a set of catalog views to determine the number of pages (and therefore amount of memory) dedicated to each object.
 # 
@@ -3337,7 +3351,9 @@ ORDER BY [total_worker_time] DESC;
 # 
 
 # Las consultas SQL más ejecutadas.<a name="lasconsultassqlmasejecutadas"></a>
-![](https://mundo-tips.com/wp-content/uploads/2020/05/SQL-Query-Optimization.jpg)
+
+<img src="https://mundo-tips.com/wp-content/uploads/2020/05/SQL-Query-Optimization.jpg?format=jpg&name=large" alt="JuveR" width="700px">
+
 #### En las tareas de administración de SQL Server, es necesario recabar información; especialmente a fin de conocer las sentencias que más hacen trabajar al servidor. Por ello, es de gran utilidad conocer cuáles son las consultas SQL que más se ejecutan y cuál es su consumo de CPU. SQL Server es un sistema que ayuda a la gestión de las bases de datos. Un producto de Microsoft que está basado en el modelo relacional, pero que además, se utiliza para el rendimiento de instancias en el motor de la base de datos. Esto es, depurar procedimientos o llevar a cabo pruebas de esfuerzo.
 
 #### Lo habitual es que, entre las consultas en SQL Server que más se ejecutan, se encuentren consultas de selección o básicas. Pero también pueden darse cualquiera de los otros tipos de consultas, como consultas de descripción, con predicado o de acción.
@@ -3362,7 +3378,8 @@ qs.execution_count DESC
 # 
 
 # Consultas SQL con mayor consumo de CPU.<a name="consultassqlmayorconsumodecpu"></a>
-![](https://linube.com/blog/wp-content/uploads/consultas-sql-min.png)
+<img src="https://linube.com/blog/wp-content/uploads/consultas-sql-min.png?format=jpg&name=large" alt="JuveR" width="700px">
+
 #### En ocasiones, es posible que nuestro SQL Server tenga un gran consumo de CPU. Una buena forma de saber de dónde viene ese consumo excesivo de CPU es realizar consultas. De esta forma podremos saber cuáles son las que más sobrecargan, de media, nuestro servidor. Este consumo elevado de CPU en el servidor puede deberse a diferentes motivos; desde fallos en la memoria del servidor a espacio insuficiente. También es posible que esto se deba a la presencia de algún elemento malicioso que ejecuta demasiada actividad aunque no sea visible.En cualquier caso, el consumo de CPU es un aspecto que no debe descuidarse en un servidor. Ya que esto podría afectar al rendimiento del servidor y provocar problemas de operatividad
 # 
 ##### Para conocer dónde se encuentra el problema, podemos recurrir a un script. De esta forma podremos saber cuáles son las consultas en SQL con un consumo más elevado de CPU. Unas consultas que pueden estar sobrecargando la CPU de nuestro servidor.
@@ -3715,7 +3732,7 @@ GO
 
 
 # Detectando actividad del servidor.<a name="dectectandoactenservidor"></a>
-![](https://i.pinimg.com/originals/56/99/84/569984584af7d9c9224bd4a1a8ab7039.jpg)
+<img src="https://i.pinimg.com/originals/56/99/84/569984584af7d9c9224bd4a1a8ab7039.jpg?format=jpg&name=large" alt="JuveR" width="800">
 # 
 
 
@@ -3884,7 +3901,7 @@ EXEC sp_send_dbmail
 
 
 # Fecha Ultima restauracion de Un Backup<a name ="ultimarestauracion"></a>
-![](https://2.bp.blogspot.com/-3PA74bncZU4/Vq9r-ULqrcI/AAAAAAAAAds/g5cD6s5JEr0/s640/copia-seguridad-windows-recuperacion-sistema.jpg)
+<img src="https://2.bp.blogspot.com/-3PA74bncZU4/Vq9r-ULqrcI/AAAAAAAAAds/g5cD6s5JEr0/s640/copia-seguridad-windows-recuperacion-sistema.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 # 
 
 
@@ -4037,9 +4054,8 @@ END CATCH
 
 # Cuantos Core Tiene mi base de datos<a name="cuantoscoretengo"></a>
 # 
-
-
-![](https://hardzone.es/app/uploads/2019/07/Sistema-01.jpg)
+<img src="https://hardzone.es/app/uploads/2019/07/Sistema-01.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+#
 ~~~sql
 select scheduler_id, cpu_id, status, is_online 
 from sys.dm_os_schedulers 
@@ -8612,7 +8628,7 @@ WHERE adc.is_local = 1;
 ![](https://www.mssqltips.com/images_newsletter/3519_NewsletterImage.png)
 #### Si estás buscando cambiar el "collation" de todas las bases de datos en un servidor SQL Server, aquí tienes un script que puedes utilizar para estos fines.
 
- #### Ten en cuenta que cambiar el "collation" de una base de datos es un proceso delicado y debe hacerse con precaución, ya que puede afectar la forma en que los datos se comparan y ordenan en las consultas. Asegúrate de realizar pruebas exhaustivas en un entorno de desarrollo antes de aplicar estos cambios en un entorno de producción.
+#### Ten en cuenta que cambiar el "collation" de una base de datos es un proceso delicado y debe hacerse con precaución, ya que puede afectar la forma en que los datos se comparan y ordenan en las consultas. Asegúrate de realizar pruebas exhaustivas en un entorno de desarrollo antes de aplicar estos cambios en un entorno de producción.
 
 # 
 ~~~sql
