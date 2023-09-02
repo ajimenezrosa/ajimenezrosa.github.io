@@ -7866,29 +7866,118 @@ WHERE s.is_user_process = 0;
  - n la tabla siguiente se muestra el número configurado automáticamente de número máximo de subprocesos de trabajo (cuando el valor se establece en 0) basado en diferentes combinaciones de CPU lógicas, arquitectura de equipo y versiones de SQL Server, mediante la fórmula: Número máximo predeterminado de trabajos + ((CPU lógicas - 4) * Trabajos por CPU).
 
 
-|Número de CPU lógicas|	Equipo de 32 bits (hasta SQL Server 2014 (12.x))|Equipo de 64 bits (hasta SQL Server 2016 (13.x) SP1)|	Equipo de 64 bits (a partir de SQL Server 2016 (13.x) SP2 y SQL Server 2017 (14.x))|
-|--------------|-----------------|--------------------|-------------------|
-|<= 4	|256	|512	|512|
-|8	|288	|576	|576|
-|16|	352|	704|	704|
-|32|	480|	960|	960|
-|64|	736|	1472|	1472|
-|128|	1248|	2496|	4480|
-|256|	2272|	4544|	8576|
+<table>
+<tr>
+<td>Número de CPU lógicas</td>
+<td>Equipo de 32 bits (hasta SQL Server 2014 (12.x))</td>
+<td>Equipo de 64 bits (hasta SQL Server 2016 (13.x) SP1)</td>
+<td>Equipo de 64 bits (a partir de SQL Server 2016 (13.x) SP2 y SQL Server 2017 (14.x))</td>
+</tr>
+<tr>
+<td><=4</td>
+<td>256</td>
+<td>512</td>
+<td>512</td>
+</tr>
+<tr>
+<td>8</td>
+<td>288</td>
+<td>578</td>
+<td>576</td>
+</tr>
+<tr>
+<td>16</td>
+<td>352</td>
+<td>704</td>
+<td>704</td>
+</tr>
+<tr>
+<td>32</td>
+<td>480</td>
+<td>960</td>
+<td>960</td>
+</tr>
+<tr>
+<td>64</td>
+<td>736</td>
+<td>1472</td>
+<td>1472</td>
+</tr>
+<tr>
+<td>128</td>
+<td>1248</td>
+<td>2496</td>
+<td>4480</td>
+</tr>
+<tr>
+<td>256</td>
+<td>2272</td>
+<td>4544</td>
+<td>8576</td>
+</tr>
+
+
+</table>
+
 
 #### Hasta SQL Server 2016 (13.x) con Service Pack 1, los trabajos por CPU solo dependen de la arquitectura (32 bits o 64 bits):
 
-|Número de CPU lógicas|	Equipo de 32 bits 1|	Equipo de 64 bits|
-|---------------------|--------------------|---------------------|
-|<= 4|	256|	512|
-|> 4|	256 + ((CPU lógicas - 4) * 8)|	512 2 + ((CPU lógicas - 4) * 16)|
+<table>
+<tr>
+    <td>Número de CPU lógicas</td>
+    <td>Equipo de 32 bits 1</td>
+    <td>	Equipo de 64 bits</td>
+</tr>
+
+<tr>
+    <td><=4</td>
+    <td>256</td>
+    <td>512</td>
+</tr>
+
+<tr>
+    <td>>4</td>
+    <td>256 + ((CPU lógicas - 4) * 8)</td>
+    <td>512 2 + ((CPU lógicas - 4) * 16)</td>
+</tr>
+
+
+</table>
+
+# 
+
 #### A partir de SQL Server 2016 (13.x) SP2 y SQL Server 2017 (14.x), los Trabajos por CPU dependen de la arquitectura y el número de procesadores (entre 4 y 64, o superior a 64):
 
-|Número de CPU lógicas|	Equipo de 32 bits 1|	Equipo de 64 bits|
-|---------------------|--------------------|---------------------|
-|<= 4|	256	|512|
-|> 4 y <= 64|	256 + ((CPU lógicas - 4) * 8)|	512 2 + ((CPU lógicas - 4) * 16)|
-|> 64|	256 + ((CPU lógicas - 4) * 32)|	512 2 + ((CPU lógicas - 4) * 32)|
+<table>
+    <tr>
+        <td>Número de CPU lógicas</td>
+        <td>Equipo de 32 bits 1</td>
+        <td>Equipo de 64 bits</td>
+    </tr>
+    <tr>
+    <td><= 4</td>    
+    <td>256</td>    
+    <td>512</td>    
+</tr>
+    </tr>
+    <tr>
+    <td>> 4 y <= 64</td>    
+    <td>256 + ((CPU lógicas - 4) * 8)</td>    
+    <td>512 2 + ((CPU lógicas - 4) * 16)</td>    
+</tr>
+</tr>
+    </tr>
+    <tr>
+    <td>> 64</td>    
+    <td>256 + ((CPU lógicas - 4) * 32)</td>    
+    <td>512 2 + ((CPU lógicas - 4) * 32)</td>    
+</tr>
+
+
+
+</table>
+
+
 #### 1 A partir de SQL Server 2016 (13.x), SQL Server ya no se puede instalar en un sistema operativo de 32 bits. Se muestran los valores de equipo de 32 bits como ayuda para los clientes que ejecutan SQL Server 2014 (12.x) y versiones anteriores. Se recomienda 1024 como número máximo de subprocesos de trabajo para una instancia de SQL Server que se ejecuta en un equipo de 32 bits.
 
 #### 2 A partir de SQL Server 2017 (14.x), el valor de trabajos máximos predeterminados se divide por 2 con menos de 2 GB de memoria.
@@ -8333,7 +8422,12 @@ for ($i = 0; $i -lt $serverInstances.Length; $i++) {
 
 ## Para obtener una lista de todas las tablas de todas las bases de datos en un servidor SQL Server, puedes utilizar la siguiente consulta:<a name="listadbytablasserver"></a>
 # 
-![](https://allmastersolutions.com/wp-content/uploads/2017/01/2017-01-19-Ejecutar-consultas-SQL-Din%C3%A1micas.png)
+<div>
+<p style = 'text-align:center;'>
+<img src="https://allmastersolutions.com/wp-content/uploads/2017/01/2017-01-19-Ejecutar-consultas-SQL-Din%C3%A1micas.png?format=jpg&name=small" alt="JuveYell" width="700px">
+</p>
+</div>
+
 
 # 
 ~~~sql
