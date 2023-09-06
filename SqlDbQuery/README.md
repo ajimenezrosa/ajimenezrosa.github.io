@@ -180,6 +180,11 @@
 
  - 39 [como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo](#failover)
  - 40 [Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server](#collectionchange)
+
+- 41 [ Para saber si SQL Server Replication está instalado en SQL Server 2019, puedes seguir estos pasos](#saberreplicationserver)
+
+
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8797,6 +8802,34 @@ DEALLOCATE db_cursor
 
 # 
 
+
+## Para saber si SQL Server Replication está instalado en SQL Server 2019, puedes seguir estos pasos:<a name="saberreplicationserver"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://www.striim.com/wp-content/uploads/2022/06/Data-replication.png
+?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+
+
+1. **SQL Server Management Studio (SSMS):** Abre SQL Server Management Studio y conéctate a tu instancia de SQL Server 2019.
+
+2. **Consulta del catálogo:** Ejecuta la siguiente consulta en una nueva ventana de consulta de SSMS:
+
+   ```sql
+   SELECT * FROM sys.objects WHERE type = 'S'
+   ```
+
+   Esta consulta buscará objetos de tipo 'S' (que representan objetos de replicación) en la base de datos maestra del servidor.
+
+3. **Verificación de objetos de replicación:** Si obtienes resultados de la consulta que incluyen objetos de tipo 'S', entonces SQL Server Replication está instalado en tu instancia de SQL Server. Estos objetos de replicación son parte del sistema de replicación y su presencia indica que la característica está instalada.
+
+#### Si no obtienes resultados o recibes un mensaje de error indicando que la tabla `sys.objects` no existe, es posible que no tengas permisos suficientes para consultar el catálogo o que la característica de replicación no esté instalada en tu instancia de SQL Server.
+
+#### Recuerda que la replicación es una característica que se puede instalar o desinstalar durante la instalación de SQL Server o posteriormente a través del instalador de SQL Server. Si necesitas habilitar o deshabilitar la replicación, puedes hacerlo a través del instalador de SQL Server o de la configuración de características de SQL Server en el Panel de Control de Windows.
 
 
 
