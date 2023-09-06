@@ -8807,8 +8807,7 @@ DEALLOCATE db_cursor
 
 <div>
 <p style = 'text-align:center;'>
-<img src="https://www.striim.com/wp-content/uploads/2022/06/Data-replication.png
-?format=jpg&name=small" alt="JuveYell" width="750px">
+<img src="https://www.striim.com/wp-content/uploads/2022/06/Data-replication.png?format=jpg&name=small" alt="JuveYell" width="750px">
 </p>
 </div>
 
@@ -8823,7 +8822,7 @@ DEALLOCATE db_cursor
    SELECT * FROM sys.objects WHERE type = 'S'
    ```
 
-   Esta consulta buscará objetos de tipo 'S' (que representan objetos de replicación) en la base de datos maestra del servidor.
+####   Esta consulta buscará objetos de tipo 'S' (que representan objetos de replicación) en la base de datos `Master` del servidor.
 
 3. **Verificación de objetos de replicación:** Si obtienes resultados de la consulta que incluyen objetos de tipo 'S', entonces SQL Server Replication está instalado en tu instancia de SQL Server. Estos objetos de replicación son parte del sistema de replicación y su presencia indica que la característica está instalada.
 
