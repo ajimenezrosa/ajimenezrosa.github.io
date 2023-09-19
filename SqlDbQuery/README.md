@@ -8903,6 +8903,15 @@ DEALLOCATE db_cursor
 
 # 
 ## Listado de transacciones bloqueadas en un servidor DB<a  name="bloqueos2" ></a>
+<div>
+<p style = 'text-align:center;'>
+<img src="https://www.datanumen.com/blogs/wp-content/uploads/2017/01/blocking-in-sql.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+
+
 
 ###  Para detectar bloqueos en un entorno Always On Availability Groups en SQL Server, puedes utilizar la siguiente consulta que se basa en vistas dinámicas relacionadas con bloqueos y Always On. Ten en cuenta que esta consulta debe ejecutarse en la instancia primaria del grupo de disponibilidad:
 
