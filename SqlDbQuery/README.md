@@ -183,7 +183,7 @@
 
 - 41 [ Para saber si SQL Server Replication está instalado en SQL Server 2019, puedes seguir estos pasos](#saberreplicationserver)
 
-
+ - 42 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)
 
 <!-- ConsultasEflowCitas -->
 
@@ -8899,6 +8899,45 @@ DEALLOCATE db_cursor
 #### Si no obtienes resultados o recibes un mensaje de error indicando que la tabla `sys.objects` no existe, es posible que no tengas permisos suficientes para consultar el catálogo o que la característica de replicación no esté instalada en tu instancia de SQL Server.
 
 #### Recuerda que la replicación es una característica que se puede instalar o desinstalar durante la instalación de SQL Server o posteriormente a través del instalador de SQL Server. Si necesitas habilitar o deshabilitar la replicación, puedes hacerlo a través del instalador de SQL Server o de la configuración de características de SQL Server en el Panel de Control de Windows.
+
+
+# 
+## Listado de transacciones bloqueadas en un servidor DB<a  name="bloqueos2" ></a>
+
+###  Para detectar bloqueos en un entorno Always On Availability Groups en SQL Server, puedes utilizar la siguiente consulta que se basa en vistas dinámicas relacionadas con bloqueos y Always On. Ten en cuenta que esta consulta debe ejecutarse en la instancia primaria del grupo de disponibilidad:
+
+~~~sql
+
+SELECT
+    DB_NAME(tl.resource_database_id) AS DatabaseName,
+    tl.request_session_id AS SessionID,
+    wt.blocking_session_id AS BlockingSessionID,
+    tl.resource_type AS ResourceType,
+    tl.resource_associated_entity_id AS AssociatedEntityID,
+    tl.request_mode AS LockMode,
+    tl.request_status AS LockStatus,
+    tl.request_owner_type AS LockOwnerType,
+    CASE
+        WHEN tl.resource_type = 'OBJECT' THEN OBJECT_NAME(tl.resource_associated_entity_id, tl.resource_database_id)
+        ELSE 'N/A'
+    END AS ResourceName,
+    r.replica_server_name AS ReplicaServerName
+FROM sys.dm_tran_locks AS tl
+LEFT JOIN sys.dm_exec_requests AS wt ON tl.request_session_id = wt.session_id
+INNER JOIN sys.dm_hadr_availability_replica_states AS r ON DB_NAME(tl.resource_database_id) = r.database_name
+WHERE tl.request_status = 'WAIT' OR tl.request_status = 'GRANT'
+ORDER BY tl.request_session_id;
+~~~
+# 
+
+#### Esta consulta recuperará información sobre los bloqueos en la base de datos en el contexto de un entorno Always On Availability Groups. Proporcionará detalles sobre el nombre de la base de datos afectada, el identificador de sesión, el identificador de sesión de bloqueo (si está bloqueado), el tipo de recurso bloqueado, el modo de bloqueo, el estado del bloqueo y otros detalles relacionados con el bloqueo. Además, mostrará en qué réplica se encuentra la base de datos en el momento del bloqueo.
+
+#### Asegúrate de ejecutar esta consulta en la instancia primaria del grupo de disponibilidad, ya que es la instancia primaria la que maneja las operaciones de escritura y, por lo tanto, donde es más probable que ocurran bloqueos significativos. Ten en cuenta que esta consulta solo mostrará bloqueos activos o en espera en el momento de la ejecución.
+
+### Recuerda que la resolución de problemas de bloqueos en un entorno Always On Availability Groups puede ser complicada debido a la replicación y la distribución de datos entre réplicas. Es importante comprender bien cómo funciona Always On y contar con experiencia en la resolución de problemas en este tipo de entornos.
+
+
+
 
 
 
