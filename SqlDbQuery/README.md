@@ -1797,6 +1797,39 @@ ORDER BY Avg_Estimated_Impact DESC
 GO
 ~~~
 
+# 
+## Creacion de Indices Filtrados, Usando N cores del servidor
+#### Sí, en SQL Server, puedes crear un índice que utilice una cantidad específica de núcleos (cores) para mejorar el rendimiento de las consultas. Esto se conoce como un "índice particionado" o un "índice filtrado". Sin embargo, es importante destacar que SQL Server generalmente gestiona la asignación de recursos de manera automática y utiliza múltiples núcleos para procesar consultas de manera eficiente sin que necesites especificar la cantidad de núcleos en un índice.
+
+#### Dicho esto, puedes crear un índice particionado o filtrado para mejorar el rendimiento en situaciones específicas, pero esto no implica la asignación manual de núcleos. A continuación, te explico cómo crear estos tipos de índices:
+
+1. **Índice Particionado:** Un índice particionado divide una tabla en varias particiones y permite que SQL Server almacene y administre los datos de manera más eficiente. Para crear un índice particionado, primero debes definir una función de partición y esquema de partición en tu base de datos y luego crear el índice utilizando estas particiones. No necesitas especificar la cantidad de núcleos.
+
+```sql
+-- Ejemplo de creación de un índice particionado en SQL Server
+CREATE PARTITION FUNCTION MiFuncionParticion ()
+AS RANGE LEFT FOR VALUES (1, 2, 3);
+
+CREATE PARTITION SCHEME MiEsquemaParticion
+AS PARTITION MiFuncionParticion
+ALL TO ([PRIMARY]);
+
+CREATE CLUSTERED INDEX MiIndiceParticionado
+ON MiTabla (Columna)
+ON MiEsquemaParticion(Columna);
+```
+
+2. **Índice Filtrado:** Un índice filtrado es un índice que solo incluye un subconjunto de filas de la tabla. Esto puede ayudar a mejorar el rendimiento en consultas específicas si solo necesitas acceder a una parte de los datos.
+
+```sql
+-- Ejemplo de creación de un índice filtrado en SQL Server
+CREATE NONCLUSTERED INDEX MiIndiceFiltrado
+ON MiTabla (Columna)
+WHERE Condición;
+```
+
+#### Ten en cuenta que la gestión de núcleos y recursos en SQL Server se realiza automáticamente a nivel del motor de base de datos. Si experimentas problemas de rendimiento, en lugar de intentar asignar núcleos manualmente, es recomendable realizar un ajuste de consultas, revisar la configuración del servidor y utilizar herramientas de monitoreo para identificar cuellos de botella y optimizar el rendimiento.
+
 
 # 
 
