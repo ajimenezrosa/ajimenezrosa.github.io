@@ -1,0 +1,254 @@
+html {
+
+    box-sizing: border-box;
+    --bgColorMenu : #828289;
+    --duration: .7s;    
+
+}
+
+html *,
+html *::before,
+html *::after {
+
+    box-sizing: inherit;
+
+}
+
+body{
+    
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    background-color: #4a4a4a;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--duration);
+
+}
+
+.menu{
+
+    margin: 0;
+    display: flex;
+    /* Works well with 100% width  */
+    width: 32.05em;
+    font-size: 1.5em;
+    padding: 0 2.85em;
+    position: static;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: var(--bgColorMenu);
+    
+}
+
+.menu__item{
+    
+    all: unset;
+    flex-grow: 1;
+    z-index: 100;
+    display: flex;
+    cursor: pointer;
+    position: relative;
+    border-radius: 50%;
+    align-items: center;
+    will-change: transform;
+    justify-content: center;
+    padding: 0.55em 0 0.85em;
+    transition: transform var(--timeOut , var(--duration));
+    
+}
+
+.menu__item::before{
+    
+    content: "";
+    z-index: -1;
+    width: 4.2em;
+    height: 4.2em;
+    border-radius: 50%;
+    position: absolute;
+    transform: scale(0);
+    transition: background-color var(--duration), transform var(--duration);
+    
+}
+
+
+.menu__item.active {
+
+    transform: translate3d(0, -.8em , 0);
+
+}
+
+.menu__item.active::before{
+    
+    transform: scale(1);
+    background-color: var(--bgColorItem);
+
+}
+
+.icon{
+    
+    width: 2.6em;
+    height: 2.6em;
+    stroke: white;
+    fill: transparent;
+    stroke-width: 1pt;
+    stroke-miterlimit: 10;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 400;
+    
+}
+
+.menu__item.active .icon {
+
+    animation: strok 1.5s reverse;
+    
+}
+
+@keyframes strok {
+
+    100% {
+
+        stroke-dashoffset: 400;
+
+    }
+
+}
+
+.menu__border{
+
+    left: 0;
+    bottom: 99%;
+    width: 10.9em;
+    height: 2.4em;
+    position: absolute;
+    clip-path: url(#menu);
+    will-change: transform;
+    background-color: var(--bgColorMenu);
+    transition: transform var(--timeOut , var(--duration));
+    
+}
+
+.svg-container {
+
+    width: 0;
+    height: 0;
+}
+
+
+@media screen and (max-width: 50em) {
+    .menu{
+        font-size: .8em;
+    }
+}
+
+
+/* segundo stiles */
+
+
+body {
+  background-color: #1e2227;
+  color: #c9d1d9;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#page-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+#authentication-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  padding-top: 200px;
+}
+
+#readme-container {
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 10px rgba(211, 204, 204, 0.2);
+  background-color: #1d1d1e;
+  border-radius: 10px;
+  padding: 20px;
+  display: none;
+}
+
+.copy-button {
+  background-color: #79c0ff;
+  color: #0d1117;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+  background-color: #58a6ff;
+}
+
+.code-container {
+  position: relative;
+  background-color: #555556;
+  /* background-color: #f0f0f0; */
+  padding: 10px;
+  border: 1px solid #ccc;
+  white-space: pre-wrap;
+
+}
+#submit-button {
+padding: 10px 20px;
+background-color: #007bff;
+border: none;
+border-radius: 5px;
+color: #ffffff;
+cursor: pointer;
+}
+
+
+#submit-button:hover {
+background-color: #0056b3;
+}
+
+
+#password-input {
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+margin-bottom: 10px;
+width: 100%;
+box-sizing: border-box;
+}
+
+
+a:link {
+color:#e3ebf3;
+}
+
+a:visited {
+color: yellow;
+}
+
+
+table {
+width: 100%;
+border: 1px solid #000;
+}
+th, td {
+width: 25%;
+text-align: left;
+vertical-align: top;
+border: 1px solid #000;
+border-collapse: collapse;
+}
+
+
