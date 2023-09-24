@@ -27,6 +27,6 @@
 # 
 
 # PowerShells
-<img src="https://licendi.com/media/magefan_blog/2022/07/210904-Blog-Post-SQL-Server-2-e1630753848251-1.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+<img src="https://nerdcaster.com/wp-content/uploads/2019/08/PowerShell.jpeg?format=jpg&name=large" alt="JuveR" width="800px">
 
 # Administracion

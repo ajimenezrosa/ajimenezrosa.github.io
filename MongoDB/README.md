@@ -27,6 +27,6 @@
 # 
 
 # Administracion de MongoDB.
-<img src="https://licendi.com/media/magefan_blog/2022/07/210904-Blog-Post-SQL-Server-2-e1630753848251-1.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+<img src="https://webimages.mongodb.com/_com_assets/cms/kuzt9r42or1fxvlq2-Meta_Generic.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 # Administracion
