@@ -185,6 +185,9 @@
 
  - 42 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)
 
+
+ - 43 [Ver los Log de Errores del Sql server](#errorlogsql)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -8979,7 +8982,41 @@ ORDER BY tl.request_session_id;
 ### Recuerda que la resolución de problemas de bloqueos en un entorno Always On Availability Groups puede ser complicada debido a la replicación y la distribución de datos entre réplicas. Es importante comprender bien cómo funciona Always On y contar con experiencia en la resolución de problemas en este tipo de entornos.
 
 
+# 
 
+
+
+
+## Ver los Log de Errores del Sql server<a name="errorlogsql"></a> 
+<div>
+<p style = 'text-align:center;'>
+<img src="https://cf-images.us-east-1.prod.boltdns.net/v1/static/6057277730001/217b8d18-11ba-46d1-bc1f-120a43f9a6a9/a2dbc8fb-60d1-4c8e-8c45-3b79ff2efadc/1280x720/match/image.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+#### Para consultar el registro de errores de SQL Server y obtener información sobre eventos y errores, puedes utilizar la siguiente consulta SQL. Esta consulta utiliza la función extendida `xp_readerrorlog` para leer el registro de errores:
+
+```sql
+EXEC xp_readerrorlog;
+```
+
+#### Al ejecutar esta consulta, obtendrás un conjunto de resultados que incluirá información sobre los eventos y errores registrados en el registro de errores de SQL Server. El conjunto de resultados contendrá columnas como `LogDate`, `ProcessInfo`, `Text`, entre otras, que proporcionan detalles sobre los eventos y errores.
+
+#### Si deseas consultar registros de errores específicos o filtrar por fechas, puedes usar los parámetros opcionales de la función `xp_readerrorlog`. Por ejemplo:
+
+```sql
+-- Mostrar los últimos 50 registros de errores
+EXEC xp_readerrorlog 0, 1, NULL, NULL, NULL, NULL, N'desc';
+
+-- Filtrar registros de errores por fecha (en este caso, los últimos 7 días)
+EXEC xp_readerrorlog 0, 1, NULL, NULL, '2023-09-18', '2023-09-25', NULL;
+
+-- Filtrar registros de errores por texto específico
+EXEC xp_readerrorlog 0, 1, NULL, N'Texto de error a buscar', NULL, NULL, NULL;
+```
+
+#### Ajusta los parámetros según tus necesidades para obtener la información específica que estás buscando en el registro de errores de SQL Server.
 
 
 
