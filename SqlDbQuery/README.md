@@ -8416,75 +8416,85 @@ ORDER BY avg_fragmentation_in_percent DESC
 
 ~~~sql
 -- Ensure a USE statement has been executed first.
+-- Asegurarse de que se haya ejecutado una instrucción USE primero.
 SET NOCOUNT ON;
-DECLARE @objectid int;
-DECLARE @indexid int;
-DECLARE @partitioncount bigint;
-DECLARE @schemaname nvarchar(130);
-DECLARE @objectname nvarchar(130);
-DECLARE @indexname nvarchar(130);
-DECLARE @partitionnum bigint;
-DECLARE @partitions bigint;
-DECLARE @frag float;
-DECLARE @command nvarchar(4000);
+DECLARE @objectid INT;
+DECLARE @indexid INT;
+DECLARE @partitioncount BIGINT;
+DECLARE @schemaname NVARCHAR(130);
+DECLARE @objectname NVARCHAR(130);
+DECLARE @indexname NVARCHAR(130);
+DECLARE @partitionnum BIGINT;
+DECLARE @partitions BIGINT;
+DECLARE @frag FLOAT;
+DECLARE @command NVARCHAR(4000);
 
--- Conditionally select tables and indexes from the sys.dm_db_index_physical_stats function
--- and convert object and index IDs to names.
+-- Condición para seleccionar tablas e índices de la función sys.dm_db_index_physical_stats
+-- y convertir los IDs de objetos e índices en nombres.
 SELECT
     object_id AS objectid,
     index_id AS indexid,
     partition_number AS partitionnum,
     avg_fragmentation_in_percent AS frag
 INTO #work_to_do
-FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL , NULL, 'LIMITED')
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
 WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
 page_count > 1000;
 
--- Declare the cursor for the list of partitions to be processed.
+-- Declarar el cursor para la lista de particiones a procesar.
 DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
 
--- Open the cursor.
+-- Abrir el cursor.
 OPEN partitions;
 
--- Loop through the partitions.
+-- Loop a través de las particiones.
 WHILE (1=1)
-    BEGIN;
-        FETCH NEXT
-           FROM partitions
-           INTO @objectid, @indexid, @partitionnum, @frag;
-        IF @@FETCH_STATUS < 0 BREAK;
-        SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
-        FROM sys.objects AS o
-        JOIN sys.schemas as s ON s.schema_id = o.schema_id
-        WHERE o.object_id = @objectid;
-        SELECT @indexname = QUOTENAME(name)
-        FROM sys.indexes
-        WHERE  object_id = @objectid AND index_id = @indexid;
-        SELECT @partitioncount = count (*)
-        FROM sys.partitions
-        WHERE object_id = @objectid AND index_id = @indexid;
+BEGIN
+    FETCH NEXT
+    FROM partitions
+    INTO @objectid, @indexid, @partitionnum, @frag;
+    IF @@FETCH_STATUS < 0 BREAK;
 
-        -- 30 is an arbitrary decision point at which to switch between reorganizing and rebuilding.
-        IF @frag < 30.0
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
-            @schemaname + N'.' + @objectname + N' REORGANIZE';
-        ELSE IF @frag >= 30.0 AND @partitioncount <= 1
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
-            @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE = ON)';
-        ELSE IF @frag >= 30.0 AND @partitioncount > 1
-            SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
-            @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' + 
-            CAST(@partitionnum AS nvarchar(10)) + N' WITH (ONLINE = ON)';
-            
+    SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
+    FROM sys.objects AS o
+    JOIN sys.schemas AS s ON s.schema_id = o.schema_id
+    WHERE o.object_id = @objectid;
+
+    SELECT @indexname = QUOTENAME(name)
+    FROM sys.indexes
+    WHERE  object_id = @objectid AND index_id = @indexid;
+
+    SELECT @partitioncount = COUNT(*)
+    FROM sys.partitions
+    WHERE object_id = @objectid AND index_id = @indexid;
+
+    -- 30 es un punto de decisión arbitrario para cambiar entre reorganización y reconstrucción.
+    IF @frag < 30.0
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REORGANIZE';
+    ELSE IF @frag >= 30.0 AND @partitioncount <= 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE = ON)';
+    ELSE IF @frag >= 30.0 AND @partitioncount > 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' + 
+        CAST(@partitionnum AS NVARCHAR(10)) + N' WITH (ONLINE = ON)';
+
+    BEGIN TRY
         EXEC (@command);
         PRINT N'Executed: ' + @command;
-    END;
+    END TRY
+    BEGIN CATCH
+        PRINT N'Error executing: ' + @command;
+        -- Puedes registrar el error o realizar cualquier otra acción aquí si es necesario.
+    END CATCH
+END;
 
--- Close and deallocate the cursor.
+-- Cerrar y liberar el cursor.
 CLOSE partitions;
 DEALLOCATE partitions;
 
--- Drop the temporary table.
+-- Eliminar la tabla temporal.
 DROP TABLE #work_to_do;
 GO
 
