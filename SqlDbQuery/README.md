@@ -8538,6 +8538,16 @@ id int
 
 )
 
+
+-- SI AL TABLA TEMPORAL EXISTE ELIMINALA.
+    BEGIN TRY
+        DORP TABLE #work_to_do;
+    END TRY
+    BEGIN CATCH
+         PRINT N'error executing';
+    END CATCH
+
+
  
 
 while exists (
