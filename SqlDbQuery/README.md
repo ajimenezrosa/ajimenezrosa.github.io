@@ -163,7 +163,7 @@
      - 29.7.1 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
 
  - 30 [Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight](#foglight1)
- - 31 [Defragmentación, al rescate, Servidores AlwaysOn Interprise Edition](#desfragmentacionalrescate2)
+ <!-- - 31 [Defragmentación, al rescate, Servidores AlwaysOn Interprise Edition](#desfragmentacionalrescate2) -->
  - 32 [Para sacar una base de datos de modo restoring solo debemos ejecutar este código.](#sacarrestoring)
  - 33 [Si estás buscando un script que lea los valores de `-ServerInstance`, `-Database` y `-Query` desde archivos de texto y luego ejecute las consultas utilizando Invoke-Sqlcmd. Aquí tienes un ejemplo de cómo podrías hacerlo en PowerShell](#powershellsqlserver)
 
@@ -3793,8 +3793,258 @@ ORDER BY avg_fragmentation_in_percent DESC
 
 
 #### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
+
+#### En esta versión modificada del script, se ha agregado la opción WITH (ONLINE = ON) en las instrucciones ALTER INDEX para que las operaciones se realicen en línea, lo que minimizará el bloqueo de las tablas y permitirá que las consultas y las inserciones continúen sin interrupciones. 
+
+####  También se ha incluido una condición adicional para decidir si se realiza una reconstrucción en línea basada en el tamaño de la tabla y el nivel de fragmentación. Las reorganizaciones se seguirán realizando en línea. 
+
+#### ***Debemos tener en cuenta que la disponibilidad de la opción ONLINE puede depender de la edición de SQL Server que estemos utilizando.***
+#####   ***Este query solo funciona con Sql Server Interprise Edition.***
 # 
 
+
+~~~sql
+-- Ensure a USE statement has been executed first.
+-- Asegurarse de que se haya ejecutado una instrucción USE primero.
+SET NOCOUNT ON;
+DECLARE @objectid INT;
+DECLARE @indexid INT;
+DECLARE @partitioncount BIGINT;
+DECLARE @schemaname NVARCHAR(130);
+DECLARE @objectname NVARCHAR(130);
+DECLARE @indexname NVARCHAR(130);
+DECLARE @partitionnum BIGINT;
+DECLARE @partitions BIGINT;
+DECLARE @frag FLOAT;
+DECLARE @command NVARCHAR(4000);
+
+-- Condición para seleccionar tablas e índices de la función sys.dm_db_index_physical_stats
+-- y convertir los IDs de objetos e índices en nombres.
+SELECT
+    object_id AS objectid,
+    index_id AS indexid,
+    partition_number AS partitionnum,
+    avg_fragmentation_in_percent AS frag
+INTO #work_to_do
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
+WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+page_count > 1000;
+
+-- Declarar el cursor para la lista de particiones a procesar.
+DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
+
+-- Abrir el cursor.
+OPEN partitions;
+
+-- Loop a través de las particiones.
+WHILE (1=1)
+BEGIN
+    FETCH NEXT
+    FROM partitions
+    INTO @objectid, @indexid, @partitionnum, @frag;
+    IF @@FETCH_STATUS < 0 BREAK;
+
+    SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
+    FROM sys.objects AS o
+    JOIN sys.schemas AS s ON s.schema_id = o.schema_id
+    WHERE o.object_id = @objectid;
+
+    SELECT @indexname = QUOTENAME(name)
+    FROM sys.indexes
+    WHERE  object_id = @objectid AND index_id = @indexid;
+
+    SELECT @partitioncount = COUNT(*)
+    FROM sys.partitions
+    WHERE object_id = @objectid AND index_id = @indexid;
+
+    -- 30 es un punto de decisión arbitrario para cambiar entre reorganización y reconstrucción.
+    IF @frag < 30.0
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REORGANIZE';
+    ELSE IF @frag >= 30.0 AND @partitioncount <= 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE = ON)';
+    ELSE IF @frag >= 30.0 AND @partitioncount > 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' + 
+        @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' + 
+        CAST(@partitionnum AS NVARCHAR(10)) + N' WITH (ONLINE = ON)';
+
+    BEGIN TRY
+        EXEC (@command);
+        PRINT N'Executed: ' + @command;
+    END TRY
+    BEGIN CATCH
+        PRINT N'Error executing: ' + @command;
+        -- Puedes registrar el error o realizar cualquier otra acción aquí si es necesario.
+    END CATCH
+END;
+
+-- Cerrar y liberar el cursor.
+CLOSE partitions;
+DEALLOCATE partitions;
+
+-- Eliminar la tabla temporal.
+DROP TABLE #work_to_do;
+GO
+
+~~~
+# 
+
+
+## defragmentar con intervalos de 10 indices y excluye los que ya fueron leidos para mayor eficiencia
+
+
+~~~sql
+-- Asegurarse de que se haya ejecutado una instrucción USE primero.
+SET NOCOUNT ON;
+DECLARE @objectid INT;
+DECLARE @indexid INT;
+DECLARE @partitioncount BIGINT;
+DECLARE @schemaname NVARCHAR(130);
+DECLARE @objectname NVARCHAR(130);
+DECLARE @indexname NVARCHAR(130);
+DECLARE @partitionnum BIGINT;
+DECLARE @partitions BIGINT;
+DECLARE @frag FLOAT;
+DECLARE @command NVARCHAR(4000);
+
+-- Condición para seleccionar tablas e índices de la función sys.dm_db_index_physical_stats
+
+-- y convertir los IDs de objetos e índices en nombres.
+
+
+declare @datos table
+
+(
+
+id int
+
+,indexs int
+
+,partic int
+
+,frag float
+
+)
+
+
+-- SI AL TABLA TEMPORAL EXISTE ELIMINALA.
+    BEGIN TRY
+        DORP TABLE #work_to_do;
+    END TRY
+    BEGIN CATCH
+         PRINT N'error executing';
+    END CATCH
+
+
+ 
+
+while exists (
+SELECT  top 10
+    object_id AS objectid,
+    index_id AS indexid,
+    partition_number AS partitionnum,
+    avg_fragmentation_in_percent AS frag
+--INTO #work_to_do
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
+WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+page_count > 1000
+and  object_id  not in
+    (
+        select id from @datos
+    )
+)
+begin
+SELECT top 10
+    object_id AS objectid,
+    index_id AS indexid,
+    partition_number AS partitionnum,
+    avg_fragmentation_in_percent AS frag
+INTO #work_to_do
+FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
+WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+page_count > 1000
+and  object_id  not in
+    (
+    select id from @datos
+    )
+;
+
+-- Declarar el cursor para la lista de particiones a procesar.
+DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
+-- Abrir el cursor.
+OPEN partitions;
+
+-- Loop a través de las particiones.
+WHILE (1=1)
+BEGIN
+    FETCH NEXT
+    FROM partitions
+    INTO @objectid, @indexid, @partitionnum, @frag;
+    IF @@FETCH_STATUS < 0 BREAK;
+
+    SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
+    FROM sys.objects AS o
+    JOIN sys.schemas AS s ON s.schema_id = o.schema_id
+    WHERE o.object_id = @objectid;
+
+    SELECT @indexname = QUOTENAME(name)
+    FROM sys.indexes
+    WHERE  object_id = @objectid AND index_id = @indexid;
+
+    SELECT @partitioncount = COUNT(*)
+    FROM sys.partitions
+    WHERE object_id = @objectid AND index_id = @indexid;
+
+    -- 30 es un punto de decisión arbitrario para cambiar entre reorganización y reconstrucción.
+
+    IF @frag < 30.0
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' +
+        @schemaname + N'.' + @objectname + N' REORGANIZE';
+    ELSE IF @frag >= 30.0 AND @partitioncount <= 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' +
+        @schemaname + N'.' + @objectname + N' REBUILD WITH (ONLINE = ON)';
+    ELSE IF @frag >= 30.0 AND @partitioncount > 1
+        SET @command = N'ALTER INDEX ' + @indexname + N' ON ' +
+        @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' +
+        CAST(@partitionnum AS NVARCHAR(10)) + N' WITH (ONLINE = ON)';
+    BEGIN TRY
+        EXEC (@command);
+        PRINT N'Executed: ' + @command;
+    END TRY
+    BEGIN CATCH
+        PRINT N'Error executing: ' + @command;
+        -- Puedes registrar el error o realizar cualquier otra acción aquí si es necesario.
+    END CATCH
+END;
+-- Cerrar y liberar el cursor.
+CLOSE partitions;
+DEALLOCATE partitions;
+
+insert into @datos
+select * from  #work_to_do
+
+-- Eliminar la tabla temporal.
+DROP TABLE #work_to_do;
+
+Print 'Defragmentados 10 registros---'
+end
+GO
+~~~
+
+
+
+
+trajandoahora
+
+
+
+
+#### Segundo paso: ejecutar un script para defragmentar los índices con problemas. El script determina si hay que hacer un Reorganize o un Rebuild para cada índice:
+# 
+
+
+#### Esta es una fragmentacion estandar , para servidores de sql server Standar.  en la misma se realizaran las defragmentaion de los indices de la db seleccionada
 
 ~~~sql
 -- Ensure a USE  statement has been executed first.
@@ -3869,6 +4119,8 @@ DROP TABLE #work_to_do;
 GO
 ~~~
 # 
+
+
 
 
 
@@ -8373,6 +8625,9 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 
 # 
 
+<!-- 
+<--
+
 # Defragmentación, al rescate (ONLINE=ON)<a name="desfragmentacionalrescate2"></a>
 ![](https://greyphillips.com/Guides/assets/img/Database_Maintenance.png)
 #### Para evitar el deterioro del rendimiento en nuestro servidor, deberemos mantener nuestros índices en un estado de fragmentación óptimo. Lo podremos lograr sencillamente siguiendo estos pasos.
@@ -8643,6 +8898,8 @@ end
 GO
 ~~~
 
+
+--> -->
 
 # Para sacar una base de datos de modo restoring solo debemos ejecutar este código.<a name="sacarrestoring"></a>
 
