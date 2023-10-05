@@ -8507,6 +8507,7 @@ GO
 
 ~~~sql
 -- Asegurarse de que se haya ejecutado una instrucción USE primero.
+
 SET NOCOUNT ON;
 DECLARE @objectid INT;
 DECLARE @indexid INT;
@@ -8523,31 +8524,42 @@ DECLARE @command NVARCHAR(4000);
 
 -- y convertir los IDs de objetos e índices en nombres.
 
+--create table filtrarIndices
+
+--(
+
+-- indice  int
+
+--)
+
+ 
+
+ 
 
 declare @datos table
-
 (
-
 id int
-
 ,indexs int
-
 ,partic int
-
 ,frag float
-
 )
+ 
 
+ 
 
--- SI AL TABLA TEMPORAL EXISTE ELIMINALA.
     BEGIN TRY
-        DORP TABLE #work_to_do;
+        DROP TABLE #work_to_do;
     END TRY
     BEGIN CATCH
-         PRINT N'error executing';
+        PRINT N'Error executing: '
+        -- Puedes registrar el error o realizar cualquier otra acción aquí si es necesario.
     END CATCH
 
+ 
 
+declare @guardar int;
+
+DECLARE @TOTAL VARCHAR(50)
  
 
 while exists (
@@ -8558,12 +8570,17 @@ SELECT  top 10
     avg_fragmentation_in_percent AS frag
 --INTO #work_to_do
 FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
-WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+WHERE avg_fragmentation_in_percent > 60.0 AND index_id > 0 AND
 page_count > 1000
 and  object_id  not in
-    (
-        select id from @datos
-    )
+(
+select id from @datos
+)
+and  object_id  not in
+(
+select  indice from filtrarIndices
+)
+
 )
 begin
 SELECT top 10
@@ -8573,16 +8590,21 @@ SELECT top 10
     avg_fragmentation_in_percent AS frag
 INTO #work_to_do
 FROM sys.dm_db_index_physical_stats (DB_ID(), NULL, NULL, NULL, 'LIMITED')
-WHERE avg_fragmentation_in_percent > 10.0 AND index_id > 0 AND
+WHERE avg_fragmentation_in_percent > 60.0 AND index_id > 0 AND
 page_count > 1000
 and  object_id  not in
-    (
+(
     select id from @datos
-    )
+)
+and  object_id  not in
+(
+    select indice from filtrarIndices
+)
 ;
 
 -- Declarar el cursor para la lista de particiones a procesar.
 DECLARE partitions CURSOR FOR SELECT * FROM #work_to_do;
+
 -- Abrir el cursor.
 OPEN partitions;
 
@@ -8593,19 +8615,22 @@ BEGIN
     FROM partitions
     INTO @objectid, @indexid, @partitionnum, @frag;
     IF @@FETCH_STATUS < 0 BREAK;
-
     SELECT @objectname = QUOTENAME(o.name), @schemaname = QUOTENAME(s.name)
     FROM sys.objects AS o
     JOIN sys.schemas AS s ON s.schema_id = o.schema_id
     WHERE o.object_id = @objectid;
+ 
 
     SELECT @indexname = QUOTENAME(name)
+
     FROM sys.indexes
+
     WHERE  object_id = @objectid AND index_id = @indexid;
 
     SELECT @partitioncount = COUNT(*)
     FROM sys.partitions
     WHERE object_id = @objectid AND index_id = @indexid;
+ 
 
     -- 30 es un punto de decisión arbitrario para cambiar entre reorganización y reconstrucción.
 
@@ -8619,26 +8644,46 @@ BEGIN
         SET @command = N'ALTER INDEX ' + @indexname + N' ON ' +
         @schemaname + N'.' + @objectname + N' REBUILD PARTITION=' +
         CAST(@partitionnum AS NVARCHAR(10)) + N' WITH (ONLINE = ON)';
+
     BEGIN TRY
+              set @guardar = null;
         EXEC (@command);
         PRINT N'Executed: ' + @command;
     END TRY
     BEGIN CATCH
         PRINT N'Error executing: ' + @command;
+              set @guardar = null;
+              set @guardar = @objectid;
+              --insert into filtrarIndices values @objectid;
         -- Puedes registrar el error o realizar cualquier otra acción aquí si es necesario.
     END CATCH
+       if(@guardar is not null)
+       begin
+              insert into filtrarIndices values (@guardar);
+    end
+
 END;
+
+ 
+
 -- Cerrar y liberar el cursor.
+
 CLOSE partitions;
 DEALLOCATE partitions;
 
+ 
+
 insert into @datos
+
 select * from  #work_to_do
 
 -- Eliminar la tabla temporal.
+
 DROP TABLE #work_to_do;
 
-Print 'Defragmentados 10 registros---'
+Set @TOTAL = (select cast( count(*) as varchar(50)) from @datos)
+
+Print 'Defragmentados 10 registros---' + @TOTAL
 end
 GO
 ~~~
