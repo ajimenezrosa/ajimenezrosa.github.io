@@ -43,7 +43,28 @@
   <script>
     var attempts = 0;
     var maxAttempts = 3;
-    var correctPassword = "la biblia de los caidos";
+    var correctPassword ;
+
+    fetch('datos.json')
+  .then(response => response.json())
+  .then(data => {
+    // Accede a las frases en el objeto JSON
+    var frases = data.frases;
+
+    // Puedes asignar la variable correctPassword a una de las frases
+    correctPassword = frases[2];
+
+    // Ahora la variable correctPassword contiene la primera frase del archivo JSON
+    console.log(correctPassword);
+  })
+  .catch(error => {
+    console.error('Error al cargar el archivo JSON:', error);
+  });
+
+   console.log(correctPassword);
+
+
+
 
     var authenticationContainer = document.getElementById("authentication-container");
     var readmeContainer = document.getElementById("readme-container");
