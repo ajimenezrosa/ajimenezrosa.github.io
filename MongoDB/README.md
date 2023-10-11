@@ -49,7 +49,7 @@ PROD: azhvcdbgmas01.corp.popular.local
  - PROYECTO DONDE SE SUELE MIGRAR LAS DB ONPREMISE DE MONGODB
  #
 
- <img src=".\img\atlas.png" alt="JuveR" width="800px">
+ <img src=".\img\atlas.png" alt="JuveR" width="700px">
 
 <!-- ![](./img/atlas.png) -->
 
@@ -127,7 +127,12 @@ Pass DB: #iHEgU9ynyKebI - root
 ~~~
 
 ~~~bash
-mongodump --ssl --authenticationDatabase admin --host=azhvcdbgmas01.corp.popular.local --port=27017 -u=root -p=#iHEgU9ynyKebI --sslPEMKeyFile=/etc/ssl/certs/server.pem --sslCAFile=/etc/ssl/certs/ca.pem --db=PersistentSessionStorageDB --archive=PersistentSessionStorageDB
+mongodump --ssl --authenticationDatabase admin 
+--host=azhvcdbgmas01.corp.popular.local 
+--port=27017 -u=root -p=#iHEgU9ynyKebI 
+--sslPEMKeyFile=/etc/ssl/certs/server.pem 
+--sslCAFile=/etc/ssl/certs/ca.pem --db=PersistentSessionStorageDB 
+--archive=PersistentSessionStorageDB
 ~~~
 
 
@@ -153,7 +158,7 @@ mongosh mongodb+srv://msquarkus@corelibrary.fx2tn.mongodb.net --apiVersion�
 
 3. Mover backup generado en el servidor de producción a la maquina local y posteriormente moverlo al servidor stagin:
 
- <img src="./img/imagenpantalla4.png" alt="JuveR" width="800px">
+ <img src="./img/imagenpantalla4.png" alt="JuveR" width="700px">
 
 <!-- ![](./img/imagenpantalla4.png) -->
 
@@ -185,7 +190,9 @@ Pwd:  Popular001
 
 
 ~~~bash
-mongorestore --uri=mongodb+srv://corelibrary.fx2tn.mongodb.net --username=dbauserprod --authenticationDatabase=admin --nsInclude="OnBoardingDB.*" --archive=OnBoardingDB
+mongorestore --uri=mongodb+srv://corelibrary.fx2tn.mongodb.net 
+--username=dbauserprod --authenticationDatabase=admin 
+--nsInclude="OnBoardingDB.*" --archive=OnBoardingDB
 ~~~
 
 

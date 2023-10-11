@@ -188,6 +188,8 @@
 
  - 43 [Ver los Log de Errores del Sql server](#errorlogsql)
 
+ - 44 [Cerrar todas la conexion a mi base de datos](#cerrarconexionessql)
+
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -9476,6 +9478,56 @@ EXEC xp_readerrorlog 0, 1, NULL, N'Texto de error a buscar', NULL, NULL, NULL;
 ```
 
 #### Ajusta los parámetros según tus necesidades para obtener la información específica que estás buscando en el registro de errores de SQL Server.
+
+
+## Cerrar todas la conexion a mi base de datos<a name="cerrarconexionessql"></a>   
+<div>
+<p style = 'text-align:center;'>
+<img src="https://bigprofitdata.com/wp-content/uploads/2020/07/Miniatura_image-1024x540.png?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+
+
+
+#### Como cerrar todas la conexiones a mi base de datos SQL Server: Cerrar conexiones sql en toda mi base de datos SQL Server
+
+~~~sql
+USE master
+GO
+ 
+SET NOCOUNT ON
+ 
+DECLARE @DBName VARCHAR(50)
+DECLARE @spidstr VARCHAR(8000)
+DECLARE @ConnKilled SMALLINT
+ 
+SET @ConnKilled = 0
+SET @spidstr = ''
+SET @DBName = 'AQUI TU BASE DE DATOS'
+ 
+IF Db_id(@DBName) < 4
+BEGIN
+	PRINT 'Connections to system databases cannot be killed'
+ 
+	RETURN
+END
+ 
+SELECT @spidstr = COALESCE(@spidstr, ',') + 'kill ' + CONVERT(VARCHAR, spid) + '; '
+FROM master..sysprocesses
+WHERE dbid = Db_id(@DBName)
+ 
+IF Len(@spidstr) > 0
+BEGIN
+	EXEC (@spidstr)
+ 
+	SELECT @ConnKilled = Count(1)
+	FROM master..sysprocesses
+	WHERE dbid = Db_id(@DBName)
+END
+~~~
+
 
 
 
