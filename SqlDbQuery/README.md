@@ -35,6 +35,14 @@
 2. [Crecimiento automático de los ficheros de la base de datos](#2)
 - 2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)
 3. [Eliminar corroes del servidor de correos Sql Server](#3)
+- 3.1 [Comprobar sysmail_event_log vista](#3.1)
+- 3.2 [Comprobación del elemento de correo con error específico](#3.2)
+- 3.3 [Sysmail_faileditems](#3.3) 
+- 3.4 [Sysmail_sentitems](#3.4)
+- 3.5 [Comprobación de la configuración de Correo electrónico de base de datos para el servidor SMTP](#3.5)
+- 3.6 [Ver log de envio de correos sql mail](#3.6) 
+- 3.7 [Ver log de envio de correos fallidos, FAILED MESSAGES LOG](#3.7)
+- 3.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)
 4. [Conexiones Activas del Servidor de SQL SERVER](#4)
 5. [DBCC CHECKDB ](#5)
 6. [Tempdb: Reducir Tamaño](#6)
@@ -620,8 +628,133 @@ GO
 EXECUTE dbo.sysmail_start_sp ;  
 GO
 ~~~
+# 
+## Comprobar sysmail_event_log vista<a name="3.1"></a>
+#### Esta vista del sistema es el punto de partida para solucionar todos los problemas de Correo electrónico de base de datos.
+
+#### Al solucionar problemas Correo electrónico de base de datos, busque en la sysmail_event_log vista eventos relacionados con errores de correo electrónico. Algunos mensajes (como el error del Correo electrónico de base de datos programa externo) no están asociados a correos electrónicos específicos.
+
+#### Sysmail_event_logcontiene una fila para cada mensaje de Windows o SQL Server devuelto por el sistema Correo electrónico de base de datos. En SQL Server Management Studio (SSMS), seleccione Administración, haga clic con el botón derecho en Correo electrónico de base de datos y seleccione Ver Correo electrónico de base de datos registro para comprobar la Correo electrónico de base de datos registro de la siguiente manera:
+
+    Ejecute la consulta siguiente en sysmail_event_log:
+ ~~~sql
+SELECT er.log_id AS [LogID],
+  er.event_type AS [EventType],
+  er.log_date AS [LogDate],
+  er.description AS [Description],
+  er.process_id AS [ProcessID],
+  er.mailitem_id AS [MailItemID],
+  er.account_id AS [AccountID],
+  er.last_mod_date AS [LastModifiedDate],
+  er.last_mod_user AS [LastModifiedUser]
+FROM msdb.dbo.sysmail_event_log er
+ORDER BY [LogDate] DESC
+ ~~~   
+
+## Comprobación del elemento de correo con error específico<a name="3.2"></a>
+
+#### Para buscar errores relacionados con correos electrónicos específicos, busque el mailitem_id del correo electrónico con errores en la sysmail_faileditems vista y, a continuación, busque los mensajes relacionados con mailitem_id en sysmail_event_log.
+
+~~~sql
+SELECT er.log_id AS [LogID], 
+    er.event_type AS [EventType], 
+    er.log_date AS [LogDate], 
+    er.description AS [Description], 
+    er.process_id AS [ProcessID], 
+    er.mailitem_id AS [MailItemID], 
+    er.account_id AS [AccountID], 
+    er.last_mod_date AS [LastModifiedDate], 
+    er.last_mod_user AS [LastModifiedUser],
+    fi.send_request_user,
+    fi.send_request_date,
+    fi.recipients, fi.subject, fi.body
+FROM msdb.dbo.sysmail_event_log er 
+    LEFT JOIN msdb.dbo.sysmail_faileditems fi
+ON er.mailitem_id = fi.mailitem_id
+ORDER BY [LogDate] DESC
+~~~
 
 
+## 3.3 Sysmail_faileditems<a name="3,3"></a>
+
+#### Si sabe que no se pudo enviar el correo electrónico, puede consultarlo sysmail_faileditems directamente. Para obtener más información sobre cómo consultar sysmail_faileditems y filtrar mensajes específicos por destinatario, vea [Comprobar el estado de los mensajes de correo electrónico enviados con Correo electrónico de base de datos.](https://learn.microsoft.com/es-es/sql/relational-databases/database-mail/check-the-status-of-e-mail-messages-sent-with-database-mail?view=sql-server-ver16)
+
+#### Para comprobar el estado de los mensajes de correo electrónico que se envían mediante Correo electrónico de base de datos, ejecute los siguientes scripts:
+
+~~~sql
+-- Show the subject, the time that the mail item row was last  
+-- modified, and the log information.  
+-- Join sysmail_faileditems to sysmail_event_log   
+-- on the mailitem_id column.  
+-- In the WHERE clause list items where danw was in the recipients,  
+-- copy_recipients, or blind_copy_recipients.  
+-- These are the items that would have been sent to Jane@contoso.com
+ 
+SELECT items.subject, items.last_mod_date, l.description 
+FROM dbo.sysmail_faileditems AS items  
+INNER JOIN dbo.sysmail_event_log AS l ON items.mailitem_id = l.mailitem_id  
+WHERE items.recipients LIKE '%Jane%'    
+    OR items.copy_recipients LIKE '%Jane%'   
+    OR items.blind_copy_recipients LIKE '%Jane%'  
+GO
+~~~
+
+
+
+## Sysmail_sentitems<a name="3.4"></a>
+#### Si desea encontrar la hora en que se envió correctamente el último correo electrónico, puede consultar sysmail_sentitems y ordenar de sent_date la siguiente manera:
+
+~~~sql
+SELECT ssi.sent_date, * 
+FROM msdb.dbo.sysmail_sentitems ssi
+ORDER BY ssi.sent_date DESC
+~~~
+
+#### Esta vista contiene una fila por cada dato adjunto que se envía a Correo electrónico de base de datos. Use esta vista cuando necesite información sobre Correo electrónico de base de datos datos adjuntos.
+
+#### Si tiene problemas para enviar correos electrónicos con datos adjuntos, pero algunos correos con datos adjuntos se envían correctamente, esta vista puede ayudarle a averiguar las diferencias.
+# 
+
+#### Comprobación de la configuración de Correo electrónico de base de datos para el servidor SMTP<a name="3.5"></a>
+
+#### Otro paso para ayudar a resolver problemas de Correo electrónico de base de datos es comprobar la configuración de Correo electrónico de base de datos para el servidor SMTP y la cuenta que se usa para enviar Correo electrónico de base de datos.
+
+#### Para obtener más información sobre cómo configurar Correo electrónico de base de datos, vea
+[Configurar Correo electrónico de base de datos.](https://learn.microsoft.com/es-es/sql/relational-databases/database-mail/configure-database-mail?view=sql-server-ver16)
+
+#
+
+
+## Ver log de envio de correos sql mail<a name="3.6"></a>
+#### SENT MESSAGES LOG
+query de los mail enviados por el servidor de correos sql server.
+~~~sql
+SELECT TOP 20 *
+FROM [msdb].[dbo].[sysmail_sentitems]
+ORDER BY [send_request_date] DESC
+~~~
+
+## Ver log de envio de correos fallidos, FAILED MESSAGES LOG<a name="3.7"></a>
+#### query de los Mail fallidos del servidor sql server.
+~~~sql
+SELECT TOP 20 *
+FROM [msdb].[dbo].[sysmail_faileditems]
+ORDER BY [send_request_date] DESC
+~~~
+
+## ALL MESSAGES – REGARDLESS OF STATUS<a name="3.8"></a>
+Listado de todos los mail enviados por el servidor de correos sql serve.
+
+~~~sql
+SELECT TOP 20 *
+FROM [msdb].[dbo].[sysmail_allitems]
+ORDER BY [send_request_date] DESC
+~~~
+
+
+
+
+trabajando
 
 #
 
