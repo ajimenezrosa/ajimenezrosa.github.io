@@ -165,7 +165,7 @@
   - 28.1 [Listar jobs SQL Server](#listajob28)
   - 28.2 [jobs con sus dias de ejecucion por steps]
   (#listajob282)
-  - 28.2.1 [quiero que me traiga los jobs del sistema sql server,  con nombre y base de datos que apuntan](#28.2.1)
+  - 28.2.1 [Jobs del sistema sql server,  con nombre y base de datos que apuntan](#28.2.1)
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
   - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
 
@@ -8383,7 +8383,7 @@ ORDER BY
 # 
 
 
-## quiero que me traiga los jobs del sistema sql server,  con nombre y base de datos que apuntan<a name="28.2.1">
+## Jobs del sistema sql server,  con nombre y base de datos que apuntan<a name="28.2.1">
 
 #### En SQL Server, la información sobre los trabajos (jobs) y la base de datos a la que apuntan se puede obtener a través del catálogo del sistema de SQL Server. Puedes usar las vistas del catálogo del sistema para obtener esta información. Aquí tienes una consulta SQL que te ayudará a obtener los nombres de los trabajos y las bases de datos a las que apuntan en SQL Server:
 
