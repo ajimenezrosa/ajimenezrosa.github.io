@@ -2531,7 +2531,7 @@ exec sp_MSForEachTable 'usp_duplicateindexes''?'''
 
 #### Para lograr esto, primero necesitas obtener una lista de todos los índices que no están creados con la opción ONLINE = ON, eliminarlos y luego volver a crearlos con la opción ONLINE = ON. Puedes hacerlo a través de un script SQL en SQL Server. Asegúrate de tomar precauciones antes de ejecutar estos comandos en un entorno de producción, ya que eliminar y recrear índices puede causar bloqueos temporales en las tablas afectadas. Aquí tienes un ejemplo de cómo podrías hacerlo:
 
-~~~SQL
+~~~sql
 -- Declarar una variable temporal para almacenar los nombres de las tablas
 DECLARE @TableName NVARCHAR(128);
 
