@@ -73,7 +73,10 @@
  - 6.7 [Conceptos básicos del diseño de índices](#disenoindices)
  - 6.7.1 [Tareas del diseño de índices](#tareadisind)
  - 6.7.2 [Consideraciones acerca de la base de datos](#consibasedatos)
-# 
+ - 6.8 [Eliminar todos los indices que no fueron creados ONLNE =ON,y Crearlos nuevamente de forma ONLINE=ON](#6.8)
+
+7. [Cuanta data puedo perder](#dataperder)
+ 
 # Determinacion de Desastres Recovery, Cuanta data Puedo Perder 
 #
 7. [Cuanta data puedo perder](#dataperder)
@@ -2521,6 +2524,77 @@ exec sp_MSForEachTable 'usp_duplicateindexes''?'''
 - La indización de tablas pequeñas puede no ser una solución óptima, porque puede provocar que el optimizador de consultas tarde más tiempo en realizar la búsqueda de los datos a través del índice que en realizar un simple recorrido de la tabla. De este modo, es posible que los índices de tablas pequeñas no se utilicen nunca; sin embargo, sigue siendo necesario su mantenimiento a medida que cambian los datos de la tabla.
  - Los índices en vistas pueden mejorar de forma significativa el rendimiento si la vista contiene agregaciones, combinaciones de tabla o una mezcla de agregaciones y combinaciones. No es necesario hacer referencia de forma explícita a la vista en la consulta para que el optimizador de consultas la utilice.
  - Utilice el Asistente para la optimización de motor de base de datos para analizar las bases de datos y crear recomendaciones de índices. Para obtener más información, vea [Database Engine Tuning Advisor](https://docs.microsoft.com/es-es/sql/relational-databases/performance/database-engine-tuning-advisor?view=sql-server-ver15)
+
+# 
+
+## Eliminar todos los indices que no fueron creados ONLNE =ON,y Crearlos nuevamente de forma ONLINE=ON<a name="6.8"></a>
+
+#### Para lograr esto, primero necesitas obtener una lista de todos los índices que no están creados con la opción ONLINE = ON, eliminarlos y luego volver a crearlos con la opción ONLINE = ON. Puedes hacerlo a través de un script SQL en SQL Server. Asegúrate de tomar precauciones antes de ejecutar estos comandos en un entorno de producción, ya que eliminar y recrear índices puede causar bloqueos temporales en las tablas afectadas. Aquí tienes un ejemplo de cómo podrías hacerlo:
+
+~~~SQL
+-- Declarar una variable temporal para almacenar los nombres de las tablas
+DECLARE @TableName NVARCHAR(128);
+
+-- Declarar un cursor para recorrer todas las tablas
+DECLARE TableCursor CURSOR FOR
+SELECT name
+FROM sys.tables;
+
+-- Variables para almacenar el nombre del índice y el nombre de la tabla
+DECLARE @IndexName NVARCHAR(128);
+DECLARE @IndexTableName NVARCHAR(128);
+
+-- Variable para almacenar el comando SQL dinámico
+DECLARE @SQLCommand NVARCHAR(MAX);
+
+-- Abrir el cursor
+OPEN TableCursor;
+
+-- Recorrer las tablas
+FETCH NEXT FROM TableCursor INTO @TableName;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Cursor para recorrer los índices de la tabla
+    DECLARE IndexCursor CURSOR FOR
+    SELECT name, object_name(object_id) as TableName
+    FROM sys.indexes
+    WHERE object_id = OBJECT_ID(@TableName) AND is_disabled = 0 AND type_desc <> 'HEAP' AND type_desc <> 'XML';
+
+    -- Recorrer los índices
+    FETCH NEXT FROM IndexCursor INTO @IndexName, @IndexTableName;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Generar y ejecutar el comando SQL para eliminar el índice
+        SET @SQLCommand = 'DROP INDEX ' + QUOTENAME(@IndexTableName) + '.' + QUOTENAME(@IndexName);
+        EXEC sp_executesql @SQLCommand;
+
+        -- Generar y ejecutar el comando SQL para recrear el índice con ONLINE = ON
+        SET @SQLCommand = 'CREATE INDEX ' + QUOTENAME(@IndexName) + ' ON ' + QUOTENAME(@IndexTableName) + ' (YourColumns) WITH (ONLINE = ON)';
+        EXEC sp_executesql @SQLCommand;
+
+        FETCH NEXT FROM IndexCursor INTO @IndexName, @IndexTableName;
+    END
+
+    -- Cerrar y desasignar el cursor de índices
+    CLOSE IndexCursor;
+    DEALLOCATE IndexCursor;
+
+    FETCH NEXT FROM TableCursor INTO @TableName;
+END
+
+-- Cerrar y desasignar el cursor de tablas
+CLOSE TableCursor;
+DEALLOCATE TableCursor;
+
+~~~
+# 
+#### En este código, se utiliza un cursor para recorrer todas las tablas de la base de datos y otro cursor para recorrer los índices de cada tabla. Para cada índice, se ejecuta una instrucción DROP INDEX para eliminarlo y luego se ejecuta una instrucción CREATE INDEX para recrearlo con la opción ONLINE = ON.
+
+#### Asegúrate de ajustar la parte (YourColumns) con las columnas adecuadas de tus índices y de realizar pruebas en un entorno de desarrollo o copia de seguridad antes de aplicar este script en producción.
+
+
+
+
 
 # 
 ## para mas informacion sobre la creacion y mantenimiento de indices en Sql Server ver las paginas [Ver Documentacion](https://docs.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver15#:~:text=Un%20%C3%ADndice%20de%20SQL%20Server%20es%20una%20estructura%20en%20disco,de%20la%20tabla%20o%20vista.&text=Un%20%C3%ADndice%20contiene%20claves%20generadas,la%20tabla%20o%20la%20vista.)
