@@ -163,7 +163,9 @@
 # 
 # 28 BPD
   - 28.1 [Listar jobs SQL Server](#listajob28)
-  - 28.2 [jobs con sus dias de ejecucion por steps](#listajob282)
+  - 28.2 [jobs con sus dias de ejecucion por steps]
+  (#listajob282)
+  - 28.2.1 [quiero que me traiga los jobs del sistema sql server,  con nombre y base de datos que apuntan](#28.2.1)
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
   - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
 
@@ -8379,6 +8381,27 @@ ORDER BY
     [StepNo]
 ~~~
 # 
+
+
+## quiero que me traiga los jobs del sistema sql server,  con nombre y base de datos que apuntan<a name="28.2.1">
+
+#### En SQL Server, la información sobre los trabajos (jobs) y la base de datos a la que apuntan se puede obtener a través del catálogo del sistema de SQL Server. Puedes usar las vistas del catálogo del sistema para obtener esta información. Aquí tienes una consulta SQL que te ayudará a obtener los nombres de los trabajos y las bases de datos a las que apuntan en SQL Server:
+
+~~~sql
+USE msdb; -- Asegúrate de estar en la base de datos 'msdb' que contiene información de trabajos.
+
+SELECT
+    jobs.name AS JobName,
+    jobsteps.database_name AS TargetDatabase
+FROM msdb.dbo.sysjobs AS jobs
+INNER JOIN msdb.dbo.sysjobsteps AS jobsteps ON jobs.job_id = jobsteps.job_id;
+~~~
+
+#### En esta consulta, estamos utilizando las vistas del catálogo del sistema msdb.dbo.sysjobs y msdb.dbo.sysjobsteps para obtener información sobre los trabajos y los pasos de los trabajos. La columna name en sysjobs contiene el nombre del trabajo, y la columna database_name en sysjobsteps contiene el nombre de la base de datos a la que apunta el trabajo.
+
+#### Asegúrate de estar conectado a la base de datos 'msdb' antes de ejecutar esta consulta, ya que la información de trabajos se encuentra en esa base de datos en SQL Server.
+
+
 
 
 # 
