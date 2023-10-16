@@ -8388,13 +8388,25 @@ ORDER BY
 #### En SQL Server, la información sobre los trabajos (jobs) y la base de datos a la que apuntan se puede obtener a través del catálogo del sistema de SQL Server. Puedes usar las vistas del catálogo del sistema para obtener esta información. Aquí tienes una consulta SQL que te ayudará a obtener los nombres de los trabajos y las bases de datos a las que apuntan en SQL Server:
 
 ~~~sql
+/*
+Creado por Alejandro Jimenez rosa.
+Lunes 16 de Octubre 2023.
+Listado de los jobs que tiene un servidor sus steps, y las 
+bases de datos a las que apuntan.
+
+
+*/
+
+
 USE msdb; -- Asegúrate de estar en la base de datos 'msdb' que contiene información de trabajos.
 
-SELECT
+SELECT distinct
     jobs.name AS JobName,
+	jobsteps.step_name,
     jobsteps.database_name AS TargetDatabase
 FROM msdb.dbo.sysjobs AS jobs
-INNER JOIN msdb.dbo.sysjobsteps AS jobsteps ON jobs.job_id = jobsteps.job_id;
+INNER JOIN msdb.dbo.sysjobsteps AS jobsteps ON jobs.job_id = jobsteps.job_id
+order by jobs.name,jobsteps.step_name, jobsteps.database_name;
 ~~~
 
 #### En esta consulta, estamos utilizando las vistas del catálogo del sistema msdb.dbo.sysjobs y msdb.dbo.sysjobsteps para obtener información sobre los trabajos y los pasos de los trabajos. La columna name en sysjobs contiene el nombre del trabajo, y la columna database_name en sysjobsteps contiene el nombre de la base de datos a la que apunta el trabajo.
