@@ -38,8 +38,9 @@
 
 
 ## A continuación, te proporciono un código en PowerShell que extrae la información del servidor y la formatea en una tabla HTML con títulos en fondo azul:<a name="1"></a>
+<img src="https://www.ionos.es/digitalguide/fileadmin/DigitalGuide/Teaser/was-ist-ein-server-t.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
-~~~Sql
+~~~sql
 # Crear una tabla HTML horizontal
 $html = @"
 <html>
@@ -145,7 +146,6 @@ td {
 </html>
 "@
 
-
 # Guardar el contenido HTML en un archivo
 $html | Out-File -FilePath "C:\Pws\logs\ServerInfo.html"
 
@@ -165,10 +165,12 @@ Invoke-Item "ServerInfo.html"
 
 ### Sacar servidores con sus bases de datos usando PowerShell<a name="2"></a>
 # 
+
+
 #### Este código ejecutará la consulta proporcionada en cada uno de los servidores en el archivo server_instances.txt y mostrará los resultados. Cabe mencionar que este código solo muestra los resultados en la consola de PowerShell. Si deseas adaptarlo para generar archivos HTML como antes, puedes usar la estructura y el estilo que hemos discutido en las respuestas anteriores.
 
 ~~~sql
-~#==========================================================================================================#
+#==========================================================================================================#
 #Creado por Alejandro Jimenez Rosa                                                                         #
 #Fecha inicio Agosto 18 2023                                                                               #
 #Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
