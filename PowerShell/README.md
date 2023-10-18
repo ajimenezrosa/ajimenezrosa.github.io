@@ -146,10 +146,8 @@ td {
 </html>
 "@
 
-# Guardar el contenido HTML en un archivo
 $html | Out-File -FilePath "C:\Pws\logs\ServerInfo.html"
 
-# Abrir el archivo en el navegador predeterminado
 Invoke-Item "ServerInfo.html"
 
 ~~~
