@@ -39,7 +39,7 @@
 
 ## A continuación, te proporciono un código en PowerShell que extrae la información del servidor y la formatea en una tabla HTML con títulos en fondo azul:<a name="1"></a>
 
-~~~powershell
+~~~Sql
 # Obtener información del servidor
 $serverInfo = Get-WmiObject -Class Win32_ComputerSystem
 $osInfo = Get-WmiObject -Class Win32_OperatingSystem
