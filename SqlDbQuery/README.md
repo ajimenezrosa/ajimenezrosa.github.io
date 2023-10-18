@@ -104,10 +104,12 @@
   - 12.5 ["Las consultas SQL más ejecutadas"](#lasconsultassqlmasejecutadas)
   - 12.6 ["Consultas SQL con mayor consumo de CPU"](#consultassqlmayorconsumodecpu)  
 
+  #  Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo
+    - 13 Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo(#13)
 # 
 # Expeciales, busqueda dentro de todas las tablas de la Base de datos Por nombres de campos.
-13. [Tablas que Contienen un mombre de Campo.](#buscarnombrecampo)
-14. [Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.](#tablasesquemascons)
+- 14     [Tablas que Contienen un mombre de Campo.](#buscarnombrecampo)
+- 14.1  [Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.](#tablasesquemascons)
 
 
 #
@@ -3714,6 +3716,67 @@ ORDER BY
 [Avg CPU Time] DESC
 ~~~
 # 
+
+## Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo:<a name="13"></a>
+
+<img src="https://i.ytimg.com/vi/wOdycyG4yx0/maxresdefault.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+
+
+1. **Detener una auditoría de servidor**:
+
+   Si deseas detener una auditoría de nivel de servidor, puedes utilizar el siguiente comando:
+
+   ~~~sql
+   ALTER SERVER AUDIT NombreDeTuAuditoria WITH (STATE = OFF);
+   ~~~
+
+   Asegúrate de reemplazar `NombreDeTuAuditoria` con el nombre real de tu auditoría.
+
+2. **Detener una auditoría de base de datos**:
+
+   Si deseas detener una auditoría de nivel de base de datos, utiliza el siguiente comando:
+
+   ~~~sql
+   ALTER DATABASE AUDIT SPECIFICATION NombreDeTuAuditoria WITH (STATE = OFF);
+   ~~~
+
+   Nuevamente, asegúrate de reemplazar `NombreDeTuAuditoria` con el nombre real de tu auditoría de base de datos.
+
+3. **Detener una sesión de auditoría**:
+
+   Las auditorías en SQL Server se ejecutan a través de sesiones de auditoría. Para detener una sesión de auditoría, puedes utilizar el siguiente comando:
+
+   ~~~sql
+   ALTER SERVER AUDIT SPECIFICATION NombreDeTuSesion WITH (STATE = OFF);
+   ~~~
+
+   Reemplaza `NombreDeTuSesion` con el nombre real de tu sesión de auditoría.
+
+4. **Eliminar una auditoría o sesión de auditoría**:
+
+   Si deseas eliminar completamente una auditoría o sesión de auditoría, puedes usar el siguiente comando:
+
+   ~~~sql
+   DROP SERVER AUDIT NombreDeTuAuditoria;
+   ~~~
+
+   O
+
+   ~~~sql
+   DROP DATABASE AUDIT SPECIFICATION NombreDeTuAuditoria;
+   ~~~
+
+   O
+
+   ~~~sql
+   DROP SERVER AUDIT SPECIFICATION NombreDeTuSesion;
+   ~~~
+
+   Ten en cuenta que eliminar una auditoría o sesión de auditoría borrará todos los datos relacionados con ella, por lo que ten cuidado al utilizar este comando.
+
+#### Recuerda que para ejecutar estos comandos, generalmente necesitas permisos de administrador o permisos adecuados en tu instancia de SQL Server.
+#
+
 
 
 #
