@@ -40,13 +40,7 @@
 ## A continuación, te proporciono un código en PowerShell que extrae la información del servidor y la formatea en una tabla HTML con títulos en fondo azul:<a name="1"></a>
 
 ~~~Sql
-# Obtener información del servidor
-$serverInfo = Get-WmiObject -Class Win32_ComputerSystem
-$osInfo = Get-WmiObject -Class Win32_OperatingSystem
-$cpuInfo = Get-WmiObject -Class Win32_Processor
-$sqlInfo = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "Microsoft SQL Server*" }
-
-# Crear una tabla HTML
+# Crear una tabla HTML horizontal
 $html = @"
 <html>
 <head>
@@ -55,55 +49,95 @@ th {
     background-color: blue;
     color: white;
 }
+td {
+    padding: 8px;
+}
 </style>
 </head>
 <body>
 <table border="1">
     <tr>
         <th>Server Name</th>
-        <th>IP Address</th>
-        <th>O.S.</th>
-        <th>O.S. Edition</th>
-        <th>O.S. Version</th>
-        <th>O.S. Build</th>
-        <th>O.S. Arquitecture</th>
-        <th>Type</th>
-        <th>Clustered</th>
-        <th>RAM (GB)</th>
-        <th>Processor Model</th>
-        <th>Installed Processors (# Sockets)</th>
-        <th>Cores</th>
-        <th>Logic Processors</th>
-        <th>Role</th>
-        <th>SQL Version</th>
-        <th>SQL Edition</th>
-        <th>SQL Arquitecture</th>
-        <th>Service Pack Level</th>
-        <th>Current SQL Build</th>
-        <th>Instance Name</th>
-        <th>Perform Volume Maintenance Task Policy</th>
+        <td>$($serverInfo.Name)</td>
     </tr>
     <tr>
-        <td>$($serverInfo.Name)</td>
+        <th>IP Address</th>
         <td>$([System.Net.Dns]::GetHostAddresses($serverInfo.Name)[0].IPAddressToString)</td>
+    </tr>
+    <tr>
+        <th>O.S.</th>
         <td>$($osInfo.Caption)</td>
+    </tr>
+    <tr>
+        <th>O.S. Edition</th>
         <td>$($osInfo.CSDVersion)</td>
+    </tr>
+    <tr>
+        <th>O.S. Version</th>
         <td>$($osInfo.Version)</td>
+    </tr>
+    <tr>
+        <th>O.S. Build</th>
         <td>$($osInfo.BuildNumber)</td>
+    </tr>
+    <tr>
+        <th>O.S. Architecture</th>
         <td>$($osInfo.OSArchitecture)</td>
+    </tr>
+    <tr>
+        <th>Type</th>
         <td>$($serverInfo.Manufacturer)</td>
+    </tr>
+    <tr>
+        <th>Clustered</th>
         <td>$($serverInfo.PartOfDomain)</td>
+    </tr>
+    <tr>
+        <th>RAM (GB)</th>
         <td>$($serverInfo.TotalPhysicalMemory / 1GB)</td>
+    </tr>
+    <tr>
+        <th>Processor Model</th>
         <td>$($cpuInfo.Name)</td>
+    </tr>
+    <tr>
+        <th>Installed Processors (# Sockets)</th>
         <td>$($cpuInfo.NumberOfCores)</td>
+    </tr>
+    <tr>
+        <th>Cores</th>
         <td>$($cpuInfo.NumberOfLogicalProcessors)</td>
+    </tr>
+    <tr>
+        <th>Role</th>
         <td>$($serverInfo.DomainRole)</td>
+    </tr>
+    <tr>
+        <th>SQL Version</th>
         <td>$($sqlInfo.InstallDate)</td>
+    </tr>
+    <tr>
+        <th>SQL Edition</th>
         <td>$($sqlInfo.Version)</td>
+    </tr>
+    <tr>
+        <th>SQL Architecture</th>
         <td>$($sqlInfo.Caption)</td>
+    </tr>
+    <tr>
+        <th>Service Pack Level</th>
         <td>$($sqlInfo.ServicePackLevel)</td>
+    </tr>
+    <tr>
+        <th>Current SQL Build</th>
         <td>$($sqlInfo.Version) ($sqlInfo.InstallLocation)</td>
+    </tr>
+    <tr>
+        <th>Instance Name</th>
         <td>$($sqlInfo.Name)</td>
+    </tr>
+    <tr>
+        <th>Perform Volume Maintenance Task Policy</th>
         <td>TODO</td>
     </tr>
 </table>
@@ -111,8 +145,9 @@ th {
 </html>
 "@
 
+
 # Guardar el contenido HTML en un archivo
-$html | Out-File -FilePath "ServerInfo.html"
+$html | Out-File -FilePath "C:\Pws\logs\ServerInfo.html"
 
 # Abrir el archivo en el navegador predeterminado
 Invoke-Item "ServerInfo.html"
@@ -133,7 +168,7 @@ Invoke-Item "ServerInfo.html"
 #### Este código ejecutará la consulta proporcionada en cada uno de los servidores en el archivo server_instances.txt y mostrará los resultados. Cabe mencionar que este código solo muestra los resultados en la consola de PowerShell. Si deseas adaptarlo para generar archivos HTML como antes, puedes usar la estructura y el estilo que hemos discutido en las respuestas anteriores.
 
 ~~~sql
-~#==========================================================================================================#
+
 #Creado por Alejandro Jimenez Rosa                                                                         #
 #Fecha inicio Agosto 18 2023                                                                               #
 #Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
