@@ -162,6 +162,8 @@ Invoke-Item "ServerInfo.html"
 
 
 ### Sacar servidores con sus bases de datos usando PowerShell<a name="2"></a>
+<img src="https://jsequeiros.com/archivos/img/sqlserver2012/base-datos-sql-server-sistema.png?format=jpg&name=large" alt="JuveR" width="800px">
+
 # 
 
 
