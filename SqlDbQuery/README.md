@@ -105,7 +105,7 @@
   - 12.6 ["Consultas SQL con mayor consumo de CPU"](#consultassqlmayorconsumodecpu)  
 
   #  Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo
-    - 13 Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo(#13)
+- 13 [Detener un proceso de auditoría en SQL Server generalmente implica deshabilitar o detener la auditoría en sí. Aquí te muestro cómo hacerlo](#13)
 # 
 # Expeciales, busqueda dentro de todas las tablas de la Base de datos Por nombres de campos.
 - 14     [Tablas que Contienen un mombre de Campo.](#buscarnombrecampo)
