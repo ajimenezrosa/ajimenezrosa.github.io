@@ -34,6 +34,9 @@
 
 - 1 [Script que extrae datos de para documentacion de servidores sql BPD](#1)
 - 2 [Sacar servidores con sus bases de datos usando PowerShell](#2)
+- 3 [Tamanos de carpetas y archivos a partir de una ruta usando Powershell](#3)
+
+
 # 
 
 
@@ -280,5 +283,67 @@ Write-Host $htmlFilePath
 Write-Host $notFoundFilePath
 ~~~
 
+# 
 
+## Tamanos de carpetas y archivos a partir de una ruta usando Powershell<a name="3"></a>
+
+#### Puedes crear un script de PowerShell que recorra todas las carpetas y subcarpetas a partir de una ruta indicada y muestre la información del tamaño de cada carpeta y archivo en una página web. Aquí tienes un ejemplo de cómo hacerlo:
+# 
+<img src="https://www.softzone.es/app/uploads-softzone.es/2022/06/tamano-archivo-windows.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+
+#
+
+~~~sql
+# Define la ruta base
+$basePath = "C:\Ruta\Base"
+
+# Definir la ruta del archivo de salida HTML
+$outputFile = "C:\Ruta\Salida\informe.html"
+
+# Función para calcular el tamaño de una carpeta o archivo
+function Get-ItemSize($item) {
+    if (Test-Path $item) {
+        $itemInfo = Get-Item $item
+        return $itemInfo.Length
+    }
+    return 0
+}
+
+# Función para generar el HTML
+function Generate-HTML($path) {
+    $htmlContent = "<html><head><title>Informe de Tamaño</title></head><body><h1>Informe de Tamaño</h1><table><tr><th>Nombre</th><th>Tamaño (bytes)</th></tr>"
+    
+    Get-ChildItem -Path $path -File -Recurse | ForEach-Object {
+        $item = $_
+        $htmlContent += "<tr><td>$($item.FullName)</td><td>$(Get-ItemSize $item.FullName)</td></tr>"
+    }
+    
+    Get-ChildItem -Path $path -Directory -Recurse | ForEach-Object {
+        $item = $_
+        $htmlContent += "<tr><td>$($item.FullName)</td><td>$(Get-ItemSize $item.FullName)</td></tr>"
+    }
+    
+    $htmlContent += "</table></body></html>"
+    
+    $htmlContent | Out-File -FilePath $outputFile
+}
+
+# Genera el informe HTML
+Generate-HTML -path $basePath
+
+# Abre el archivo HTML en el navegador predeterminado
+Invoke-Item $outputFile
+
+~~~
+# 
+
+#### Asegúrate de reemplazar $basePath con la ruta desde la cual deseas comenzar a recopilar información. El script crea un informe HTML que incluye el nombre y el tamaño (en bytes) de cada archivo y carpeta en la ruta especificada y sus subcarpetas. Finalmente, abre el informe en el navegador predeterminado.
+
+#### Recuerda que debes ejecutar este script en PowerShell con permisos suficientes para acceder a las carpetas y archivos en la ruta especificada. También, asegúrate de que la ruta de salida especificada en $outputFile sea accesible para escribir.
+
+
+#
+
+No hay nada debajo de esta linea
+# 
 
