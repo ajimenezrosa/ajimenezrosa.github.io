@@ -295,23 +295,25 @@ Write-Host $notFoundFilePath
 
 ~~~sql
 # Define la ruta base
-$basePath = "C:\Ruta\Base"
+$basePath = "E:\Cursos"
 
 # Definir la ruta del archivo de salida HTML
-$outputFile = "C:\Ruta\Salida\informe.html"
+$outputFile = "C:\Ruta\informe.html"
 
-# Función para calcular el tamaño de una carpeta o archivo
+# Función para calcular el tamaño de una carpeta o archivo en GB
 function Get-ItemSize($item) {
     if (Test-Path $item) {
         $itemInfo = Get-Item $item
-        return $itemInfo.Length
+        $sizeInBytes = $itemInfo.Length
+        $sizeInGB = [math]::Round($sizeInBytes / 1GB, 2)
+        return $sizeInGB
     }
     return 0
 }
 
 # Función para generar el HTML
 function Generate-HTML($path) {
-    $htmlContent = "<html><head><title>Informe de Tamaño</title></head><body><h1>Informe de Tamaño</h1><table><tr><th>Nombre</th><th>Tamaño (bytes)</th></tr>"
+    $htmlContent = "<html><head><title>Informe de Tamaño</title></head><body><h1>Informe de Tamaño</h1><table><tr><th>Nombre</th><th>Tamaño (GB)</th></tr>"
     
     Get-ChildItem -Path $path -File -Recurse | ForEach-Object {
         $item = $_
