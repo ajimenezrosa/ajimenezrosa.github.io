@@ -293,6 +293,7 @@ Write-Host $notFoundFilePath
 
 #
 
+## codigo en GB.
 ~~~sql
 # Define la ruta base
 $basePath = "E:\Cursos"
@@ -338,6 +339,54 @@ Invoke-Item $outputFile
 
 ~~~
 # 
+
+## Codigo en MB
+~~~sql
+# Define la ruta base
+$basePath = "E:\Cursos"
+
+# Definir la ruta del archivo de salida HTML
+$outputFile = "C:\Ruta\informe.html"
+
+# Función para calcular el tamaño de una carpeta o archivo en MB
+function Get-ItemSize($item) {
+    if (Test-Path $item) {
+        $itemInfo = Get-Item $item
+        $sizeInBytes = $itemInfo.Length
+        $sizeInMB = [math]::Round($sizeInBytes / 1MB, 2)
+        return $sizeInMB
+    }
+    return 0
+}
+
+# Función para generar el HTML
+function Generate-HTML($path) {
+    $htmlContent = "<html><head><title>Informe de Tamaño</title></head><body><h1>Informe de Tamaño</h1><table><tr><th>Nombre</th><th>Tamaño (MB)</th></tr>"
+    
+    Get-ChildItem -Path $path -File -Recurse | ForEach-Object {
+        $item = $_
+        $htmlContent += "<tr><td>$($item.FullName)</td><td>$(Get-ItemSize $item.FullName)</td></tr>"
+    }
+    
+    Get-ChildItem -Path $path -Directory -Recurse | ForEach-Object {
+        $item = $_
+        $htmlContent += "<tr><td>$($item.FullName)</td><td>$(Get-ItemSize $item.FullName)</td></tr>"
+    }
+    
+    $htmlContent += "</table></body></html>"
+    
+    $htmlContent | Out-File -FilePath $outputFile
+}
+
+# Genera el informe HTML
+Generate-HTML -path $basePath
+
+# Abre el archivo HTML en el navegador predeterminado
+Invoke-Item $outputFile
+
+~~~
+
+
 
 #### Asegúrate de reemplazar $basePath con la ruta desde la cual deseas comenzar a recopilar información. El script crea un informe HTML que incluye el nombre y el tamaño (en bytes) de cada archivo y carpeta en la ruta especificada y sus subcarpetas. Finalmente, abre el informe en el navegador predeterminado.
 
