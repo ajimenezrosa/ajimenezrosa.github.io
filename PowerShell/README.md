@@ -398,6 +398,7 @@ Invoke-Item $outputFile
 
 ## Leer todos los programas instalados en una PC<a name="4"></a>
 
+<img src="https://seguridadparaelpc.files.wordpress.com/2016/05/listar-todos-los-programas-instalados-en-windows-en-un-paso1.jpg?w=1366&h=720&crop=1?format=jpg&name=large" alt="JuveR" width="800px">
 
 
 #### Guarda este código en un archivo con extensión ".ps1" (por ejemplo, "ListarProgramas.ps1") y luego ejecútalo en PowerShell. Ten en cuenta que este método utiliza la clase Win32_Product de WMI para obtener la lista de programas instalados, pero ten en cuenta que esta clase puede ser lenta y no incluir todos los programas instalados en la PC.
@@ -451,6 +452,7 @@ Invoke-Item $htmlFilePath
 
 ~~~
 
+#### Este script crea un archivo HTML llamado "ProgramasInstalados.html" en el directorio desde donde se ejecuta el script. Contiene una tabla con el nombre de la máquina y el nombre de los programas instalados. Luego, abre el archivo HTML en el navegador web predeterminado. Asegúrate de que el script tenga los permisos necesarios para crear archivos y abrir programas.
 
 
 #
