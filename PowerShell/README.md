@@ -36,6 +36,8 @@
 - 2 [Sacar servidores con sus bases de datos usando PowerShell](#2)
 - 3 [Tamanos de carpetas y archivos a partir de una ruta usando Powershell](#3)
 
+- 4 [Leer todos los programas instalados en una PC](#4)
+
 
 # 
 
@@ -391,6 +393,64 @@ Invoke-Item $outputFile
 #### Asegúrate de reemplazar $basePath con la ruta desde la cual deseas comenzar a recopilar información. El script crea un informe HTML que incluye el nombre y el tamaño (en bytes) de cada archivo y carpeta en la ruta especificada y sus subcarpetas. Finalmente, abre el informe en el navegador predeterminado.
 
 #### Recuerda que debes ejecutar este script en PowerShell con permisos suficientes para acceder a las carpetas y archivos en la ruta especificada. También, asegúrate de que la ruta de salida especificada en $outputFile sea accesible para escribir.
+# 
+
+
+## Leer todos los programas instalados en una PC<a name="4"></a>
+
+
+
+#### Guarda este código en un archivo con extensión ".ps1" (por ejemplo, "ListarProgramas.ps1") y luego ejecútalo en PowerShell. Ten en cuenta que este método utiliza la clase Win32_Product de WMI para obtener la lista de programas instalados, pero ten en cuenta que esta clase puede ser lenta y no incluir todos los programas instalados en la PC.
+
+#### Una alternativa más rápida y completa es utilizar el Registro de Windows para obtener la lista de programas instalados. Aquí hay un ejemplo de cómo hacerlo:
+
+~~~sql
+# Obtiene el nombre de la máquina
+$nombreMaquina = $env:COMPUTERNAME
+
+# Obtiene una lista de programas instalados en la PC desde el Registro de Windows
+$UninstallKey = Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall" -ErrorAction SilentlyContinue
+
+# Crear un archivo HTML para almacenar la lista de programas
+$htmlFilePath = "ProgramasInstalados.html"
+
+# Inicializa el contenido del archivo HTML
+$htmlContent = "<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Programas Instalados</title>
+</head>
+<body>
+    <h1>Programas Instalados en $nombreMaquina</h1>
+    <table border='1'>
+        <tr>
+            <th>Nombre de la máquina</th>
+            <th>Nombre del programa</th>
+        </tr>"
+
+# Itera a través de la lista de programas instalados y agrega filas a la tabla
+$UninstallKey | ForEach-Object {
+    $programa = Get-ItemProperty $_.PSPath
+    $nombrePrograma = $programa.DisplayName
+    if ($nombrePrograma -ne $null) {
+        $htmlContent += "<tr>"
+        $htmlContent += "<td>$nombreMaquina</td>"
+        $htmlContent += "<td>$nombrePrograma</td>"
+        $htmlContent += "</tr>"
+    }
+}
+
+# Cierra el contenido del archivo HTML
+$htmlContent += "</table></body></html>"
+
+# Guarda el contenido en el archivo HTML
+$htmlContent | Set-Content -Path $htmlFilePath
+
+# Abre el archivo HTML en el navegador predeterminado
+Invoke-Item $htmlFilePath
+
+~~~
+
 
 
 #
