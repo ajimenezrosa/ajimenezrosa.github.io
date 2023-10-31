@@ -4449,7 +4449,7 @@ ORDER BY login_time desc
 #### Nota este proceso fue creado por mi para enviar las actividades del serviro via correo electronico desde la base de datos Sql server en formatos HTML.
 # 
 
-## Este query es una consulta SQL que se utiliza para recopilar información sobre las sesiones en una instancia de SQL Server en tiempo real. Proporciona información detallada sobre las sesiones en ejecución, sus consultas, bloqueos, y más. Aquí está una descripción de las partes clave de este query:
+## Este query es una consulta SQL que se utiliza para recopilar información sobre las sesiones en una instancia de SQL Server en tiempo real. Proporciona información detallada sobre las sesiones en ejecución, sus consultas, bloqueos, y más. Aquí está una descripción de las partes clave de este query:<a name="20.1"></a>
 
 1. `SELECT`: Esta es la cláusula de selección que define las columnas que se mostrarán en los resultados de la consulta.
 
