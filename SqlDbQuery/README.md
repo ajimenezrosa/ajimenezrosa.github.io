@@ -124,6 +124,7 @@
 18. [Cuanto Ocupan mis tablas](#cuantoocupantablas)
 19. [Defragmentación, al rescate](#desfragmentacionalrescate)
 20. [Detectando actividad del servidor.](#dectectandoactenservidor)
+ - 20.1 [Este query es una consulta SQL que se utiliza para recopilar información sobre las sesiones en una instancia de SQL Server en tiempo real](#20.1)
 20. [Fecha Ultima restauracion de Un Backup](#ultimarestauracion)
 20. [Ultimos Backup Realizados en la Base de Datos](#ultimosbackup3)
 
@@ -4447,6 +4448,97 @@ ORDER BY login_time desc
 
 #### Nota este proceso fue creado por mi para enviar las actividades del serviro via correo electronico desde la base de datos Sql server en formatos HTML.
 # 
+
+## Este query es una consulta SQL que se utiliza para recopilar información sobre las sesiones en una instancia de SQL Server en tiempo real. Proporciona información detallada sobre las sesiones en ejecución, sus consultas, bloqueos, y más. Aquí está una descripción de las partes clave de este query:
+
+1. `SELECT`: Esta es la cláusula de selección que define las columnas que se mostrarán en los resultados de la consulta.
+
+2. Lista de columnas seleccionadas: Cada columna en la lista representa un atributo específico que se recopilará para cada sesión en ejecución. Algunos ejemplos de las columnas seleccionadas incluyen `session_id`, `status`, `login_name`, `database_name`, `host_name`, `program_name`, `blocking_session_id`, `command`, `reads`, `writes`, `cpu_time`, `wait_type`, `wait_time`, `last_wait_type`, `wait_resource`, `transaction_isolation_level`, `object_name`, `query_text`, y `query_plan`.
+
+3. `FROM`: Esta cláusula especifica las tablas y vistas de las que se extraerán los datos. El query utiliza múltiples tablas del sistema, incluyendo `sys.dm_exec_connections`, `sys.dm_exec_sessions`, `sys.dm_exec_requests`, `sys.dm_exec_sql_text`, y `sys.dm_exec_query_plan`.
+
+4. `OUTER JOIN`: Se utilizan uniones externas para combinar los datos de diferentes tablas, asegurando que se incluyan todas las sesiones en ejecución y que los datos se muestren incluso si no hay correspondencias en todas las tablas.
+
+5. `WHERE`: La cláusula WHERE establece condiciones de filtrado para limitar los resultados a sesiones en ejecución que cumplan con ciertos criterios. Por ejemplo, excluye la sesión actual (`@@SPID`) y solo muestra las sesiones con un estado de 'running'.
+
+6. `ORDER BY`: La cláusula ORDER BY especifica el orden en el que se presentarán los resultados. En este caso, las sesiones se ordenan por su identificador de sesión (`session_id`).
+
+#### En resumen, este query recopila información sobre las sesiones en ejecución en una instancia de SQL Server, incluyendo detalles como el estado de la sesión, el nombre de inicio de sesión, la base de datos en uso, el host y programa desde el que se conecta, la consulta actual, el tiempo de CPU, el tipo de espera, los recursos de espera, el nivel de aislamiento de transacción, y otros atributos relevantes. Esta información es útil para monitorear y diagnosticar el rendimiento de la base de datos y las sesiones activas en SQL Server.
+
+~~~sql
+ SELECT
+
+              es.session_id
+
+              ,es.status
+
+              ,es.login_name
+
+              ,DB_NAME(er.database_id) as database_name
+
+              ,es.host_name
+
+              ,es.program_name
+
+              ,er.blocking_session_id
+
+              ,er.command
+
+              ,es.reads
+
+              ,es.writes
+
+              ,es.cpu_time
+
+              ,er.wait_type
+
+              ,er.wait_time
+
+              ,er.last_wait_type
+
+              ,er.wait_resource
+
+              ,CASE es.transaction_isolation_level WHEN 0 THEN 'Unspecified'
+
+              WHEN 1 THEN 'ReadUncommitted'
+
+              WHEN 2 THEN 'ReadCommitted'
+
+              WHEN 3 THEN 'Repeatable'
+
+              WHEN 4 THEN 'Serializable'
+
+              WHEN 5 THEN 'Snapshot'
+
+              END AS transaction_isolation_level
+
+              ,OBJECT_NAME(st.objectid, er.database_id) as object_name
+
+              ,SUBSTRING(st.text, er.statement_start_offset / 2,
+
+              (CASE WHEN er.statement_end_offset = -1 THEN LEN(CONVERT(nvarchar(max), st.text)) * 2
+
+              ELSE er.statement_end_offset END - er.statement_start_offset) / 2) AS query_text
+
+              ,ph.query_plan
+
+              FROM sys.dm_exec_connections ec
+
+              LEFT OUTER JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
+
+              LEFT OUTER JOIN sys.dm_exec_requests er ON ec.connection_id = er.connection_id
+
+              OUTER APPLY sys.dm_exec_sql_text(sql_handle) st
+
+              OUTER APPLY sys.dm_exec_query_plan(plan_handle) ph
+
+              WHERE ec.session_id  <> @@SPID
+
+              AND es.status = 'running'
+
+ORDER BY es.session_id;
+~~~
+
 
 
 ~~~sql
