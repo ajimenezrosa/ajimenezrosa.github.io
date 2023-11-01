@@ -9939,8 +9939,6 @@ END
 ###  SCRIPT DE MICROSOFT PARA DETECTAR problemas SDP, PARA DETETAR PROBLEMAS EN DB
 
 
-
-
 ~~~sql
 
 /*******************************************************************
