@@ -9935,7 +9935,7 @@ END
 
 
 
-# Script de Microsoft para detecar problemas SDP<a name=45sdp"></a>
+# Script de Microsoft para detecar problemas SDP<a name="45sdp"></a>
 ###  SCRIPT DE MICROSOFT PARA DETECTAR problemas SDP, PARA DETETAR PROBLEMAS EN DB
 
 
