@@ -190,7 +190,7 @@
 
  - 36 [Sacar servidores con sus bases de datos usando PowerShell](#powershellserverydbhtml)
 
- - 37 [Extraer todos los jobs de un servidor SQL server, para ser migrados a otro servidor](#extraerjobssql)
+ - 37 [Extraer todos los jobs de un servidor SQL server, para ser migrados a otro servidor](#migrarjobs)
 
  - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
 
