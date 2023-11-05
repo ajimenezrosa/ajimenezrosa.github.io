@@ -110,9 +110,19 @@ button:hover {
 }
 
 
-.record-list .record-item.resuelto {
-  background-color: green;
+.resuelto {
+  background-color: rgb(201, 222, 143);
 }
+
+.enproceso {
+  background-color:  yellow
+}
+
+.cancelado {
+  background-color:  rgb(244, 118, 80);
+}
+
+
 
   </style>
 </head>
@@ -232,7 +242,19 @@ button:hover {
       for (let i = 0; i < solicitudes.length; i++) {
         const solicitud = solicitudes[i];
         const listItem = document.createElement("li");
-        listItem.className = "record-item";
+        if(solicitud.estatus === "Pending")
+          listItem.className = "record-item";
+  
+          if(solicitud.estatus === "Resuelto")
+          listItem.className = "resuelto";
+
+          if(solicitud.estatus === "En proceso")
+          listItem.className = "enproceso";
+
+          if(solicitud.estatus === "Cancelado")
+          listItem.className = "cancelado";
+
+
         listItem.innerHTML = `
           <strong>Título:</strong> ${solicitud.titulo}<br>
           <strong>Descripción:</strong> ${solicitud.descripcion}<br>
@@ -268,6 +290,17 @@ button:hover {
         comentarioSolicitudSelect.appendChild(option);
       }
       guardarSolicitudesEnLocalStorage();
+
+        // Dentro de la función renderSolicitudes
+        if (solicitudes.estatus === "Resuelto") {
+          listItem.classList.add("resuelto"); // Agrega la clase 'resuelto' si el estatus es 'Resuelto'
+        }
+        
+        console.log(solicitudes.estatus);
+        // listItem.class.add("resuelto"); // Agrega la clase 'resuelto' si el estatus es 'Resuelto'
+      
+
+
     }
 
     function renderComentarios() {
