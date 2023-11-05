@@ -204,6 +204,7 @@ button:hover {
     const comentarioSolicitudSelect = document.getElementById("comentarioSolicitud");
     const solicitudes = [];
     const comentarios = [];
+    const comentariosTemp = [];
 
     function guardarSolicitudesEnLocalStorage() {
       localStorage.setItem("solicitudes", JSON.stringify(solicitudes));
@@ -270,7 +271,7 @@ button:hover {
           <ul id="comments${i}" class="comment-list" style="display: none;"></ul>
         `;
 
-        console.log(solicitud);
+        // console.log(solicitud);
 
         // Mostrar los comentarios relacionados a esta solicitud
         const commentsList = listItem.querySelector(`#comments${i}`);
@@ -290,16 +291,17 @@ button:hover {
         comentarioSolicitudSelect.appendChild(option);
       }
       guardarSolicitudesEnLocalStorage();
+      cargarComentariosDesdeLocalStorage() 
 
         // Dentro de la función renderSolicitudes
         if (solicitudes.estatus === "Resuelto") {
           listItem.classList.add("resuelto"); // Agrega la clase 'resuelto' si el estatus es 'Resuelto'
         }
         
-        console.log(solicitudes.estatus);
+        // console.log(solicitudes.estatus);
         // listItem.class.add("resuelto"); // Agrega la clase 'resuelto' si el estatus es 'Resuelto'
       
-
+        renderComentarios();
 
     }
 
@@ -319,6 +321,9 @@ button:hover {
         comentariosList.appendChild(listItem);
       }
       guardarComentariosEnLocalStorage();
+      // recargarComentarios();
+
+      // console.log(solicitudes);
     }
 
     function crearSolicitud() {
@@ -330,6 +335,9 @@ button:hover {
       const requeridoPor = document.getElementById("requeridoPor").value;
       const estatus =document.getElementById("estado").value;
 
+
+      // console.log(solicitud.comentario);
+
       if (titulo && descripcion && fechaInicio && fechaFinal && comentario && requeridoPor) {
         const nuevaSolicitud = {
           titulo,
@@ -339,11 +347,26 @@ button:hover {
           comentario,
           requeridoPor,
           estatus,
-          comentarios: [],
+          comentarios: comentariosTemp,
         };
         solicitudes.push(nuevaSolicitud);
+        comentarios.push(comentariosTemp);
+
+
+        // for(i=0;i<=comentariosTemp.length; i++){
+        //   console.log(comentariosTemp[i]);
+        //   comentarios.push(comentariosTemp);
+          
+        // }
+
+          // miArreglo = miArreglo.filter(elemento => elemento !== valorAEliminar);
+
+
+        // solicitudes.comentarios = solicitudes.comentarios.filter(elemento => elemento !== "undefined");
+
         renderSolicitudes();
         limpiarFormulario();
+        guardarSolicitudesEnLocalStorage();
       }
     }
 
@@ -357,6 +380,13 @@ button:hover {
       document.getElementById("requeridoPor").value = solicitud.requeridoPor;
       document.getElementById("estado").value = solicitud.estatus;
       solicitudes.splice(index, 1);
+
+      // comentariosTemp= [];
+      comentariosTemp.push(solicitud.comentarios);
+
+      comentariosTemp.pop();
+      // console.log(comentariosTemp);
+      
       renderSolicitudes();
     }
 
@@ -415,6 +445,16 @@ button:hover {
       comentarios.splice(index, 1);
       renderComentarios();
     }
+
+
+    // function recargarComentarios()
+    // {
+    //   for (x =0; x <= comentarios.length; x++){
+    //     editarComentario(x);
+    //     guardarComentariosEnLocalStorage();
+    //   }
+    // }
+
 
     function eliminarComentario(index) {
       const comentario = comentarios[index];
