@@ -242,17 +242,17 @@ button:hover {
       for (let i = 0; i < solicitudes.length; i++) {
         const solicitud = solicitudes[i];
         const listItem = document.createElement("li");
-        if(solicitud.estatus === "Pending")
+        if(solicitud.estatus === "Pendiente")
           listItem.className = "record-item";
   
           if(solicitud.estatus === "Resuelto")
-          listItem.className = "resuelto";
+          listItem.className = "resuelto record-item";
 
           if(solicitud.estatus === "En proceso")
-          listItem.className = "enproceso";
+          listItem.className = "enproceso record-item";
 
           if(solicitud.estatus === "Cancelado")
-          listItem.className = "cancelado";
+          listItem.className = "cancelado record-item";
 
 
         listItem.innerHTML = `
