@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Estilos CSS */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .button-group {
+      margin-top: 15px;
+    }
+
+    .record-list {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .record-item {
+      margin-bottom: 10px;
+    }
+
+    .comment-list {
+      margin-top: 10px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .comment-item {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CRUD de Solicitudes y Comentarios</h1>
+
+    <!-- Formulario para crear una nueva solicitud -->
+    <div class="form-group">
+      <label for="titulo">Título:</label>
+      <input type="text" id="titulo" placeholder="Título">
+    </div>
+    <div class="form-group">
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" placeholder="Descripción"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="fechaInicio">Fecha de Inicio:</label>
+      <input type="date" id="fechaInicio">
+    </div>
+    <div class="form-group">
+      <label for="fechaFinal">Fecha Final:</label>
+      <input type="date" id="fechaFinal">
+    </div>
+    <div class="form-group">
+      <label for="comentario">Comentario:</label>
+      <input type="text" id="comentario" placeholder="Comentario">
+    </div>
+    <div class="form-group">
+      <label for="requeridoPor">Requerido por:</label>
+      <input type="text" id="requeridoPor" placeholder="Requerido por">
+    </div>
+    <div class="button-group">
+      <button onclick="crearSolicitud()">Crear Solicitud</button>
+    </div>
+
+    <!-- Lista de solicitudes -->
+    <h2>Solicitudes</h2>
+    <ul id="solicitudes" class="record-list"></ul>
+
+    <!-- Lista de comentarios -->
+    <h2>Comentarios</h2>
+    <ul id="comentarios" class="comment-list"></ul>
+  </div>
+
+  <script>
+    // Funciones JavaScript para interactuar con los datos y el localStorage
+    const solicitudesList = document.getElementById("solicitudes");
+    const comentariosList = document.getElementById("comentarios");
+    const solicitudes = [];
+    const comentarios = [];
+
+    function guardarSolicitudesEnLocalStorage() {
+      localStorage.setItem("solicitudes", JSON.stringify(solicitudes));
+    }
+
+    function guardarComentariosEnLocalStorage() {
+      localStorage.setItem("comentarios", JSON.stringify(comentarios));
+    }
+
+    function cargarSolicitudesDesdeLocalStorage() {
+      const storedSolicitudes = JSON.parse(localStorage.getItem("solicitudes") || "[]");
+      for (const solicitud of storedSolicitudes) {
+        solicitudes.push(solicitud);
+      }
+    }
+
+    function cargarComentariosDesdeLocalStorage() {
+      const storedComentarios = JSON.parse(localStorage.getItem("comentarios") || "[]");
+      for (const comentario of storedComentarios) {
+        comentarios.push(comentario);
+      }
+    }
+
+    function renderSolicitudes() {
+      solicitudesList.innerHTML = "";
+      for (let i = 0; i < solicitudes.length; i++) {
+        const solicitud = solicitudes[i];
+        const listItem = document.createElement("li");
+        listItem.className = "record-item";
+        listItem.innerHTML = `
+          <strong>Título:</strong> ${solicitud.titulo}<br>
+          <strong>Descripción:</strong> ${solicitud.descripcion}<br>
+          <strong>Fecha Inicio:</strong> ${solicitud.fechaInicio}<br>
+          <strong>Fecha Final:</strong> ${solicitud.fechaFinal}<br>
+          <strong>Comentario:</strong> ${solicitud.comentario}<br>
+          <strong>Requerido Por:</strong> ${solicitud.requeridoPor}<br>
+          <button onclick="editarSolicitud(${i})">Editar</button>
+          <button onclick="eliminarSolicitud(${i})">Eliminar</button>
+        `;
+
+        // Mostrar los comentarios relacionados a esta solicitud
+        if (solicitud.comentarios.length > 0) {
+          listItem.innerHTML += "<strong>Comentarios:</strong><ul>";
+          for (const comentario of solicitud.comentarios) {
+            listItem.innerHTML += `<li>${comentario.comentario} (${comentario.fechaEjecucion})</li>`;
+          }
+          listItem.innerHTML += "</ul>";
+        }
+
+        solicitudesList.appendChild(listItem);
+      }
+      guardarSolicitudesEnLocalStorage();
+    }
+
+    function renderComentarios() {
+      comentariosList.innerHTML = "";
+      for (let i = 0; i < comentarios.length; i++) {
+        const comentario = comentarios[i];
+        const listItem = document.createElement("li");
+        listItem.className = "comment-item";
+        listItem.innerHTML = `
+          <strong>Solicitud:</strong> ${comentario.tituloSolicitud}<br>
+          <strong>Comentario:</strong> ${comentario.comentario}<br>
+          <strong>Fecha de Ejecución:</strong> ${comentario.fechaEjecucion}<br>
+          <button onclick="editarComentario(${i})">Editar</button>
+          <button onclick="eliminarComentario(${i})">Eliminar</button>
+        `;
+        comentariosList.appendChild(listItem);
+      }
+      guardarComentariosEnLocalStorage();
+    }
+
+    function crearSolicitud() {
+      const titulo = document.getElementById("titulo").value;
+      const descripcion = document.getElementById("descripcion").value;
+      const fechaInicio = document.getElementById("fechaInicio").value;
+      const fechaFinal = document.getElementById("fechaFinal").value;
+      const comentario = document.getElementById("comentario").value;
+      const requeridoPor = document.getElementById("requeridoPor").value;
+
+      if (titulo && descripcion && fechaInicio && fechaFinal && comentario && requeridoPor) {
+        const nuevaSolicitud = {
+          titulo,
+          descripcion,
+          fechaInicio,
+          fechaFinal,
+          comentario,
+          requeridoPor,
+          comentarios: [],
+        };
+        solicitudes.push(nuevaSolicitud);
+        renderSolicitudes();
+        limpiarFormulario();
+      }
+    }
+
+    function editarSolicitud(index) {
+      const solicitud = solicitudes[index];
+      document.getElementById("titulo").value = solicitud.titulo;
+      document.getElementById("descripcion").value = solicitud.descripcion;
+      document.getElementById("fechaInicio").value = solicitud.fechaInicio;
+      document.getElementById("fechaFinal").value = solicitud.fechaFinal;
+      document.getElementById("comentario").value = solicitud.comentario;
+      document.getElementById("requeridoPor").value = solicitud.requeridoPor;
+      solicitudes.splice(index, 1);
+      renderSolicitudes();
+    }
+
+    function eliminarSolicitud(index) {
+      solicitudes.splice(index, 1);
+      renderSolicitudes();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("titulo").value = "";
+      document.getElementById("descripcion").value = "";
+      document.getElementById("fechaInicio").value = "";
+      document.getElementById("fechaFinal").value = "";
+      document.getElementById("comentario").value = "";
+      document.getElementById("requeridoPor").value = "";
+    }
+
+    function crearComentario() {
+      const tituloSolicitud = document.getElementById("comentarioSolicitud").value;
+      const comentarioTexto = document.getElementById("comentarioTexto").value;
+      const comentarioFecha = document.getElementById("comentarioFecha").value;
+
+      if (tituloSolicitud && comentarioTexto && comentarioFecha) {
+        const nuevoComentario = {
+          tituloSolicitud,
+          comentario: comentarioTexto,
+          fechaEjecucion: comentarioFecha,
+        };
+        comentarios.push(nuevoComentario);
+        const solicitudIndex = solicitudes.findIndex((solicitud) => solicitud.titulo === tituloSolicitud);
+        solicitudes[solicitudIndex].comentarios.push(nuevoComentario);
+        renderComentarios();
+        limpiarFormularioComentario();
+        renderSolicitudes();
+      }
+    }
+
+    function editarComentario(index) {
+      const comentario = comentarios[index];
+      document.getElementById("comentarioSolicitud").value = comentario.tituloSolicitud;
+      document.getElementById("comentarioTexto").value = comentario.comentario;
+      document.getElementById("comentarioFecha").value = comentario.fechaEjecucion;
+      comentarios.splice(index, 1);
+      renderComentarios();
+    }
+
+    function eliminarComentario(index) {
+      const comentario = comentarios[index];
+      const solicitudIndex = solicitudes.findIndex((solicitud) => solicitud.titulo === comentario.tituloSolicitud);
+      solicitudes[solicitudIndex].comentarios = solicitudes[solicitudIndex].comentarios.filter(
+        (c) => c.fechaEjecucion !== comentario.fechaEjecucion
+      );
+      renderSolicitudes();
+      comentarios.splice(index, 1);
+      renderComentarios();
+    }
+
+    function limpiarFormularioComentario() {
+      document.getElementById("comentarioSolicitud").value = "";
+      document.getElementById("comentarioTexto").value = "";
+      document.getElementById("comentarioFecha").value = "";
+    }
+
+    // Cargar solicitudes y comentarios almacenados en el localStorage al cargar la página
+    cargarSolicitudesDesdeLocalStorage();
+    cargarComentariosDesdeLocalStorage();
+    renderSolicitudes();
+    renderComentarios();
+  </script>
+</body>
+</html>
