@@ -462,7 +462,7 @@ No hay nada debajo de esta linea
 
 
 
-~~~sq
+~~~sql
 # Lee la lista de servidores desde el archivo servidores.txt
 $servidores = Get-Content -Path "C:\PowerShellDiscosServidores\servidores.txt"
 
