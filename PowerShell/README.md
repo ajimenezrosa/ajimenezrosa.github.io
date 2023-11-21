@@ -457,157 +457,87 @@ Invoke-Item $htmlFilePath
 
 #
 
-No hay nada debajo de esta linea
+
+# Generador de Informe de Cores y Discos de Servidores en PowerShell
 # 
+<img src="https://elsalvador.solutekla.com/photo/1/supermicro/servidores/server_supermicro_rack_1u_intel_bronze_3104_6core_8gb_ddr4_2666_2tb_hdd5019pmoto12/server_supermicro_rack_1u_intel_bronze_3104_6core_8gb_ddr4_2666_2tb_hdd5019pmoto12_0001?w=1366&h=720&crop=1?format=jpg&name=large" alt="JuveR" width="800px">
 
-
+#### 
 
 ~~~sql
-# Lee la lista de servidores desde el archivo servidores.txt
-$servidores = Get-Content -Path "C:\PowerShellDiscosServidores\servidores.txt"
-
-# Función para obtener la información del servidor SQL
-function ObtenerDatosSQL($servidor) {
-    try {
-        # Tu código para obtener datos SQL
-
-        return $datosSQL  # Retorna los datos recopilados
-    } catch {
-        Write-Host "Error al conectarse al servidor SQL: $_" -ForegroundColor Red
-        return $servidor  # Retorna el servidor no encontrado
-    }
-}
-
-# Función para obtener información del servidor Windows
-function ObtenerDatosServidor($servidor) {
-    try {
-        # Tu código para obtener datos del servidor Windows
-
-        return $datosServidor  # Retorna los datos recopilados
-    } catch {
-        Write-Host "Error al obtener información del servidor Windows: $_" -ForegroundColor Red
-        return $servidor  # Retorna el servidor no encontrado
-    }
-}
-
-# Arrays para almacenar los datos
-$resultados = @()
-$noEncontrados = @()
-
-# Iterar a través de la lista de servidores
-foreach ($servidor in $servidores) {
-    $datosSQL = ObtenerDatosSQL $servidor
-    $datosServidor = ObtenerDatosServidor $servidor
-    
-    # Verificar si se obtuvieron datos o si el servidor no se encontró
-    if ($datosSQL -is [PSCustomObject] -and $datosServidor -is [PSCustomObject]) {
-        # Si se obtuvieron datos de ambos tipos de servidores, agregarlos a $resultados
-        $resultados += $datosSQL, $datosServidor
-    } else {
-        # Si no se encontró el servidor, agregarlo a $noEncontrados
-        $noEncontrados += $servidor
-    }
-}
-
-# Generar el contenido HTML para los resultados y servidores no encontrados
+# Obtener la fecha y hora actual para agregar al nombre del archivo
 $fechaHora = Get-Date -Format "yyyyMMdd-HHmmss"
 
-$htmlResultado = @"
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Resultados de Servidores - $fechaHora</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        h2 {
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h2>Información de Servidores</h2>
-    <h3>Resultados obtenidos el $fechaHora</h3>
-    <table>
-        <tr>
-            <th>Nombre del Servidor SQL</th>
-            <th>Instancia</th>
-            <th>Service Pack</th>
-            <th>Tamaño de la base de datos (MB)</th>
-        </tr>
-"@
+# Leer los nombres de los servidores desde el archivo servidores.txt
+$servidores = Get-Content -Path "C:\PowerShellDiscosServidores\servidores.txt"
 
-# Agregar datos de SQL al HTML
-foreach ($resultado in $resultados) {
-    if ($resultado.NombreServidor) {
-        $htmlResultado += @"
-        <tr>
-            <td>$($resultado.NombreServidor)</td>
-            <td>$($resultado.Instancia)</td>
-            <td>$($resultado.ServicePack)</td>
-            <td>$($resultado.TamanoMB)</td>
-        </tr>
-"@
+# Variable para almacenar los resultados HTML de los servidores no encontrados
+$resultadosNoEncontradosHTML = "<html><head><title>Listado de Cores y discos de Servidores</title></head><body><h1>Listado de Cores y discos de Servidores</h1>"
+# Variable para almacenar los resultados HTML de los servidores encontrados
+$resultadosEncontradosHTML = "<html><head><title>Listado de Cores y discos de Servidores</title><style>table {border-collapse: collapse; width: 100%;} th, td {border: 1px solid black; padding: 8px; text-align: left;} th {background-color: #f2f2f2;}</style></head><body><h1>Listado de Cores y discos de Servidores</h1>"
+
+# Variable para almacenar los nombres de los servidores no encontrados
+$servidoresNoEncontrados = @()
+
+# Iterar sobre cada servidor en la lista
+foreach ($serverName in $servidores) {
+    Write-Host "Obteniendo información para el servidor $serverName..."
+    
+    # Intentar obtener información sobre los núcleos y discos del servidor
+    $cores = Get-WmiObject -ComputerName $serverName -Class Win32_Processor -ErrorAction SilentlyContinue
+    $disks = Get-WmiObject -ComputerName $serverName -Class Win32_LogicalDisk -ErrorAction SilentlyContinue
+
+    # Verificar si no se pudo obtener información y registrar el servidor no encontrado
+    if (-not $cores -or -not $disks) {
+        Write-Host "¡No se pudo acceder al servidor $serverName!"
+        $servidoresNoEncontrados += $serverName
+    }
+    else {
+        # Agregar los resultados del servidor a la tabla HTML de servidores encontrados
+        $resultadosEncontradosHTML += "<h2>Información para el servidor $serverName ($($cores.NumberOfCores) cores)</h2>"
+        $resultadosEncontradosHTML += "<table><tr><th>Disco</th><th>Tamaño total (GB)</th><th>Espacio libre (GB)</th></tr>"
+        foreach ($disk in $disks) {
+            $tamanioTotal = [math]::Round($disk.Size / 1GB, 2)
+            $espacioLibre = [math]::Round($disk.FreeSpace / 1GB, 2)
+            $resultadosEncontradosHTML += "<tr><td>$($disk.DeviceID)</td><td>$tamanioTotal</td><td>$espacioLibre</td></tr>"
+        }
+        $resultadosEncontradosHTML += "</table>"
     }
 }
 
-# Terminar el HTML
-$htmlResultado += @"
-    </table>
-</body>
-</html>
-"@
-
-# Guardar resultados en un archivo HTML
-$htmlResultado | Out-File -FilePath "C:\PowerShellDiscosServidores\Resultados\ServidoresDiscos_$fechaHora.html"
-
-# Generar HTML para los servidores no encontrados
-$htmlNoEncontrados = @"
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Servidores No Encontrados - $fechaHora</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        h2 {
-            color: #ff0000;
-        }
-    </style>
-</head>
-<body>
-    <h2>Servidores no encontrados</h2>
-"@
-
-foreach ($noEncontrado in $noEncontrados) {
-    $htmlNoEncontrados += "<p>$noEncontrado</p>"
+# Generar HTML con la lista de servidores no encontrados
+if ($servidoresNoEncontrados.Count -gt 0) {
+    $resultadosNoEncontradosHTML += "<h1>Servidores No Encontrados</h1>"
+    $resultadosNoEncontradosHTML += "<ul>"
+    foreach ($servidorNoEncontrado in $servidoresNoEncontrados) {
+        $resultadosNoEncontradosHTML += "<li>$servidorNoEncontrado</li>"
+    }
+    $resultadosNoEncontradosHTML += "</ul>"
+} else {
+    $resultadosNoEncontradosHTML += "<h1>Todos los servidores están accesibles</h1>"
 }
 
-$htmlNoEncontrados += @"
-</body>
-</html>
-"@
+# Cerrar etiquetas HTML
+$resultadosNoEncontradosHTML += "</body></html>"
+$resultadosEncontradosHTML += "</body></html>"
 
-# Guardar servidores no encontrados en un archivo HTML
-$htmlNoEncontrados | Out-File -FilePath "C:\PowerShellDiscosServidores\NOENCONTRADOS\NoEncontrados_$fechaHora.html"
+# Guardar la lista de servidores no encontrados en un archivo HTML con fecha y hora en el nombre
+$resultadosNoEncontradosHTML | Out-File -FilePath "C:\PowerShellDiscosServidores\NOENCONTRADOS\NoEncontrados_$fechaHora.html" -Encoding UTF8
 
+# Guardar los resultados de servidores encontrados en archivos HTML individuales con fecha y hora en el nombre
+$resultadosEncontradosHTML | Out-File -FilePath "C:\PowerShellDiscosServidores\ENCONTRADOS\Encontrados_$fechaHora.html" -Encoding UTF8
+
+Write-Host "Los servidores no encontrados se han guardado en NoEncontrados_$fechaHora.html."
+Write-Host "Los servidores encontrados se han guardado en Encontrados_$fechaHora.html."
 
 ~~~
+
+
+
+
+
+
+
+No hay nada debajo de esta linea
+# 
 
