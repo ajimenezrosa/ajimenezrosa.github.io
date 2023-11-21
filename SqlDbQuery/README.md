@@ -169,6 +169,9 @@
   - 28.2 [jobs con sus dias de ejecucion por steps]
   (#listajob282)
   - 28.2.1 [Jobs del sistema sql server,  con nombre y base de datos que apuntan](#28.2.1)
+ 
+  - 28.2.2 [Jobs del sistema sql server,  para entregar al personal de control M](#28.2.2)
+  -
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
   - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
 
@@ -8580,6 +8583,147 @@ order by jobs.name,jobsteps.step_name, jobsteps.database_name;
 
 
 # 
+
+# Jobs del sistema sql server,  para entregar al personal de control M<a name="28.2.2"></a>
+# 
+## Trabajos con los Jobs de Sql server , realizados para el trabajo de control M, con esto se migraran los jobs a un proceso automatico en el cual se despararan los jobs desde una aplicacio.
+
+~~~sql
+/*
+Author: Jose Alejandro Jimenez Rosa
+Fecha: 2023 Junio  26.
+
+Descripcion:
+Query modificado a peticion de RAUDYS MANUEL MELIAN CRUZ
+en una conversacion por Teams del dia Viernes 23 de Junio del 2023
+
+
+cito:
+Como habiamos conversado, necesitamos esto por columnas:
+
+-Servidor
+-Nombre de job
+-Descripcion
+-Cuenta de usuario con la que se ejecuta
+-Si esta habilitado
+-Si esta schedulado
+-Ocurrencia (Daily, Weekly, etc)
+-Recurrencia (Dias de ejecucion)
+-Hora(s) de ejecucion
+
+
+
+*/
+
+use msdb
+go
+
+
+SELECT distinct
+	@@SERVERNAME AS Servidor,
+    [sJOB].[name] AS [JobName] ,
+	--Replace( [sJOB].description,Char(10),'') description,
+	description = REPLACE(REPLACE(REPLACE([sJOB].description,CHAR(9),''),CHAR(10),''),CHAR(13),''),
+
+	[dbo].[fn_sysdac_get_username](sJOB.owner_sid) [JobOwner],
+
+    CASE [sJOB].[enabled]
+      WHEN 1 THEN 'Yes'
+      WHEN 0 THEN 'No'
+    END AS [IsEnabled] ,
+
+	 CASE
+        WHEN [sSCH].[schedule_uid] IS NULL THEN 'No'
+        ELSE 'Yes'
+      END AS [IsScheduled],
+    
+    --CASE 
+    --    WHEN [sSCH].[freq_type] = 64 THEN 'Start automatically when SQL Server Agent starts'
+    --    WHEN [sSCH].[freq_type] = 128 THEN 'Start whenever the CPUs become idle'
+    --    WHEN [sSCH].[freq_type] IN (4,8,16,32) THEN 'Recurring'
+    --    WHEN [sSCH].[freq_type] = 1 THEN 'One Time'
+    --END [ScheduleType], 
+
+
+
+
+    CASE [sSCH].[freq_type]
+        WHEN 1 THEN 'One Time'
+        WHEN 4 THEN 'Daily'
+        WHEN 8 THEN 'Weekly'
+        WHEN 16 THEN 'Monthly'
+        WHEN 32 THEN 'Monthly - Relative to Frequency Interval'
+        WHEN 64 THEN 'Start automatically when SQL Server Agent starts'
+        WHEN 128 THEN 'Start whenever the CPUs become idle'
+  END [Occurrence], 
+
+ -- 	'Start Date' = CASE active_start_date
+	--	WHEN 0 THEN null
+	--	ELSE
+	--	substring(convert(varchar(15),active_start_date),1,4) + '/' + 
+	--	substring(convert(varchar(15),active_start_date),5,2) + '/' + 
+	--	substring(convert(varchar(15),active_start_date),7,2)
+	--END,
+	----[sJSTP].last_run_date,
+
+
+  CASE [sSCH].[freq_type]
+        WHEN 4 THEN 'Occurs every ' + CAST([freq_interval] AS VARCHAR(3)) + ' day(s)'
+        WHEN 8 THEN 'Occurs every ' + CAST([freq_recurrence_factor] AS VARCHAR(3)) + ' week(s) on '
+                + CASE WHEN [sSCH].[freq_interval] & 1 = 1 THEN 'Sunday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 2 = 2 THEN ', Monday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 4 = 4 THEN ', Tuesday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 8 = 8 THEN ', Wednesday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 16 = 16 THEN ', Thursday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 32 = 32 THEN ', Friday' ELSE '' END
+                + CASE WHEN [sSCH].[freq_interval] & 64 = 64 THEN ', Saturday' ELSE '' END
+        WHEN 16 THEN 'Occurs on Day ' + CAST([freq_interval] AS VARCHAR(3)) + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+        WHEN 32 THEN 'Occurs on '
+                 + CASE [sSCH].[freq_relative_interval]
+                    WHEN 1 THEN 'First'
+                    WHEN 2 THEN 'Second'
+                    WHEN 4 THEN 'Third'
+                    WHEN 8 THEN 'Fourth'
+                    WHEN 16 THEN 'Last'
+                   END
+                 + ' ' 
+                 + CASE [sSCH].[freq_interval]
+                    WHEN 1 THEN 'Sunday'
+                    WHEN 2 THEN 'Monday'
+                    WHEN 3 THEN 'Tuesday'
+                    WHEN 4 THEN 'Wednesday'
+                    WHEN 5 THEN 'Thursday'
+                    WHEN 6 THEN 'Friday'
+                    WHEN 7 THEN 'Saturday'
+                    WHEN 8 THEN 'Day'
+                    WHEN 9 THEN 'Weekday'
+                    WHEN 10 THEN 'Weekend day'
+                   END
+                 + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+    END AS [Recurrence], 
+ 	 sSCH.active_start_time
+
+	 --sSCH.freq_subday_interval
+ 
+	--[dbo].[fn_sysdac_get_username](sJOB.owner_sid) [JobOwner],
+        --[sCAT].[name] AS [JobCategory] 
+FROM
+    [msdb].[dbo].[sysjobsteps] AS [sJSTP]
+    INNER JOIN [msdb].[dbo].[sysjobs] AS [sJOB] ON [sJSTP].[job_id] = [sJOB].[job_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOSSTP] ON [sJSTP].[job_id] = [sOSSTP].[job_id] AND [sJSTP].[on_success_step_id] = [sOSSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOFSTP] ON [sJSTP].[job_id] = [sOFSTP].[job_id] AND [sJSTP].[on_fail_step_id] = [sOFSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysproxies] AS [sPROX] ON [sJSTP].[proxy_id] = [sPROX].[proxy_id]
+    LEFT JOIN [msdb].[dbo].[syscategories] AS [sCAT] ON [sJOB].[category_id] = [sCAT].[category_id]
+    LEFT JOIN [msdb].[sys].[database_principals] AS [sDBP] ON [sJOB].[owner_sid] = [sDBP].[sid]
+    LEFT JOIN [msdb].[dbo].[sysjobschedules] AS [sJOBSCH] ON [sJOB].[job_id] = [sJOBSCH].[job_id]
+    LEFT JOIN [msdb].[dbo].[sysschedules] AS [sSCH] ON [sJOBSCH].[schedule_id] = [sSCH].[schedule_id]
+ORDER BY
+    [JobName] 
+ 
+
+~~~
+
+
 
 # Establecimiento de la opción de configuración del servidor Máximo de subprocesos de trabajo <a name="autogrowmaxime"></a>
 ###### Artículo

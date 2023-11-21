@@ -465,7 +465,12 @@ Invoke-Item $htmlFilePath
 #### 
 
 ~~~sql
+
+
 # Obtener la fecha y hora actual para agregar al nombre del archivo
+# Creado por Ajejandro Jimenez Rosa.......................
+# Finalizado 21 de Noviembre 2023..........................
+# 
 $fechaHora = Get-Date -Format "yyyyMMdd-HHmmss"
 
 # Leer los nombres de los servidores desde el archivo servidores.txt
