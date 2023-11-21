@@ -458,7 +458,7 @@ Invoke-Item $htmlFilePath
 #
 
 
-# Generador de Informe de Cores y Discos de Servidores en PowerShell<a name="4"></a>
+# Generador de Informe de Cores y Discos de Servidores en PowerShell<a name="5"></a>
 # 
 <img src="https://elsalvador.solutekla.com/photo/1/supermicro/servidores/server_supermicro_rack_1u_intel_bronze_3104_6core_8gb_ddr4_2666_2tb_hdd5019pmoto12/server_supermicro_rack_1u_intel_bronze_3104_6core_8gb_ddr4_2666_2tb_hdd5019pmoto12_0001?w=1366&h=720&crop=1?format=jpg&name=large" alt="JuveR" width="800px">
 
