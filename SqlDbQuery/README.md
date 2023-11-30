@@ -88,6 +88,8 @@
 9. [Query de los ultimos Backup realizados en un Servidor de Bases de datos.](#ultimobackup)
 9. [Query Que muestra la ultimos Restore realizados a un Servidor ](#queryrestoresql)
 12. ["Limpiar y Reducir el Log de Transacciones SQL Server"](#limpiarlog) 
+13. ["Seguimiento en Tiempo Real de Operaciones de Backup y Restore"](#tiemporestore)
+
 #
 # Performance de la base de datos.  Verificaciones de rendimiento del Sql Server
 #
@@ -3105,6 +3107,30 @@ SET RECOVERY FULL;
 GO
 ~~~
 # 
+
+## Seguimiento en Tiempo Real de Operaciones de Backup y Restore<a name="tiemporestore"></a>
+
+
+
+#### Este código SQL utiliza las vistas dinámicas sys.dm_exec_requests y sys.dm_exec_sql_text para recopilar datos sobre las solicitudes en ejecución. A través del uso de CROSS APPLY, vincula la información de sys.dm_exec_requests con el texto del SQL subyacente utilizando sys.dm_exec_sql_text. La consulta final devuelve los siguientes campos:
+
+#### SPID (identificador de sesión): renombrado como session_id del sys.dm_exec_requests.
+#### command: tipo de comando en ejecución, como 'BACKUP DATABASE' o 'RESTORE DATABASE'.
+#### Query (consulta): el texto de la consulta SQL actual, obtenido a través de sys.dm_exec_sql_text.
+#### start_time: momento en el que la solicitud de ejecución comenzó.
+#### percent_complete: porcentaje de completitud de la tarea en ejecución.
+#### estimated_completion_time: tiempo estimado de finalización de la tarea, calculado utilizando estimated_completion_time y ajustado a la hora actual (getdate()).
+#### La cláusula WHERE filtra los resultados para mostrar solo las solicitudes que involucran comandos de copia de seguridad o restauración de bases de datos, utilizando la condición r.command in ('BACKUP DATABASE','RESTORE DATABASE').
+# 
+#### En resumen, este query es útil para monitorear y obtener detalles específicos sobre las operaciones de copia de seguridad y restauración de bases de datos en el entorno de SQL Server.
+
+~~~sql
+SELECT session_id as SPID, command, a.text AS Query, start_time, percent_complete, dateadd(second,estimated_completion_time/1000, getdate()) as estimated_completion_time
+
+FROM sys.dm_exec_requests r CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) a
+
+WHERE r.command in ('BACKUP DATABASE','RESTORE DATABASE')
+~~~
 
 # 
 
