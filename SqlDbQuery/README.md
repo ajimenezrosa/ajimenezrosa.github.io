@@ -27,7 +27,6 @@
 # 
 
 # Sql server Commpendio de querys.
-<img src="https://licendi.com/media/magefan_blog/2022/07/210904-Blog-Post-SQL-Server-2-e1630753848251-1.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
 # Administracion
 
@@ -3109,6 +3108,8 @@ GO
 # 
 
 ## Seguimiento en Tiempo Real de Operaciones de Backup y Restore<a name="tiemporestore"></a>
+<img src="https://community.netapp.com/t5/image/serverpage/image-id/24675iA413E45406EBE109/image-dimensions/802x333?v=v2&name=large" alt="JuveR" width="800px">
+
 
 
 
