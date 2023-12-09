@@ -11562,7 +11562,7 @@ exec sp_Run_PerfStats
 
  
 Scripts para Ambientes Standalone:
-1. Creación de base de datos STOS_ADMIN (Standalone):
+#### 1. Creación de base de datos STOS_ADMIN (Standalone):
 
 ~~~sql
 CREATE DATABASE [STOS_ADMIN]
@@ -11585,7 +11585,7 @@ GO
 ~~~
 
 
-# 2. Script de Backup de Sql StandAlone
+#### 2. Script de Backup de Sql StandAlone
 ~~~sql
 BACKUP DATABASE [master] TO  DISK = N'U:\MSSQL\BACKUP\master.bak' WITH NOFORMAT, INIT,  NAME = N'master-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 5
 GO
@@ -11594,7 +11594,7 @@ GO
 
 
 
-# 3. Script de Respaldo para Standalone:
+#### 3. Script de Respaldo para Standalone:
 
 ~~~sql
 -- Respaldo de base de datos 'master':
@@ -11614,7 +11614,7 @@ GO
 ~~~
 
 # Scripts para Ambientes de Availability Group (AlwaysOn):
-## 1. Creación de base de datos STOS_ADMIN (AlwaysOn):
+#### 1. Creación de base de datos STOS_ADMIN (AlwaysOn):
 ~~~sql
 CREATE DATABASE [STOS_ADMIN]
  ON  PRIMARY 
@@ -11635,7 +11635,7 @@ GO
 
 ~~~
 
-## 2. Respaldo y Restauración para Availability Group:
+#### 2. Respaldo y Restauración para Availability Group:
 ## Respaldo en la réplica primaria:
 
 ~~~sql
@@ -11658,7 +11658,7 @@ GO
 
 ~~~
 
-## Restauración en las réplicas secundarias:
+#### 3. Restauración en las réplicas secundarias:
 
 ~~~sql
 USE master
