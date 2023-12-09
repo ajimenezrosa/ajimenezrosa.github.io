@@ -1,0 +1,6 @@
+BACKUP DATABASE [master] TO  DISK = N'U:\MSSQL\BACKUP\master.bak' WITH NOFORMAT, INIT,  NAME = N'master-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 5
+GO
+
+
+
+

@@ -212,7 +212,16 @@
 
 - 45 [Script de Microsoft para detecar problemas SDP,](#45sdp)
 
+# 
 
+## Creacion de Bases de datos Tanto para Stand Alone como AlwaysOn BPD.
+  - 46 [Scripts para Restaurar db/s en Diferentes tipos de Ambientes](#46)
+
+
+
+# 
+
+#
 <!-- ConsultasEflowCitas -->
 
 # Conectar  una unidad de red a un servidor sql Server.<a name="1"></a>
@@ -10103,6 +10112,16 @@ BEGIN
 	WHERE dbid = Db_id(@DBName)
 END
 ~~~
+# 
+
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://bigprofitdata.com/wp-content/uploads/2020/07/Miniatura_image-1024x540.png?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
 
 
 
@@ -11486,11 +11505,179 @@ GO
 exec sp_Run_PerfStats
 
 ~~~
+# 
+
+# 
+
+
+# Scripts para Restaurar db/s en Diferentes tipos de Ambientes.<a name="46"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://learn.microsoft.com/es-es/sql/relational-databases/backup-restore/media/bnrr-rmsimple2-diffdbbu.png?view=sql-server-ver16?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
 
 
 
+## Scripts para Ambientes Standalone:
+### scripts_backup_bd_standalone
+#### Propósito: Realiza una copia de seguridad completa de la base de datos master.
+#### Ubicación de respaldo: U:\MSSQL\BACKUP\master.bak
+#### Scripts_Restore_bd_Standalone
+#### Propósito: Restaura la base de datos bpd_convertidor desde un archivo de respaldo.
+#### Ubicación del respaldo: U:\MSSQL\BACKUP\bpd_convertidor.BAK
+#### Detalles de la restauración: Restaura los archivos de datos (mdf), log (ldf), e índices (ndf) en ubicaciones específicas.
+# 
+# STANDALONE_STOS_ADMIN_DB_creation
+#### Propósito: Crea la base de datos STOS_ADMIN.
+#### Ubicaciones de archivos:
+#### Datos: E:\MSSQL\DATA\STOS_ADMIN.mdf
+#### Índices: I:\MSSQL\INDEX\STOS_ADMIN_Index.ndf
+#### Registro: L:\MSSQL\LOG\STOS_ADMIN_log.ldf
+#### Configuración adicional:
+#### Establece el modelo de recuperación en SIMPLE.
+#### Cambia el propietario de la base de datos a _SQLDBOwner.
+#### Scripts para Ambientes de Availability Group (AlwaysOn):
+# 
+# AG_STOS_ADMIN_DB_creation
+#### Propósito: Crea la base de datos STOS_ADMIN para entornos de Availability Group.
+#### Ubicaciones de archivos y configuración: Similar al script STANDALONE_STOS_ADMIN_DB_creation pero con recuperación establecida como FULL.
+#
+# AG_STOS_ADMIN_BackupDB_PrimaryReplica
+#### Propósito: Realiza copias de seguridad de la base de datos STOS_ADMIN (copias completas y de registros de transacciones) en la réplica primaria.
+#### Ubicaciones de respaldo: U:\MSSQL\BACKUP\STOS_ADMIN.bak y U:\MSSQL\BACKUP\STOS_ADMIN.trn
+#### AG_STOS_ADMIN_RestoreDB_SecondariesReplicas
+#### Propósito: Restaura la base de datos STOS_ADMIN en réplicas secundarias.
+#### Detalles de restauración: Restaura el respaldo completo y los registros de transacciones en las ubicaciones correspondientes en las réplicas secundarias.
+#### Estos scripts son herramientas poderosas para respaldar, restaurar y crear bases de datos en entornos Standalone y de Availability Group, ayudando a mantener la integridad de los datos y a administrar los entornos de base de datos de manera efectiva. Recuerda ajustar las rutas de archivos y los nombres de bases de datos según sea necesario para tu entorno específico.
+
+#
+
+# Scripts para Ambientes Standalone:
+#### 1. Creación de base de datos STOS_ADMIN (Standalone):
 
 
+#### Para ambientes availability group (Alwayson)
+
+ 
+Scripts para Ambientes Standalone:
+1. Creación de base de datos STOS_ADMIN (Standalone):
+
+~~~sql
+CREATE DATABASE [STOS_ADMIN]
+ ON  PRIMARY 
+( NAME = N'STOS_ADMIN', FILENAME = N'E:\MSSQL\DATA\STOS_ADMIN.mdf' , SIZE = 153600KB , FILEGROWTH = 51200KB ), 
+ FILEGROUP [INDEXES] 
+( NAME = N'STOS_ADMIN_Index', FILENAME = N'I:\MSSQL\INDEX\STOS_ADMIN_Index.ndf' , SIZE = 153600KB , FILEGROWTH = 51200KB )
+ LOG ON 
+( NAME = N'STOS_ADMIN_log', FILENAME = N'L:\MSSQL\LOG\STOS_ADMIN_log.ldf' , SIZE = 51200KB , FILEGROWTH = 51200KB )
+GO
+ALTER DATABASE [STOS_ADMIN] SET RECOVERY SIMPLE WITH NO_WAIT
+GO
+
+-- Cambio de propietario de la base de datos:
+USE [STOS_ADMIN]
+GO
+EXEC dbo.sp_changedbowner @loginame = N'_SQLDBOwner', @map = false	
+GO
+
+~~~
+
+# 2. Script de Respaldo para Standalone:
+
+~~~sql
+-- Respaldo de base de datos 'master':
+BACKUP DATABASE [master] TO  DISK = N'U:\MSSQL\BACKUP\master.bak' WITH NOFORMAT, INIT,  NAME = N'master-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 5
+GO
+
+-- Restaurar base de datos 'bpd_convertidor':
+RESTORE DATABASE [bpd_convertidor] 
+FROM  DISK = N'U:\MSSQL\BACKUP\bpd_convertidor.BAK' 
+WITH  FILE = 1,  
+MOVE N'bpd_convertidor' TO N'E:\MSSQL\Data\bpd_convertidor.mdf',  
+MOVE N'bpd_convertidor_Log' TO N'L:\MSSQL\Log\bpd_convertidor_log.ldf',  
+MOVE N'bpd_convertidor_Index' TO N'I:\MSSQL\Index\bpd_convertidor_index.ndf',  
+NOUNLOAD,  STATS = 10
+GO
+
+~~~
+
+# Scripts para Ambientes de Availability Group (AlwaysOn):
+## 1. Creación de base de datos STOS_ADMIN (AlwaysOn):
+~~~sql
+CREATE DATABASE [STOS_ADMIN]
+ ON  PRIMARY 
+( NAME = N'STOS_ADMIN', FILENAME = N'E:\MSSQL\DATA\STOS_ADMIN.mdf' , SIZE = 153600KB , FILEGROWTH = 51200KB ), 
+ FILEGROUP [INDEXES] 
+( NAME = N'STOS_ADMIN_Index', FILENAME = N'I:\MSSQL\INDEX\STOS_ADMIN_Index.ndf' , SIZE = 153600KB , FILEGROWTH = 51200KB )
+ LOG ON 
+( NAME = N'STOS_ADMIN_log', FILENAME = N'L:\MSSQL\LOG\STOS_ADMIN_log.ldf' , SIZE = 51200KB , FILEGROWTH = 51200KB )
+GO
+ALTER DATABASE [STOS_ADMIN] SET RECOVERY FULL WITH NO_WAIT
+GO
+
+-- Cambio de propietario de la base de datos:
+USE [STOS_ADMIN]
+GO
+EXEC dbo.sp_changedbowner @loginame = N'_SQLDBOwner', @map = false	
+GO
+
+~~~
+
+## 2. Respaldo y Restauración para Availability Group:
+## Respaldo en la réplica primaria:
+
+~~~sql
+USE master
+GO
+
+-- Respaldo de base de datos STOS_ADMIN (primaria):
+BACKUP DATABASE [STOS_ADMIN]
+TO DISK = N'U:\MSSQL\BACKUP\STOS_ADMIN.bak' 
+WITH INIT,  
+NAME = N'STOS_ADMIN-Full Database Backup', 
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Respaldo de registros de transacciones STOS_ADMIN (primaria):
+BACKUP LOG [STOS_ADMIN]
+TO DISK = 'U:\MSSQL\BACKUP\STOS_ADMIN.trn' 
+WITH INIT;
+GO
+
+~~~
+
+## Restauración en las réplicas secundarias:
+
+~~~sql
+USE master
+GO
+
+-- Restaurar base de datos STOS_ADMIN en secundarias:
+RESTORE DATABASE [STOS_ADMIN]
+FROM  DISK = N'U:\MSSQL\BACKUP\STOS_ADMIN.BAK' 
+WITH  FILE = 1,  
+MOVE N'STOS_ADMIN' TO N'E:\MSSQL\DATA\STOS_ADMIN.mdf',  
+MOVE N'STOS_ADMIN' TO N'L:\MSSQL\LOG\STOS_ADMIN.ldf',
+MOVE N'STOS_ADMIN' TO N'I:\MSSQL\INDEX\STOS_ADMIN.ndf',
+NOUNLOAD,  STATS = 1,
+NORECOVERY;	
+GO
+
+-- Restaurar registros de transacciones en secundarias:
+RESTORE LOG [STOS_ADMIN]
+FROM Disk = 'U:\MSSQL\BACKUP\STOS_ADMIN.trn'
+WITH NORECOVERY;
+GO
+
+~~~
+
+#### Estos scripts están ordenados según su uso y su secuencia lógica para cada tipo de ambiente, permitiendo realizar las operaciones de creación de bases de datos, respaldo y restauración de manera adecuada.
+
+
+
+# 
 #### No existe nada debajo de esta linea
 
 
