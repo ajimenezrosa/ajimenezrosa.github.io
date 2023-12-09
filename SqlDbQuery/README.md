@@ -11585,7 +11585,7 @@ GO
 ~~~
 
 
-# Script de Backup de Sql StandAlone
+# 2. Script de Backup de Sql StandAlone
 ~~~sql
 BACKUP DATABASE [master] TO  DISK = N'U:\MSSQL\BACKUP\master.bak' WITH NOFORMAT, INIT,  NAME = N'master-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 5
 GO
@@ -11594,7 +11594,7 @@ GO
 
 
 
-# 2. Script de Respaldo para Standalone:
+# 3. Script de Respaldo para Standalone:
 
 ~~~sql
 -- Respaldo de base de datos 'master':
