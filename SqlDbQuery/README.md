@@ -219,7 +219,7 @@
 ## Creacion de Bases de datos Tanto para Stand Alone como AlwaysOn BPD.
   - 46 [Scripts para Restaurar db/s en Diferentes tipos de Ambientes](#46)
 
- - 47 Como puedo saber que puerto utilizan mis consultas BPD(#puetos)
+ - 47 [Como puedo saber que puerto utilizan mis consultas BPD](#puetos)
 
 
 # 
