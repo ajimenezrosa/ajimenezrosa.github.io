@@ -217,6 +217,7 @@
 ## Creacion de Bases de datos Tanto para Stand Alone como AlwaysOn BPD.
   - 46 [Scripts para Restaurar db/s en Diferentes tipos de Ambientes](#46)
 
+ - 47 Como puedo saber que puerto utilizan mis consultas BPD(#puetos)
 
 
 # 
@@ -11685,6 +11686,29 @@ GO
 
 #### Estos scripts están ordenados según su uso y su secuencia lógica para cada tipo de ambiente, permitiendo realizar las operaciones de creación de bases de datos, respaldo y restauración de manera adecuada.
 
+# 
+
+
+ ## Como puedo saber que puerto utilizan mis consultas BPD<a name="puetos"></a>
+# 
+
+ 
+
+#### Codigo que muestra el puerto que esta utilizando una session determinada
+
+#### esto seria util en caso de querer saber el puesto que esta utiliando el sql server
+
+#### para nuestro caso es el por defecto 1433
+
+ 
+~~~sql
+SELECT local_tcp_port
+
+FROM   sys.dm_exec_connections
+
+WHERE  session_id = @@SPID
+~~~
+ 
 
 
 # 
