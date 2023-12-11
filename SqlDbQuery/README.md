@@ -212,7 +212,9 @@
 
 - 45 [Script de Microsoft para detecar problemas SDP,](#45sdp)
 
+
 # 
+
 
 ## Creacion de Bases de datos Tanto para Stand Alone como AlwaysOn BPD.
   - 46 [Scripts para Restaurar db/s en Diferentes tipos de Ambientes](#46)
