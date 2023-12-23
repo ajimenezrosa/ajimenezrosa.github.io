@@ -1,8 +1,0 @@
-RESTORE DATABASE [bpd_convertidor] 
-FROM  DISK = N'U:\MSSQL\BACKUP\bpd_convertidor.BAK' 
-WITH  FILE = 1,  
-MOVE N'bpd_convertidor' TO N'E:\MSSQL\Data\bpd_convertidor.mdf',  
-MOVE N'bpd_convertidor_Log' TO N'L:\MSSQL\Log\bpd_convertidor_log.ldf',  
-MOVE N'bpd_convertidor_Index' TO N'I:\MSSQL\Index\bpd_convertidor_index.ndf',  
-NOUNLOAD,  STATS = 10
-GO
