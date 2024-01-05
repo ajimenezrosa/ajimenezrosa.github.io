@@ -51,6 +51,9 @@
  - [CH's para ser presentados los Jueves ](#chjueves)
  - [Plantilla para Notificación de Cambios y Mantenimiento](#planillamantenimiento)
 
+ - [Ir al Contacto de Microsoft](#contacto-microsoft)
+ - [Aprobacion de  CH EMERGENTE 2  plantilla para tomar como ejemplos)(#CHEMERGENTE2plantilla)
+
 
 # 
 
@@ -209,5 +212,154 @@ Es importante tener en cuenta que será necesario reiniciar el servidor después
 
 
 #
+
+
+
+---
+
+### <a name="contacto-microsoft"></a>Contacto de Microsoft
+
+Teléfono: 9-1-888-751-2322 / 1800-751-3455 / 1809-200-8794 (Opción 1, 2, 2)
+
+ID: 133600749
+Nombre: Fausto Rodriguez
+
+# 
+
+## Aprobacion de  CH EMERGENTE 2  plantilla para tomar como ejemplos.<a name="CHEMERGENTE2plantilla"></a>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Correos y Correo Redactado</title>
+  <style>
+    h2 {
+      color: blue;
+    }
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #000;
+      margin-top: 20px;
+    }
+    th {
+      background-color: blue;
+      color: white;
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Enviado</h2>
+<ul>
+  <li>Luis Manuel Mateo Galvez &lt;lmmateo@bpd.com.do&gt;</li>
+  <li>Victor Jose Sanchez Morales &lt;vsanchez@bpd.com.do&gt;</li>
+  <!-- Otros correos de "Enviado" -->
+</ul>
+
+<h2>Copias</h2>
+<ul>
+  <li>Nestor Castro &lt;nestor.castro@multicomputos.com&gt;</li>
+  <li>Vladimir Rosario &lt;vladimir.rosario@multicomputos.com&gt;</li>
+  <!-- Otros correos de "Copias" -->
+</ul>
+
+<p>
+  Asunto: Solicitud de Aprobación para CH Emergente 2<br><br>
+  Estimados,<br><br>
+  Espero se encuentren bien. Les escribo para solicitar su atención y aprobación para el CH emergente 2.<br><br>
+  Descripción del Cambio:<br>
+  A solicitud de Johny Eusebio (a través del suplidor), se requiere el retorno de las bases de datos VDI_DB_LOGS, VDI_DB_Monitoring y VDI_DB_SITE en el servidor CO01VSQL2016. Estas bases de datos se encuentran corrompidas, lo que ha afectado el funcionamiento de las VDI.<br><br>
+  Fecha y Hora del Cambio Propuesto:<br>
+  29 de agosto de 2023 a las 7:00 PM<br><br>
+  Razón del Cambio:<br>
+  Las bases de datos se encuentran corrompidas y las VDI no funcionan correctamente.<br><br>
+  Agradeceríamos su revisión y aprobación para llevar a cabo este cambio urgente. Quedamos atentos a sus comentarios o sugerencias.<br><br>
+  Saludos cordiales,<br>
+  [Nombre]<br>
+  [Posición]<br>
+  [Información de Contacto]<br>
+</p>
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #000;
+    }
+    th {
+      background-color: blue;
+      color: white;
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+    td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<table>
+  <tr>
+    <th>RFC / RFF o RFR</th>
+    <th>Descripción</th>
+    <th>Elemento Afectado</th>
+    <th>Incluye Retiro/Entrada Equipos?</th>
+    <th>Tiempo Fuera</th>
+    <th>Incluye RE_DC?</th>
+    <th>Justificación</th>
+    <th>Fecha Cambio</th>
+    <th>Hora Cambio</th>
+    <th>Responsable del cambio</th>
+    <th>No. Ticket y Fecha de la anomalía</th>
+    <th>Fecha Ingreso QA</th>
+    <th>Fecha Certificación</th>
+    <th>Tiempo duración antes</th>
+    <th>Tiempo duración después</th>
+  </tr>
+  <tr>
+    <td>CH048253</td>
+    <td>A solicitud de Johny Eusebio (via el suplidor) se requiere retornar las bd VDI_DB_LOGS VDI_DB_Monitoring VDI_DB_SITE en el co01vsql2016 ya están corrompidas y las VDI no están funcionando como se espera.</td>
+    <td>VDI_DB_LOGS VDI_DB_Monitoring VDI_DB_SITE</td>
+    <td>CO01VSQL2016</td>
+    <td>0 HORAS</td>
+    <td>Las bd están corrompidas y las VDI no están funcionando como se espera.</td>
+    <td>El retorno de las bd es al 18 de agosto 2023 9:47 pm</td>
+    <td>29/08/2023</td>
+    <td>7:00 PM</td>
+    <td>Rainiero Marte</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+  </tr>
+</table>
+
+</body>
+</html>
+
+
 
 
