@@ -52,7 +52,12 @@
  - [Plantilla para Notificación de Cambios y Mantenimiento](#planillamantenimiento)
 
  - [Ir al Contacto de Microsoft](#contacto-microsoft)
- - [Aprobacion de  CH EMERGENTE 2  plantilla para tomar como ejemplos)(#CHEMERGENTE2plantilla)
+ - [Aprobacion de  CH EMERGENTE 2  plantilla para tomar como ejemplos](#CHEMERGENTE2plantilla)
+
+ - [Set de disco (standard)](#discosstandar)
+ - [Notificacion de finalizacion de trabajos Realizado. Ch entre otros.](#notificartrabajorealizado)
+
+ - [Recomendaciones para Manejo de Índices](#indicesquehacer)
 
 
 # 
@@ -359,6 +364,240 @@ Nombre: Fausto Rodriguez
 
 </body>
 </html>
+
+# 
+
+
+
+## Set de disco (standard)<a name="discosstandar"></a>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Estandarización de Discos de Servidores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #3498db;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Estandarización de Discos de Servidores</h1>
+
+<table>
+  <tr>
+    <th>SERVIDOR</th>
+    <th>DRIVE LETTER</th>
+    <th>SIZE (GB)</th>
+    <th>TIPO DISCO</th>
+    <th>LABEL</th>
+    <th>DESCRIPCION</th>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>B</td>
+    <td></td>
+    <td>SQL_Binaries</td>
+    <td>Binarios de SQL Server</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>C</td>
+    <td></td>
+    <td>OS_Windows</td>
+    <td>Sistema Operativo</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>D</td>
+    <td></td>
+    <td>APP_Files</td>
+    <td>Disco para archivos de aplicación</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>E</td>
+    <td></td>
+    <td>SQL_Data</td>
+    <td>Archivos de Data de SQL Server</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>I</td>
+    <td></td>
+    <td>SQL_Index</td>
+    <td>Archivos de Indices de SQL Server</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>L</td>
+    <td></td>
+    <td>SQL_Log</td>
+    <td>Archivos de log de transacciones SQL Server</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>P</td>
+    <td></td>
+    <td>OS_PageFile</td>
+    <td>Archivo de paginación</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>T</td>
+    <td></td>
+    <td>SQL_TempDB</td>
+    <td>Archivos base de datos TempDB</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>U</td>
+    <td></td>
+    <td>SQL_Backup</td>
+    <td>Disco para respaldos de las bases de datos</td>
+  </tr>
+  <tr>
+    <td>Stand Alone</td>
+    <td>V</td>
+    <td></td>
+    <td>SQL_AUDIT</td>
+    <td>Disco para auditorias</td>
+  </tr>
+</table>
+
+</body>
+</html>
+
+
+#
+
+## Notificacion de finalizacion de trabajos Realizado. Ch entre otros.<a name="notificartrabajorealizado"></a>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notificación de Trabajo Completado</title>
+  <style>
+    /* Estilos del código previo */
+
+    .details {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Encabezados y listas de correos previas -->
+
+  <p>
+    Saludos a todos,<br><br>
+    Quería informarles que se ha completado el trabajo solicitado. El SQL SERVER AGENT ya estaba instalado, como se había mencionado previamente, y se ha realizado la instalación de Integration Services en el servidor CO01FRAUDEDB, tal como se especificó en el CH050587.<br><br>
+    <strong>Detalles Técnicos:</strong> Se llevó a cabo la instalación siguiendo las pautas y recomendaciones de Microsoft para esta versión específica de SQL Server.<br><br>
+  </p>
+
+  <div class="details">
+    <table>
+      <tr>
+        <th>TICKET/CHO</th>
+        <td>CH050587</td>
+      </tr>
+      <tr>
+        <th>DESCRIPCIÓN</th>
+        <td>Se requiere instalar Integration Services en el servidor CO01FRAUDEDB.</td>
+      </tr>
+      <tr>
+        <th>ESTATUS</th>
+        <td>Completado</td>
+      </tr>
+      <tr>
+        <th>PARTICIPANTE(S)</th>
+        <td>Jose Alejandro Jimenez Rosa</td>
+      </tr>
+      <tr>
+        <th>DETALLE TÉCNICO</th>
+        <td>Se llevó a cabo la instalación siguiendo las pautas y recomendaciones de Microsoft para esta versión específica de SQL Server.</td>
+      </tr>
+    </table>
+  </div>
+
+  <p>
+    Agradecemos su atención y quedamos atentos a cualquier comentario o seguimiento adicional.<br><br>
+    Saludos cordiales,<br>
+    
+
+  </p>
+</body>
+</html>
+
+
+# 
+
+## Recomendaciones para Manejo de Índices<a name="indicesquehacer"></a>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recomendaciones para Manejo de Índices</title>
+  <style>
+    /* Estilos del contenido */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- <h1>Recomendaciones para Manejo de Índices</h1> -->
+  <p>
+    Para futuros casos donde se requiera eliminar índices, es importante llevar a cabo algunas tareas previas antes de la implementación en producción. Aquí se detallan algunas recomendaciones clave:
+  </p>
+
+  <ul>
+    <li>
+      Gestionar con desarrollo la eliminación del índice en pre-producción y realizar pruebas para obtener diferentes puntos de vista antes de eliminar índices de manera masiva.
+    </li>
+    <li>
+      No eliminar índices de manera masiva y siempre ingresar un CH solicitando la eliminación de cada índice por separado. Además, asegurarse de obtener un script de 'create' previo a la eliminación.
+    </li>
+  </ul>
+
+  <p>
+    De igual manera, al crear índices, es esencial evaluar los índices existentes y considerar si alguno de ellos debe ser eliminado previamente para evitar penalizaciones en el rendimiento.
+  </p>
+
+  <p>
+    Siempre es recomendable crear un índice a la vez y esperar un período de tiempo antes de seguir creando más índices en caso de ser necesario. Cualquier duda o sugerencia es bienvenida.
+  </p>
+</body>
+</html>
+
+# 
 
 
 
