@@ -151,6 +151,7 @@
   - 24.7  [Query para la Sincronizacion de los empleados de soluflex con el Reloj.](#procedurecargadatossoluflex)
   - 25 [Sincronizar datos tabla TA_ponchesreloj con datos de sql server](#ta_ponchesrelojjob)
 
+ - [Obtener la Versión de SQL Server - Métodos Rápidos](#25dup)
 # NOTIFICACIONES DE SQL MAIL.
 <!-- 26. [Notificaciones de resgistros via Sql Mail](#notificarcambios)  -->
   - 26.3 [Reporte de Variacion Espacio en Disco K:\ ](#reporteespacioendiscok)
@@ -11711,6 +11712,68 @@ FROM   sys.dm_exec_connections
 WHERE  session_id = @@SPID
 ~~~
  
+# 
+
+# Obtener la Versión de SQL Server - Métodos Rápidos<a name="25dup"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://i.ytimg.com/vi/Efpm8uciluw/maxresdefault.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+
+#### En el rol de un Administrador de Bases de Datos (DBA), es crucial conocer la versión exacta de SQL Server instalada. Aquí te presento cuatro métodos sencillos para obtener esta información.
+
+## Método 1: Consulta SQL
+#### Conéctate a la instancia de SQL Server y ejecuta la siguiente consulta SQL:
+
+~~~sql
+SELECT @@version;
+~~~
+
+#### Este comando proporcionará detalles sobre la versión de SQL Server, como se muestra a continuación:
+
+
+    Microsoft SQL Server 2008 (SP1) - 10.0.2531.0 (X64) Mar 29 2009 10:11:52 Copyright (c) 1988-2008 Microsoft Corporation Express Edition (64-bit) on Windows NT 6.1 <X64> (Build 7600: )
+
+## Método 2: Consulta ServerProperty
+#### Conéctate a la instancia de SQL Server y ejecuta la siguiente consulta:
+
+~~~sql
+
+SELECT SERVERPROPERTY('productversion') AS 'Versión', SERVERPROPERTY('productlevel') AS 'Nivel', SERVERPROPERTY('edition') AS 'Edición';
+~~~
+
+#### Esta consulta devuelve información detallada sobre la versión, nivel y edición de SQL Server, como se muestra a continuación:
+
+
+Versión          | Nivel  | Edición
+-----------------|--------|-----------------
+10.0.1600.22     | RTM    | Enterprise Edition
+
+## Método 3: SQL Server Management Studio
+#### Conéctate al servidor mediante SQL Server Management Studio. El Explorador de Objetos mostrará la información de versión junto con el nombre de usuario utilizado para la conexión.
+
+## Método 4: Archivo de Registro de Errores
+#### Busca la instancia en las primeras líneas del archivo de registro de errores. Por defecto, el archivo se encuentra en la ruta:
+
+    C:\Program Files\Microsoft SQL Server\MSSQL.n\MSSQL\LOG\ERRORLOG
+#### Las entradas en el archivo de registro proporcionan información sobre la versión, nivel, edición y sistema operativo, como se muestra a continuación:
+
+
+    2011-03-27 22:31:33.50 Server Microsoft SQL Server 2008 (SP1) - 10.0.2531.0 (X64) Mar 29 2009 10:11:52 Copyright (c) 1988-2008 Microsoft Corporation Express Edition (64-bit) on Windows NT 6.1 <X64> (Build 7600: )
+#### Estos métodos te permitirán obtener rápidamente la información necesaria sobre la versión de SQL Server, facilitando tu tarea como DBA.
+
+
+
+
+
+
+
+
+
 
 
 # 
