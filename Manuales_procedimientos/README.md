@@ -59,7 +59,7 @@
 
  - [Recomendaciones para Manejo de Índices](#indicesquehacer)
 
-
+ - [Documentación de Cambios en Listener de SolarWinds en caso de presentar problemas](#cambiolistener)
 # 
 
 # Enlaces de Acceso
@@ -598,6 +598,57 @@ Nombre: Fausto Rodriguez
 </html>
 
 # 
+
+
+# Documentación de Cambios en Listener de SolarWinds en caso de presentar problemas<a name="cambiolistener"></a>
+## Introducción
+<p>
+En la implementación o puesta en producción de los servidores SolarWinds, se encontró la necesidad de realizar cambios en un listener existente. Este proceso implicó la eliminación del listener actual y la creación de uno nuevo con un nombre diferente. Sin embargo, surgió un problema debido a la persistencia del objeto en el Directorio Activo.
+</p>
+<p>
+Para abordar este inconveniente, se solicitó la asistencia del Sr. Roberto Antonio Rodríguez Rincón, quien cuenta con experiencia en la resolución de este tipo de problemas en el pasado. El Sr. Rodríguez Rincón aplicó los permisos necesarios para permitir la eliminación y posterior creación del objeto sin contratiempos.
+</p>
+
+
+## Procedimiento Detallado
+1. Identificación del Problema
+Durante la fase de implementación de los servidores SolarWinds, se identificó la necesidad de modificar un listener existente.
+
+2. Eliminación del Listener Actual
+Se procedió a eliminar el listener actual mediante los siguientes pasos:
+
+bash
+Copy code
+# Comando de Eliminación del Listener
+SolarWindsCommandTool.exe --delete-listener --listener-name [NombreActual]
+3. Creación de un Nuevo Listener
+Se creó un nuevo listener con un nombre diferente al original:
+
+bash
+Copy code
+# Comando de Creación de un Nuevo Listener
+SolarWindsCommandTool.exe --create-listener --listener-name [NuevoNombre] --port [NuevoPuerto]
+4. Detección de Persistencia en el Directorio Activo
+Tras la eliminación del listener, se identificó la persistencia del objeto en el Directorio Activo, lo que generó conflictos para la creación del nuevo listener.
+
+5. Asistencia de Roberto Antonio Rodríguez Rincón
+Se contactó al Sr. Roberto Antonio Rodríguez Rincón para abordar la persistencia del objeto en el Directorio Activo.
+
+6. Asignación de Permisos por el Sr. Rodríguez Rincón
+El Sr. Rodríguez Rincón aplicó los siguientes permisos para permitir la eliminación y creación del objeto:
+
+Permiso de Eliminación: Permisos para eliminar el objeto existente.
+Permiso de Creación: Permisos para crear el nuevo objeto.
+7. Confirmación de la Resolución
+Una vez aplicados los permisos, se procedió nuevamente con la creación del nuevo listener, confirmando la resolución del problema.
+
+Conclusiones
+La asistencia del Sr. Roberto Antonio Rodríguez Rincón fue fundamental para superar los desafíos relacionados con la persistencia del objeto en el Directorio Activo. El procedimiento detallado garantiza una implementación exitosa de los cambios en el listener de SolarWinds.
+
+Nota: Asegúrese de adaptar los comandos y nombres de objetos según la configuración específica de su entorno SolarWinds.
+
+# 
+
 
 
 
