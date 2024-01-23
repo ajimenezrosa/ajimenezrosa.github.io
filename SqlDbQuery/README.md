@@ -45,7 +45,9 @@
 4. [Conexiones Activas del Servidor de SQL SERVER](#4)
 5. [DBCC CHECKDB ](#5)
 6. [Tempdb: Reducir Tamaño](#6)
+
 7. [La conexión de administración dedicada: por qué la quiere, cuándo la necesita y cómo saber quién la está usando](#7)
+
 
 
 # Memoria y cache de los Servidores Sql
@@ -212,6 +214,10 @@
  - 44 [Cerrar todas la conexion a mi base de datos](#cerrarconexionessql)
 
 - 45 [Script de Microsoft para detecar problemas SDP,](#45sdp)
+
+
+
+- 46 [Tamanio de las bases de datos de un servidor](#46)
 
 
 # 
@@ -11765,6 +11771,26 @@ Versión          | Nivel  | Edición
 
     2011-03-27 22:31:33.50 Server Microsoft SQL Server 2008 (SP1) - 10.0.2531.0 (X64) Mar 29 2009 10:11:52 Copyright (c) 1988-2008 Microsoft Corporation Express Edition (64-bit) on Windows NT 6.1 <X64> (Build 7600: )
 #### Estos métodos te permitirán obtener rápidamente la información necesaria sobre la versión de SQL Server, facilitando tu tarea como DBA.
+
+
+
+
+## 46 [Tamanio de las bases de datos de un servidor]<a name="46"></a>
+
+
+#### Puedes utilizar la siguiente consulta en SQL Server para obtener el nombre del servidor, el nombre de la base de datos y su tamaño en gigabytes (GB):
+
+~~~sql
+SELECT 
+    @@SERVERNAME AS 'Nombre del Servidor',
+    DB_NAME() AS 'Nombre de la Base de Datos',
+    CONVERT(DECIMAL(10, 2), ROUND(SUM(size) * 8.0 / 1024, 2)) AS 'Tamaño de la Base de Datos (GB)'
+FROM 
+    sys.master_files
+WHERE 
+    database_id = DB_ID();
+~~~    
+#### Esta consulta utiliza la vista del sistema sys.master_files para obtener información sobre los archivos de la base de datos y calcula el tamaño total de la base de datos en gigabytes. La función ROUND se utiliza para redondear el resultado a dos decimales.
 
 
 
