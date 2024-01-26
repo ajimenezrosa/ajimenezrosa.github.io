@@ -60,6 +60,9 @@
  - [Recomendaciones para Manejo de Índices](#indicesquehacer)
 
  - [Documentación de Cambios en Listener de SolarWinds en caso de presentar problemas](#cambiolistener)
+
+ -  [Procedimientos Post Migración de Base de Datos](#migraciondebasededatos)
+
 # 
 
 # Enlaces de Acceso
@@ -649,7 +652,24 @@ Nota: Asegúrese de adaptar los comandos y nombres de objetos según la configur
 
 # 
 
+## Procedimientos Post Migración de Base de Datos<a name="migraciondebasededatos">
+#### Después de completar exitosamente la migración de la base de datos y asegurarnos de su correcto funcionamiento a nivel técnico, es crucial llevar a cabo una serie de pasos operativos para garantizar la integridad y eficiencia del sistema. A continuación, se detallan los procedimientos a seguir:
+
+1. Notificación de Migración a CINTOTECA Soporte
+Se recomienda generar un ticket de soporte dirigido al equipo de CINTOTECA para solicitar la incorporación de la nueva base de datos en el sistema de backup. Esto asegura que la información crítica esté respaldada adecuadamente y se pueda acceder a ella en caso de cualquier eventualidad.
+
+2. Gestión de Backup en el Servidor de Origen
+En el caso de que la base de datos original sea colocada offline o eliminada en el servidor de origen, es imperativo comunicar la suspensión de los backups correspondientes a esta base de datos. Esta medida preventiva evita posibles errores y garantiza la consistencia en las plataformas.
+
+3. Configuración en Jobs STOS_DepuraDb_logs
+Agregar la nueva base de datos a los trabajos programados, específicamente en los Jobs STOS_DepuraDb_logs. Este paso es esencial para controlar el crecimiento de los logs de la base de datos recién migrada, evitando posibles fallas en el servidor. Esta configuración ayuda a mantener un equilibrio en el espacio ocupado por los registros.
+
+4. Verificación del Propietario de la Base de Datos
+Es necesario verificar el propietario con el que se restauró la nueva base de datos. En caso de que sea diferente, ajustar el propietario para que coincida con las bases de datos existentes en el servidor. Esta uniformidad facilita la administración y coherencia en la gestión de bases de datos.
+
+#####  Estos procedimientos post migración aseguran una transición suave y eficiente, minimizando posibles problemas operativos y garantizando la integridad de los datos en el entorno bancario.
 
 
+# 
 
 
