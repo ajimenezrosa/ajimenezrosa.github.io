@@ -665,7 +665,7 @@ En el caso de que la base de datos original sea colocada offline o eliminada en 
 Agregar la nueva base de datos a los trabajos programados, específicamente en los Jobs STOS_DepuraDb_logs. Este paso es esencial para controlar el crecimiento de los logs de la base de datos recién migrada, evitando posibles fallas en el servidor. Esta configuración ayuda a mantener un equilibrio en el espacio ocupado por los registros.
 
 4. Verificación del Propietario de la Base de Datos
-Es necesario verificar el propietario con el que se restauró la nueva base de datos. En caso de que sea diferente, ajustar el propietario para que coincida con las bases de datos existentes en el servidor. Esta uniformidad facilita la administración y coherencia en la gestión de bases de datos.
+Es necesario verificar el Owner con el que se restauró la nueva base de datos. En caso de que sea diferente, ajustar el Owner del servidor para que coincida con las bases de datos existentes en el servidor. Esta uniformidad facilita la administración y coherencia en la gestión de bases de datos.
 
 #####  Estos procedimientos post migración aseguran una transición suave y eficiente, minimizando posibles problemas operativos y garantizando la integridad de los datos en el entorno bancario.
 
