@@ -229,6 +229,10 @@
  - 47 [Como puedo saber que puerto utilizan mis consultas BPD](#puetos)
 
 
+## Querys para Actividades de Depuracion de DB's 
+ - [Query de listado de Tablas con su Tamano y su cantidad de registros](#listadotablas)
+
+
 # 
 
 #
@@ -11792,10 +11796,48 @@ WHERE
 ~~~    
 #### Esta consulta utiliza la vista del sistema sys.master_files para obtener información sobre los archivos de la base de datos y calcula el tamaño total de la base de datos en gigabytes. La función ROUND se utiliza para redondear el resultado a dos decimales.
 
+# 
 
+## Query de listado de Tablas con su Tamano y su cantidad de registros<a name="listadotablas"></a>
 
+<div>
+<p style = 'text-align:center;'>
+<img src="https://desarrolloweb.com/media/696/campos-tablas.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
 
+#### En el query proporcionado para SQL Server, la columna size_bytes representa el tamaño total de la tabla en bytes. La unidad de medida en este caso es bytes. Si deseas expresar el tamaño en kilobytes (KB), megabytes (MB), gigabytes (GB) u otra unidad más conveniente, puedes realizar la conversión correspondiente.
 
+#### Aquí tienes algunas conversiones comunes:
+
+###### KB: size_bytes / 1024
+###### MB: size_bytes / (1024 * 1024)
+###### GB: size_bytes / (1024 * 1024 * 1024)
+#### Puedes ajustar el resultado según la unidad de medida que prefieras. Por ejemplo, si deseas obtener el tamaño en megabytes, la consulta podría modificarse así:
+
+~~~sql
+SELECT 
+    t.name AS table_name,
+    p.rows AS cantidad_registros,
+    SUM(a.total_pages) * 8 / (1024 * 1024) AS size_mb
+FROM 
+    sys.tables t
+INNER JOIN      
+    sys.indexes i ON t.object_id = i.object_id
+INNER JOIN 
+    sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
+INNER JOIN 
+    sys.allocation_units a ON p.partition_id = a.container_id
+WHERE 
+    t.is_ms_shipped = 0
+GROUP BY 
+    t.name, p.rows
+ORDER BY 
+    table_name;
+
+~~~
+
+#### Esta modificación divide el tamaño total en bytes por (1024 * 1024) para obtener el tamaño en megabytes. Puedes ajustar la división según la unidad de medida que prefieras utilizar.
 
 
 
