@@ -4501,7 +4501,101 @@ ORDER BY login_time desc
 ~~~
 # 
 
+## Actividad del servidor para extraer en caso de que el servidor sea 2008 o menor
+~~~sql
 
+
+-- Eliminar la db temporal en caso que la misma ya exista
+-- drop table db_temp
+-- go
+
+ 
+--Creacion de la base de datos db_temp para poder hacer el analisis de los datos
+--y extraer lo que se requiere. 
+
+--create table db_temp
+
+--(
+
+--SPID INT
+
+--, Status varchar(50)
+
+--,login varchar(50)
+
+--,hostname varchar(50)
+
+--,blkby varchar(50)
+
+--,DBname varchar(50)
+
+--,command varchar(500)
+
+--,CPUTime int
+
+--,DiskIO int
+
+--,LastBatch varchar(15)
+
+--,ProgramName varchar(500)
+
+--,SPID2 INT
+
+--,Requestid int
+
+ 
+
+--)
+
+ 
+
+ 
+
+ 
+--Ejecutar este comando y copiar en resultado en la tabla para poder ser analizado
+--sp_who2
+ 
+
+--Ejecutar este query para exytraer los datos solicitados.
+
+SELECT [login]
+
+      ,[hostname]
+
+      ,[blkby]
+
+      ,[DBname]
+
+
+      ,MIN( [LastBatch]) "Fecha Minima"
+
+      ,max( [LastBatch]) "Fecha Maxima"
+
+      ,[ProgramName]
+
+
+  FROM [master].[dbo].[db_temp]
+
+ 
+
+  group by
+
+        [login]
+
+      ,[hostname]
+
+      ,[blkby]
+
+      ,[DBname]
+
+      ,[ProgramName]
+
+~~~
+
+
+
+
+#
 #### Nota este proceso fue creado por mi para enviar las actividades del serviro via correo electronico desde la base de datos Sql server en formatos HTML.
 # 
 
