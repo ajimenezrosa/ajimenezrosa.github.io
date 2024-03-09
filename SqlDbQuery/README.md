@@ -233,6 +233,9 @@
  - [Query de listado de Tablas con su Tamano y su cantidad de registros](#listadotablas)
 
 
+
+# Querys de Personal de Microsoft
+ - 500 [Script de Monitoreo y Optimización del Rendimiento de SQL Server](#500)
 # 
 
 #
@@ -4494,7 +4497,8 @@ FROM sys.dm_exec_sessions es
     LEFT JOIN sys.dm_exec_requests er 
         ON es.session_id = er.session_id 
     OUTER APPLY sys.dm_exec_sql_text (er.sql_handle) st 
-WHERE es.session_id > 50    -- < 50 system sessions 
+
+                        session_id > 50    -- < 50 system sessions 
 and login_time >'2019-09-11 01:00:00'
 --ORDER BY es.cpu_time DESC 
 ORDER BY login_time desc
@@ -11932,6 +11936,374 @@ ORDER BY
 ~~~
 
 #### Esta modificación divide el tamaño total en bytes por (1024 * 1024) para obtener el tamaño en megabytes. Puedes ajustar la división según la unidad de medida que prefieras utilizar.
+
+
+# 
+
+
+```markdown
+# Script de Monitoreo y Optimización del Rendimiento de SQL Server<a name="500"></a>
+
+## DESCARGO DE RESPONSABILIDAD
+El código de muestra se proporciona con fines ilustrativos y no está destinado a ser utilizado en un entorno de producción. Este código de muestra y cualquier información relacionada se proporcionan "tal cual" sin garantía de ningún tipo, ya sea expresa o implícita, incluidas, entre otras, las garantías implícitas de comerciabilidad y/o aptitud para un propósito particular. Le otorgamos un derecho no exclusivo y libre de regalías para usar y modificar el código de muestra y para reproducir y distribuir la forma de código objeto del código de muestra, siempre que:
+
+1. Usted acepta no usar nuestro nombre, logotipo o marcas comerciales para comercializar su producto de software en el que se incrusta el código de muestra.
+2. Incluye un aviso de derechos de autor válido en su producto de software en el que se incrusta el código de muestra.
+3. Usted indemniza, libera de responsabilidad y defiende a nosotros y a nuestros proveedores de cualquier reclamo o demanda, incluidos honorarios de abogados, que surjan o resulten del uso o distribución del código de muestra.
+
+## Propósito
+Este script SQL proporciona un conjunto completo de consultas para monitorear y optimizar el rendimiento de una base de datos de SQL Server. Incluye varias secciones como información del servidor, procesos de bloqueo, estadísticas de espera, estadísticas de latch, información de memoria, utilización de archivos de base de datos de E/S, consultas más costosas, índices faltantes y declaraciones de creación de índices.
+
+## Cómo Usar
+1. Ejecute cada sección del script secuencialmente en una ventana de consulta de SQL Server Management Studio (SSMS).
+2. Revise la salida de cada sección para comprender el rendimiento del servidor e identificar áreas de optimización.
+3. Personalice el script según sea necesario para su entorno de base de datos específico.
+4. Asegúrese de que se otorguen los permisos adecuados para ejecutar estas consultas.
+
+## Componentes
+- **Información del Servidor**: Proporciona información básica sobre la instancia de SQL Server, como el nombre del servidor, la versión del producto, la edición, etc.
+- **Procesos de Bloqueo**: Identifica cualquier proceso que esté bloqueando actualmente o que esté siendo bloqueado por otros procesos.
+- **Información de Esperas**: Analiza las estadísticas de espera para identificar las fuentes más significativas de espera dentro de la base de datos.
+- **Latches**: Proporciona estadísticas de latch para comprender la contención de recursos de latch.
+- **Tareas en Espera**: Enumera las tareas que están esperando recursos o están bloqueadas actualmente.
+- **Información de Memoria**: Muestra información sobre el uso y los límites de memoria.
+- **Utilización y Latencia de Archivos de Base de Datos de E/S**: Analiza el rendimiento de E/S para archivos de base de datos.
+- **Top 10 de Consultas Más Costosas**: Identifica las principales consultas que consumen recursos de CPU y disco.
+- **Índices Faltantes**: Sugiere mejoras potenciales de índice según las estadísticas de ejecución de consultas.
+- **Declaración de Creación de Índices Faltantes**: Genera declaraciones CREATE INDEX para los índices faltantes sugeridos.
+
+## Descargo de Responsabilidad
+Este script está destinado únicamente con fines educativos y debe usarse con precaución en un entorno de producción. Siempre revise y pruebe los scripts a fondo antes de aplicarlos a un sistema de producción.
+
+~~~sql
+/*DISCLAIMER. Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment. 
+THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE. 
+We grant you a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute the object code form of the Sample Code, provided that. You agree: 
+(i) to not use Our name, logo, or trademarks to market Your software product in which the Sample Code is embedded; 
+(ii) to include a valid copyright notice on Your software product in which the Sample Code is embedded; and 
+(iii) to indemnify, hold harmless, and defend Us and Our suppliers from and against any claims or lawsuits, including attorneys' fees, that arise or result from the use or distribution of the Sample Code.*/
+--------------------------------------------------------------------------------------------------------------------------
+SELECT @@SERVERNAME
+GO
+SELECT SERVERPROPERTY('productversion'), SERVERPROPERTY ('productlevel'), SERVERPROPERTY ('edition')
+GO
+
+--------------------------------------------------------------------------------------------------------------------------
+
+SELECT session_id ,status ,command, blocking_session_id
+    ,wait_type ,wait_time ,wait_resource 
+    ,transaction_id, estimated_completion_time
+FROM sys.dm_exec_requests 
+WHERE (status = N'suspended' OR status = N'running')
+AND session_id <> @@SPID;
+GO
+
+----------------------------------------------------Blocking Processes----------------------------------------------------
+
+--Parte 1
+SELECT
+             WaitingTime = s.waittime, s.spid, BlockingSPID = s.blocked, DatabaseName = DB_NAME(s.dbid),
+             s.program_name, s.loginame, s.hostname, s.cmd, ObjectName = OBJECT_NAME(objectid,s.dbid), Definition = CAST(text AS VARCHAR(MAX))
+ INTO        #Processes
+ FROM      sys.sysprocesses s
+ CROSS APPLY sys.dm_exec_sql_text (sql_handle)
+ WHERE
+            s.spid > 50
+go            
+
+--select * from #Processes
+--Parte2
+
+WITH Blocking(SPID, BlockingSPID, "WaitingTime (secs)", BlockingStatement, LoginName, HostName, Command, RowNo, LevelRow)
+ AS
+ (
+      SELECT
+       s.spid, s.BlockingSPID, s.WaitingTime/1000, s.Definition, s.loginame, s.hostname, s.cmd,
+       ROW_NUMBER() OVER(ORDER BY s.spid),
+       0 AS LevelRow
+     FROM
+       #Processes s
+       JOIN #Processes s1 ON s.spid = s1.BlockingSPID
+     WHERE
+       s.BlockingSPID = 0
+     UNION ALL
+     SELECT
+       r.spid,  r.BlockingSPID, r.WaitingTime/1000, r.Definition, r.loginame, r.hostname, r.cmd,
+       d.RowNo,
+       d.LevelRow + 1
+     FROM
+       #Processes r
+      JOIN Blocking d ON r.BlockingSPID = d.SPID
+     WHERE
+       r.BlockingSPID > 0
+ )
+ SELECT * FROM Blocking
+ ORDER BY RowNo, LevelRow
+ go
+
+--Parte 3
+ drop table #Processes
+ go
+ --------------------------------------------------------Waits Info--------------------------------------------------
+
+WITH [Waits] AS
+    (SELECT
+        [wait_type],
+        [wait_time_ms] / 1000.0 AS [WaitS],
+        ([wait_time_ms] - [signal_wait_time_ms]) / 1000.0 AS [ResourceS],
+        [signal_wait_time_ms] / 1000.0 AS [SignalS],
+        [waiting_tasks_count] AS [WaitCount],
+        100.0 * [wait_time_ms] / SUM ([wait_time_ms]) OVER() AS [Percentage],
+        ROW_NUMBER() OVER(ORDER BY [wait_time_ms] DESC) AS [RowNum]
+    FROM sys.dm_os_wait_stats
+    WHERE [wait_type] NOT IN (
+        N'BROKER_EVENTHANDLER',             N'BROKER_RECEIVE_WAITFOR',
+        N'BROKER_TASK_STOP',                N'BROKER_TO_FLUSH',
+        N'BROKER_TRANSMITTER',              N'CHECKPOINT_QUEUE',
+        N'CHKPT',                           N'CLR_AUTO_EVENT',
+        N'CLR_MANUAL_EVENT',                N'CLR_SEMAPHORE',
+        N'DBMIRROR_DBM_EVENT',              N'DBMIRROR_EVENTS_QUEUE',
+        N'DBMIRROR_WORKER_QUEUE',           N'DBMIRRORING_CMD',
+        N'DIRTY_PAGE_POLL',                 N'DISPATCHER_QUEUE_SEMAPHORE',
+        N'EXECSYNC',                        N'FSAGENT',
+        N'FT_IFTS_SCHEDULER_IDLE_WAIT',     N'FT_IFTSHC_MUTEX',
+        N'HADR_CLUSAPI_CALL',               N'HADR_FILESTREAM_IOMGR_IOCOMPLETION',
+        N'HADR_LOGCAPTURE_WAIT',            N'HADR_NOTIFICATION_DEQUEUE',
+        N'HADR_TIMER_TASK',                 N'HADR_WORK_QUEUE',
+        N'KSOURCE_WAKEUP',                  N'LAZYWRITER_SLEEP',
+        N'LOGMGR_QUEUE',                    N'ONDEMAND_TASK_QUEUE',
+        N'PWAIT_ALL_COMPONENTS_INITIALIZED',
+        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
+        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',
+        N'REQUEST_FOR_DEADLOCK_SEARCH',     N'RESOURCE_QUEUE',
+        N'SERVER_IDLE_CHECK',               N'SLEEP_BPOOL_FLUSH',
+        N'SLEEP_DBSTARTUP',                 N'SLEEP_DCOMSTARTUP',
+        N'SLEEP_MASTERDBREADY',             N'SLEEP_MASTERMDREADY',
+        N'SLEEP_MASTERUPGRADED',            N'SLEEP_MSDBSTARTUP',
+        N'SLEEP_SYSTEMTASK',                N'SLEEP_TASK',
+        N'SLEEP_TEMPDBSTARTUP',             N'SNI_HTTP_ACCEPT',
+        N'SP_SERVER_DIAGNOSTICS_SLEEP',     N'SQLTRACE_BUFFER_FLUSH',
+        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP',
+        N'SQLTRACE_WAIT_ENTRIES',           N'WAIT_FOR_RESULTS',
+        N'WAITFOR',                         N'WAITFOR_TASKSHUTDOWN',
+        N'WAIT_XTP_HOST_WAIT',              N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG',
+        N'WAIT_XTP_CKPT_CLOSE',             N'XE_DISPATCHER_JOIN',
+        N'XE_DISPATCHER_WAIT',              N'XE_TIMER_EVENT')
+    AND [waiting_tasks_count] > 0
+ )
+SELECT
+	TOP 5
+    MAX ([W1].[wait_type]) AS [WaitType],
+    CAST (MAX ([W1].[WaitS]) AS DECIMAL (16,2)) AS [Wait_S],
+    CAST (MAX ([W1].[ResourceS]) AS DECIMAL (16,2)) AS [Resource_S],
+    CAST (MAX ([W1].[SignalS]) AS DECIMAL (16,2)) AS [Signal_S],
+    MAX ([W1].[WaitCount]) AS [WaitCount],
+    CAST (MAX ([W1].[Percentage]) AS DECIMAL (5,2)) AS [Percentage],
+    CAST ((MAX ([W1].[WaitS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgWait_S],
+    CAST ((MAX ([W1].[ResourceS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgRes_S],
+    CAST ((MAX ([W1].[SignalS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgSig_S]
+FROM [Waits] AS [W1]
+INNER JOIN [Waits] AS [W2]
+    ON [W2].[RowNum] <= [W1].[RowNum]
+GROUP BY [W1].[RowNum]
+HAVING SUM ([W2].[Percentage]) - MAX ([W1].[Percentage]) < 95; -- percentage threshold
+GO
+
+-------------------------------------------------------------Latches-----------------------------------------------------
+
+WITH [Latches] AS
+    (SELECT
+        [latch_class],
+        [wait_time_ms] / 1000.0 AS [WaitS],
+        [waiting_requests_count] AS [WaitCount],
+        100.0 * [wait_time_ms] / SUM ([wait_time_ms]) OVER() AS [Percentage],
+        ROW_NUMBER() OVER(ORDER BY [wait_time_ms] DESC) AS [RowNum]
+    FROM sys.dm_os_latch_stats
+    WHERE [latch_class] NOT IN (
+        N'BUFFER')
+    AND [wait_time_ms] > 0
+)
+SELECT
+    MAX ([W1].[latch_class]) AS [LatchClass],
+    CAST (MAX ([W1].[WaitS]) AS DECIMAL(14, 2)) AS [Wait_S],
+    MAX ([W1].[WaitCount]) AS [WaitCount],
+    CAST (MAX ([W1].[Percentage]) AS DECIMAL(14, 2)) AS [Percentage],
+    CAST ((MAX ([W1].[WaitS]) / MAX ([W1].[WaitCount])) AS DECIMAL (14, 4)) AS [AvgWait_S]
+FROM [Latches] AS [W1]
+INNER JOIN [Latches] AS [W2]
+    ON [W2].[RowNum] <= [W1].[RowNum]
+GROUP BY [W1].[RowNum]
+HAVING SUM ([W2].[Percentage]) - MAX ([W1].[Percentage]) < 95; -- percentage threshold
+GO
+
+-------------------------------------------------------------Waiting Tasks-------------------------------------------------
+
+SELECT 'Waiting_tasks' AS [Information], owt.session_id,
+     owt.wait_duration_ms,
+     owt.wait_type,
+     owt.blocking_session_id,
+     owt.resource_description,
+     es.program_name,
+     est.text,
+     est.dbid,
+     eqp.query_plan,
+     er.database_id,
+     es.cpu_time,
+     es.memory_usage
+ FROM sys.dm_os_waiting_tasks owt
+ INNER JOIN sys.dm_exec_sessions es ON owt.session_id = es.session_id
+ INNER JOIN sys.dm_exec_requests er ON es.session_id = er.session_id
+ OUTER APPLY sys.dm_exec_sql_text (er.sql_handle) est
+ OUTER APPLY sys.dm_exec_query_plan (er.plan_handle) eqp
+ WHERE es.is_user_process = 1
+ AND owt.wait_duration_ms > 0;
+ GO
+ 
+--------------------------------------------------------Memory Info--------------------------------------------------
+ SELECT
+(physical_memory_in_use_kb/1024)/1024 AS 'Physical Memory in Use (GB)',
+(total_virtual_address_space_kb/1024)/1024 AS 'Total Virtual Address Space (GB)',
+(virtual_address_space_committed_kb/1024)/1024 AS 'Total Virtual Address Space Committed (GB)',
+(virtual_address_space_available_kb/1024)/1024 AS 'Total Virtual Address Space Available (GB)'
+FROM sys.dm_os_process_memory
+GO
+
+SELECT 
+(physical_memory_kb/1024)/1024 AS 'Physical Memory (GB)', 
+(committed_kb/1024)/1024 AS 'Committed Memory (GB)' 
+FROM sys.dm_os_sys_info 
+GO
+
+SELECT 
+counter_name AS 'Performance Counter', 
+cntr_value AS 'Counter Value' 
+FROM sys.dm_os_performance_counters
+WHERE counter_name in  ('Lock Memory (KB)', 'Target Server Memory (KB)', 'Total Server Memory (KB)', 'Buffer Cache Hit Ratio', 'Page life expectancy', 'DatabASe Pages')
+GROUP BY counter_name,cntr_value
+GO
+
+SELECT memory_limit_mb, process_memory_limit_mb
+FROM sys.dm_os_job_object
+
+-------------------------------------------------I/O Database File Utilization And Latency-----------------------------------
+
+SELECT TOP 5 DB_NAME(a.database_id) AS [Database Name] , b.type_desc, b.physical_name, CAST(( io_stall_read_ms + io_stall_write_ms ) / ( 1.0 + num_of_reads + num_of_writes) AS NUMERIC(10,1)) AS [avg_io_stall_ms]
+FROM sys.dm_io_virtual_file_stats(NULL, NULL) a
+INNER JOIN sys.master_files b 
+ON a.database_id = b.database_id and a.file_id = b.file_id
+ORDER BY avg_io_stall_ms DESC ;
+GO
+
+SELECT DB_NAME(f.database_id) AS database_name, f.name AS logical_file_name, f.type_desc, 
+	CAST (CASE 
+		-- Handle UNC paths (e.g. '\\fileserver\readonlydbs\dept_dw.ndf')
+		WHEN LEFT (LTRIM (f.physical_name), 2) = '\\' 
+			THEN LEFT (LTRIM (f.physical_name),CHARINDEX('\',LTRIM(f.physical_name),CHARINDEX('\',LTRIM(f.physical_name), 3) + 1) - 1)
+			-- Handle local paths (e.g. 'C:\Program Files\...\master.mdf') 
+			WHEN CHARINDEX('\', LTRIM(f.physical_name), 3) > 0 
+			THEN UPPER(LEFT(LTRIM(f.physical_name), CHARINDEX ('\', LTRIM(f.physical_name), 3) - 1))
+		ELSE f.physical_name
+	END AS NVARCHAR(255)) AS logical_disk,
+	fs.size_on_disk_bytes/1024/1024 AS size_on_disk_Mbytes,
+	fs.num_of_reads, fs.num_of_writes,
+	fs.num_of_bytes_read/1024/1024 AS num_of_Mbytes_read,
+	fs.num_of_bytes_written/1024/1024 AS num_of_Mbytes_written,
+	(fs.io_stall_read_ms / (1.0 + fs.num_of_reads)) AS avg_read_latency_ms,
+	(fs.io_stall_write_ms / (1.0 + fs.num_of_writes)) AS avg_write_latency_ms
+FROM sys.dm_io_virtual_file_stats (default, default) AS fs
+INNER JOIN sys.master_files AS f ON fs.database_id = f.database_id AND fs.[file_id] = f.[file_id]
+ORDER BY 2 DESC
+GO
+
+-------------------------------------------------Top 10 most expensive queries-----------------------------------------------
+
+SELECT TOP 10 
+		(SELECT db_name(dbid) FROM sys.dm_exec_sql_text(qs.plan_handle)) DBName, 
+		(SELECT object_name(objectid, dbid) FROM sys.dm_exec_sql_text(qs.plan_handle)) 		AS SPName, 
+		(SELECT SUBSTRING(text, statement_start_offset/2 + 1, (CASE WHEN 			statement_end_offset = -1 THEN LEN(CONVERT(nvarchar(max), text)) * 2 ELSE 		statement_end_offset END - statement_start_offset)/2) FROM 			sys.dm_exec_sql_text(sql_handle)) AS query_text,
+		creation_time,
+		last_execution_time,
+		execution_count,
+		total_worker_time / 1000 AS CPU_ms,
+		total_worker_time / execution_count / 1000 AS Avg_CPU_ms,
+		total_logical_reads AS page_reads,
+		total_logical_reads / execution_count AS Avg_page_reads,
+		total_elapsed_time / 1000 AS CPU_ms,
+		total_worker_time / execution_count / 1000 AS Avg_CPU_ms,
+		(SELECT query_plan FROM sys.dm_exec_query_plan(qs.plan_handle)) QueryPlan
+FROM sys.dm_exec_query_stats qs
+ORDER BY total_worker_time DESC
+go
+
+------------------------------------------------------Missing Indexes--------------------------------------------------------
+
+SELECT TOP 5 priority = avg_total_user_cost * avg_user_impact * (user_seeks + user_scans) , 
+d.statement , d.equality_columns , d.inequality_columns , d.included_columns , 
+s.avg_total_user_cost , s.avg_user_impact , s.user_seeks, s.user_scans 
+FROM sys.dm_db_missing_index_group_stats s 
+JOIN sys.dm_db_missing_index_groups g 
+ON s.group_handle = g.index_group_handle 
+JOIN sys.dm_db_missing_index_details d 
+ON g.index_handle = d.index_handle 
+ORDER BY priority DESC
+go
+
+---------------------------------------------Missing Indexes Creation Statement----------------------------------------------
+
+
+;WITH I AS ( 
+SELECT --user_seeks * avg_total_user_cost * (avg_user_impact * 0.01) AS [index_advantage], 
+		avg_total_user_cost * avg_user_impact * (user_seeks + user_scans) AS [Priority],
+migs.last_user_seek, 
+mid.[statement] AS [Database.Schema.Table], 
+mid.equality_columns, mid.inequality_columns, 
+mid.included_columns,migs.unique_compiles, migs.user_seeks, 
+migs.avg_total_user_cost, migs.avg_user_impact 
+FROM sys.dm_db_missing_index_group_stats AS migs WITH (NOLOCK) 
+INNER JOIN sys.dm_db_missing_index_groups AS mig WITH (NOLOCK) 
+ON migs.group_handle = mig.index_group_handle 
+INNER JOIN sys.dm_db_missing_index_details AS mid WITH (NOLOCK) 
+ON mig.index_handle = mid.index_handle 
+--WHERE mid.database_id = db_id('driveatv') --DB_ID() 
+      --AND user_seeks * avg_total_user_cost * (avg_user_impact * 0.01) > 90 -- Set this to Whatever 
+    
+) 
+SELECT top 5 'CREATE INDEX IX_' 
+            + SUBSTRING([Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table])+4)+3, 
+                              LEN([Database.Schema.Table]) -   
+                              (CHARINDEX('].[',[Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table])+4)+3)) 
+            + '_' + LEFT(REPLACE(REPLACE(REPLACE(REPLACE( 
+            ISNULL(equality_columns,inequality_columns), 
+            '[',''),']',''),' ',''),',',''),20) 
+            + ' ON ' 
+            + [Database.Schema.Table] 
+            + '(' 
+            + ISNULL(equality_columns,'') 
+            + CASE WHEN equality_columns IS NOT NULL AND 
+                              inequality_columns IS NOT NULL 
+                  THEN ',' 
+                  ELSE '' 
+              END 
+	  + ISNULL(inequality_columns,'') 
+	  	         + ')' 
+			     + CASE WHEN included_columns IS NOT NULL 
+                  THEN ' INCLUDE(' + included_columns + ')' + ' WITH (ONLINE = ON)'
+                  ELSE ' WITH (ONLINE = ON)'
+              END CreateStatement
+FROM I
+order by Priority DESC
+go
+~~~
+
+
+
+
+
+
 
 
 
