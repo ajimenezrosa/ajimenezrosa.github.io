@@ -236,6 +236,7 @@
 
 # Querys de Personal de Microsoft
  - 500 [Script de Monitoreo y Optimización del Rendimiento de SQL Server](#500)
+ - 501 [Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On](#501)
 # 
 
 #
@@ -12300,8 +12301,90 @@ go
 ~~~
 
 
+# 
 
 
+### Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On<a name="501"></a>
+
+#### Objetivo:
+El objetivo de este conjunto de consultas y scripts es capturar información relevante para el análisis de latencia en el movimiento de datos entre nodos primarios y secundarios en Grupos de Disponibilidad Always On en Microsoft SQL Server. La documentación proporcionada está diseñada para permitir una fácil ejecución y recopilación de datos para su posterior análisis y diagnóstico.
+
+#### Pasos para la Captura de Logs:
+
+1. **Captura de Información de Estado del Grupo de Disponibilidad Always On:**
+   - **Propósito:** Esta consulta recopila información esencial sobre el estado de los nodos, réplicas y bases de datos en el Grupo de Disponibilidad.
+   - **Ejecución:** Se debe ejecutar en ambos nodos primarios y secundarios y guardar los resultados como `primary.xml` y `secondary.xml` respectivamente.
+
+```sql
+SELECT
+    AGNode.group_name,
+    AGNode.replica_server_name,
+    AGNode.node_name,
+    ReplicaState.role,
+    ReplicaState.role_desc,
+    ReplicaState.is_local,
+    DatabaseState.database_id,
+    DB_NAME(DatabaseState.database_id) AS database_name,
+    DatabaseState.group_database_id,
+    DatabaseState.is_commit_participant,
+    DatabaseState.is_primary_replica,
+    DatabaseState.synchronization_state_desc,
+    DatabaseState.synchronization_health_desc,
+    ClusterState.group_id,
+    ReplicaState.replica_id
+FROM
+    sys.dm_hadr_availability_replica_cluster_nodes AS AGNode
+JOIN
+    sys.dm_hadr_availability_replica_cluster_states AS ClusterState ON AGNode.replica_server_name = ClusterState.replica_server_name
+JOIN
+    sys.dm_hadr_availability_replica_states AS ReplicaState ON ReplicaState.replica_id = ClusterState.replica_id
+JOIN
+    sys.dm_hadr_database_replica_states AS DatabaseState ON ReplicaState.replica_id = DatabaseState.replica_id
+FOR XML RAW, ROOT('AGInfoRoot')
+```
+
+2. **Captura de Eventos de Movimiento de Datos:**
+   - **Propósito:** Establece una sesión de eventos para capturar actividades relacionadas con el movimiento de datos entre nodos primarios y secundarios.
+   - **Ejecución:** Se debe ejecutar en ambos nodos primarios y secundarios durante un período de 5 a 10 minutos y luego detenerlo.
+
+```sql
+CREATE EVENT SESSION [AlwaysOn_Data_Movement_Tracing] ON SERVER
+ADD EVENT sqlserver.hadr_apply_log_block,
+    ADD EVENT sqlserver.hadr_capture_filestream_wait,
+    ADD EVENT sqlserver.hadr_capture_log_block,
+    ADD EVENT sqlserver.hadr_capture_vlfheader,
+    ADD EVENT sqlserver.hadr_db_commit_mgr_harden,
+    ADD EVENT sqlserver.hadr_log_block_compression,
+    ADD EVENT sqlserver.hadr_log_block_decompression,
+    ADD EVENT sqlserver.hadr_log_block_group_commit ,
+    ADD EVENT sqlserver.hadr_log_block_send_complete,
+    ADD EVENT sqlserver.hadr_lsn_send_complete,
+    ADD EVENT sqlserver.hadr_receive_harden_lsn_message,
+    ADD EVENT sqlserver.hadr_send_harden_lsn_message,
+    ADD EVENT sqlserver.hadr_transport_flow_control_action,
+    ADD EVENT sqlserver.hadr_transport_receive_log_block_message,
+    ADD EVENT sqlserver.log_block_pushed_to_logpool,
+    ADD EVENT sqlserver.log_flush_complete ,
+    ADD EVENT sqlserver.recovery_unit_harden_log_timestamps
+ADD TARGET package0.event_file(SET filename=N'c:\temp\AlwaysOn_Data_Movement_Tracing.xel',max_file_size=(500),max_rollover_files=(4))
+WITH (MAX_MEMORY=4096 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=30 SECONDS,MAX_EVENT_SIZE=0 KB,
+MEMORY_PARTITION_MODE=NONE,TRACK_CAUSALITY=OFF,STARTUP_STATE=ON)
+GO
+
+-- Comienza la sesión de eventos
+ALTER EVENT SESSION [AlwaysOn_Data_Movement_Tracing] ON SERVER STATE=START;
+```
+
+3. **Procesamiento de Datos y Generación de Informes:**
+   - **Propósito:** Prepara los archivos de registro capturados y los archivos XML de estado del Grupo de Disponibilidad para su análisis posterior.
+   - **Pasos:**
+     - Mueva los archivos `AlwaysOn_Data_Movement_Tracing.xel` y `primary.xml` del nodo primario a una carpeta designada.
+     - Mueva el archivo `AlwaysOn_Data_Movement_Tracing.xel` del nodo secundario y `secondary.xml` a otra carpeta designada.
+     - Utilice una herramienta específica para procesar estos archivos y generar informes sobre la latencia en el movimiento de datos.
+
+#### Notas Adicionales:
+- Asegúrese de ajustar las rutas de archivo según sea necesario para reflejar la ubicación de los archivos en su entorno.
+- Para detener la sesión de eventos, utilice el script proporcionado en la sección comentada.
 
 
 
