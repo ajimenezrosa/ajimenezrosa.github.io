@@ -1901,6 +1901,42 @@ AND   o.is_ms_shipped = 0
 AND   o.type <> 'S'
 ORDER BY (ius.user_seeks + ius.user_scans + ius.user_lookups + ius.user_updates) DESC, o.name;
 ~~~
+
+### Por supuesto, aquí tienes un ejemplo de una consulta SQL que busca las tablas que no tienen una clave primaria definida en una base de datos:
+~~~sql
+
+--USE nombre_de_tu_base_de_datos;
+
+SELECT
+    t.name AS 'Nombre de la tabla'
+FROM
+    sys.tables t
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes i
+        WHERE i.object_id = t.object_id AND i.is_primary_key = 1
+    )
+ORDER BY
+    t.name;
+~~~
+
+Segundo codigo este no esta probado aun
+~~~sql 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'nombre_de_tu_base_de_datos'
+AND table_type = 'BASE TABLE'
+AND table_name NOT IN (
+    SELECT DISTINCT table_name
+    FROM information_schema.key_column_usage
+    WHERE table_schema = 'nombre_de_tu_base_de_datos'
+    AND constraint_name = 'PRIMARY'
+);
+~~~
+
+
+
 # 
 ### La responsabilidad más importante de un Administrador de bases de datos es el poder garantizar que las bases de datos trabajen de una forma óptima. La manera más eficiente de hacerlo es por medio de índices. Los índices en SQL son uno de los recursos más efectivos a la hora de obtener una ganancia en el rendimiento. Sin embargo, lo que sucede con los índices es que estos se deterioran con el tiempo.
 ### -- Missing Index Script
