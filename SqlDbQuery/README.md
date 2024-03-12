@@ -1903,10 +1903,9 @@ ORDER BY (ius.user_seeks + ius.user_scans + ius.user_lookups + ius.user_updates)
 ~~~
 
 ### Por supuesto, aquí tienes un ejemplo de una consulta SQL que busca las tablas que no tienen una clave primaria definida en una base de datos:
+
 ~~~sql
-
 --USE nombre_de_tu_base_de_datos;
-
 SELECT
     t.name AS 'Nombre de la tabla'
 FROM
@@ -1920,21 +1919,6 @@ WHERE
 ORDER BY
     t.name;
 ~~~
-
-Segundo codigo este no esta probado aun
-~~~sql 
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'nombre_de_tu_base_de_datos'
-AND table_type = 'BASE TABLE'
-AND table_name NOT IN (
-    SELECT DISTINCT table_name
-    FROM information_schema.key_column_usage
-    WHERE table_schema = 'nombre_de_tu_base_de_datos'
-    AND constraint_name = 'PRIMARY'
-);
-~~~
-
 
 
 # 
