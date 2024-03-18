@@ -75,7 +75,7 @@
  - 6.7.1 [Tareas del diseño de índices](#tareadisind)
  - 6.7.2 [Consideraciones acerca de la base de datos](#consibasedatos)
  - 6.8 [Eliminar todos los indices que no fueron creados ONLNE =ON,y Crearlos nuevamente de forma ONLINE=ON](#6.8)
-
+ - [Listado de los indices que tiene una Base de Datos]($6.9)
 7. [Cuanta data puedo perder](#dataperder)
  
 # Determinacion de Desastres Recovery, Cuanta data Puedo Perder 
@@ -2657,6 +2657,40 @@ DEALLOCATE TableCursor;
 
 # 
 ## para mas informacion sobre la creacion y mantenimiento de indices en Sql Server ver las paginas [Ver Documentacion](https://docs.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver15#:~:text=Un%20%C3%ADndice%20de%20SQL%20Server%20es%20una%20estructura%20en%20disco,de%20la%20tabla%20o%20vista.&text=Un%20%C3%ADndice%20contiene%20claves%20generadas,la%20tabla%20o%20la%20vista.)
+
+# 
+
+## Listado de los indices que tiene una Base de Datos<a name="6.9"></a>
+####  Por supuesto, puedes utilizar la siguiente consulta para obtener una lista de los índices presentes en una base de datos específica en SQL Server:
+
+~~~sql
+USE TuBaseDeDatos;
+
+SELECT 
+    OBJECT_NAME(object_id) AS NombreObjeto,
+    name AS NombreIndice,
+    type_desc AS Tipo,
+    CASE WHEN is_primary_key = 1 THEN 'Sí' ELSE 'No' END AS EsClavePrimaria,
+    CASE WHEN is_unique = 1 THEN 'Sí' ELSE 'No' END AS EsUnico
+FROM 
+    sys.indexes
+WHERE 
+    type IN (1,2) -- Índices clustered y no agrupados
+ORDER BY 
+    OBJECT_NAME(object_id), name;
+~~~
+
+#### Asegúrate de reemplazar "TuBaseDeDatos" con el nombre de la base de datos que estás utilizando. Esta consulta mostrará los siguientes detalles para cada índice:
+
+- Nombre del objeto (tabla o vista) al que pertenece el índice.
+- Nombre del índice.
+- Tipo de índice (clustered o nonclustered).
+- Si el índice es una clave primaria o no.
+- Si el índice es único o no.
+
+#### Esta consulta filtra los tipos de índices para mostrar solo los índices clustered y nonclustered. Si necesitas información sobre otros tipos de índices, puedes ajustar la consulta según tus necesidades.
+
+
 
 
 # 
