@@ -113,7 +113,7 @@
 # Expeciales, busqueda dentro de todas las tablas de la Base de datos Por nombres de campos.
 - 14     [Tablas que Contienen un mombre de Campo.](#buscarnombrecampo)
 - 14.1  [Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.](#tablasesquemascons)
-
+- 14.3 [ Listado de todos los objetos de una base de datos](14.3)
 
 #
 
@@ -3954,6 +3954,35 @@ and  table_schema in ('dbo')
 ORDER BY table_name
 ~~~
 # 
+
+
+
+
+# Listado de todos los objetos de una base de datos<a name="14.3"></a>
+#### Para obtener los enlaces de servidor (linked servers) y otros objetos similares de una base de datos en SQL Server, puedes consultar el sistema de metadatos del servidor. Puedes utilizar consultas en SQL para acceder a esta información. Aquí tienes un ejemplo de cómo hacerlo:
+
+~~~sql
+-- Consulta para obtener los linked servers y otros objetos similares
+SELECT
+    name AS Nombre_Objeto,
+    CASE 
+        WHEN type_desc = 'SQL_LINKED_SERVER' THEN 'Linked Server'
+        WHEN type_desc = 'SQL_SERVER_LOGIN' THEN 'Login'
+        WHEN type_desc = 'SQL_SCALAR_FUNCTION' THEN 'Función Escalar'
+        WHEN type_desc = 'SQL_STORED_PROCEDURE' THEN 'Procedimiento Almacenado'
+        WHEN type_desc = 'SQL_TRIGGER' THEN 'Trigger'
+        WHEN type_desc = 'SQL_VIEW' THEN 'Vista'
+        -- Agrega más tipos de objetos según sea necesario
+        ELSE type_desc
+    END AS Tipo_Objeto
+FROM sys.objects
+WHERE type_desc IN ('SQL_LINKED_SERVER', 'SQL_SERVER_LOGIN', 'SQL_SCALAR_FUNCTION', 'SQL_STORED_PROCEDURE', 'SQL_TRIGGER', 'SQL_VIEW')
+~~~
+#### Esta consulta seleccionará todos los objetos de la base de datos que sean linked servers, logins, funciones escalares, procedimientos almacenados, triggers o vistas, y mostrará su nombre y tipo correspondiente.
+
+#### Por favor, ten en cuenta que necesitas tener permisos suficientes en el servidor SQL Server para ejecutar esta consulta y acceder a la información del sistema de metadatos.
+
+
 
 #
 # Query de la ultima vez que se ejecuto en procedimiento<a name="ultejecproc1"></a>
@@ -11996,7 +12025,6 @@ ORDER BY
 # 
 
 
-```markdown
 # Script de Monitoreo y Optimización del Rendimiento de SQL Server<a name="500"></a>
 
 ## DESCARGO DE RESPONSABILIDAD
