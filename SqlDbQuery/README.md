@@ -3959,6 +3959,7 @@ ORDER BY table_name
 
 
 # Listado de todos los objetos de una base de datos<a name="14.3"></a>
+    Solicitado por Yolanca Suarez , Banco Popular Dominicano..2024-03-19
 #### Para obtener los enlaces de servidor (linked servers) y otros objetos similares de una base de datos en SQL Server, puedes consultar el sistema de metadatos del servidor. Puedes utilizar consultas en SQL para acceder a esta información. Aquí tienes un ejemplo de cómo hacerlo:
 
 ~~~sql
