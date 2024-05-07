@@ -625,6 +625,9 @@ WHERE state_desc = 'RECOVERY_PENDING';
 USE master;
 GO
 
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET RESTRICTED_USER; -- Solo sysadmin puede conectarse
+GO
+
 ALTER DATABASE [NombreDeTuBaseDeDatos] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 
