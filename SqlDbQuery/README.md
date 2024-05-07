@@ -33,6 +33,7 @@
 1. [Conectar  una unidad de red a un servidor sql Server](#1)
 2. [Crecimiento automático de los ficheros de la base de datos](#2)
 - 2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)
+- [Consultas y Soluciones para Bases de Datos en SQL Server DB recovery Pending](#2_recovery1)
 3. [Eliminar corroes del servidor de correos Sql Server](#3)
 - 3.1 [Comprobar sysmail_event_log vista](#3.1)
 - 3.2 [Comprobación del elemento de correo con error específico](#3.2)
@@ -585,8 +586,73 @@ WHERE f.database_id = DB_ID(N'tempdb');
 
 ### El Resultado de esta consulta seria lo siguiente.
 ![](https://www.brentozar.com/wp-content/uploads/2017/11/moving-tempdb.png)
-###  al ejecutar este resultado en la consola de Mssql server  se modificaran los temporales de  las bases de datos.
 
+###  al ejecutar este resultado en la consola de Mssql server  se modificaran los temporales de  las bases de datos.
+# 
+
+
+## Consultas y Soluciones para Bases de Datos en SQL Server DB recovery Pending<a name="2_recovery1"><a/>
+
+<img src="https://stevestedman.com/wp-content/uploads/SQL14RecoveryPending.png?format=png&name=large" alt="JuveR" width="800px">
+
+#
+
+
+
+#### Este documento proporciona dos consultas comunes y soluciones para problemas relacionados con bases de datos en Microsoft SQL Server. Las consultas abordan el estado de "recovery pending" de una base de datos y cómo solucionarlo.
+
+## Consulta 1: Verificar Bases de Datos en Estado "Recovery Pending"
+#### Esta consulta se utiliza para verificar las bases de datos en estado "recovery pending". Esto puede ser útil para identificar bases de datos que necesitan atención debido a problemas de recuperación.
+
+~~~sql
+Copy code
+SELECT name, state_desc 
+FROM sys.databases 
+WHERE state_desc = 'RECOVERY_PENDING';
+~~~
+
+#### sys.databases: Es una vista del sistema que contiene una fila por cada base de datos en el servidor.
+#### name: Nombre de la base de datos.
+#### state_desc: Descripción del estado actual de la base de datos.
+#### RECOVERY_PENDING: Estado que indica que la base de datos está en proceso de recuperación, pero aún no se ha completado.
+
+
+## Consulta 2: Solucionar Problema de "Recovery Pending"
+#### Esta consulta proporciona una solución para el problema de "recovery pending" en una base de datos de SQL Server. Ayuda a reparar la base de datos y resolver el estado de recuperación pendiente.
+
+~~~sql
+
+USE master;
+GO
+
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+
+DBCC CHECKDB ([NombreDeTuBaseDeDatos], REPAIR_ALLOW_DATA_LOSS) WITH NO_INFOMSGS;
+GO
+
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET MULTI_USER;
+GO
+~~~
+
+#### USE master;: Cambia al contexto de la base de datos master, donde se ejecutan las declaraciones de administración del servidor.
+#### SET SINGLE_USER WITH ROLLBACK IMMEDIATE;: Establece la base de datos en modo de usuario único y realiza un rollback inmediato para desbloquear la base de datos.
+#### DBCC CHECKDB ([NombreDeTuBaseDeDatos], REPAIR_ALLOW_DATA_LOSS) WITH NO_INFOMSGS;: Ejecuta la verificación de integridad de la base de datos con opción de reparación permitiendo pérdida de datos.
+#### SET MULTI_USER;: Restaura la base de datos al modo de usuario múltiple para permitir el acceso a múltiples usuarios.
+
+Búsqueda Rápida
+1: Verificar Bases de Datos en Estado "Recovery Pending"
+ 2: Solucionar Problema de "Recovery Pending"
+
+
+
+
+
+
+
+
+
+<!-- ================================================ -->
 
 # MEJORES PRÁCTICAS EN TEMPDB DE SQL SERVER
 ![](https://reader016.staticloud.net/reader016/html5/20190612/55957c4d1a28ab6f5f8b4751/bg1.png)
