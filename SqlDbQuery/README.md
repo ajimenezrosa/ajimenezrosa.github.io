@@ -33,6 +33,7 @@
 1. [Conectar  una unidad de red a un servidor sql Server](#1)
 2. [Crecimiento automático de los ficheros de la base de datos](#2)
 - 2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)
+- [Consultas y Soluciones para Bases de Datos en SQL Server DB recovery Pending](#2_recovery1)
 3. [Eliminar corroes del servidor de correos Sql Server](#3)
 - 3.1 [Comprobar sysmail_event_log vista](#3.1)
 - 3.2 [Comprobación del elemento de correo con error específico](#3.2)
@@ -45,7 +46,9 @@
 4. [Conexiones Activas del Servidor de SQL SERVER](#4)
 5. [DBCC CHECKDB ](#5)
 6. [Tempdb: Reducir Tamaño](#6)
+
 7. [La conexión de administración dedicada: por qué la quiere, cuándo la necesita y cómo saber quién la está usando](#7)
+
 
 
 # Memoria y cache de los Servidores Sql
@@ -73,7 +76,7 @@
  - 6.7.1 [Tareas del diseño de índices](#tareadisind)
  - 6.7.2 [Consideraciones acerca de la base de datos](#consibasedatos)
  - 6.8 [Eliminar todos los indices que no fueron creados ONLNE =ON,y Crearlos nuevamente de forma ONLINE=ON](#6.8)
-
+ - [Listado de los indices que tiene una Base de Datos]($6.9)
 7. [Cuanta data puedo perder](#dataperder)
  
 # Determinacion de Desastres Recovery, Cuanta data Puedo Perder 
@@ -111,7 +114,7 @@
 # Expeciales, busqueda dentro de todas las tablas de la Base de datos Por nombres de campos.
 - 14     [Tablas que Contienen un mombre de Campo.](#buscarnombrecampo)
 - 14.1  [Aquí una forma mas simple en el supuesto caso que solo quisiéramos ver las tablas y sus respectivos esquemas.](#tablasesquemascons)
-
+- 14.3 [ Listado de todos los objetos de una base de datos](14.3)
 
 #
 
@@ -151,6 +154,7 @@
   - 24.7  [Query para la Sincronizacion de los empleados de soluflex con el Reloj.](#procedurecargadatossoluflex)
   - 25 [Sincronizar datos tabla TA_ponchesreloj con datos de sql server](#ta_ponchesrelojjob)
 
+ - [Obtener la Versión de SQL Server - Métodos Rápidos](#25dup)
 # NOTIFICACIONES DE SQL MAIL.
 <!-- 26. [Notificaciones de resgistros via Sql Mail](#notificarcambios)  -->
   - 26.3 [Reporte de Variacion Espacio en Disco K:\ ](#reporteespacioendiscok)
@@ -214,6 +218,10 @@
 - 45 [Script de Microsoft para detecar problemas SDP,](#45sdp)
 
 
+
+- 46 [Tamanio de las bases de datos de un servidor](#46)
+
+
 # 
 
 
@@ -223,6 +231,14 @@
  - 47 [Como puedo saber que puerto utilizan mis consultas BPD](#puetos)
 
 
+## Querys para Actividades de Depuracion de DB's 
+ - [Query de listado de Tablas con su Tamano y su cantidad de registros](#listadotablas)
+
+
+
+# Querys de Personal de Microsoft
+ - 500 [Script de Monitoreo y Optimización del Rendimiento de SQL Server](#500)
+ - 501 [Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On](#501)
 # 
 
 #
@@ -571,8 +587,76 @@ WHERE f.database_id = DB_ID(N'tempdb');
 
 ### El Resultado de esta consulta seria lo siguiente.
 ![](https://www.brentozar.com/wp-content/uploads/2017/11/moving-tempdb.png)
-###  al ejecutar este resultado en la consola de Mssql server  se modificaran los temporales de  las bases de datos.
 
+###  al ejecutar este resultado en la consola de Mssql server  se modificaran los temporales de  las bases de datos.
+# 
+
+
+## Consultas y Soluciones para Bases de Datos en SQL Server DB recovery Pending<a name="2_recovery1"><a/>
+
+<img src="https://stevestedman.com/wp-content/uploads/SQL14RecoveryPending.png?format=png&name=large" alt="JuveR" width="800px">
+
+#
+
+
+
+#### Este documento proporciona dos consultas comunes y soluciones para problemas relacionados con bases de datos en Microsoft SQL Server. Las consultas abordan el estado de "recovery pending" de una base de datos y cómo solucionarlo.
+
+## Consulta 1: Verificar Bases de Datos en Estado "Recovery Pending"
+#### Esta consulta se utiliza para verificar las bases de datos en estado "recovery pending". Esto puede ser útil para identificar bases de datos que necesitan atención debido a problemas de recuperación.
+
+~~~sql
+Copy code
+SELECT name, state_desc 
+FROM sys.databases 
+WHERE state_desc = 'RECOVERY_PENDING';
+~~~
+
+#### sys.databases: Es una vista del sistema que contiene una fila por cada base de datos en el servidor.
+#### name: Nombre de la base de datos.
+#### state_desc: Descripción del estado actual de la base de datos.
+#### RECOVERY_PENDING: Estado que indica que la base de datos está en proceso de recuperación, pero aún no se ha completado.
+
+
+## Consulta 2: Solucionar Problema de "Recovery Pending"
+#### Esta consulta proporciona una solución para el problema de "recovery pending" en una base de datos de SQL Server. Ayuda a reparar la base de datos y resolver el estado de recuperación pendiente.
+
+~~~sql
+
+USE master;
+GO
+
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET RESTRICTED_USER; -- Solo sysadmin puede conectarse
+GO
+
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+
+DBCC CHECKDB ([NombreDeTuBaseDeDatos], REPAIR_ALLOW_DATA_LOSS) WITH NO_INFOMSGS;
+GO
+
+ALTER DATABASE [NombreDeTuBaseDeDatos] SET MULTI_USER;
+GO
+~~~
+
+#### USE master;: Cambia al contexto de la base de datos master, donde se ejecutan las declaraciones de administración del servidor.
+#### SET SINGLE_USER WITH ROLLBACK IMMEDIATE;: Establece la base de datos en modo de usuario único y realiza un rollback inmediato para desbloquear la base de datos.
+#### DBCC CHECKDB ([NombreDeTuBaseDeDatos], REPAIR_ALLOW_DATA_LOSS) WITH NO_INFOMSGS;: Ejecuta la verificación de integridad de la base de datos con opción de reparación permitiendo pérdida de datos.
+#### SET MULTI_USER;: Restaura la base de datos al modo de usuario múltiple para permitir el acceso a múltiples usuarios.
+
+Búsqueda Rápida
+1: Verificar Bases de Datos en Estado "Recovery Pending"
+ 2: Solucionar Problema de "Recovery Pending"
+
+
+
+
+
+
+
+
+
+<!-- ================================================ -->
 
 # MEJORES PRÁCTICAS EN TEMPDB DE SQL SERVER
 ![](https://reader016.staticloud.net/reader016/html5/20190612/55957c4d1a28ab6f5f8b4751/bg1.png)
@@ -1887,6 +1971,26 @@ AND   o.is_ms_shipped = 0
 AND   o.type <> 'S'
 ORDER BY (ius.user_seeks + ius.user_scans + ius.user_lookups + ius.user_updates) DESC, o.name;
 ~~~
+
+### Por supuesto, aquí tienes un ejemplo de una consulta SQL que busca las tablas que no tienen una clave primaria definida en una base de datos:
+
+~~~sql
+--USE nombre_de_tu_base_de_datos;
+SELECT
+    t.name AS 'Nombre de la tabla'
+FROM
+    sys.tables t
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes i
+        WHERE i.object_id = t.object_id AND i.is_primary_key = 1
+    )
+ORDER BY
+    t.name;
+~~~
+
+
 # 
 ### La responsabilidad más importante de un Administrador de bases de datos es el poder garantizar que las bases de datos trabajen de una forma óptima. La manera más eficiente de hacerlo es por medio de índices. Los índices en SQL son uno de los recursos más efectivos a la hora de obtener una ganancia en el rendimiento. Sin embargo, lo que sucede con los índices es que estos se deterioran con el tiempo.
 ### -- Missing Index Script
@@ -2623,6 +2727,40 @@ DEALLOCATE TableCursor;
 
 # 
 ## para mas informacion sobre la creacion y mantenimiento de indices en Sql Server ver las paginas [Ver Documentacion](https://docs.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver15#:~:text=Un%20%C3%ADndice%20de%20SQL%20Server%20es%20una%20estructura%20en%20disco,de%20la%20tabla%20o%20vista.&text=Un%20%C3%ADndice%20contiene%20claves%20generadas,la%20tabla%20o%20la%20vista.)
+
+# 
+
+## Listado de los indices que tiene una Base de Datos<a name="6.9"></a>
+####  Por supuesto, puedes utilizar la siguiente consulta para obtener una lista de los índices presentes en una base de datos específica en SQL Server:
+
+~~~sql
+USE TuBaseDeDatos;
+
+SELECT 
+    OBJECT_NAME(object_id) AS NombreObjeto,
+    name AS NombreIndice,
+    type_desc AS Tipo,
+    CASE WHEN is_primary_key = 1 THEN 'Sí' ELSE 'No' END AS EsClavePrimaria,
+    CASE WHEN is_unique = 1 THEN 'Sí' ELSE 'No' END AS EsUnico
+FROM 
+    sys.indexes
+WHERE 
+    type IN (1,2) -- Índices clustered y no agrupados
+ORDER BY 
+    OBJECT_NAME(object_id), name;
+~~~
+
+#### Asegúrate de reemplazar "TuBaseDeDatos" con el nombre de la base de datos que estás utilizando. Esta consulta mostrará los siguientes detalles para cada índice:
+
+- Nombre del objeto (tabla o vista) al que pertenece el índice.
+- Nombre del índice.
+- Tipo de índice (clustered o nonclustered).
+- Si el índice es una clave primaria o no.
+- Si el índice es único o no.
+
+#### Esta consulta filtra los tipos de índices para mostrar solo los índices clustered y nonclustered. Si necesitas información sobre otros tipos de índices, puedes ajustar la consulta según tus necesidades.
+
+
 
 
 # 
@@ -3887,6 +4025,36 @@ ORDER BY table_name
 ~~~
 # 
 
+
+
+
+# Listado de todos los objetos de una base de datos<a name="14.3"></a>
+    Solicitado por Yolanca Suarez , Banco Popular Dominicano..2024-03-19
+#### Para obtener los enlaces de servidor (linked servers) y otros objetos similares de una base de datos en SQL Server, puedes consultar el sistema de metadatos del servidor. Puedes utilizar consultas en SQL para acceder a esta información. Aquí tienes un ejemplo de cómo hacerlo:
+
+~~~sql
+-- Consulta para obtener los linked servers y otros objetos similares
+SELECT
+    name AS Nombre_Objeto,
+    CASE 
+        WHEN type_desc = 'SQL_LINKED_SERVER' THEN 'Linked Server'
+        WHEN type_desc = 'SQL_SERVER_LOGIN' THEN 'Login'
+        WHEN type_desc = 'SQL_SCALAR_FUNCTION' THEN 'Función Escalar'
+        WHEN type_desc = 'SQL_STORED_PROCEDURE' THEN 'Procedimiento Almacenado'
+        WHEN type_desc = 'SQL_TRIGGER' THEN 'Trigger'
+        WHEN type_desc = 'SQL_VIEW' THEN 'Vista'
+        -- Agrega más tipos de objetos según sea necesario
+        ELSE type_desc
+    END AS Tipo_Objeto
+FROM sys.objects
+WHERE type_desc IN ('SQL_LINKED_SERVER', 'SQL_SERVER_LOGIN', 'SQL_SCALAR_FUNCTION', 'SQL_STORED_PROCEDURE', 'SQL_TRIGGER', 'SQL_VIEW')
+~~~
+#### Esta consulta seleccionará todos los objetos de la base de datos que sean linked servers, logins, funciones escalares, procedimientos almacenados, triggers o vistas, y mostrará su nombre y tipo correspondiente.
+
+#### Por favor, ten en cuenta que necesitas tener permisos suficientes en el servidor SQL Server para ejecutar esta consulta y acceder a la información del sistema de metadatos.
+
+
+
 #
 # Query de la ultima vez que se ejecuto en procedimiento<a name="ultejecproc1"></a>
 
@@ -4484,14 +4652,109 @@ FROM sys.dm_exec_sessions es
     LEFT JOIN sys.dm_exec_requests er 
         ON es.session_id = er.session_id 
     OUTER APPLY sys.dm_exec_sql_text (er.sql_handle) st 
-WHERE es.session_id > 50    -- < 50 system sessions 
+
+                        session_id > 50    -- < 50 system sessions 
 and login_time >'2019-09-11 01:00:00'
 --ORDER BY es.cpu_time DESC 
 ORDER BY login_time desc
 ~~~
 # 
 
+## Actividad del servidor para extraer en caso de que el servidor sea 2008 o menor
+~~~sql
 
+
+-- Eliminar la db temporal en caso que la misma ya exista
+-- drop table db_temp
+-- go
+
+ 
+--Creacion de la base de datos db_temp para poder hacer el analisis de los datos
+--y extraer lo que se requiere. 
+
+--create table db_temp
+
+--(
+
+--SPID INT
+
+--, Status varchar(50)
+
+--,login varchar(50)
+
+--,hostname varchar(50)
+
+--,blkby varchar(50)
+
+--,DBname varchar(50)
+
+--,command varchar(500)
+
+--,CPUTime int
+
+--,DiskIO int
+
+--,LastBatch varchar(15)
+
+--,ProgramName varchar(500)
+
+--,SPID2 INT
+
+--,Requestid int
+
+ 
+
+--)
+
+ 
+
+ 
+
+ 
+--Ejecutar este comando y copiar en resultado en la tabla para poder ser analizado
+--sp_who2
+ 
+
+--Ejecutar este query para exytraer los datos solicitados.
+
+SELECT [login]
+
+      ,[hostname]
+
+      ,[blkby]
+
+      ,[DBname]
+
+
+      ,MIN( [LastBatch]) "Fecha Minima"
+
+      ,max( [LastBatch]) "Fecha Maxima"
+
+      ,[ProgramName]
+
+
+  FROM [master].[dbo].[db_temp]
+
+ 
+
+  group by
+
+        [login]
+
+      ,[hostname]
+
+      ,[blkby]
+
+      ,[DBname]
+
+      ,[ProgramName]
+
+~~~
+
+
+
+
+#
 #### Nota este proceso fue creado por mi para enviar las actividades del serviro via correo electronico desde la base de datos Sql server en formatos HTML.
 # 
 
@@ -11776,6 +12039,575 @@ FROM   sys.dm_exec_connections
 WHERE  session_id = @@SPID
 ~~~
  
+# 
+
+# Obtener la Versión de SQL Server - Métodos Rápidos<a name="25dup"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://i.ytimg.com/vi/Efpm8uciluw/maxresdefault.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+
+#### En el rol de un Administrador de Bases de Datos (DBA), es crucial conocer la versión exacta de SQL Server instalada. Aquí te presento cuatro métodos sencillos para obtener esta información.
+
+## Método 1: Consulta SQL
+#### Conéctate a la instancia de SQL Server y ejecuta la siguiente consulta SQL:
+
+~~~sql
+SELECT @@version;
+~~~
+
+#### Este comando proporcionará detalles sobre la versión de SQL Server, como se muestra a continuación:
+
+
+    Microsoft SQL Server 2008 (SP1) - 10.0.2531.0 (X64) Mar 29 2009 10:11:52 Copyright (c) 1988-2008 Microsoft Corporation Express Edition (64-bit) on Windows NT 6.1 <X64> (Build 7600: )
+
+## Método 2: Consulta ServerProperty
+#### Conéctate a la instancia de SQL Server y ejecuta la siguiente consulta:
+
+~~~sql
+
+SELECT SERVERPROPERTY('productversion') AS 'Versión', SERVERPROPERTY('productlevel') AS 'Nivel', SERVERPROPERTY('edition') AS 'Edición';
+~~~
+
+#### Esta consulta devuelve información detallada sobre la versión, nivel y edición de SQL Server, como se muestra a continuación:
+
+
+Versión          | Nivel  | Edición
+-----------------|--------|-----------------
+10.0.1600.22     | RTM    | Enterprise Edition
+
+## Método 3: SQL Server Management Studio
+#### Conéctate al servidor mediante SQL Server Management Studio. El Explorador de Objetos mostrará la información de versión junto con el nombre de usuario utilizado para la conexión.
+
+## Método 4: Archivo de Registro de Errores
+#### Busca la instancia en las primeras líneas del archivo de registro de errores. Por defecto, el archivo se encuentra en la ruta:
+
+    C:\Program Files\Microsoft SQL Server\MSSQL.n\MSSQL\LOG\ERRORLOG
+#### Las entradas en el archivo de registro proporcionan información sobre la versión, nivel, edición y sistema operativo, como se muestra a continuación:
+
+
+    2011-03-27 22:31:33.50 Server Microsoft SQL Server 2008 (SP1) - 10.0.2531.0 (X64) Mar 29 2009 10:11:52 Copyright (c) 1988-2008 Microsoft Corporation Express Edition (64-bit) on Windows NT 6.1 <X64> (Build 7600: )
+#### Estos métodos te permitirán obtener rápidamente la información necesaria sobre la versión de SQL Server, facilitando tu tarea como DBA.
+
+
+
+
+## 46 [Tamanio de las bases de datos de un servidor]<a name="46"></a>
+
+
+#### Puedes utilizar la siguiente consulta en SQL Server para obtener el nombre del servidor, el nombre de la base de datos y su tamaño en gigabytes (GB):
+
+~~~sql
+SELECT 
+    @@SERVERNAME AS 'Nombre del Servidor',
+    DB_NAME() AS 'Nombre de la Base de Datos',
+    CONVERT(DECIMAL(10, 2), ROUND(SUM(size) * 8.0 / 1024, 2)) AS 'Tamaño de la Base de Datos (GB)'
+FROM 
+    sys.master_files
+WHERE 
+    database_id = DB_ID();
+~~~    
+#### Esta consulta utiliza la vista del sistema sys.master_files para obtener información sobre los archivos de la base de datos y calcula el tamaño total de la base de datos en gigabytes. La función ROUND se utiliza para redondear el resultado a dos decimales.
+
+# 
+
+## Query de listado de Tablas con su Tamano y su cantidad de registros<a name="listadotablas"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://desarrolloweb.com/media/696/campos-tablas.jpg?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+#### En el query proporcionado para SQL Server, la columna size_bytes representa el tamaño total de la tabla en bytes. La unidad de medida en este caso es bytes. Si deseas expresar el tamaño en kilobytes (KB), megabytes (MB), gigabytes (GB) u otra unidad más conveniente, puedes realizar la conversión correspondiente.
+
+#### Aquí tienes algunas conversiones comunes:
+
+###### KB: size_bytes / 1024
+###### MB: size_bytes / (1024 * 1024)
+###### GB: size_bytes / (1024 * 1024 * 1024)
+#### Puedes ajustar el resultado según la unidad de medida que prefieras. Por ejemplo, si deseas obtener el tamaño en megabytes, la consulta podría modificarse así:
+
+~~~sql
+SELECT 
+    t.name AS table_name,
+    p.rows AS cantidad_registros,
+    SUM(a.total_pages) * 8 / (1024 * 1024) AS size_mb
+FROM 
+    sys.tables t
+INNER JOIN      
+    sys.indexes i ON t.object_id = i.object_id
+INNER JOIN 
+    sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
+INNER JOIN 
+    sys.allocation_units a ON p.partition_id = a.container_id
+WHERE 
+    t.is_ms_shipped = 0
+GROUP BY 
+    t.name, p.rows
+ORDER BY 
+    table_name;
+
+~~~
+
+#### Esta modificación divide el tamaño total en bytes por (1024 * 1024) para obtener el tamaño en megabytes. Puedes ajustar la división según la unidad de medida que prefieras utilizar.
+
+
+# 
+
+
+# Script de Monitoreo y Optimización del Rendimiento de SQL Server<a name="500"></a>
+
+## DESCARGO DE RESPONSABILIDAD
+El código de muestra se proporciona con fines ilustrativos y no está destinado a ser utilizado en un entorno de producción. Este código de muestra y cualquier información relacionada se proporcionan "tal cual" sin garantía de ningún tipo, ya sea expresa o implícita, incluidas, entre otras, las garantías implícitas de comerciabilidad y/o aptitud para un propósito particular. Le otorgamos un derecho no exclusivo y libre de regalías para usar y modificar el código de muestra y para reproducir y distribuir la forma de código objeto del código de muestra, siempre que:
+
+1. Usted acepta no usar nuestro nombre, logotipo o marcas comerciales para comercializar su producto de software en el que se incrusta el código de muestra.
+2. Incluye un aviso de derechos de autor válido en su producto de software en el que se incrusta el código de muestra.
+3. Usted indemniza, libera de responsabilidad y defiende a nosotros y a nuestros proveedores de cualquier reclamo o demanda, incluidos honorarios de abogados, que surjan o resulten del uso o distribución del código de muestra.
+
+## Propósito
+Este script SQL proporciona un conjunto completo de consultas para monitorear y optimizar el rendimiento de una base de datos de SQL Server. Incluye varias secciones como información del servidor, procesos de bloqueo, estadísticas de espera, estadísticas de latch, información de memoria, utilización de archivos de base de datos de E/S, consultas más costosas, índices faltantes y declaraciones de creación de índices.
+
+## Cómo Usar
+1. Ejecute cada sección del script secuencialmente en una ventana de consulta de SQL Server Management Studio (SSMS).
+2. Revise la salida de cada sección para comprender el rendimiento del servidor e identificar áreas de optimización.
+3. Personalice el script según sea necesario para su entorno de base de datos específico.
+4. Asegúrese de que se otorguen los permisos adecuados para ejecutar estas consultas.
+
+## Componentes
+- **Información del Servidor**: Proporciona información básica sobre la instancia de SQL Server, como el nombre del servidor, la versión del producto, la edición, etc.
+- **Procesos de Bloqueo**: Identifica cualquier proceso que esté bloqueando actualmente o que esté siendo bloqueado por otros procesos.
+- **Información de Esperas**: Analiza las estadísticas de espera para identificar las fuentes más significativas de espera dentro de la base de datos.
+- **Latches**: Proporciona estadísticas de latch para comprender la contención de recursos de latch.
+- **Tareas en Espera**: Enumera las tareas que están esperando recursos o están bloqueadas actualmente.
+- **Información de Memoria**: Muestra información sobre el uso y los límites de memoria.
+- **Utilización y Latencia de Archivos de Base de Datos de E/S**: Analiza el rendimiento de E/S para archivos de base de datos.
+- **Top 10 de Consultas Más Costosas**: Identifica las principales consultas que consumen recursos de CPU y disco.
+- **Índices Faltantes**: Sugiere mejoras potenciales de índice según las estadísticas de ejecución de consultas.
+- **Declaración de Creación de Índices Faltantes**: Genera declaraciones CREATE INDEX para los índices faltantes sugeridos.
+
+## Descargo de Responsabilidad
+Este script está destinado únicamente con fines educativos y debe usarse con precaución en un entorno de producción. Siempre revise y pruebe los scripts a fondo antes de aplicarlos a un sistema de producción.
+
+~~~sql
+/*DISCLAIMER. Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment. 
+THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE. 
+We grant you a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute the object code form of the Sample Code, provided that. You agree: 
+(i) to not use Our name, logo, or trademarks to market Your software product in which the Sample Code is embedded; 
+(ii) to include a valid copyright notice on Your software product in which the Sample Code is embedded; and 
+(iii) to indemnify, hold harmless, and defend Us and Our suppliers from and against any claims or lawsuits, including attorneys' fees, that arise or result from the use or distribution of the Sample Code.*/
+--------------------------------------------------------------------------------------------------------------------------
+SELECT @@SERVERNAME
+GO
+SELECT SERVERPROPERTY('productversion'), SERVERPROPERTY ('productlevel'), SERVERPROPERTY ('edition')
+GO
+
+--------------------------------------------------------------------------------------------------------------------------
+
+SELECT session_id ,status ,command, blocking_session_id
+    ,wait_type ,wait_time ,wait_resource 
+    ,transaction_id, estimated_completion_time
+FROM sys.dm_exec_requests 
+WHERE (status = N'suspended' OR status = N'running')
+AND session_id <> @@SPID;
+GO
+
+----------------------------------------------------Blocking Processes----------------------------------------------------
+
+--Parte 1
+SELECT
+             WaitingTime = s.waittime, s.spid, BlockingSPID = s.blocked, DatabaseName = DB_NAME(s.dbid),
+             s.program_name, s.loginame, s.hostname, s.cmd, ObjectName = OBJECT_NAME(objectid,s.dbid), Definition = CAST(text AS VARCHAR(MAX))
+ INTO        #Processes
+ FROM      sys.sysprocesses s
+ CROSS APPLY sys.dm_exec_sql_text (sql_handle)
+ WHERE
+            s.spid > 50
+go            
+
+--select * from #Processes
+--Parte2
+
+WITH Blocking(SPID, BlockingSPID, "WaitingTime (secs)", BlockingStatement, LoginName, HostName, Command, RowNo, LevelRow)
+ AS
+ (
+      SELECT
+       s.spid, s.BlockingSPID, s.WaitingTime/1000, s.Definition, s.loginame, s.hostname, s.cmd,
+       ROW_NUMBER() OVER(ORDER BY s.spid),
+       0 AS LevelRow
+     FROM
+       #Processes s
+       JOIN #Processes s1 ON s.spid = s1.BlockingSPID
+     WHERE
+       s.BlockingSPID = 0
+     UNION ALL
+     SELECT
+       r.spid,  r.BlockingSPID, r.WaitingTime/1000, r.Definition, r.loginame, r.hostname, r.cmd,
+       d.RowNo,
+       d.LevelRow + 1
+     FROM
+       #Processes r
+      JOIN Blocking d ON r.BlockingSPID = d.SPID
+     WHERE
+       r.BlockingSPID > 0
+ )
+ SELECT * FROM Blocking
+ ORDER BY RowNo, LevelRow
+ go
+
+--Parte 3
+ drop table #Processes
+ go
+ --------------------------------------------------------Waits Info--------------------------------------------------
+
+WITH [Waits] AS
+    (SELECT
+        [wait_type],
+        [wait_time_ms] / 1000.0 AS [WaitS],
+        ([wait_time_ms] - [signal_wait_time_ms]) / 1000.0 AS [ResourceS],
+        [signal_wait_time_ms] / 1000.0 AS [SignalS],
+        [waiting_tasks_count] AS [WaitCount],
+        100.0 * [wait_time_ms] / SUM ([wait_time_ms]) OVER() AS [Percentage],
+        ROW_NUMBER() OVER(ORDER BY [wait_time_ms] DESC) AS [RowNum]
+    FROM sys.dm_os_wait_stats
+    WHERE [wait_type] NOT IN (
+        N'BROKER_EVENTHANDLER',             N'BROKER_RECEIVE_WAITFOR',
+        N'BROKER_TASK_STOP',                N'BROKER_TO_FLUSH',
+        N'BROKER_TRANSMITTER',              N'CHECKPOINT_QUEUE',
+        N'CHKPT',                           N'CLR_AUTO_EVENT',
+        N'CLR_MANUAL_EVENT',                N'CLR_SEMAPHORE',
+        N'DBMIRROR_DBM_EVENT',              N'DBMIRROR_EVENTS_QUEUE',
+        N'DBMIRROR_WORKER_QUEUE',           N'DBMIRRORING_CMD',
+        N'DIRTY_PAGE_POLL',                 N'DISPATCHER_QUEUE_SEMAPHORE',
+        N'EXECSYNC',                        N'FSAGENT',
+        N'FT_IFTS_SCHEDULER_IDLE_WAIT',     N'FT_IFTSHC_MUTEX',
+        N'HADR_CLUSAPI_CALL',               N'HADR_FILESTREAM_IOMGR_IOCOMPLETION',
+        N'HADR_LOGCAPTURE_WAIT',            N'HADR_NOTIFICATION_DEQUEUE',
+        N'HADR_TIMER_TASK',                 N'HADR_WORK_QUEUE',
+        N'KSOURCE_WAKEUP',                  N'LAZYWRITER_SLEEP',
+        N'LOGMGR_QUEUE',                    N'ONDEMAND_TASK_QUEUE',
+        N'PWAIT_ALL_COMPONENTS_INITIALIZED',
+        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
+        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',
+        N'REQUEST_FOR_DEADLOCK_SEARCH',     N'RESOURCE_QUEUE',
+        N'SERVER_IDLE_CHECK',               N'SLEEP_BPOOL_FLUSH',
+        N'SLEEP_DBSTARTUP',                 N'SLEEP_DCOMSTARTUP',
+        N'SLEEP_MASTERDBREADY',             N'SLEEP_MASTERMDREADY',
+        N'SLEEP_MASTERUPGRADED',            N'SLEEP_MSDBSTARTUP',
+        N'SLEEP_SYSTEMTASK',                N'SLEEP_TASK',
+        N'SLEEP_TEMPDBSTARTUP',             N'SNI_HTTP_ACCEPT',
+        N'SP_SERVER_DIAGNOSTICS_SLEEP',     N'SQLTRACE_BUFFER_FLUSH',
+        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP',
+        N'SQLTRACE_WAIT_ENTRIES',           N'WAIT_FOR_RESULTS',
+        N'WAITFOR',                         N'WAITFOR_TASKSHUTDOWN',
+        N'WAIT_XTP_HOST_WAIT',              N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG',
+        N'WAIT_XTP_CKPT_CLOSE',             N'XE_DISPATCHER_JOIN',
+        N'XE_DISPATCHER_WAIT',              N'XE_TIMER_EVENT')
+    AND [waiting_tasks_count] > 0
+ )
+SELECT
+	TOP 5
+    MAX ([W1].[wait_type]) AS [WaitType],
+    CAST (MAX ([W1].[WaitS]) AS DECIMAL (16,2)) AS [Wait_S],
+    CAST (MAX ([W1].[ResourceS]) AS DECIMAL (16,2)) AS [Resource_S],
+    CAST (MAX ([W1].[SignalS]) AS DECIMAL (16,2)) AS [Signal_S],
+    MAX ([W1].[WaitCount]) AS [WaitCount],
+    CAST (MAX ([W1].[Percentage]) AS DECIMAL (5,2)) AS [Percentage],
+    CAST ((MAX ([W1].[WaitS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgWait_S],
+    CAST ((MAX ([W1].[ResourceS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgRes_S],
+    CAST ((MAX ([W1].[SignalS]) / MAX ([W1].[WaitCount])) AS DECIMAL (16,4)) AS [AvgSig_S]
+FROM [Waits] AS [W1]
+INNER JOIN [Waits] AS [W2]
+    ON [W2].[RowNum] <= [W1].[RowNum]
+GROUP BY [W1].[RowNum]
+HAVING SUM ([W2].[Percentage]) - MAX ([W1].[Percentage]) < 95; -- percentage threshold
+GO
+
+-------------------------------------------------------------Latches-----------------------------------------------------
+
+WITH [Latches] AS
+    (SELECT
+        [latch_class],
+        [wait_time_ms] / 1000.0 AS [WaitS],
+        [waiting_requests_count] AS [WaitCount],
+        100.0 * [wait_time_ms] / SUM ([wait_time_ms]) OVER() AS [Percentage],
+        ROW_NUMBER() OVER(ORDER BY [wait_time_ms] DESC) AS [RowNum]
+    FROM sys.dm_os_latch_stats
+    WHERE [latch_class] NOT IN (
+        N'BUFFER')
+    AND [wait_time_ms] > 0
+)
+SELECT
+    MAX ([W1].[latch_class]) AS [LatchClass],
+    CAST (MAX ([W1].[WaitS]) AS DECIMAL(14, 2)) AS [Wait_S],
+    MAX ([W1].[WaitCount]) AS [WaitCount],
+    CAST (MAX ([W1].[Percentage]) AS DECIMAL(14, 2)) AS [Percentage],
+    CAST ((MAX ([W1].[WaitS]) / MAX ([W1].[WaitCount])) AS DECIMAL (14, 4)) AS [AvgWait_S]
+FROM [Latches] AS [W1]
+INNER JOIN [Latches] AS [W2]
+    ON [W2].[RowNum] <= [W1].[RowNum]
+GROUP BY [W1].[RowNum]
+HAVING SUM ([W2].[Percentage]) - MAX ([W1].[Percentage]) < 95; -- percentage threshold
+GO
+
+-------------------------------------------------------------Waiting Tasks-------------------------------------------------
+
+SELECT 'Waiting_tasks' AS [Information], owt.session_id,
+     owt.wait_duration_ms,
+     owt.wait_type,
+     owt.blocking_session_id,
+     owt.resource_description,
+     es.program_name,
+     est.text,
+     est.dbid,
+     eqp.query_plan,
+     er.database_id,
+     es.cpu_time,
+     es.memory_usage
+ FROM sys.dm_os_waiting_tasks owt
+ INNER JOIN sys.dm_exec_sessions es ON owt.session_id = es.session_id
+ INNER JOIN sys.dm_exec_requests er ON es.session_id = er.session_id
+ OUTER APPLY sys.dm_exec_sql_text (er.sql_handle) est
+ OUTER APPLY sys.dm_exec_query_plan (er.plan_handle) eqp
+ WHERE es.is_user_process = 1
+ AND owt.wait_duration_ms > 0;
+ GO
+ 
+--------------------------------------------------------Memory Info--------------------------------------------------
+ SELECT
+(physical_memory_in_use_kb/1024)/1024 AS 'Physical Memory in Use (GB)',
+(total_virtual_address_space_kb/1024)/1024 AS 'Total Virtual Address Space (GB)',
+(virtual_address_space_committed_kb/1024)/1024 AS 'Total Virtual Address Space Committed (GB)',
+(virtual_address_space_available_kb/1024)/1024 AS 'Total Virtual Address Space Available (GB)'
+FROM sys.dm_os_process_memory
+GO
+
+SELECT 
+(physical_memory_kb/1024)/1024 AS 'Physical Memory (GB)', 
+(committed_kb/1024)/1024 AS 'Committed Memory (GB)' 
+FROM sys.dm_os_sys_info 
+GO
+
+SELECT 
+counter_name AS 'Performance Counter', 
+cntr_value AS 'Counter Value' 
+FROM sys.dm_os_performance_counters
+WHERE counter_name in  ('Lock Memory (KB)', 'Target Server Memory (KB)', 'Total Server Memory (KB)', 'Buffer Cache Hit Ratio', 'Page life expectancy', 'DatabASe Pages')
+GROUP BY counter_name,cntr_value
+GO
+
+SELECT memory_limit_mb, process_memory_limit_mb
+FROM sys.dm_os_job_object
+
+-------------------------------------------------I/O Database File Utilization And Latency-----------------------------------
+
+SELECT TOP 5 DB_NAME(a.database_id) AS [Database Name] , b.type_desc, b.physical_name, CAST(( io_stall_read_ms + io_stall_write_ms ) / ( 1.0 + num_of_reads + num_of_writes) AS NUMERIC(10,1)) AS [avg_io_stall_ms]
+FROM sys.dm_io_virtual_file_stats(NULL, NULL) a
+INNER JOIN sys.master_files b 
+ON a.database_id = b.database_id and a.file_id = b.file_id
+ORDER BY avg_io_stall_ms DESC ;
+GO
+
+SELECT DB_NAME(f.database_id) AS database_name, f.name AS logical_file_name, f.type_desc, 
+	CAST (CASE 
+		-- Handle UNC paths (e.g. '\\fileserver\readonlydbs\dept_dw.ndf')
+		WHEN LEFT (LTRIM (f.physical_name), 2) = '\\' 
+			THEN LEFT (LTRIM (f.physical_name),CHARINDEX('\',LTRIM(f.physical_name),CHARINDEX('\',LTRIM(f.physical_name), 3) + 1) - 1)
+			-- Handle local paths (e.g. 'C:\Program Files\...\master.mdf') 
+			WHEN CHARINDEX('\', LTRIM(f.physical_name), 3) > 0 
+			THEN UPPER(LEFT(LTRIM(f.physical_name), CHARINDEX ('\', LTRIM(f.physical_name), 3) - 1))
+		ELSE f.physical_name
+	END AS NVARCHAR(255)) AS logical_disk,
+	fs.size_on_disk_bytes/1024/1024 AS size_on_disk_Mbytes,
+	fs.num_of_reads, fs.num_of_writes,
+	fs.num_of_bytes_read/1024/1024 AS num_of_Mbytes_read,
+	fs.num_of_bytes_written/1024/1024 AS num_of_Mbytes_written,
+	(fs.io_stall_read_ms / (1.0 + fs.num_of_reads)) AS avg_read_latency_ms,
+	(fs.io_stall_write_ms / (1.0 + fs.num_of_writes)) AS avg_write_latency_ms
+FROM sys.dm_io_virtual_file_stats (default, default) AS fs
+INNER JOIN sys.master_files AS f ON fs.database_id = f.database_id AND fs.[file_id] = f.[file_id]
+ORDER BY 2 DESC
+GO
+
+-------------------------------------------------Top 10 most expensive queries-----------------------------------------------
+
+SELECT TOP 10 
+		(SELECT db_name(dbid) FROM sys.dm_exec_sql_text(qs.plan_handle)) DBName, 
+		(SELECT object_name(objectid, dbid) FROM sys.dm_exec_sql_text(qs.plan_handle)) 		AS SPName, 
+		(SELECT SUBSTRING(text, statement_start_offset/2 + 1, (CASE WHEN 			statement_end_offset = -1 THEN LEN(CONVERT(nvarchar(max), text)) * 2 ELSE 		statement_end_offset END - statement_start_offset)/2) FROM 			sys.dm_exec_sql_text(sql_handle)) AS query_text,
+		creation_time,
+		last_execution_time,
+		execution_count,
+		total_worker_time / 1000 AS CPU_ms,
+		total_worker_time / execution_count / 1000 AS Avg_CPU_ms,
+		total_logical_reads AS page_reads,
+		total_logical_reads / execution_count AS Avg_page_reads,
+		total_elapsed_time / 1000 AS CPU_ms,
+		total_worker_time / execution_count / 1000 AS Avg_CPU_ms,
+		(SELECT query_plan FROM sys.dm_exec_query_plan(qs.plan_handle)) QueryPlan
+FROM sys.dm_exec_query_stats qs
+ORDER BY total_worker_time DESC
+go
+
+------------------------------------------------------Missing Indexes--------------------------------------------------------
+
+SELECT TOP 5 priority = avg_total_user_cost * avg_user_impact * (user_seeks + user_scans) , 
+d.statement , d.equality_columns , d.inequality_columns , d.included_columns , 
+s.avg_total_user_cost , s.avg_user_impact , s.user_seeks, s.user_scans 
+FROM sys.dm_db_missing_index_group_stats s 
+JOIN sys.dm_db_missing_index_groups g 
+ON s.group_handle = g.index_group_handle 
+JOIN sys.dm_db_missing_index_details d 
+ON g.index_handle = d.index_handle 
+ORDER BY priority DESC
+go
+
+---------------------------------------------Missing Indexes Creation Statement----------------------------------------------
+
+
+;WITH I AS ( 
+SELECT --user_seeks * avg_total_user_cost * (avg_user_impact * 0.01) AS [index_advantage], 
+		avg_total_user_cost * avg_user_impact * (user_seeks + user_scans) AS [Priority],
+migs.last_user_seek, 
+mid.[statement] AS [Database.Schema.Table], 
+mid.equality_columns, mid.inequality_columns, 
+mid.included_columns,migs.unique_compiles, migs.user_seeks, 
+migs.avg_total_user_cost, migs.avg_user_impact 
+FROM sys.dm_db_missing_index_group_stats AS migs WITH (NOLOCK) 
+INNER JOIN sys.dm_db_missing_index_groups AS mig WITH (NOLOCK) 
+ON migs.group_handle = mig.index_group_handle 
+INNER JOIN sys.dm_db_missing_index_details AS mid WITH (NOLOCK) 
+ON mig.index_handle = mid.index_handle 
+--WHERE mid.database_id = db_id('driveatv') --DB_ID() 
+      --AND user_seeks * avg_total_user_cost * (avg_user_impact * 0.01) > 90 -- Set this to Whatever 
+    
+) 
+SELECT top 5 'CREATE INDEX IX_' 
+            + SUBSTRING([Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table])+4)+3, 
+                              LEN([Database.Schema.Table]) -   
+                              (CHARINDEX('].[',[Database.Schema.Table], 
+                              CHARINDEX('].[',[Database.Schema.Table])+4)+3)) 
+            + '_' + LEFT(REPLACE(REPLACE(REPLACE(REPLACE( 
+            ISNULL(equality_columns,inequality_columns), 
+            '[',''),']',''),' ',''),',',''),20) 
+            + ' ON ' 
+            + [Database.Schema.Table] 
+            + '(' 
+            + ISNULL(equality_columns,'') 
+            + CASE WHEN equality_columns IS NOT NULL AND 
+                              inequality_columns IS NOT NULL 
+                  THEN ',' 
+                  ELSE '' 
+              END 
+	  + ISNULL(inequality_columns,'') 
+	  	         + ')' 
+			     + CASE WHEN included_columns IS NOT NULL 
+                  THEN ' INCLUDE(' + included_columns + ')' + ' WITH (ONLINE = ON)'
+                  ELSE ' WITH (ONLINE = ON)'
+              END CreateStatement
+FROM I
+order by Priority DESC
+go
+~~~
+
+
+# 
+
+
+### Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On<a name="501"></a>
+
+#### Objetivo:
+El objetivo de este conjunto de consultas y scripts es capturar información relevante para el análisis de latencia en el movimiento de datos entre nodos primarios y secundarios en Grupos de Disponibilidad Always On en Microsoft SQL Server. La documentación proporcionada está diseñada para permitir una fácil ejecución y recopilación de datos para su posterior análisis y diagnóstico.
+
+#### Pasos para la Captura de Logs:
+
+1. **Captura de Información de Estado del Grupo de Disponibilidad Always On:**
+   - **Propósito:** Esta consulta recopila información esencial sobre el estado de los nodos, réplicas y bases de datos en el Grupo de Disponibilidad.
+   - **Ejecución:** Se debe ejecutar en ambos nodos primarios y secundarios y guardar los resultados como `primary.xml` y `secondary.xml` respectivamente.
+
+```sql
+SELECT
+    AGNode.group_name,
+    AGNode.replica_server_name,
+    AGNode.node_name,
+    ReplicaState.role,
+    ReplicaState.role_desc,
+    ReplicaState.is_local,
+    DatabaseState.database_id,
+    DB_NAME(DatabaseState.database_id) AS database_name,
+    DatabaseState.group_database_id,
+    DatabaseState.is_commit_participant,
+    DatabaseState.is_primary_replica,
+    DatabaseState.synchronization_state_desc,
+    DatabaseState.synchronization_health_desc,
+    ClusterState.group_id,
+    ReplicaState.replica_id
+FROM
+    sys.dm_hadr_availability_replica_cluster_nodes AS AGNode
+JOIN
+    sys.dm_hadr_availability_replica_cluster_states AS ClusterState ON AGNode.replica_server_name = ClusterState.replica_server_name
+JOIN
+    sys.dm_hadr_availability_replica_states AS ReplicaState ON ReplicaState.replica_id = ClusterState.replica_id
+JOIN
+    sys.dm_hadr_database_replica_states AS DatabaseState ON ReplicaState.replica_id = DatabaseState.replica_id
+FOR XML RAW, ROOT('AGInfoRoot')
+```
+
+2. **Captura de Eventos de Movimiento de Datos:**
+   - **Propósito:** Establece una sesión de eventos para capturar actividades relacionadas con el movimiento de datos entre nodos primarios y secundarios.
+   - **Ejecución:** Se debe ejecutar en ambos nodos primarios y secundarios durante un período de 5 a 10 minutos y luego detenerlo.
+
+```sql
+CREATE EVENT SESSION [AlwaysOn_Data_Movement_Tracing] ON SERVER
+ADD EVENT sqlserver.hadr_apply_log_block,
+    ADD EVENT sqlserver.hadr_capture_filestream_wait,
+    ADD EVENT sqlserver.hadr_capture_log_block,
+    ADD EVENT sqlserver.hadr_capture_vlfheader,
+    ADD EVENT sqlserver.hadr_db_commit_mgr_harden,
+    ADD EVENT sqlserver.hadr_log_block_compression,
+    ADD EVENT sqlserver.hadr_log_block_decompression,
+    ADD EVENT sqlserver.hadr_log_block_group_commit ,
+    ADD EVENT sqlserver.hadr_log_block_send_complete,
+    ADD EVENT sqlserver.hadr_lsn_send_complete,
+    ADD EVENT sqlserver.hadr_receive_harden_lsn_message,
+    ADD EVENT sqlserver.hadr_send_harden_lsn_message,
+    ADD EVENT sqlserver.hadr_transport_flow_control_action,
+    ADD EVENT sqlserver.hadr_transport_receive_log_block_message,
+    ADD EVENT sqlserver.log_block_pushed_to_logpool,
+    ADD EVENT sqlserver.log_flush_complete ,
+    ADD EVENT sqlserver.recovery_unit_harden_log_timestamps
+ADD TARGET package0.event_file(SET filename=N'c:\temp\AlwaysOn_Data_Movement_Tracing.xel',max_file_size=(500),max_rollover_files=(4))
+WITH (MAX_MEMORY=4096 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=30 SECONDS,MAX_EVENT_SIZE=0 KB,
+MEMORY_PARTITION_MODE=NONE,TRACK_CAUSALITY=OFF,STARTUP_STATE=ON)
+GO
+
+-- Comienza la sesión de eventos
+ALTER EVENT SESSION [AlwaysOn_Data_Movement_Tracing] ON SERVER STATE=START;
+```
+
+3. **Procesamiento de Datos y Generación de Informes:**
+   - **Propósito:** Prepara los archivos de registro capturados y los archivos XML de estado del Grupo de Disponibilidad para su análisis posterior.
+   - **Pasos:**
+     - Mueva los archivos `AlwaysOn_Data_Movement_Tracing.xel` y `primary.xml` del nodo primario a una carpeta designada.
+     - Mueva el archivo `AlwaysOn_Data_Movement_Tracing.xel` del nodo secundario y `secondary.xml` a otra carpeta designada.
+     - Utilice una herramienta específica para procesar estos archivos y generar informes sobre la latencia en el movimiento de datos.
+
+#### Notas Adicionales:
+- Asegúrese de ajustar las rutas de archivo según sea necesario para reflejar la ubicación de los archivos en su entorno.
+- Para detener la sesión de eventos, utilice el script proporcionado en la sección comentada.
+
+
+
+
+
+
 
 
 # 
