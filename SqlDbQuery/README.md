@@ -199,6 +199,7 @@
  - 38 [Determinar si un Nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)
 
  - 39 [como puedo saber si un servidor sql server alwaysOn hizo failover y cuando lo hizo](#failover)
+ - 39.1 [informacion de failover de los servidores de forma mas detallada. mejoras del anterior](#failover2)
  - 40 [Cambiar el "collation" (ordenamiento) de todas las bases de datos en un servidor SQL Server](#collectionchange)
 
 - 41 [ Para saber si SQL Server Replication está instalado en SQL Server 2019, puedes seguir estos pasos](#saberreplicationserver)
@@ -9904,6 +9905,70 @@ WHERE adc.is_local = 1;
 ####  Es importante tener en cuenta que el acceso y la comprensión de estos registros pueden variar según la versión de SQL Server que estés utilizando y cómo esté configurado tu entorno. Si estás utilizando herramientas de monitorización de terceros, también podrías obtener información más detallada sobre los cambios de estado y los failovers.
 
 #### Recuerda que la configuración exacta puede variar según tu entorno y la versión de SQL Server que estés utilizando. Siempre es recomendable consultar la documentación oficial de SQL Server para obtener instrucciones específicas para tu caso.
+
+<!-- ======================== -->
+
+
+## Para obtener información sobre los failovers en SQL Server, puedes consultar el log de errores de SQL Server o las vistas del sistema que contienen información sobre el clúster de conmutación por error. Aquí tienes un ejemplo de cómo puedes hacerlo mediante una consulta en T-SQL para revisar el log de errores y extraer información relevante sobre los failovers:<a name="failover2"></a>
+
+#### 1. **Usando el Log de Errores de SQL Server**:
+
+~~~sql
+EXEC xp_readerrorlog 0, 1, N'Failover';
+~~~
+
+### Esta consulta ejecuta el procedimiento almacenado `xp_readerrorlog`, que lee el log de errores de SQL Server buscando la palabra clave "Failover". Esto te dará una lista de entradas en el log que contienen la palabra "Failover", las cuales generalmente incluyen eventos de conmutación por error.
+
+#### 2. **Filtrando los Logs para Conmutaciones por Error**:
+
+~~~sql
+CREATE TABLE #ErrorLog (
+    LogDate DATETIME,
+    ProcessInfo NVARCHAR(50),
+    Text NVARCHAR(MAX)
+);
+
+INSERT INTO #ErrorLog
+EXEC xp_readerrorlog 0, 1, N'Failover';
+
+SELECT LogDate, Text
+FROM #ErrorLog
+WHERE Text LIKE '%Failover%';
+
+DROP TABLE #ErrorLog;
+~~~
+
+#### Este script crea una tabla temporal para almacenar las entradas del log de errores, inserta las entradas que contienen la palabra "Failover" y luego selecciona las columnas `LogDate` y `Text` que contienen la información relevante. Finalmente, elimina la tabla temporal.
+
+### 3. **Usando las Vistas del Sistema**:
+
+#### Para obtener información de failovers desde vistas del sistema, especialmente si estás usando Always On Availability Groups, puedes consultar la vista `sys.dm_hadr_availability_replica_cluster_nodes` y otras relacionadas:
+
+~~~sql
+SELECT 
+    ags.name AS 'AGName',
+    ar.replica_server_name AS 'ReplicaName',
+    harn.node_name AS 'NodeName',
+    far.failure_time AS 'FailoverTime',
+    far.failure_count AS 'FailureCount',
+    far.failure_type_desc AS 'FailureType'
+FROM 
+    sys.dm_hadr_availability_replica_cluster_nodes AS harn
+JOIN 
+    sys.availability_groups AS ags ON harn.group_id = ags.group_id
+JOIN 
+    sys.availability_replicas AS ar ON ags.group_id = ar.group_id
+JOIN 
+    sys.dm_hadr_failure_report AS far ON ar.replica_id = far.replica_id
+ORDER BY 
+    far.failure_time DESC;
+~~~
+
+#### Este script une varias vistas del sistema relacionadas con Always On Availability Groups para obtener detalles de failovers, incluyendo el tiempo de fallas (`failure_time`), el tipo de falla (`failure_type_desc`), y otras informaciones relacionadas.
+
+#### Estos ejemplos te permiten obtener información sobre los failovers en SQL Server. Asegúrate de ajustar las consultas según tus necesidades específicas y el entorno de tu SQL Server.
+
+
 
 
 
