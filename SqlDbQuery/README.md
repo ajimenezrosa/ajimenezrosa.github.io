@@ -228,7 +228,11 @@
 ## Creacion de Bases de datos Tanto para Stand Alone como AlwaysOn BPD.
   - 46 [Scripts para Restaurar db/s en Diferentes tipos de Ambientes](#46)
 
- - 47 [Como puedo saber que puerto utilizan mis consultas BPD](#puetos)
+ - 47 [Como puedo saber que
+  puerto utilizan mis consultas BPD](#puetos)
+
+ - 48 [Documentation of SQL Scripts for Backup and Restore with TDE](#tde1)
+
 
 
 ## Querys para Actividades de Depuracion de DB's 
@@ -12604,11 +12608,280 @@ ALTER EVENT SESSION [AlwaysOn_Data_Movement_Tracing] ON SERVER STATE=START;
 - Para detener la sesión de eventos, utilice el script proporcionado en la sección comentada.
 
 
+## Documentation of SQL Scripts for Backup and Restore with TDE<a name="tde1"></a>
+
+Below are the documented SQL scripts for performing backup and restore operations on multiple databases with Transparent Data Encryption (TDE). Each script includes comments explaining the steps and the sequence in which they should be executed.
+
+#### 1. PYEENG Database
+
+~~~sql
+-- Step 1: Full Database Backup
+BACKUP DATABASE [PYEENG]
+TO DISK = N'U:\MSSQL\BACKUP\PYEENG.bak'
+WITH INIT,
+NAME = N'PYEENG-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Step 2: Transaction Log Backup
+BACKUP LOG [PYEENG]
+TO DISK = 'U:\MSSQL\BACKUP\PYEENG.trn'
+WITH INIT;
+GO
+
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [PYEENG]
+GO
+
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [PYEENG]
+FROM  DISK = N'U:\MSSQL\BACKUP\PYEENG.BAK'
+WITH  FILE = 1,
+MOVE N'PYEENG' TO N'G:\MSSQL\DATA\PYEENG.mdf',
+MOVE N'PYEENG_log' TO N'N:\MSSQL\LOG\PYEENG_log.ldf',
+MOVE N'PYEENG_index' TO N'K:\MSSQL\INDEX\PYEENG_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [PYEENG]
+FROM Disk = 'U:\MSSQL\BACKUP\PYEENG.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [PYEENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+#### 2. SII_Omega_TRX Database
+
+~~~sql
+-- Step 1: Full Database Backup
+BACKUP DATABASE [SII_Omega_TRX]
+TO DISK = N'U:\MSSQL\BACKUP\SII_Omega_TRX.bak'
+WITH INIT,
+NAME = N'SII_Omega_TRX-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Step 2: Transaction Log Backup
+BACKUP LOG [SII_Omega_TRX]
+TO DISK = 'U:\MSSQL\BACKUP\SII_Omega_TRX.trn'
+WITH INIT;
+GO
+
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [SII_Omega_TRX]
+GO
+
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [SII_Omega_TRX]
+FROM  DISK = N'U:\MSSQL\BACKUP\SII_Omega_TRX.BAK'
+WITH  FILE = 1,
+MOVE N'SII_Omega_TRX' TO N'G:\MSSQL\DATA\SII_Omega_TRX.mdf',
+MOVE N'SII_Omega_TRX_log' TO N'L:\MSSQL\LOG\SII_Omega_TRX_log.ldf',
+MOVE N'SII_Omega_TRX_index' TO N'I:\MSSQL\INDEX\SII_Omega_TRX_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [SII_Omega_TRX]
+FROM Disk = 'U:\MSSQL\BACKUP\SII_Omega_TRX.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [SII_Omega_TRX] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+#### 3. TSCENG Database
+
+~~~sql
+-- Step 1: Full Database Backup
+BACKUP DATABASE [TSCENG]
+TO DISK = N'U:\MSSQL\BACKUP\TSCENG.bak'
+WITH INIT,
+NAME = N'TSCENG-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Step 2: Transaction Log Backup
+BACKUP LOG [TSCENG]
+TO DISK = 'U:\MSSQL\BACKUP\TSCENG.trn'
+WITH INIT;
+GO
+
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [TSCENG]
+GO
+
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [TSCENG]
+FROM  DISK = N'U:\MSSQL\BACKUP\TSCENG.BAK'
+WITH  FILE = 1,
+MOVE N'TSCENG_Data' TO N'G:\MSSQL\DATA\TSCENG.mdf',
+MOVE N'TSCENG_log' TO N'M:\MSSQL\LOG\TSCENG_log.ldf',
+MOVE N'TSCENG_index' TO N'K:\MSSQL\INDEX\TSCENG_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [TSCENG]
+FROM Disk = 'U:\MSSQL\BACKUP\TSCENG.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [TSCENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+#### 4. AUTMOD Database
+
+~~~sql
+-- Step 1: Full Database Backup
+BACKUP DATABASE [AUTMOD]
+TO DISK = N'U:\MSSQL\BACKUP\AUTMOD.bak'
+WITH INIT,
+NAME = N'AUTMOD-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Step 2: Transaction Log Backup
+BACKUP LOG [AUTMOD]
+TO DISK = 'U:\MSSQL\BACKUP\AUTMOD.trn'
+WITH INIT;
+GO
+
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [AUTMOD]
+GO
+
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [AUTMOD]
+FROM  DISK = N'U:\MSSQL\BACKUP\AUTMOD.BAK'
+WITH  FILE = 1,
+MOVE N'AUTMOD' TO N'F:\MSSQL\DATA\AUTMOD.mdf',
+MOVE N'AUTMOD_log' TO N'N:\MSSQL\LOG\AUTMOD_log.ldf',
+MOVE N'AUTMOD_index' TO N'K:\MSSQL\INDEX\AUTMOD_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [AUTMOD]
+FROM Disk = 'U:\MSSQL\BACKUP\AUTMOD.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [AUTMOD] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+#### 5. BPD_SecureContainer Database
+
+~~~sql
+-- Step 1: Full Database Backup
+BACKUP DATABASE [BPD_SecureContainer]
+TO DISK = N'U:\MSSQL\BACKUP\BPD_SecureContainer.bak'
+WITH INIT,
+NAME = N'BPD_SecureContainer-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
+
+-- Step 2: Transaction Log Backup
+BACKUP LOG [BPD_SecureContainer]
+TO DISK = 'U:\MSSQL\BACKUP\BPD_SecureContainer.trn'
+WITH INIT;
+GO
+
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [BPD_SecureContainer]
+GO
+
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [BPD_SecureContainer]
+FROM  DISK = N'U:\MSSQL\BACKUP\BPD_SecureContainer.BAK'
+WITH  FILE = 1,
+MOVE N'BPD_SecureContainer' TO N'D:\MSSQL\DATA\BPD_SecureContainer.mdf',
+MOVE N'BPD_SecureContainer_log' TO N'L:\MSSQL\LOG\BPD_SecureContainer_log.ldf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [BPD_SecureContainer]
+FROM Disk = 'U:\MSSQL\BACKUP\BPD_SecureContainer.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [BPD_SecureContainer] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+#### 6. PAYENG Database
+
+~~~sql
+-- Step 1: Full Database Backup
 
 
+BACKUP DATABASE [PAYENG]
+TO DISK = N'U:\MSSQL\BACKUP\PAYENG.bak'
+WITH INIT,
+NAME = N'PAYENG-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD,  STATS = 1
+GO
 
+-- Step 2: Transaction Log Backup
+BACKUP LOG [PAYENG]
+TO DISK = 'U:\MSSQL\BACKUP\PAYENG.trn'
+WITH INIT;
+GO
 
+-- Step 3: Add Database to Availability Group on Primary Replica
+ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [PAYENG]
+GO
 
+-- Step 4: Restore Full Database Backup on Secondary Replica
+RESTORE DATABASE [PAYENG]
+FROM  DISK = N'U:\MSSQL\BACKUP\PAYENG.BAK'
+WITH  FILE = 1,
+MOVE N'PAYENG' TO N'F:\MSSQL\DATA\PAYENG.mdf',
+MOVE N'PAYENG_log' TO N'M:\MSSQL\LOG\PAYENG_log.ldf',
+MOVE N'PAYENG_index' TO N'I:\MSSQL\INDEX\PAYENG_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;       
+GO
+
+-- Step 5: Restore Transaction Log Backup on Secondary Replica
+RESTORE LOG [PAYENG]
+FROM Disk = 'U:\MSSQL\BACKUP\PAYENG.trn'
+WITH NORECOVERY;
+GO
+
+-- Step 6: Set HADR Availability Group on Secondary Replica
+ALTER DATABASE [PAYENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+GO
+~~~
+
+### Summary
+
+For each database, the sequence of steps is as follows:
+1. **Full Database Backup**: Creates a full backup of the database.
+2. **Transaction Log Backup**: Creates a transaction log backup to capture all the transactions that occurred after the full backup.
+3. **Add Database to Availability Group**: Adds the database to the Availability Group on the primary replica.
+4. **Restore Full Database Backup on Secondary Replica**: Restores the full backup on the secondary replica.
+5. **Restore Transaction Log Backup on Secondary Replica**: Restores the transaction log backup on the secondary replica.
+6. **Set HADR Availability Group on Secondary Replica**: Configures the secondary replica to be part of the Availability Group.
+
+This sequence ensures that the databases are properly backed up, restored, and configured for high availability.
 
 # 
 #### No existe nada debajo de esta linea
