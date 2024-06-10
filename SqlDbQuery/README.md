@@ -4634,7 +4634,7 @@ Determinación de la actividad del servidor
 
 */
 SELECT es.session_id 
-	,DB_NAME(ES.database_id)
+	,DB_NAME(ES.database_id) DBNAME
     ,es.program_name 
     ,es.login_name 
     ,es.nt_user_name 
@@ -4657,7 +4657,7 @@ FROM sys.dm_exec_sessions es
         ON es.session_id = er.session_id 
     OUTER APPLY sys.dm_exec_sql_text (er.sql_handle) st 
 
-                        session_id > 50    -- < 50 system sessions 
+    where                    es.session_id > 50    -- < 50 system sessions 
 and login_time >'2019-09-11 01:00:00'
 --ORDER BY es.cpu_time DESC 
 ORDER BY login_time desc
