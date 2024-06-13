@@ -170,13 +170,15 @@
   - 27.1 [Conectar  un dominio de Windows y leer Informacion](#leerdominio)
 # 
 # 28 BPD
+ ## Jobs
   - 28.1 [Listar jobs SQL Server](#listajob28)
   - 28.2 [jobs con sus dias de ejecucion por steps]
   (#listajob282)
   - 28.2.1 [Jobs del sistema sql server,  con nombre y base de datos que apuntan](#28.2.1)
  
   - 28.2.2 [Jobs del sistema sql server,  para entregar al personal de control M](#28.2.2)
-  -
+  - 28.2.3 [Jobs Que se estan Ejecutando en un Servidor SQL Server](#jobactivos2)
+
   - 28.3 [Configure the max worker threads (server configuration option)](#autogrowmaxime)
   - 29.4 [Query para saber el Max/memory de un servidor Sql](#querymamemory)
 
@@ -12884,6 +12886,93 @@ For each database, the sequence of steps is as follows:
 This sequence ensures that the databases are properly backed up, restored, and configured for high availability.
 
 # 
+
+## Jobs Que se estan Ejecutando en un Servidor SQL Server<a name="jobactivos2"></a>
+
+Aqui podaras ver un script SQL que se utiliza para listar los jobs actualmente en ejecución en SQL Server. La consulta utiliza el procedimiento almacenado `sp_help_job` de la base de datos `msdb` con el parámetro `@execution_status=1`, que filtra los jobs que están en estado de ejecución.
+
+## Requisitos
+
+- SQL Server 2005 o superior
+- Permisos adecuados para acceder a la base de datos `msdb` y ejecutar procedimientos almacenados
+
+## Uso
+
+### Descripción del Comando
+
+El comando que se ejecuta es:
+
+```sql
+exec msdb.dbo.sp_help_job @execution_status=1
+```
+
+### Parámetros
+
+- `@execution_status=1`: Este parámetro filtra los resultados para mostrar solo los jobs que están actualmente en ejecución.
+
+### Salida
+
+La salida del comando proporciona información sobre los jobs que están en ejecución. Los campos más relevantes que se incluyen en la salida son:
+
+- `job_id`: Identificador único del job.
+- `originating_server`: Nombre del servidor de origen.
+- `name`: Nombre del job.
+- `enabled`: Estado del job (si está habilitado o no).
+- `description`: Descripción del job.
+- `start_step_id`: Paso inicial del job.
+- `category`: Categoría del job.
+- `owner`: Propietario del job.
+- `notify_level_eventlog`: Nivel de notificación en el registro de eventos.
+- `notify_level_email`: Nivel de notificación por correo electrónico.
+- `notify_level_netsend`: Nivel de notificación por red.
+- `notify_level_page`: Nivel de notificación por buscapersonas.
+- `delete_level`: Nivel de eliminación.
+- `date_created`: Fecha de creación del job.
+- `date_modified`: Fecha de última modificación del job.
+- `version_number`: Número de versión del job.
+
+### Ejecución del Comando
+
+Para ejecutar el comando, sigue estos pasos:
+
+1. Abre SQL Server Management Studio (SSMS).
+2. Conéctate a la instancia de SQL Server donde deseas verificar los jobs en ejecución.
+3. Abre una nueva consulta.
+4. Copia y pega el siguiente comando en la ventana de la consulta:
+
+    ```sql
+    exec msdb.dbo.sp_help_job @execution_status=1
+    ```
+
+5. Ejecuta la consulta presionando `F5` o haciendo clic en el botón "Ejecutar" en la barra de herramientas.
+
+## Ejemplo de Uso
+
+A continuación se muestra un ejemplo de cómo se vería la salida del comando:
+
+```plaintext
++--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
+| job_id                               | originating_server| name              | enabled | description               | start_step_id |
++--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
+| 1F27BA43-88F7-4E02-AB7E-BE485DE8A3D5 | SERVER01          | Backup Database   | 1       | Daily backup of database  | 1             |
+| 2D47D3B6-C9EC-4BF8-8490-12072B8F7053 | SERVER01          | Index Rebuild     | 1       | Weekly index rebuild      | 1             |
++--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
+```
+
+## Contribuciones
+
+Las contribuciones son bienvenidas. Si encuentras algún error o tienes sugerencias para mejorar este script, por favor abre un issue o envía un pull request.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Para más detalles, consulta el archivo [LICENSE](./LICENSE).
+
+---
+
+¡Espero que esta documentación sea útil para tu repositorio de GitHub! Si necesitas más detalles o alguna otra sección específica, no dudes en decírmelo.
+
+
+
 #### No existe nada debajo de esta linea
 
 
