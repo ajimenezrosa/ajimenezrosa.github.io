@@ -12954,8 +12954,8 @@ A continuación se muestra un ejemplo de cómo se vería la salida del comando:
 +--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
 | job_id                               | originating_server| name              | enabled | description               | start_step_id |
 +--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
-| 1F27BA43-88F7-4E02-AB7E-BE485DE8A3D5 | SERVER01          | Backup Database   | 1       | Daily backup of database  | 1             |
-| 2D47D3B6-C9EC-4BF8-8490-12072B8F7053 | SERVER01          | Index Rebuild     | 1       | Weekly index rebuild      | 1             |
+| 1F27BA43-88F7-4E02- | SERVER01          | Backup Database   | 1       | Daily backup of database  | 1             |
+| 2D47D3B6-C9EC- | SERVER01          | Index Rebuild     | 1       | Weekly index rebuild      | 1             |
 +--------------------------------------+-------------------+-------------------+---------+---------------------------+---------------+
 ```
 
