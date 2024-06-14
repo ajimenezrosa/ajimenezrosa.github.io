@@ -91,6 +91,10 @@
 9. [Query Que muestra la ultimos Restore realizados a un Servidor ](#queryrestoresql)
 12. ["Limpiar y Reducir el Log de Transacciones SQL Server"](#limpiarlog) 
 13. ["Seguimiento en Tiempo Real de Operaciones de Backup y Restore"](#tiemporestore)
+14. [Documentación del Script SQL para Monitoreo de Operaciones de Backup y Restore](#tiempobkrestore)
+
+
+
 
 #
 # Performance de la base de datos.  Verificaciones de rendimiento del Sql Server
@@ -3291,6 +3295,53 @@ WHERE r.command in ('BACKUP DATABASE','RESTORE DATABASE')
 ~~~
 
 # 
+
+
+### Documentación del Script SQL para Monitoreo de Operaciones de Backup y Restore<a name="tiempobkrestore"></a>
+
+#### Descripción
+Este script SQL permite monitorear el estado de las operaciones de respaldo y restauración de bases de datos en el servidor de base de datos actual.
+
+#### Detalles del Script
+~~~sql
+USE master;
+
+SELECT 
+    session_id as SPID, 
+    command, 
+    a.text AS Query, 
+    start_time, 
+    percent_complete, 
+    dateadd(second, estimated_completion_time/1000, getdate()) as estimated_completion_time
+FROM 
+    sys.dm_exec_requests r 
+    CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) a
+WHERE 
+    r.command in ('BACKUP DATABASE', 'RESTORE DATABASE');
+~~~
+
+#### Explicación
+- **USE master;**: Especifica que la consulta se ejecutará en la base de datos `master`.
+- **SELECT ...**: Recupera información relevante de las operaciones actuales de respaldo y restauración en curso:
+  - `session_id`: Identificador de sesión (SPID) para la operación.
+  - `command`: Tipo de comando en ejecución (BACKUP DATABASE o RESTORE DATABASE).
+  - `a.text AS Query`: Consulta SQL en ejecución.
+  - `start_time`: Hora de inicio de la operación.
+  - `percent_complete`: Porcentaje completado de la operación.
+  - `dateadd(second, estimated_completion_time/1000, getdate()) as estimated_completion_time`: Estimación de tiempo de finalización de la operación.
+- **FROM sys.dm_exec_requests r CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) a**: Utiliza las vistas del sistema `sys.dm_exec_requests` y `sys.dm_exec_sql_text` para obtener información detallada sobre las consultas en ejecución.
+- **WHERE r.command in ('BACKUP DATABASE', 'RESTORE DATABASE');**: Filtra las consultas en ejecución para mostrar solo las operaciones de respaldo y restauración de bases de datos.
+
+#### Enlace de Búsqueda
+Puedes encontrar más información sobre las vistas del sistema utilizadas y cómo interpretar los resultados en la documentación oficial de Microsoft SQL Server:
+
+[Documentación de sys.dm_exec_requests](https://docs.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-requests-transact-sql)
+
+[Documentación de sys.dm_exec_sql_text](https://docs.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-sql-text-transact-sql)
+
+Este formato estructurado proporciona una visión clara y organizada del script, facilitando su comprensión y referencia futura.
+
+
 
 # Performance.
 
