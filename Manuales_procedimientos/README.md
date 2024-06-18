@@ -63,7 +63,7 @@
 
  -  [Procedimientos Post Migración de Base de Datos](#migraciondebasededatos)
 
-[Documentación del Proceso de Solicitud de Pago de Horas Extras](https://github.com/tuusuario/tu-repositorio/ruta-al-documento.md)
+[Documentación del Proceso de Solicitud de Pago de Horas Extras](#horasextras)
 
 
 # 
@@ -676,7 +676,7 @@ Es necesario verificar el Owner con el que se restauró la nueva base de datos. 
 # 
 
 
-### Paso a Paso para la Solicitud de Pago de Horas Extras
+### Paso a Paso para la Solicitud de Pago de Horas Extras<a name="horasextras"></a>
 
 1. **Colocar el archivo de las horas extras:**
    - Ubica el archivo de las horas extras en el grupo "Depto Administración Base de Datos" en Teams.

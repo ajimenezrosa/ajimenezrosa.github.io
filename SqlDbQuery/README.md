@@ -260,9 +260,9 @@
 <img src="https://www.softzone.es/app/uploads-softzone.es/2019/01/almacenamiento-en-la-nube.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
 ~~~sql
-EXEC xp_cmdshell 'net use M: \\10.0.0.167\Transaccional px85947#@1/user:INABIMASD\administrador'
+EXEC xp_cmdshell 'net use M: \\10.0.0.167\Transaccional passworddominio/user:INABIMASD\administrador'
 
-EXEC xp_cmdshell 'net use T:  \\10.0.0.167\backups\MSSQL px85947#@1/user:INABIMASD\administrador'
+EXEC xp_cmdshell 'net use T:  \\10.0.0.167\backups\MSSQL passworddominio/user:INABIMASD\administrador'
 
 --exec xp_cmdshell 'net use Y: \\127.0.0.1\Shared aVeRyStR0nGP@s$w0rd@123 /USER:Administrator /PERSISTENT:yes'
 --go
