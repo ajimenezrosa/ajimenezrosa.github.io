@@ -63,6 +63,9 @@
 
  -  [Procedimientos Post Migración de Base de Datos](#migraciondebasededatos)
 
+[Documentación del Proceso de Solicitud de Pago de Horas Extras](https://github.com/tuusuario/tu-repositorio/ruta-al-documento.md)
+
+
 # 
 
 # Enlaces de Acceso
@@ -672,4 +675,41 @@ Es necesario verificar el Owner con el que se restauró la nueva base de datos. 
 
 # 
 
+
+### Paso a Paso para la Solicitud de Pago de Horas Extras
+
+1. **Colocar el archivo de las horas extras:**
+   - Ubica el archivo de las horas extras en el grupo "Depto Administración Base de Datos" en Teams.
+
+2. **Solicitar a los integrantes que coloquen sus horas extras:**
+   - Pide a todos los integrantes del grupo que registren sus horas extras en el archivo correspondiente.
+
+3. **Enviar un correo a la Sra. Yolanda Suárez:**
+   - Redacta y envía un correo a la Sra. Yolanda Suárez solicitando la aprobación del Sr. Luis Manuel Mateo, Gerente de Área.
+
+4. **Esperar la aprobación del Sr. Mateo:**
+   - Una vez recibida la aprobación del Sr. Mateo, procede con la siguiente etapa.
+
+5. **Crear un ticket a recursos humanos:**
+   - Dirígete a la siguiente dirección para crear el ticket: [http://co02vsbridge/CAisd/pdmweb.exe](http://co02vsbridge/CAisd/pdmweb.exe)
+   - Ruta a colocar para crear el ticket: 
+     ```
+     RRHH, Sistemas y Procesos y Gestión de Calidad.RRHH.Div Administrativo y Filiales.Depto Administrativo.6
+     ```
+
+6. **Dirigir el ticket a la persona correspondiente:**
+   - Persona a quien está dirigido el ticket en RRHH: 
+     ```
+     Valenzuela Fortuna, Georibert, Joan
+     ```
+
+7. **Texto a colocar en el ticket:**
+   - Asunto: `Pago Reporte horario Extendido`
+   - Mensaje:
+     ```
+     Solicitamos su acostumbrada colaboración para el pago de las horas extras reportadas.
+     Adjunto el reporte y el de acuerdo.
+     ```
+
+### Enlace al Documento en GitHub
 
