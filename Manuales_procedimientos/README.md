@@ -65,6 +65,9 @@
 
 [Documentación del Proceso de Solicitud de Pago de Horas Extras](#horasextras)
 
+[Checklist de Verificación para Ambientes de Alta Disponibilidad](#checklistAmbienteAO)
+
+
 
 # 
 
@@ -712,4 +715,114 @@ Es necesario verificar el Owner con el que se restauró la nueva base de datos. 
      ```
 
 ### Enlace al Documento en GitHub
+
+
+
+# 
+
+
+
+## Checklist de Verificación para Ambientes de Alta Disponibilidad<a name="checklistAmbienteAO"></a>
+
+Este documento está diseñado como una guía paso a paso para la verificación de un ambiente de alta disponibilidad, específicamente en un clúster de FailOver de Windows. 
+
+## Introducción y Objetivo
+
+El objetivo principal de este documento es proporcionar un conjunto estructurado de instrucciones y comprobaciones que deben seguirse al momento de crear un nuevo ambiente, para asegurar que todos los componentes del sistema estén funcionando correctamente y sin errores. Esto incluye la configuración y el estado de los nodos del clúster, los roles, las redes y los parámetros específicos del servidor de base de datos. Al seguir esta guía, los administradores pueden asegurar la máxima disponibilidad y rendimiento del entorno, minimizando el riesgo de interrupciones inesperadas.
+
+### Importancia de la Verificación
+
+Realizar una verificación exhaustiva de los entornos de alta disponibilidad al crear un nuevo ambiente es fundamental para:
+
+1. **Prevenir Fallos**: Identificar y resolver problemas potenciales antes de que causen interrupciones en el servicio.
+2. **Optimizar el Rendimiento**: Asegurar que los recursos del sistema se utilicen de manera eficiente, lo que contribuye a un rendimiento óptimo.
+3. **Cumplimiento de SLA**: Garantizar que los acuerdos de nivel de servicio (SLA) con los usuarios finales y clientes se cumplan mediante la reducción del tiempo de inactividad.
+4. **Mantenimiento Proactivo**: Permitir una planificación adecuada de mantenimientos y actualizaciones sin afectar la disponibilidad del servicio.
+
+### Estructura del Documento
+
+Este documento está dividido en secciones que cubren diferentes áreas críticas del clúster de FailOver de Windows y del servidor de base de datos. Cada sección contiene pasos detallados para verificar la correcta configuración y operación de los componentes, incluyendo:
+
+- **Configuración del Clúster de FailOver**: Verificación del estado del clúster, nodos y redes.
+- **Configuración del Servidor de Base de Datos**: Ajustes de memoria, paralelismo y configuraciones específicas de bases de datos.
+- **Verificación de Puertos y Conectividad**: Asegurar que los puertos críticos estén accesibles.
+- **Ajustes del Sistema Operativo**: Configuraciones de rendimiento y tamaño de archivos de paginación.
+
+Al final de cada sección, se proporcionan puntos de verificación específicos que deben ser completados y documentados por el administrador del sistema. Esto no solo garantiza que se siga un proceso consistente y exhaustivo, sino que también proporciona un registro detallado para auditorías y revisiones futuras.
+
+---
+
+## Verificación del Clúster de FailOver de Windows
+
+### 1. Verificación del Nombre del Clúster
+- Accede al FailOver cluster de Windows.
+- Haz clic en el nombre del clúster para verificar que todo esté funcionando correctamente y no haya registros de errores en el ambiente.
+
+### 2. Verificación de Roles
+- Ir a **Roles** y verificar que todos los roles estén funcionando de manera correcta.
+
+### 3. Verificación de Nodos
+- Ir a **Nodes** y asegurarse de que los nodos estén activos, funcionando correctamente y sin errores.
+
+### 4. Verificación de Redes
+- Ir a **Networks** y verificar que el clúster tenga las tarjetas de red conectadas y que ninguna de ellas esté presentando errores.
+
+## Verificación de Puertos
+
+### 1. Puertos de los Servidores
+- Verificar que los puertos 1433 y 5022 de los servidores tengan acceso tanto para entrada como para salida.
+
+## Configuración del Servidor de Base de Datos
+
+### 1. Memoria Máxima
+- Verificar que el `max memory` del servidor de base de datos sea el 75% del valor de la memoria del servidor, a menos que se indique otra cosa.
+
+### 2. Nivel de Paralelismo
+- Ejecutar el query que determina el nivel de paralelismo recomendado.
+- Ir a **Propiedades \ Advanced \ Max Degree of Parallelism** y colocar el valor entregado por el query.
+
+### 3. Configuración de Remote DAC
+- Ir a **Propiedades \ Facets**.
+- En la ventana **Facet**, seleccionar la opción **Surface Area Configuration**.
+- En la opción **RemoteDacEnabled**, colocar `True`.
+
+### 4. Configuración de Autocrecimiento de Bases de Datos del Sistema
+- Ir a las bases de datos del sistema (`master`, `model` y `msdb`).
+- Ir a **Propiedades \ Files** y en **Autogrowth / Maxsize** colocar el valor en `500MB`.
+
+### 5. Modelo de Recuperación
+- Ir a las bases de datos (`model` y `msdb`).
+- En **Propiedades \ Options**, colocar el **Recovery Model** en `Full`.
+
+### 6. Configuración de TempDB
+- Ir a la base de datos `TempDB`.
+- En la opción **Files**, modificar el **Size (MB)** y colocar `2000` a todos menos al archivo log de la base de datos `TempDB`.
+
+## Verificaciones Adicionales
+
+### 1. Proxy de Mantenimiento Preventivo
+- Verificar en **SQL Server Agent \ Proxies** que tenga el `Proxy_PreventiveMaintenance` colocado.
+
+### 2. Paquetes SSIS (Opcional)
+- Verificar en **SQL Server Agent \ SSIS Package Execution** que tenga esta opción colocada. ***Esto es opcional, para algunos casos esto no se requiere***
+
+## Configuración del Sistema Operativo
+
+### 1. Configuración Avanzada del Sistema
+- Ir a **View Advanced System Setting**.
+- En **Performance**, presionar el botón **Settings**.
+- En la siguiente pantalla, ir a **Advanced** y hacer clic en el botón **Change**.
+
+#### Cambios para los Discos:
+
+- **C:**
+  - Hacer clic en **Custom Size** y colocar los siguientes valores:
+    - Initial Size (MB): `5192`
+    - Maximum Size (MB): `5192`
+
+- **P:**
+  - Hacer clic en **Custom Size** y colocar los siguientes valores:
+    - Initial Size (MB): `4096`
+    - Maximum Size (MB): `16384` (***Nota: para nuestro caso, esto es un 75% del tamaño total del disco***).
+
 
