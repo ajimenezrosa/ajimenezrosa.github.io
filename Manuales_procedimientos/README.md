@@ -67,7 +67,7 @@
 
 [Checklist de Verificación para Ambientes de Alta Disponibilidad](#checklistAmbienteAO)
 
-
+[Documentación de TSS2](#TSS2)
 
 # 
 
@@ -826,3 +826,115 @@ Al final de cada sección, se proporcionan puntos de verificación específicos 
     - Maximum Size (MB): `16384` (***Nota: para nuestro caso, esto es un 75% del tamaño total del disco***).
 
 
+# 
+
+# Documentación de TSS2<a name="TSS2"></a>
+<img src="https://img.site24x7static.com/images/es/applogs-banner-Image2.svg?format=jpg&name=large" alt="JuveR" width="800px">
+
+**Autor:** ***José Alejandro Jiménez Rosa***
+
+Esta documentación ha sido creada para documentar la solución presentada por Microsoft en el caso del servidor de Internet Banking del Banco Popular, que hizo failover y no se registró en los logs del servidor el 12 de junio de 2024 a las 21:35.
+
+## Descripción de TSS2
+
+TSS2 (Troubleshooting Support Script) de Microsoft es una herramienta diseñada para ayudar a los administradores de SQL Server a recopilar información de diagnóstico y solucionar problemas en entornos de SQL Server. Esta herramienta automatiza la recopilación de registros, configuraciones, y otros datos importantes para la solución de problemas.
+
+## Principales Comandos
+
+### 1. Start-TSS
+Inicia la recopilación de datos.
+```powershell
+Start-TSS -Scenario SQLServer -OutputPath C:\TSS2Output
+```
+
+### 2. Stop-TSS
+Detiene la recopilación de datos.
+```powershell
+Stop-TSS
+```
+
+### 3. Get-TSSStatus
+Muestra el estado actual de la recopilación de datos.
+```powershell
+Get-TSSStatus
+```
+
+### 4. Export-TSSData
+Exporta los datos recopilados a un archivo comprimido.
+```powershell
+Export-TSSData -OutputPath C:\TSS2Output.zip
+```
+
+## Principales Archivos de PowerShell
+
+### 1. Start-TSS.ps1
+Contiene la lógica para iniciar la recopilación de datos. Define los escenarios y los tipos de datos que se deben recopilar según el entorno especificado.
+
+### 2. Stop-TSS.ps1
+Implementa la lógica para detener la recopilación de datos, asegurándose de que todos los procesos en curso se finalicen correctamente.
+
+### 3. Get-TSSStatus.ps1
+Proporciona el estado actual de las operaciones de TSS, indicando qué datos se han recopilado y cualquier error que haya ocurrido.
+
+### 4. Export-TSSData.ps1
+Maneja la exportación y compresión de los datos recopilados para su análisis posterior.
+
+### Análisis de Archivos de PowerShell
+
+Para entender cómo funcionan estos scripts, aquí hay una breve descripción de cada uno:
+
+#### `Start-TSS.ps1`
+- **Propósito**: Inicia la recopilación de datos.
+- **Funcionalidad**: Define qué tipo de datos se van a recopilar según el escenario especificado (por ejemplo, SQLServer).
+- **Ejemplo**: Recopilar datos de procesos y exportarlos a un archivo CSV.
+
+#### `Stop-TSS.ps1`
+- **Propósito**: Detiene la recopilación de datos.
+- **Funcionalidad**: Finaliza cualquier proceso de recopilación en curso de manera ordenada.
+
+#### `Get-TSSStatus.ps1`
+- **Propósito**: Proporciona el estado actual de la recopilación.
+- **Funcionalidad**: Muestra información sobre qué datos se han recopilado y si ha habido errores.
+
+#### `Export-TSSData.ps1`
+- **Propósito**: Exporta los datos recopilados.
+- **Funcionalidad**: Comprime los datos recopilados y los prepara para su análisis posterior.
+
+## Ejecución en un Availability Group de SQL Server
+
+### Posibilidad de Ejecución
+TSS2 puede ejecutarse en un entorno de Availability Group de SQL Server, pero se deben considerar ciertos aspectos para evitar interferencias con el funcionamiento normal del grupo de disponibilidad.
+
+### Posibles Riesgos
+1. **Impacto en el Rendimiento**: La recopilación de datos intensiva puede consumir recursos significativos del sistema, lo que puede afectar el rendimiento del servidor SQL y, por ende, el Availability Group.
+2. **Interrupciones en la Replicación**: En algunos casos, la recopilación de datos puede provocar retrasos en la replicación o incluso errores si no se maneja adecuadamente.
+3. **Problemas de Conectividad**: La ejecución de scripts y la recopilación de datos puede temporalmente afectar la conectividad con los nodos del Availability Group.
+
+### Mitigación de Riesgos
+1. **Programar en Horas de Baja Carga**: Ejecutar TSS2 durante períodos de baja carga para minimizar el impacto en el rendimiento.
+2. **Monitoreo Activo**: Supervisar activamente el rendimiento del servidor y la replicación durante la ejecución de TSS2.
+3. **Pruebas Previas**: Realizar pruebas en un entorno de ensayo antes de implementar en producción para identificar posibles problemas.
+4. **Limitación de Escenarios**: Configurar TSS2 para que recopile solo los datos necesarios, reduciendo la carga en el sistema.
+
+## Instrucciones de Recopilación de Logs
+
+1. **Descargar la Utilidad TSS SDP**
+   - [Descargar Zip](http://aka.ms/getTSSv2)
+   - Extraer los archivos.
+   - Necesitas rol de administrador en la instancia de SQL para capturar los logs de SQL.
+
+2. **Preparación del Entorno**
+   - Navega al directorio donde extrajiste los archivos y copia el directorio.
+   - Lanza PowerShell (NO ISE) como Administrador.
+   - Cambia al directorio que copiaste (`cd <directorio>`).
+
+3. **Ejecución del Script TSS**
+   - Escribe `.\TSS.ps1 -SDP SQLbase -noPSR -AcceptEula` y presiona Enter.
+   - Escribe “y” cuando se te pregunte si es la primera vez y si deseas recopilar eventos de seguridad.
+   - No hagas clic en la ventana de PowerShell mientras la recopilación está en curso, ya que esto pausará la colección.
+
+4. **Finalización y Recopilación de Datos**
+   - Una vez completada la recopilación, los datos se guardarán en `C:\MS_DATA`.
+   - Navega a ese directorio, comprime los archivos y súbelos a nuestro espacio de trabajo en el enlace proporcionado.
+
+---
