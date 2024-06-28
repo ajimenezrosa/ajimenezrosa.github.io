@@ -3531,22 +3531,39 @@ ORDER BY qs.execution_count DESC;
 ~~~
 # 
 
-# 
 
-# Identifying SQL Server Disk Latency<a name="disklatency"></a>
+## Documentación sobre la Latencia de Discos y Cómo Manejarla en SQL Server<a name="disklatency"></a>
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqldiskiotrafficjam.jpg?format=jpg&name=large" alt="JuveR" width="800px">
+<img src="https://acf.geeknetic.es/imagenes/auto/23/11/10/6ik-micron-lanza-la-memoria-de-baja-latencia-y-velocidades-de-hasta-8.000-mhz-para-servidores-en-capacid.png?format=jpg&name=large" alt="JuveR" width="800px">
 
-#### When SQL Server is not as fast as users think it ought to be, how can you tell where the slowdown is? Where’s the performance bottleneck? Where’s the traffic jam? Is it waiting on CPU? Does it needs memory? What about the disks? Could SQL Server be slow because of disk latency? Could be. But how can we know for sure? Fortunately, we can ask SQL Server what it’s waiting on when it’s waiting for a resource.
+**Autor: Jose Alejandro Jimenez Rosa**
 
-#### There are a couple of easy ways to check for disk latency issues in SQL Server: using the sys.dm_io_virtual_file_stats DMV and using the dbatools.io Test-DbaDiskSpeed command. Let’s look at each.
+#### Introducción
 
-## Check disk latency using DMVs
+La latencia de discos es un aspecto crítico en la gestión del rendimiento de sistemas de almacenamiento, especialmente en servidores SQL. La latencia se refiere al tiempo que transcurre desde que se envía una solicitud de lectura o escritura al disco hasta que la operación se completa. Una alta latencia puede llevar a un rendimiento deficiente del sistema, afectando la productividad y la eficiencia operativa. Esta documentación explora en detalle qué es la latencia de discos, sus causas, cómo medirla y las estrategias para reducirla en el contexto de SQL Server.
 
-#### Way back in SQL Server 2005, Microsoft introduced the sys.dm_io_virtual_file_stats Dynamic Management View (DMV). This DMV reports disk read and write activities for data and log files.
+#### ¿Qué es la Latencia de Discos?
 
-#### For many years, I’ve used a query based on one from SQLSkills’ Paul Randal. I’ve simply added a column to help quickly categorize/interpret the latency values. This query can be very helpful when troubleshooting what you suspect to be a disk I/O bottleneck.
-# 
+La latencia de discos es el retraso entre una solicitud de E/S (Entrada/Salida) y la respuesta del disco. Se mide en milisegundos (ms) y puede verse influenciada por varios factores, incluyendo la velocidad del disco, la carga de trabajo, la interfaz de conexión y la configuración del sistema. La latencia es un componente esencial del tiempo de respuesta total del sistema, y su reducción es crucial para mejorar el rendimiento general.
+
+#### Causas de la Latencia de Discos
+
+1. **Velocidad del Disco**: Los discos duros (HDD) mecánicos tienden a tener mayor latencia en comparación con las unidades de estado sólido (SSD) debido a sus partes móviles.
+2. **Carga de Trabajo**: Una alta carga de trabajo puede aumentar la latencia debido a la cola de solicitudes de E/S.
+3. **Interfaz de Conexión**: La interfaz del disco (SATA, SAS, NVMe) puede afectar significativamente la latencia.
+4. **Configuración del Sistema**: La configuración del sistema operativo y del SQL Server también puede influir en la latencia.
+
+#### Cómo Medir la Latencia de Discos en SQL Server
+
+Existen varias formas de verificar problemas de latencia de discos en SQL Server, utilizando vistas de gestión dinámica (DMVs) y herramientas como `dbatools`.
+
+##### Uso de DMVs
+
+Desde SQL Server 2005, Microsoft introdujo la vista de gestión dinámica `sys.dm_io_virtual_file_stats`, que reporta actividades de lectura y escritura de discos para archivos de datos y de registros.
+
+##### Consulta para Medir Latencia
+
+A continuación, se presenta una consulta basada en el trabajo de Paul Randal de SQLSkills, con una columna adicional para categorizar rápidamente los valores de latencia.
 
 ~~~sql
 SELECT
@@ -3591,60 +3608,54 @@ FROM
    JOIN sys.master_files AS [mf]
    ON [vfs].[database_id] = [mf].[database_id]
       AND [vfs].[file_id] = [mf].[file_id]
--- WHERE [vfs].[file_id] = 2 -- log files
-ORDER BY [Latency] DESC
--- ORDER BY [ReadLatency] DESC
--- ORDER BY [WriteLatency] DESC;
+ORDER BY [Latency] DESC;
 GO
 ~~~
-# 
 
-#### When I run this query against a docker-based SQL Server 2017 instance, I receive the following results
+Esta consulta ayuda a interpretar rápidamente los resultados de latencia. Los valores de latencia se clasifican de la siguiente manera:
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/sqlserverdisklatencystats-dmv-1024x419.png?format=jpg&name=large" alt="JuveR" width="800px">
+| Latencia       | Descripción  |
+|----------------|--------------|
+| 0 a 1 ms       | Excelente    |
+| 2 a 5 ms       | Muy bueno    |
+| 6 a 10 ms      | Bueno        |
+| 11 a 20 ms     | Pobre        |
+| 21 a 100 ms    | Malo         |
+| 101 a 500 ms   | ¡Ay!         |
+| más de 500 ms  | ¡¡AY!!       |
 
+##### Uso de dbatools
 
-#### The Latency Desc column helps to interpret the results. Latency can be classified as shown in the following table. Of course, this is a rule of thumb and your needs may vary.
-|||
-|--------|-----------------|
-|0 to 1 ms|	Excellent     |
-|2 to 5 ms|	Very good     |
-|6 to 10 ms|	Good        |
-|11 to 20 ms|	Poor        |
-|21 to 100 ms|	Bad       |
-|101 to 500 ms|	Yikes!    |
-|more than 500 ms|	YIKES!!!|
-
-## Check disk latency using dbatools
-#### Fans of dbatools.io may already know that something similar to the query above is included as part of the Test-DbaDiskSpeed command.
-
-#### You can run the command as-is, only providing the instance and credentials to use. I typically add a few other options to format the output into a table and send it to a file that I can easily examine.
+`dbatools.io` ofrece una herramienta llamada `Test-DbaDiskSpeed`, que realiza pruebas de velocidad del disco y proporciona un informe detallado.
 
 ~~~cmd
 Test-DbaDiskSpeed -SqlInstance localhost -SqlCredential sa | Format-Table -Property Database, SizeGB, FileName, FileID, FileType, DiskLocation, Reads, AverageReadStall, ReadPerformance, Writes, AverageWriteStall, WritePerformance, 'Avg Overall Latency' | Out-String -Width 4096 |out-file c:\temp\DbaDiskSpeed.txt
 ~~~
 
-#### Running the PowerShell script on my docker-based SQL Server 2017 instance provides the following output file.
+Este comando ejecuta una prueba de velocidad de disco en la instancia de SQL Server especificada y genera un archivo de salida con los resultados.
 
-<img src="https://theserogroup.com/wp-content/uploads/2021/05/diskspeedoutputsqlserverdbatools-1024x354.png?format=jpg&name=large" alt="JuveR" width="800px">
+#### Estrategias para Reducir la Latencia de Discos
 
-## Let’s not ask SQL Server about disk latency
-#### Of course, there will be those who mistrust the results from either of these methods, because, well, of course SQL Server wouldn’t fess up to being the bottleneck. It’s obviously going to point the finger elsewhere.
+1. **Actualizar a SSDs**: Los discos de estado sólido ofrecen menor latencia en comparación con los HDDs tradicionales.
+2. **Optimizar la Configuración del Sistema**: Ajustar configuraciones del sistema operativo y del SQL Server para optimizar el rendimiento de E/S.
+3. **Distribuir la Carga de Trabajo**: Balancear la carga de trabajo entre varios discos para evitar cuellos de botella.
+4. **Monitorización Continua**: Utilizar herramientas y scripts para monitorear continuamente la latencia y tomar acciones proactivas.
 
-#### To address those claims, check out [Identify Disk I/O Performance Issues for Your SQL Server Using DiskSpd](https://theserogroup.com/sql-server-consulting/identify-disk-i-o-performance-issues-for-your-sql-server-using-diskspd/). That tool completely removes SQL Server from the discussion and objectively tests the disk I/O.
+#### Conclusión
 
-#### But for a quick sanity check, you can’t beat the sys.dm_io_virtual_file_stats DMV and the Test-DbaDiskSpeed command.
-
-#### Looking for other ways to diagnose or improve performance? Here are a few other posts that may help.
-
-   - [Should I Add Hardware Resources to My SQL Server? Do This First](https://theserogroup.com/sql-server/should-i-add-hardware-resources-to-my-sql-server-do-this-first/)
-   - [SQL Server Performance and Windows Power Plan](https://theserogroup.com/dba/sql-server-performance-and-windows-power-plan/)
-  - [How do Views Affect SQL Server Performance?](https://theserogroup.com/dba/how-do-views-affect-sql-server-performance/)
-  - [Is My SQL Server Configured Properly?](https://theserogroup.com/sql-server/is-my-sql-server-configured-properly/)
+La gestión de la latencia de discos es esencial para mantener un rendimiento óptimo en los servidores SQL. Medir y entender la latencia mediante DMVs y herramientas como `dbatools` permite a los administradores identificar cuellos de botella y aplicar estrategias para mejorar el rendimiento. Mantener una baja latencia asegura que el sistema responda de manera eficiente, mejorando así la productividad y la satisfacción del usuario final.
 
 
-#
 
+
+
+
+
+
+
+
+
+# 
 # SQL Server memory use by database and object<a name="disklatency2"></a>
 ## Problem
 #### For many people, the way that SQL Server uses memory can be a bit of an enigma. A large percentage of the memory your SQL Server instance utilizes is consumed by buffer pool (essentially, data). Without a lot of digging, it can be hard to tell which of your databases consume the most buffer pool memory, and even more so, which objects within those databases. This information can be quite useful, for example, if you are considering an application change to split your database across multiple servers, or trying to identify databases that are candidates for consolidation.
