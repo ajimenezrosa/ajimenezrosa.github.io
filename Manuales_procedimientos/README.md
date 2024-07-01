@@ -835,6 +835,9 @@ Al final de cada sección, se proporcionan puntos de verificación específicos 
 
 ## Configuración de Clúster y Listener<a name="custerlistener"></a>
 
+<img src="https://bairesdev.mo.cloudinary.net/blog/2023/10/What-is-SQL-Server.jpg?tx=w_1920,q_auto">
+
+
 Esta documentación describe los pasos para agregar nodos a los contenedores y configurar un clúster y un listener en un dominio.
 
 ### Pasos para Agregar Nodos a los Contenedores
