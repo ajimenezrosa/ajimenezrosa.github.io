@@ -67,6 +67,10 @@
 
 [Checklist de Verificación para Ambientes de Alta Disponibilidad](#checklistAmbienteAO)
 
+[Configuración de Clúster y Listener](#custerlistener)
+
+
+
 [Documentación de TSS2](#TSS2)
 
 # 
@@ -824,6 +828,76 @@ Al final de cada sección, se proporcionan puntos de verificación específicos 
   - Hacer clic en **Custom Size** y colocar los siguientes valores:
     - Initial Size (MB): `4096`
     - Maximum Size (MB): `16384` (***Nota: para nuestro caso, esto es un 75% del tamaño total del disco***).
+
+# 
+
+# 
+
+## Configuración de Clúster y Listener<a name="custerlistener"></a>
+
+Esta documentación describe los pasos para agregar nodos a los contenedores y configurar un clúster y un listener en un dominio.
+
+### Pasos para Agregar Nodos a los Contenedores
+
+1. **Identificar los Contenedores Existentes:**
+   - Los contenedores de ambiente incluyen AO2022, 2029, etc.
+   
+2. **Agregar Nodos a los Contenedores:**
+   - Determine los nodos que se agregarán a cada contenedor.
+   - Use los comandos específicos de su infraestructura para agregar los nodos a los contenedores pertinentes.
+
+### Crear el Clúster en el Dominio
+
+1. **Crear el Objeto Clúster:**
+   - Use la herramienta de administración de su dominio para crear un objeto clúster.
+   - Asegúrese de que el objeto clúster esté correctamente configurado y asociado al dominio.
+
+2. **Configurar el Listener:**
+   - Cree y configure el listener necesario para el clúster.
+   - Asegúrese de que el listener esté correctamente asociado al clúster creado.
+
+### Agregar el Grupo de Permisos de Failover Cluster
+
+1. **Agregar Clúster al Grupo de Permisos:**
+   - Una vez que el clúster esté creado, agréguelo al grupo de permisos de failover cluster.
+   - Asegúrese de que todos los nodos y recursos necesarios tengan los permisos adecuados para operar dentro del clúster.
+
+### Ejemplo de Código
+
+A continuación se muestra un ejemplo de cómo podría ser el código para realizar algunas de estas tareas en un script de PowerShell:
+
+```powershell
+# Crear el clúster
+New-Cluster -Name "NombreDelCluster" -Node "Nodo1","Nodo2","Nodo3" -StaticAddress "DirecciónIP"
+
+# Configurar el listener
+Add-ClusterResource -Name "NombreDelListener" -ResourceType "IP Address" -Cluster "NombreDelCluster"
+Set-ClusterParameter -Name Address -Value "DirecciónIPDelListener"
+
+# Agregar al grupo de permisos de failover cluster
+Add-ClusterGroup -Name "NombreDelGrupo" -Cluster "NombreDelCluster"
+Grant-ClusterAccess -User "NombreDelUsuario" -Permission FullControl
+```
+
+### Verificación y Pruebas
+
+1. **Verificar Configuración:**
+   - Asegúrese de que todos los nodos y recursos estén configurados correctamente y sean visibles en el clúster.
+   
+2. **Pruebas de Failover:**
+   - Realice pruebas de failover para asegurar que los recursos pueden cambiar de nodo sin problemas.
+   - Verifique que el listener esté funcionando correctamente y respondiendo a las solicitudes.
+
+### Notas Adicionales
+
+- Es importante revisar la documentación específica de su infraestructura y software para comandos y pasos específicos.
+- Asegúrese de tener permisos administrativos adecuados para realizar estas configuraciones.
+- Mantenga un registro de todos los cambios realizados para futuras referencias y auditorías.
+
+---
+
+Esta documentación debe incluirse en el archivo `README.md` de su repositorio de GitHub, o en un archivo de documentación específico si es necesario.
+
 
 
 # 
