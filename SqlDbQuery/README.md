@@ -77,11 +77,13 @@
  - 6.7.2 [Consideraciones acerca de la base de datos](#consibasedatos)
  - 6.8 [Eliminar todos los indices que no fueron creados ONLNE =ON,y Crearlos nuevamente de forma ONLINE=ON](#6.8)
  - [Listado de los indices que tiene una Base de Datos]($6.9)
-7. [Cuanta data puedo perder](#dataperder)
- 
+ - 6.9. [Missing Index Script](#missinindex")
+ - 6.10 [Procedimiento MeasureIndexImprovement ](#MeasureIndexImprovement) 
+
 # Determinacion de Desastres Recovery, Cuanta data Puedo Perder 
 #
 7. [Cuanta data puedo perder](#dataperder)
+
 
 # 
 # Backup de Sql server Consultas de Verificacion.
@@ -2003,7 +2005,7 @@ ORDER BY
 
 # 
 ### La responsabilidad más importante de un Administrador de bases de datos es el poder garantizar que las bases de datos trabajen de una forma óptima. La manera más eficiente de hacerlo es por medio de índices. Los índices en SQL son uno de los recursos más efectivos a la hora de obtener una ganancia en el rendimiento. Sin embargo, lo que sucede con los índices es que estos se deterioran con el tiempo.
-### -- Missing Index Script
+### -- Missing Index Script<a name="missinindex"></a>
 # 
 ~~~sql
 -- Missing Index Script
@@ -2112,6 +2114,152 @@ WHERE Condición;
 
 
 # 
+
+# Procedimiento MeasureIndexImprovement<a name="MeasureIndexImprovement"></a>
+
+## Descripción
+El procedimiento almacenado `MeasureIndexImprovement` mide la mejora en el uso de índices en una base de datos de SQL Server entre dos fechas especificadas. Recopila datos sobre el uso de índices al inicio y al final del período dado y compara los resultados para mostrar la mejora en búsquedas (`seeks`), escaneos (`scans`), consultas (`lookups`) y actualizaciones (`updates`) para cada índice.
+
+## Parámetros
+- `@StartDate DATETIME`: La fecha de inicio para medir el uso de índices.
+- `@EndDate DATETIME`: La fecha de fin para medir el uso de índices.
+
+## Funcionalidad
+1. **Recopilación de Datos Iniciales**: Recopila estadísticas de uso de índices en la fecha de inicio y las almacena en una tabla temporal.
+2. **Recopilación de Datos Finales**: Recopila estadísticas de uso de índices en la fecha de fin y las almacena en otra tabla temporal.
+3. **Comparación**: Compara los datos iniciales y finales para calcular la mejora en búsquedas, escaneos, consultas y actualizaciones para cada índice.
+4. **Salida**: Muestra los resultados de la comparación, mostrando el nombre de la base de datos, nombre de la tabla, ID del índice, nombre del índice, estadísticas de uso iniciales, estadísticas de uso finales y la mejora en cada estadística.
+
+## Código SQL
+
+~~~sql
+CREATE PROCEDURE MeasureIndexImprovement
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    -- Crea una tabla temporal para almacenar el uso inicial de los índices
+    CREATE TABLE #InitialIndexUsageStats (
+        DatabaseName NVARCHAR(128),
+        TableName NVARCHAR(128),
+        IndexID INT,
+        IndexName NVARCHAR(128),
+        UserSeeks BIGINT,
+        UserScans BIGINT,
+        UserLookups BIGINT,
+        UserUpdates BIGINT
+    );
+
+    -- Recopila datos sobre el uso de índices en la fecha de inicio
+    INSERT INTO #InitialIndexUsageStats
+    SELECT 
+        DB_NAME(s.database_id) AS DatabaseName,
+        OBJECT_NAME(s.object_id) AS TableName,
+        s.index_id AS IndexID,
+        i.name AS IndexName,
+        s.user_seeks AS UserSeeks,
+        s.user_scans AS UserScans,
+        s.user_lookups AS UserLookups,
+        s.user_updates AS UserUpdates
+    FROM 
+        sys.dm_db_index_usage_stats s
+    INNER JOIN 
+        sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
+    WHERE 
+        s.database_id = DB_ID() 
+        AND s.last_user_seek >= @StartDate
+        AND s.last_user_seek < DATEADD(day, 1, @EndDate);
+
+    -- Crea una tabla temporal para almacenar el uso final de los índices
+    CREATE TABLE #FinalIndexUsageStats (
+        DatabaseName NVARCHAR(128),
+        TableName NVARCHAR(128),
+        IndexID INT,
+        IndexName NVARCHAR(128),
+        UserSeeks BIGINT,
+        UserScans BIGINT,
+        UserLookups BIGINT,
+        UserUpdates BIGINT
+    );
+
+    -- Recopila datos sobre el uso de índices en la fecha de fin
+    INSERT INTO #FinalIndexUsageStats
+    SELECT 
+        DB_NAME(s.database_id) AS DatabaseName,
+        OBJECT_NAME(s.object_id) AS TableName,
+        s.index_id AS IndexID,
+        i.name AS IndexName,
+        s.user_seeks AS UserSeeks,
+        s.user_scans AS UserScans,
+        s.user_lookups AS UserLookups,
+        s.user_updates AS UserUpdates
+    FROM 
+        sys.dm_db_index_usage_stats s
+    INNER JOIN 
+        sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
+    WHERE 
+        s.database_id = DB_ID() 
+        AND s.last_user_seek >= @EndDate
+        AND s.last_user_seek < DATEADD(day, 1, @EndDate);
+
+    -- Compara los datos antes y después de los cambios
+    SELECT 
+        COALESCE(initial.DatabaseName, final.DatabaseName) AS DatabaseName,
+        COALESCE(initial.TableName, final.TableName) AS TableName,
+        COALESCE(initial.IndexID, final.IndexID) AS IndexID,
+        COALESCE(initial.IndexName, final.IndexName) AS IndexName,
+        ISNULL(initial.UserSeeks, 0) AS InitialUserSeeks,
+        ISNULL(final.UserSeeks, 0) AS FinalUserSeeks,
+        (ISNULL(final.UserSeeks, 0) - ISNULL(initial.UserSeeks, 0)) AS ImprovementInSeeks,
+        ISNULL(initial.UserScans, 0) AS InitialUserScans,
+        ISNULL(final.UserScans, 0) AS FinalUserScans,
+        (ISNULL(final.UserScans, 0) - ISNULL(initial.UserScans, 0)) AS ImprovementInScans,
+        ISNULL(initial.UserLookups, 0) AS InitialUserLookups,
+        ISNULL(final.UserLookups, 0) AS FinalUserLookups,
+        (ISNULL(final.UserLookups, 0) - ISNULL(initial.UserLookups, 0)) AS ImprovementInLookups,
+        ISNULL(initial.UserUpdates, 0) AS InitialUserUpdates,
+        ISNULL(final.UserUpdates, 0) AS FinalUserUpdates,
+        (ISNULL(final.UserUpdates, 0) - ISNULL(initial.UserUpdates, 0)) AS ImprovementInUpdates
+    FROM 
+        #InitialIndexUsageStats initial
+    FULL OUTER JOIN 
+        #FinalIndexUsageStats final
+    ON 
+        initial.DatabaseName = final.DatabaseName
+        AND initial.TableName = final.TableName
+        AND initial.IndexID = final.IndexID
+    ORDER BY 
+        COALESCE(initial.TableName, final.TableName), 
+        COALESCE(initial.IndexID, final.IndexID);
+
+    -- Limpia las tablas temporales
+    DROP TABLE #InitialIndexUsageStats;
+    DROP TABLE #FinalIndexUsageStats;
+END;
+GO
+
+-- Ejecuta el procedimiento almacenado con las fechas deseadas
+EXEC MeasureIndexImprovement '2024-05-01', '2024-06-28';
+~~~
+
+## Cómo Usarlo
+1. Crea el procedimiento almacenado en tu base de datos de SQL Server ejecutando el código SQL proporcionado.
+2. Ejecuta el procedimiento almacenado con las fechas de inicio y fin deseadas para medir la mejora en el uso de índices:
+   ~~~sql
+   EXEC MeasureIndexImprovement 'YYYY-MM-DD', 'YYYY-MM-DD';
+   ~~~
+   Reemplaza `'YYYY-MM-DD'` con las fechas de inicio y fin que desees.
+
+## Ejemplo de Ejecución
+Para medir la mejora en el uso de índices entre el 1 de mayo de 2024 y el 28 de junio de 2024:
+~~~sql
+EXEC MeasureIndexImprovement '2024-05-01', '2024-06-28';
+~~~
+
+Esto mostrará los resultados de la comparación, mostrando las estadísticas de uso iniciales y finales de los índices y la mejora en búsquedas, escaneos, consultas y actualizaciones para cada índice.
+
+
+
 
 
 # Indices no Utilizados<a name="indicesnoutilizados"></a>
