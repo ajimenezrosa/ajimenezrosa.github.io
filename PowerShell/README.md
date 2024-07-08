@@ -38,7 +38,7 @@
 
 - 4 [Leer todos los programas instalados en una PC](#4)
 - 5 [Generador de Informe de Cores y Discos de Servidores en PowerShell](#5)
-
+- [Script de Reporte de Trabajos SQL](#6)
 # 
 
 
@@ -540,6 +540,176 @@ Write-Host "Los servidores encontrados se han guardado en Encontrados_$fechaHora
 
 
 
+
+# 
+---
+
+# Script de Reporte de Trabajos SQL<a name="6"></a>
+
+
+<img src="https://i.octopus.com/blog/2019-11/sql-server-powershell/sql-server-powershell-examples.png?w=1366&h=720&crop=1?format=jpg&name=large" alt="JuveR" width="800px">
+
+
+
+## Descripción
+
+Este script de PowerShell se conecta a una lista de servidores SQL, ejecuta una consulta SQL especificada y genera informes HTML. El informe principal lista detalles sobre los trabajos SQL en cada servidor, mientras que un informe secundario lista cualquier servidor al que no se pudo acceder.
+
+## Características
+
+- Se conecta a múltiples servidores SQL.
+- Ejecuta una consulta SQL personalizada en cada servidor.
+- Genera un informe HTML con detalles de los trabajos SQL.
+- Genera un informe HTML que lista los servidores a los que no se pudo acceder.
+
+## Requisitos
+
+- PowerShell
+- Módulo de SQL Server para PowerShell (`SqlServer`)
+
+## Uso
+
+1. **Clonar el repositorio:**
+   ```sh
+   git clone https://github.com/ajimenezrosa/reporte-trabajos-sql.git
+   cd reporte-trabajos-sql
+   ```
+
+2. **Definir la lista de servidores:**
+   Edita el array `$servers` en el script para incluir los nombres de los servidores SQL que deseas consultar.
+
+3. **Ejecutar el script:**
+   Ejecuta el script en PowerShell:
+   ```sh
+   .\Generar-ReporteTrabajosSQL.ps1
+   ```
+
+4. **Ver los informes:**
+   - `ReporteTrabajosSQL.html`: Contiene detalles de los trabajos SQL.
+   - `ServidoresNoEncontrados.html`: Contiene una lista de los servidores a los que no se pudo acceder.
+
+## Script
+
+```powershell
+# Define la lista de servidores
+$servers = @("Servidor1", "Servidor2", "Servidor3")
+
+# Define la consulta SQL
+$sqlQuery = @"
+SELECT DISTINCT
+    @@SERVERNAME AS Servidor,
+    [sJOB].[name] AS [JobName],
+    description = REPLACE(REPLACE(REPLACE([sJOB].description, CHAR(9), ''), CHAR(10), ''), CHAR(13), ''),
+    [dbo].[fn_sysdac_get_username](sJOB.owner_sid) AS [JobOwner],
+    CASE [sJOB].[enabled]
+        WHEN 1 THEN 'Yes'
+        WHEN 0 THEN 'No'
+    END AS [IsEnabled],
+    CASE
+        WHEN [sSCH].[schedule_uid] IS NULL THEN 'No'
+        ELSE 'Yes'
+    END AS [IsScheduled],
+    CASE [sSCH].[freq_type]
+        WHEN 1 THEN 'One Time'
+        WHEN 4 THEN 'Daily'
+        WHEN 8 THEN 'Weekly'
+        WHEN 16 THEN 'Monthly'
+        WHEN 32 THEN 'Monthly - Relative to Frequency Interval'
+        WHEN 64 THEN 'Start automatically when SQL Server Agent starts'
+        WHEN 128 THEN 'Start whenever the CPUs become idle'
+    END AS [Occurrence],
+    CASE [sSCH].[freq_type]
+        WHEN 4 THEN 'Occurs every ' + CAST([freq_interval] AS VARCHAR(3)) + ' day(s)'
+        WHEN 8 THEN 'Occurs every ' + CAST([freq_recurrence_factor] AS VARCHAR(3)) + ' week(s) on '
+            + CASE WHEN [sSCH].[freq_interval] & 1 = 1 THEN 'Sunday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 2 = 2 THEN ', Monday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 4 = 4 THEN ', Tuesday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 8 = 8 THEN ', Wednesday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 16 = 16 THEN ', Thursday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 32 = 32 THEN ', Friday' ELSE '' END
+            + CASE WHEN [sSCH].[freq_interval] & 64 = 64 THEN ', Saturday' ELSE '' END
+        WHEN 16 THEN 'Occurs on Day ' + CAST([freq_interval] AS VARCHAR(3)) + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+        WHEN 32 THEN 'Occurs on '
+            + CASE [sSCH].[freq_relative_interval]
+                WHEN 1 THEN 'First'
+                WHEN 2 THEN 'Second'
+                WHEN 4 THEN 'Third'
+                WHEN 8 THEN 'Fourth'
+                WHEN 16 THEN 'Last'
+            END
+            + ' '
+            + CASE [sSCH].[freq_interval]
+                WHEN 1 THEN 'Sunday'
+                WHEN 2 THEN 'Monday'
+                WHEN 3 THEN 'Tuesday'
+                WHEN 4 THEN 'Wednesday'
+                WHEN 5 THEN 'Thursday'
+                WHEN 6 THEN 'Friday'
+                WHEN 7 THEN 'Saturday'
+                WHEN 8 THEN 'Day'
+                WHEN 9 THEN 'Weekday'
+                WHEN 10 THEN 'Weekend day'
+            END
+            + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+    END AS [Recurrence],
+    sSCH.active_start_time
+FROM
+    [msdb].[dbo].[sysjobsteps] AS [sJSTP]
+    INNER JOIN [msdb].[dbo].[sysjobs] AS [sJOB] ON [sJSTP].[job_id] = [sJOB].[job_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOSSTP] ON [sJSTP].[job_id] = [sOSSTP].[job_id] AND [sJSTP].[on_success_step_id] = [sOSSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOFSTP] ON [sJSTP].[job_id] = [sOFSTP].[job_id] AND [sJSTP].[on_fail_step_id] = [sOFSTP].[step_id]
+    LEFT JOIN [msdb].[dbo].[sysproxies] AS [sPROX] ON [sJSTP].[proxy_id] = [sPROX].[proxy_id]
+    LEFT JOIN [msdb].[dbo].[syscategories] AS [sCAT] ON [sJOB].[category_id] = [sCAT].[category_id]
+    LEFT JOIN [msdb].[sys].[database_principals] AS [sDBP] ON [sJOB].[owner_sid] = [sDBP].[sid]
+    LEFT JOIN [msdb].[dbo].[sysjobschedules] AS [sJOBSCH] ON [sJOB].[job_id] = [sJOBSCH].[job_id]
+    LEFT JOIN [msdb].[dbo].[sysschedules] AS [sSCH] ON [sJOBSCH].[schedule_id] = [sSCH].[schedule_id]
+ORDER BY
+    [JobName];
+"@
+
+# Inicializa los arrays para almacenar resultados y errores
+$results = @()
+$notFound = @()
+
+# Recorre cada servidor y ejecuta la consulta SQL
+foreach ($server in $servers) {
+    try {
+        # Construye la cadena de conexión
+        $connectionString = "Server=$server;Database=msdb;Integrated Security=True;"
+
+        # Ejecuta la consulta SQL y almacena el resultado
+        $data = Invoke-Sqlcmd -Query $sqlQuery -ConnectionString $connectionString
+        if ($data) {
+            $results += $data
+        } else {
+            $notFound += $server
+        }
+    } catch {
+        # Si hay un error, registra el servidor en la lista de no encontrados
+        $notFound += $server
+    }
+}
+
+# Genera la tabla HTML para los resultados
+if ($results.Count -gt 0) {
+    $html = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -Title "Reporte de Trabajos SQL"
+    $html | Out-File "ReporteTrabajosSQL.html"
+}
+
+# Genera la tabla HTML para los servidores no encontrados
+if ($notFound.Count -gt 0) {
+    $htmlNotFound = $notFound | ConvertTo-Html -Title "Servidores No Encontrados"
+    $htmlNotFound | Out-File "ServidoresNoEncontrados.html"
+}
+```
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+Asegúrate de ajustar el archivo `LICENSE` si necesitas especificar una licencia diferente. También puedes agregar más detalles específicos sobre la instalación y la configuración en el archivo `README.md` según sea necesario.
 
 
 
