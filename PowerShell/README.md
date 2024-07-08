@@ -737,9 +737,7 @@ if ($results.Count -gt 0) {
 "@
     $footer = "</body></html>"
 
-    $html
-
- = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -PreContent $header -PostContent $footer
+    $html = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -PreContent $header -PostContent $footer
     $html | Out-File ("C:\powershell sql\Encontrados\ReporteTrabajosSQL_" + $timestamp + ".html")
 }
 
@@ -771,6 +769,7 @@ if ($notFound.Count -gt 0) {
     $htmlNotFound = $headerNotFound + ($rowsNotFound -join "") + $footerNotFound
     $htmlNotFound | Out-File ("C:\powershell sql\NoEncontrados\ServidoresNoEncontrados_" + $timestamp + ".html")
 }
+
 ~~~
 
 
