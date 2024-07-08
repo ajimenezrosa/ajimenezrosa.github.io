@@ -550,6 +550,11 @@ Write-Host "Los servidores encontrados se han guardado en Encontrados_$fechaHora
 <img src="https://i.octopus.com/blog/2019-11/sql-server-powershell/sql-server-powershell-examples.png?w=1366&h=720&crop=1?format=jpg&name=large" alt="JuveR" width="800px">
 
 
+Claro, aquí tienes la documentación en español para que puedas colocar este script en un documento de GitHub:
+
+---
+
+# Script de Reporte de Trabajos SQL
 
 ## Descripción
 
@@ -561,11 +566,13 @@ Este script de PowerShell se conecta a una lista de servidores SQL, ejecuta una 
 - Ejecuta una consulta SQL personalizada en cada servidor.
 - Genera un informe HTML con detalles de los trabajos SQL.
 - Genera un informe HTML que lista los servidores a los que no se pudo acceder.
+- Imprime en consola si el servidor fue encontrado o no.
 
 ## Requisitos
 
 - PowerShell
 - Módulo de SQL Server para PowerShell (`SqlServer`)
+- Archivo `servidores.txt` con la lista de servidores (uno por línea).
 
 ## Uso
 
@@ -575,24 +582,29 @@ Este script de PowerShell se conecta a una lista de servidores SQL, ejecuta una 
    cd reporte-trabajos-sql
    ```
 
-2. **Definir la lista de servidores:**
-   Edita el array `$servers` en el script para incluir los nombres de los servidores SQL que deseas consultar.
+2. **Crear el archivo de servidores:**
+   Crea un archivo `servidores.txt` en el mismo directorio del script, con el siguiente formato (un servidor por línea):
+   ```
+   Servidor1
+   Servidor2
+   Servidor3
+   ```
 
 3. **Ejecutar el script:**
    Ejecuta el script en PowerShell:
    ```sh
-   .\Generar-ReporteTrabajosSQL.ps1
+   .\PowerShellJobsSql.ps1
    ```
 
 4. **Ver los informes:**
-   - `ReporteTrabajosSQL.html`: Contiene detalles de los trabajos SQL.
-   - `ServidoresNoEncontrados.html`: Contiene una lista de los servidores a los que no se pudo acceder.
+   - Carpeta `Encontrados`: Contiene los informes HTML con detalles de los trabajos SQL de los servidores encontrados.
+   - Carpeta `NoEncontrados`: Contiene un informe HTML con la lista de servidores a los que no se pudo acceder.
 
 ## Script
 
-```powershell
-# Define la lista de servidores
-$servers = @("Servidor1", "Servidor2", "Servidor3")
+~~~sql
+# Leer la lista de servidores desde el archivo servidores.txt
+$servers = Get-Content -Path "C:\powershell sql\servidores.txt"
 
 # Define la consulta SQL
 $sqlQuery = @"
@@ -681,35 +693,85 @@ foreach ($server in $servers) {
         $data = Invoke-Sqlcmd -Query $sqlQuery -ConnectionString $connectionString
         if ($data) {
             $results += $data
+            Write-Host ($server + ": Encontrado")
         } else {
             $notFound += $server
+            Write-Host ($server + ": No Encontrado")
         }
     } catch {
         # Si hay un error, registra el servidor en la lista de no encontrados
         $notFound += $server
+        Write-Host ($server + ": No Encontrado")
     }
 }
 
+# Crear carpetas si no existen
+if (-not (Test-Path -Path "C:\powershell sql\Encontrados")) {
+    New-Item -ItemType Directory -Path "C:\powershell sql\Encontrados"
+}
+if (-not (Test-Path -Path "C:\powershell sql\NoEncontrados")) {
+    New-Item -ItemType Directory -Path "C:\powershell sql\NoEncontrados"
+}
+
+# Generar timestamp para los nombres de archivo
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+
 # Genera la tabla HTML para los resultados
 if ($results.Count -gt 0) {
-    $html = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -Title "Reporte de Trabajos SQL"
-    $html | Out-File "ReporteTrabajosSQL.html"
+    $header = @"
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1, h2 { text-align: center; }
+        h1 { color: #00008B; }
+        h2 { color: #000000; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Banco Popular Dominicano</h1>
+    <h2>Extracción de jobs de múltiples servidores SQL Server vía PowerShell</h2>
+"@
+    $footer = "</body></html>"
+
+    $html
+
+ = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -PreContent $header -PostContent $footer
+    $html | Out-File ("C:\powershell sql\Encontrados\ReporteTrabajosSQL_" + $timestamp + ".html")
 }
 
 # Genera la tabla HTML para los servidores no encontrados
 if ($notFound.Count -gt 0) {
-    $htmlNotFound = $notFound | ConvertTo-Html -Title "Servidores No Encontrados"
-    $htmlNotFound | Out-File "ServidoresNoEncontrados.html"
+    $headerNotFound = @"
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1, h2 { text-align: center; }
+        h1 { color: #00008B; }
+        h2 { color: #000000; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Banco Popular Dominicano</h1>
+    <h2>Servidores No Encontrados</h2>
+    <table>
+        <tr><th>Servidor</th></tr>
+"@
+
+    $footerNotFound = "</table></body></html>"
+
+    $rowsNotFound = $notFound | ForEach-Object { "<tr><td>$_</td></tr>" }
+    $htmlNotFound = $headerNotFound + ($rowsNotFound -join "") + $footerNotFound
+    $htmlNotFound | Out-File ("C:\powershell sql\NoEncontrados\ServidoresNoEncontrados_" + $timestamp + ".html")
 }
-```
-
-## Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-Asegúrate de ajustar el archivo `LICENSE` si necesitas especificar una licencia diferente. También puedes agregar más detalles específicos sobre la instalación y la configuración en el archivo `README.md` según sea necesario.
+~~~
 
 
 
