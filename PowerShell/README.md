@@ -603,173 +603,361 @@ Este script de PowerShell se conecta a una lista de servidores SQL, ejecuta una 
 ## Script
 
 ~~~sql
+ 
+
+#=======================================================================================================================#
+
+# Códigos creados para extraer Jobs de servidores SQL para control M.---------------------------------------------------#
+
+# Este código fue realizado en base a un código SQL que extrae datos de los servidores, pero debe ser ejecutado --------#
+
+# servidor por servidor. Esto dificulta la tarea cuando los servidores pasan de un número X. Cuanto mayor sea el número-#
+
+# de servidores, mayor será la cantidad de trabajo y tiempo invertido.--------------------------------------------------#
+
+#    -------------------------------------------------------------------------------------------------------------------#
+
+# Author:  Jose Alejandro Jimenez Rosa----------------------------------------------------------------------------------#
+
+# ----------------------------------------------------------------------------------------------------------------------#
+
+#=======================================================================================================================#
+
+ 
+
+ 
+
 # Leer la lista de servidores desde el archivo servidores.txt
+
 $servers = Get-Content -Path "C:\powershell sql\servidores.txt"
 
+ 
+
 # Define la consulta SQL
+
 $sqlQuery = @"
+
 SELECT DISTINCT
+
     @@SERVERNAME AS Servidor,
+
     [sJOB].[name] AS [JobName],
+
     description = REPLACE(REPLACE(REPLACE([sJOB].description, CHAR(9), ''), CHAR(10), ''), CHAR(13), ''),
+
     [dbo].[fn_sysdac_get_username](sJOB.owner_sid) AS [JobOwner],
+
     CASE [sJOB].[enabled]
+
         WHEN 1 THEN 'Yes'
+
         WHEN 0 THEN 'No'
+
     END AS [IsEnabled],
+
     CASE
+
         WHEN [sSCH].[schedule_uid] IS NULL THEN 'No'
+
         ELSE 'Yes'
+
     END AS [IsScheduled],
+
     CASE [sSCH].[freq_type]
+
         WHEN 1 THEN 'One Time'
+
         WHEN 4 THEN 'Daily'
+
         WHEN 8 THEN 'Weekly'
+
         WHEN 16 THEN 'Monthly'
+
         WHEN 32 THEN 'Monthly - Relative to Frequency Interval'
+
         WHEN 64 THEN 'Start automatically when SQL Server Agent starts'
+
         WHEN 128 THEN 'Start whenever the CPUs become idle'
+
     END AS [Occurrence],
+
     CASE [sSCH].[freq_type]
+
         WHEN 4 THEN 'Occurs every ' + CAST([freq_interval] AS VARCHAR(3)) + ' day(s)'
+
         WHEN 8 THEN 'Occurs every ' + CAST([freq_recurrence_factor] AS VARCHAR(3)) + ' week(s) on '
+
             + CASE WHEN [sSCH].[freq_interval] & 1 = 1 THEN 'Sunday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 2 = 2 THEN ', Monday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 4 = 4 THEN ', Tuesday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 8 = 8 THEN ', Wednesday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 16 = 16 THEN ', Thursday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 32 = 32 THEN ', Friday' ELSE '' END
+
             + CASE WHEN [sSCH].[freq_interval] & 64 = 64 THEN ', Saturday' ELSE '' END
+
         WHEN 16 THEN 'Occurs on Day ' + CAST([freq_interval] AS VARCHAR(3)) + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+
         WHEN 32 THEN 'Occurs on '
+
             + CASE [sSCH].[freq_relative_interval]
+
                 WHEN 1 THEN 'First'
+
                 WHEN 2 THEN 'Second'
+
                 WHEN 4 THEN 'Third'
+
                 WHEN 8 THEN 'Fourth'
+
                 WHEN 16 THEN 'Last'
+
             END
+
             + ' '
+
             + CASE [sSCH].[freq_interval]
+
                 WHEN 1 THEN 'Sunday'
+
                 WHEN 2 THEN 'Monday'
+
                 WHEN 3 THEN 'Tuesday'
+
                 WHEN 4 THEN 'Wednesday'
+
                 WHEN 5 THEN 'Thursday'
+
                 WHEN 6 THEN 'Friday'
+
                 WHEN 7 THEN 'Saturday'
+
                 WHEN 8 THEN 'Day'
+
                 WHEN 9 THEN 'Weekday'
+
                 WHEN 10 THEN 'Weekend day'
+
             END
+
             + ' of every ' + CAST([sSCH].[freq_recurrence_factor] AS VARCHAR(3)) + ' month(s)'
+
     END AS [Recurrence],
+
     sSCH.active_start_time
+
 FROM
+
     [msdb].[dbo].[sysjobsteps] AS [sJSTP]
+
     INNER JOIN [msdb].[dbo].[sysjobs] AS [sJOB] ON [sJSTP].[job_id] = [sJOB].[job_id]
+
     LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOSSTP] ON [sJSTP].[job_id] = [sOSSTP].[job_id] AND [sJSTP].[on_success_step_id] = [sOSSTP].[step_id]
+
     LEFT JOIN [msdb].[dbo].[sysjobsteps] AS [sOFSTP] ON [sJSTP].[job_id] = [sOFSTP].[job_id] AND [sJSTP].[on_fail_step_id] = [sOFSTP].[step_id]
+
     LEFT JOIN [msdb].[dbo].[sysproxies] AS [sPROX] ON [sJSTP].[proxy_id] = [sPROX].[proxy_id]
+
     LEFT JOIN [msdb].[dbo].[syscategories] AS [sCAT] ON [sJOB].[category_id] = [sCAT].[category_id]
+
     LEFT JOIN [msdb].[sys].[database_principals] AS [sDBP] ON [sJOB].[owner_sid] = [sDBP].[sid]
+
     LEFT JOIN [msdb].[dbo].[sysjobschedules] AS [sJOBSCH] ON [sJOB].[job_id] = [sJOBSCH].[job_id]
+
     LEFT JOIN [msdb].[dbo].[sysschedules] AS [sSCH] ON [sJOBSCH].[schedule_id] = [sSCH].[schedule_id]
+
 ORDER BY
+
     [JobName];
+
 "@
+
+ 
 
 # Inicializa los arrays para almacenar resultados y errores
+
 $results = @()
+
 $notFound = @()
 
+ 
+
 # Recorre cada servidor y ejecuta la consulta SQL
+
 foreach ($server in $servers) {
+
     try {
+
         # Construye la cadena de conexión
+
         $connectionString = "Server=$server;Database=msdb;Integrated Security=True;"
 
+ 
+
         # Ejecuta la consulta SQL y almacena el resultado
+
         $data = Invoke-Sqlcmd -Query $sqlQuery -ConnectionString $connectionString
+
         if ($data) {
+
             $results += $data
+
             Write-Host ($server + ": Encontrado")
+
         } else {
+
             $notFound += $server
+
             Write-Host ($server + ": No Encontrado")
+
         }
+
     } catch {
+
         # Si hay un error, registra el servidor en la lista de no encontrados
+
         $notFound += $server
+
         Write-Host ($server + ": No Encontrado")
+
     }
+
 }
+
+ 
 
 # Crear carpetas si no existen
+
 if (-not (Test-Path -Path "C:\powershell sql\Encontrados")) {
+
     New-Item -ItemType Directory -Path "C:\powershell sql\Encontrados"
+
 }
+
 if (-not (Test-Path -Path "C:\powershell sql\NoEncontrados")) {
+
     New-Item -ItemType Directory -Path "C:\powershell sql\NoEncontrados"
+
 }
+
+ 
 
 # Generar timestamp para los nombres de archivo
+
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 
+ 
+
 # Genera la tabla HTML para los resultados
+
 if ($results.Count -gt 0) {
+
     $header = @"
+
 <html>
+
 <head>
+
     <style>
+
         body { font-family: Arial, sans-serif; }
+
         h1, h2 { text-align: center; }
+
         h1 { color: #00008B; }
+
         h2 { color: #000000; }
+
         table { width: 100%; border-collapse: collapse; }
+
         th, td { border: 1px solid black; padding: 8px; text-align: left; }
+
         th { background-color: #f2f2f2; }
+
     </style>
+
 </head>
+
 <body>
+
     <h1>Banco Popular Dominicano</h1>
+
     <h2>Extracción de jobs de múltiples servidores SQL Server vía PowerShell</h2>
+
 "@
+
     $footer = "</body></html>"
 
+ 
+
     $html = $results | ConvertTo-Html -Property Servidor, JobName, Description, JobOwner, IsEnabled, IsScheduled, Occurrence, Recurrence, active_start_time -PreContent $header -PostContent $footer
+
     $html | Out-File ("C:\powershell sql\Encontrados\ReporteTrabajosSQL_" + $timestamp + ".html")
+
 }
 
+ 
+
 # Genera la tabla HTML para los servidores no encontrados
+
 if ($notFound.Count -gt 0) {
+
     $headerNotFound = @"
+
 <html>
+
 <head>
+
     <style>
+
         body { font-family: Arial, sans-serif; }
+
         h1, h2 { text-align: center; }
+
         h1 { color: #00008B; }
+
         h2 { color: #000000; }
+
         table { width: 100%; border-collapse: collapse; }
+
         th, td { border: 1px solid black; padding: 8px; text-align: left; }
+
         th { background-color: #f2f2f2; }
+
     </style>
+
 </head>
+
 <body>
+
     <h1>Banco Popular Dominicano</h1>
+
     <h2>Servidores No Encontrados</h2>
+
     <table>
+
         <tr><th>Servidor</th></tr>
+
 "@
+
+ 
 
     $footerNotFound = "</table></body></html>"
 
-    $rowsNotFound = $notFound | ForEach-Object { "<tr><td>$_</td></tr>" }
-    $htmlNotFound = $headerNotFound + ($rowsNotFound -join "") + $footerNotFound
-    $htmlNotFound | Out-File ("C:\powershell sql\NoEncontrados\ServidoresNoEncontrados_" + $timestamp + ".html")
-}
+ 
 
+    $rowsNotFound = $notFound | ForEach-Object { "<tr><td>$_</td></tr>" }
+
+    $htmlNotFound = $headerNotFound + ($rowsNotFound -join "") + $footerNotFound
+
+    $htmlNotFound | Out-File ("C:\powershell sql\NoEncontrados\ServidoresNoEncontrados_" + $timestamp + ".html")
+
+}
 ~~~
 
 
