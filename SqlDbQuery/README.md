@@ -246,6 +246,10 @@
 ## Querys para Actividades de Depuracion de DB's 
  - [Query de listado de Tablas con su Tamano y su cantidad de registros](#listadotablas)
 
+# Querys verficacion y modificaciones de Tempdb
+
+  [Monitoreo de TempDB](#tempdb1)
+
 
 
 # Querys de Personal de Microsoft
@@ -13508,7 +13512,104 @@ Este proyecto está bajo la licencia MIT. Para más detalles, consulta el archiv
 
 ¡Espero que esta documentación sea útil para tu repositorio de GitHub! Si necesitas más detalles o alguna otra sección específica, no dudes en decírmelo.
 
+# 
 
+================
+
+## Monitoreo de TempDB.<a name="tempdb1"></a>
+
+Para asegurar que los archivos de `tempdb` en un servidor SQL Server fueron creados correctamente y para monitorear su comportamiento, puedes seguir estos pasos:
+
+1. **Verificar la configuración y existencia de `tempdb`:**
+   Utiliza la siguiente consulta para revisar los archivos y su configuración:
+
+   ```sql
+   USE tempdb;
+   GO
+   EXEC sp_helpfile;
+   ```
+
+   Esta consulta te mostrará información sobre los archivos de `tempdb`, incluyendo su nombre, tamaño, crecimiento, y ubicación.
+
+2. **Revisar el tamaño y crecimiento de `tempdb`:**
+   Puedes verificar el tamaño actual y el crecimiento de `tempdb` usando la siguiente consulta:
+
+   ```sql
+   SELECT 
+       name AS [FileName], 
+       size*8/1024 AS [SizeMB], 
+       max_size, 
+       growth*8/1024 AS [GrowthMB], 
+       physical_name AS [FilePath]
+   FROM sys.master_files
+   WHERE database_id = DB_ID('tempdb');
+   ```
+
+   Esta consulta te dará una visión general del tamaño de cada archivo y su configuración de crecimiento.
+
+3. **Monitorear el uso de espacio en `tempdb`:**
+   Para monitorear el uso de espacio en `tempdb`, puedes utilizar la siguiente consulta:
+
+   ```sql
+   SELECT 
+       SUM(unallocated_extent_page_count) AS [unallocated_extent_page_count],
+       SUM(version_store_reserved_page_count) AS [version_store_reserved_page_count],
+       SUM(user_object_reserved_page_count) AS [user_object_reserved_page_count],
+       SUM(internal_object_reserved_page_count) AS [internal_object_reserved_page_count],
+       SUM(mixed_extent_page_count) AS [mixed_extent_page_count]
+   FROM sys.dm_db_file_space_usage;
+   ```
+
+   Esto te proporcionará detalles sobre el uso de espacio por diferentes tipos de objetos en `tempdb`.
+
+4. **Monitorear la actividad de `tempdb`:**
+   Puedes utilizar la siguiente consulta para monitorear la actividad de `tempdb` y ver qué sesiones están utilizando más recursos:
+
+   ```sql
+   SELECT 
+       t1.session_id, 
+       t1.request_id, 
+       t1.task_alloc AS [Task Allocated (MB)], 
+       t1.task_dealloc AS [Task Deallocated (MB)], 
+       t2.text AS [SQL Text]
+   FROM 
+   ( 
+       SELECT 
+           session_id, 
+           request_id, 
+           SUM(internal_objects_alloc_page_count)*8/1024 AS task_alloc,
+           SUM(internal_objects_dealloc_page_count)*8/1024 AS task_dealloc
+       FROM sys.dm_db_task_space_usage
+       GROUP BY session_id, request_id
+   ) t1
+   JOIN sys.dm_exec_requests t3 ON t1.session_id = t3.session_id AND t1.request_id = t3.request_id
+   CROSS APPLY sys.dm_exec_sql_text(t3.sql_handle) t2
+   ORDER BY task_alloc DESC;
+   ```
+
+   Esta consulta te ayudará a identificar qué sesiones y consultas están consumiendo más recursos en `tempdb`.
+
+5. **Monitorear el rendimiento de `tempdb`:**
+   Puedes revisar los contadores de rendimiento de SQL Server relacionados con `tempdb` en el monitor de rendimiento de Windows. Los contadores clave incluyen:
+
+   - `SQLServer:Databases` -> `Transactions/sec`
+   - `SQLServer:Databases` -> `Log Flushes/sec`
+   - `SQLServer:Databases` -> `Log Bytes Flushed/sec`
+   - `SQLServer:Databases` -> `Data File(s) Size (KB)`
+
+6. **Monitorear bloqueos y esperas en `tempdb`:**
+   Usa la siguiente consulta para identificar bloqueos y esperas relacionados con `tempdb`:
+
+   ```sql
+   SELECT 
+       wait_type, 
+       wait_time_ms, 
+       wait_resource
+   FROM sys.dm_os_waiting_tasks
+   WHERE resource_description LIKE '2:%'; -- 2 es el database_id para tempdb
+   ```
+
+Estos pasos te ayudarán a asegurarte de que `tempdb` esté configurado correctamente y a monitorear su comportamiento y rendimiento en tiempo real.
 
 #### No existe nada debajo de esta linea
 
