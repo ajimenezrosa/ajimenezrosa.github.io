@@ -248,7 +248,8 @@
 
 # Querys verficacion y modificaciones de Tempdb
 
-  [Monitoreo de TempDB](#tempdb1)
+  - [Agregar Archivos de `tempdb` en SQL Server](#tempdb2)
+  - [Monitoreo de TempDB](#tempdb1)
 
 
 
@@ -13514,7 +13515,113 @@ Este proyecto está bajo la licencia MIT. Para más detalles, consulta el archiv
 
 # 
 
-================
+
+## Agregar Archivos de `tempdb` en SQL Server<a name="tempdb2"></a>
+
+Esta guía describe cómo agregar archivos adicionales al `tempdb` en un servidor SQL Server y verificar su correcta configuración. Este procedimiento se puede utilizar en futuras implementaciones para optimizar el rendimiento de `tempdb`.
+
+## 1. Introducción
+
+El propósito de esta guía es proporcionar un paso a paso para agregar archivos al `tempdb` en SQL Server y verificar que se hayan agregado y utilizado correctamente. Esta configuración puede ayudar a mejorar la gestión y el rendimiento del `tempdb`.
+
+## 2. Prerrequisitos
+
+Antes de iniciar, asegúrese de:
+
+- Tener acceso administrativo al servidor SQL Server.
+- Tener suficiente espacio en disco en la ubicación donde se crearán los nuevos archivos `tempdb`.
+
+## 3. Pasos para Configurar `tempdb`
+
+### 3.1. Abrir SQL Server Management Studio (SSMS)
+
+Inicie sesión en el servidor SQL Server usando SQL Server Management Studio (SSMS).
+
+### 3.2. Ejecutar el Código para Agregar Archivos a `tempdb`
+
+Ejecute el siguiente script para agregar nuevos archivos a `tempdb`:
+
+```sql
+USE master;
+
+GO
+
+ALTER DATABASE tempdb
+ADD FILE (NAME = tempdev8, FILENAME = 'S:\MSSQL\TEMPDB\tempdb8.ndf', SIZE = 100MB, FILEGROWTH = 500MB);
+
+ALTER DATABASE tempdb
+ADD FILE (NAME = tempdev9, FILENAME = 'S:\MSSQL\TEMPDB\tempdb9.ndf', SIZE = 100MB, FILEGROWTH = 500MB);
+
+ALTER DATABASE tempdb
+ADD FILE (NAME = tempdev10, FILENAME = 'S:\MSSQL\TEMPDB\tempdb10.ndf', SIZE = 100MB, FILEGROWTH = 500MB);
+
+ALTER DATABASE tempdb
+ADD FILE (NAME = tempdev11, FILENAME = 'S:\MSSQL\TEMPDB\tempdb11.ndf', SIZE = 100MB, FILEGROWTH = 500MB);
+
+GO
+```
+
+### 3.3. Verificar que los Archivos se hayan Agregado Correctamente
+
+Ejecute el siguiente comando para verificar que los archivos se hayan agregado correctamente:
+
+```sql
+USE tempdb;
+
+GO
+
+EXEC sp_helpfile;
+
+GO
+```
+
+## 4. Verificación de la Configuración
+
+### 4.1. Confirmar el Uso de los Nuevos Archivos
+
+Para confirmar que los nuevos archivos de `tempdb` se están utilizando correctamente:
+
+- Asegúrese de que no haya errores en los registros de SQL Server.
+- Monitoree el rendimiento de la base de datos para verificar mejoras.
+
+### 4.2. Capturas de Pantalla
+
+Tome capturas de pantalla del resultado de `sp_helpfile` como evidencia de la configuración exitosa.
+
+## 5. Reporte de Finalización
+
+### 5.1. Notificación al Equipo Responsable
+
+Una vez completada la configuración, notifique a los siguientes equipos y roles:
+
+- Control de Cambios
+- Gerentes de Producción
+- Control de Incidentes
+
+Proporcione las capturas de pantalla del resultado de `sp_helpfile` como evidencia.
+
+## 6. Referencias
+
+Consulte la documentación oficial de SQL Server para obtener más detalles sobre la gestión de `tempdb` y las mejores prácticas:
+
+- [Documentación de SQL Server](https://docs.microsoft.com/en-us/sql/sql-server/)
+
+## 7. Historial de Cambios
+
+Registre cualquier cambio realizado en este procedimiento en esta sección.
+
+| Fecha       | Cambio Realizado                    | Autor            |
+|-------------|-------------------------------------|------------------|
+| YYYY-MM-DD  | Creación del documento              | Nombre del Autor |
+| YYYY-MM-DD  | Actualización de los archivos       | Nombre del Autor |
+
+---
+
+Esta guía debe almacenarse en el repositorio de GitHub correspondiente y mantenerse actualizada con cualquier cambio en los procedimientos o configuraciones.
+
+# 
+
+
 
 ## Monitoreo de TempDB.<a name="tempdb1"></a>
 
