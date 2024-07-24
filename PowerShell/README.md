@@ -34,6 +34,7 @@
 
 - 1 [Script que extrae datos de para documentacion de servidores sql BPD](#1)
 - 2 [Sacar servidores con sus bases de datos usando PowerShell](#2)
+- 3 [PowerShell que extrae los Sistema Operativa y version de sql del servidor](#2.2)
 - 3 [Tamanos de carpetas y archivos a partir de una ruta usando Powershell](#3)
 
 - 4 [Leer todos los programas instalados en una PC](#4)
@@ -286,6 +287,131 @@ Write-Host $notFoundFilePath
 ~~~
 
 # 
+
+# PowerShell que extrae los Sistema Operativa y version de sql del servidor<a name="2.2"></a>
+
+~~~~sql
+# Script para obtener información de servidores SQL y sus sistemas operativos
+
+# Definir la ruta del archivo de servidores y la carpeta de salida
+$serverFilePath = "C:\PWtablas\server_instances.txt"
+$outputDirectory = "C:\PWtablas\html"
+
+# Crear la carpeta de salida si no existe
+if (-Not (Test-Path -Path $outputDirectory)) {
+    New-Item -ItemType Directory -Path $outputDirectory
+}
+
+# Leer servidores e instancias desde un archivo
+$servers = Get-Content -Path $serverFilePath
+
+# Crear una lista para almacenar los resultados
+$results = @()
+
+foreach ($server in $servers) {
+    try {
+        # Crear la conexión al servidor SQL
+        $connectionString = "Server=$server;Integrated Security=True;"
+        $connection = New-Object System.Data.SqlClient.SqlConnection
+        $connection.ConnectionString = $connectionString
+        $connection.Open()
+
+        # Obtener información del servidor SQL
+        $serverName = $connection.DataSource
+        $instanceName = if ($server -match '\\') { $server.Split('\')[1] } else { "Default" }
+        $versionInfo = $connection.ServerVersion
+
+        # Obtener la versión de SQL Server en términos de año
+        $sqlVersionYear = switch -Regex ($versionInfo) {
+            "^8\." { "SQL Server 2000" }
+            "^9\." { "SQL Server 2005" }
+            "^10\.0" { "SQL Server 2008" }
+            "^10\.5" { "SQL Server 2008 R2" }
+            "^11\." { "SQL Server 2012" }
+            "^12\." { "SQL Server 2014" }
+            "^13\." { "SQL Server 2016" }
+            "^14\." { "SQL Server 2017" }
+            "^15\." { "SQL Server 2019" }
+            "^16\." { "SQL Server 2022" }
+            default { "Versión Desconocida" }
+        }
+
+        # Obtener información del sistema operativo del servidor
+        $osInfo = Invoke-Command -ComputerName $server.Split('\')[0] -ScriptBlock {
+            Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty Caption
+        }
+        
+        $osVersion = switch -Regex ($osInfo) {
+            "2019" { "Windows Server 2019" }
+            "2016" { "Windows Server 2016" }
+            "2012 R2" { "Windows Server 2012 R2" }
+            "2012" { "Windows Server 2012" }
+            "2008 R2" { "Windows Server 2008 R2" }
+            "2008" { "Windows Server 2008" }
+            "2003" { "Windows Server 2003" }
+            default { $osInfo }
+        }
+
+        # Guardar los resultados
+        $results += [PSCustomObject]@{
+            ServerName   = $serverName
+            InstanceName = $instanceName
+            OSVersion    = $osVersion
+            SqlVersion   = $sqlVersionYear
+        }
+
+        $connection.Close()
+    } catch {
+        Write-Host "No se pudo conectar al servidor: $server"
+    }
+}
+
+# Convertir los resultados a HTML
+$html = $results | ConvertTo-Html -Property ServerName, InstanceName, OSVersion, SqlVersion -Fragment | Out-String
+
+# Agregar el encabezado y estilos básicos al HTML
+$html = @"
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Información de Servidores SQL</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Información de Servidores SQL</h1>
+    $html
+</body>
+</html>
+"@
+
+# Definir la ruta completa del archivo de salida
+$outputFilePath = Join-Path -Path $outputDirectory -ChildPath "ServerInfo.html"
+
+# Guardar el HTML en un archivo
+$html | Out-File -FilePath $outputFilePath -Encoding UTF8
+
+Write-Host "El archivo HTML se ha generado correctamente en $outputFilePath"
+
+~~~~
+
+Este script realiza lo siguiente:
+
+Define las rutas del archivo de servidores y la carpeta de salida.
+Crea la carpeta de salida si no existe.
+Lee la lista de servidores e instancias desde C:\PWtablas\server_instances.txt.
+Se conecta a cada servidor para obtener la versión de SQL Server.
+Usa Invoke-Command para obtener la información del sistema operativo remoto.
+Almacena la información en un objeto personalizado.
+Convierte los resultados en HTML y los guarda en C:\PWtablas\html\ServerInfo.html.
+Asegúrate de tener permisos necesarios para ejecutar Invoke-Command en los servidores remotos y que WinRM esté configurado en esos servidores.
+
+
+
+
 
 ## Tamanos de carpetas y archivos a partir de una ruta usando Powershell<a name="3"></a>
 
