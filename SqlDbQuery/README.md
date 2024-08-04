@@ -261,8 +261,8 @@
 
 
 # Query para auditoria y verificacion de ambientes.
-
 - 600 [Query de extraccion de Base de datos y Tablas en Sql Server.](#600)
+
 
 
 
