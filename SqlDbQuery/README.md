@@ -258,6 +258,14 @@
  - 501 [Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On](#501)
 # 
 
+
+
+# Query para auditoria y verificacion de ambientes.
+
+- 600 [Query de extraccion de Base de datos y Tablas en Sql Server.](#600)
+
+
+
 #
 <!-- ConsultasEflowCitas -->
 
@@ -13717,8 +13725,120 @@ Para asegurar que los archivos de `tempdb` en un servidor SQL Server fueron crea
    ```
 
 Estos pasos te ayudarán a asegurarte de que `tempdb` esté configurado correctamente y a monitorear su comportamiento y rendimiento en tiempo real.
+# 
 
-#### No existe nada debajo de esta linea
+
+## Query de extraccion de Base de datos y Tablas en Sql Server.<a name="600"></a>
+
+Este script obtiene información detallada sobre todas las bases de datos y sus tablas en una instancia de SQL Server. Incluye el nombre del servidor, la versión de SQL Server, la versión del sistema operativo y el nivel de service pack en un formato legible.
+<div>
+<p style = 'text-align:center;'>
+<img src="https://gdm-catalog-fmapi-prod.imgix.net/ProductScreenshot/619d96d5-048c-485f-9070-1ef4713c56de.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+## Resumen del Script
+
+El script realiza los siguientes pasos:
+1. Obtiene el nombre del servidor, la edición de SQL Server, la versión, el nivel de parche y el nivel de service pack.
+2. Extrae la versión del sistema operativo de la instancia de SQL Server.
+3. Itera sobre todas las bases de datos en el servidor (excluyendo bases de datos del sistema) y obtiene los nombres de todas las tablas.
+4. Almacena la información obtenida en una tabla temporal.
+5. Muestra la información de la tabla temporal.
+6. Limpia la tabla temporal.
+
+## Script
+
+~~~sql
+-- Obtener información del servidor
+DECLARE @ServerName NVARCHAR(255);
+DECLARE @SQLEdition NVARCHAR(255);
+DECLARE @SQLVersion NVARCHAR(255);
+DECLARE @SQLPatch NVARCHAR(255);
+DECLARE @SQLServicePack NVARCHAR(255);
+DECLARE @OSVersion NVARCHAR(255);
+
+SET @ServerName = @@SERVERNAME;
+SET @SQLEdition = CAST(SERVERPROPERTY('Edition') AS NVARCHAR);
+SET @SQLVersion = CAST(SERVERPROPERTY('ProductVersion') AS NVARCHAR);
+SET @SQLPatch = CAST(SERVERPROPERTY('ProductLevel') AS NVARCHAR);
+SET @SQLServicePack = ISNULL(CAST(SERVERPROPERTY('ProductUpdateLevel') AS NVARCHAR), 'N/A');
+
+-- Obtener la versión del sistema operativo desde @@VERSION
+SELECT @OSVersion = SUBSTRING(@@VERSION, CHARINDEX('Windows', @@VERSION), LEN(@@VERSION) - CHARINDEX('Windows', @@VERSION) + 1);
+
+-- Formatear la versión de SQL Server y el sistema operativo en un formato legible
+DECLARE @ReadableSQLVersion NVARCHAR(255);
+SET @ReadableSQLVersion = @SQLEdition + ' - ' + @SQLVersion + ' - ' + @SQLPatch + ' - Service Pack ' + @SQLServicePack;
+
+DECLARE @ReadableOSVersion NVARCHAR(255);
+SET @ReadableOSVersion = @OSVersion;
+
+-- Crear una tabla temporal para almacenar la información
+IF OBJECT_ID('tempdb..#DatabasesAndTables') IS NOT NULL
+    DROP TABLE #DatabasesAndTables;
+
+CREATE TABLE #DatabasesAndTables (
+    ServerName NVARCHAR(255),
+    ReadableSQLVersion NVARCHAR(255),
+    ReadableOSVersion NVARCHAR(255),
+    DatabaseName NVARCHAR(255),
+    TableName NVARCHAR(255)
+);
+
+-- Declarar un cursor para iterar sobre todas las bases de datos del servidor
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE db_cursor CURSOR FOR
+SELECT name
+FROM sys.databases
+WHERE state_desc = 'ONLINE' AND name NOT IN ('master', 'tempdb', 'model', 'msdb');
+
+OPEN db_cursor;
+FETCH NEXT FROM db_cursor INTO @DatabaseName;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Construir una consulta dinámica para obtener todas las tablas de la base de datos actual
+    DECLARE @SQL NVARCHAR(MAX);
+    SET @SQL = 'INSERT INTO #DatabasesAndTables (ServerName, ReadableSQLVersion, ReadableOSVersion, DatabaseName, TableName)
+                SELECT ''' + @ServerName + ''', ''' + @ReadableSQLVersion + ''', ''' + @ReadableOSVersion + ''', ''' + @DatabaseName + ''', TABLE_NAME
+                FROM ' + QUOTENAME(@DatabaseName) + '.INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_TYPE = ''BASE TABLE''';
+
+    -- Ejecutar la consulta dinámica
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM db_cursor INTO @DatabaseName;
+END;
+
+CLOSE db_cursor;
+DEALLOCATE db_cursor;
+
+-- Seleccionar los resultados de la tabla temporal
+SELECT * FROM #DatabasesAndTables;
+
+-- Limpiar la tabla temporal
+DROP TABLE #DatabasesAndTables;
+
+~~~
+
+## Prerrequisitos
+    - Permisos: Asegúrate de tener los permisos necesarios para ejecutar el script y acceder a las vistas sys.databases y INFORMATION_SCHEMA.TABLES.
+    - Versión de SQL Server: El script es compatible con SQL Server 2008 y versiones posteriores.
+
+## Notas
+    - El script excluye las bases de datos del sistema (master, tempdb, model, y msdb) de los resultados.
+    - La función @@VERSION se utiliza para extraer la versión del sistema operativo.
+## Ejemplo de Salida
+
+| ServerName | ReadableSQLVersion                                     | ReadableOSVersion            | DatabaseName | TableName |
+|------------|--------------------------------------------------------|------------------------------|--------------|-----------|
+| SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyDatabase   | Customers |
+| SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyDatabase   | Orders    |
+| SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyOtherDB    | Products  |
+
+
+
+# No existe nada debajo de esta linea
 
 
 
