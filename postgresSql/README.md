@@ -389,3 +389,5 @@ Este documento proporciona una lista de comandos esenciales de PostgreSQL, inclu
 Estos comandos son esenciales para la administración de bases de datos en PostgreSQL y son utilizados frecuentemente en la gestión diaria de bases de datos.
 
 
+
+
