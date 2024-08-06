@@ -253,9 +253,6 @@ Este documento cubre una amplia gama de aspectos de la administración de bases 
  
 #
 
-Aquí tienes el archivo en formato Markdown con un menú para cada uno de los puntos:
-
-```markdown
 # Comandos Principales de PostgreSQL
 
 ## Descripción
@@ -390,6 +387,5 @@ Este documento proporciona una lista de comandos esenciales de PostgreSQL, inclu
 
 ## Notas Adicionales
 Estos comandos son esenciales para la administración de bases de datos en PostgreSQL y son utilizados frecuentemente en la gestión diaria de bases de datos.
-```
 
-Este archivo incluye un menú de navegación que facilita el acceso a cada uno de los puntos descritos. Puedes copiar este contenido y guardarlo en un archivo `.md` en tu repositorio de GitHub.
+
