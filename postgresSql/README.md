@@ -49,6 +49,29 @@
 10. [Mantenimiento Regular](#mantenimiento-regular)
 11. [Automatización de Tareas](#automatización-de-tareas)
 
+## Ejemplos de Comandos de Consola utiles y necesarios.
+- [Listar Bases de Datos](#listar-bases-de-datos)
+- [Conectar a una Base de Datos](#conectar-a-una-base-de-datos)
+- [Listar Tablas](#listar-tablas)
+- [Describir una Tabla](#describir-una-tabla)
+- [Listar Esquemas](#listar-esquemas)
+- [Listar Usuarios](#listar-usuarios)
+- [Salir de psql](#salir-de-psql)
+- [Ejecutar un Comando SQL desde un Archivo](#ejecutar-un-comando-sql-desde-un-archivo)
+- [Mostrar Comandos SQL Recientemente Ejecutados](#mostrar-comandos-sql-recientemente-ejecutados)
+- [Borrar el Historial de Comandos](#borrar-el-historial-de-comandos)
+- [Establecer un Formato de Salida](#establecer-un-formato-de-salida)
+- [Mostrar Información de Conexión](#mostrar-información-de-conexión)
+- [Ejecución de Consultas SQL Básicas](#ejecución-de-consultas-sql-básicas)
+  - [Seleccionar Datos](#seleccionar-datos)
+  - [Insertar Datos](#insertar-datos)
+  - [Actualizar Datos](#actualizar-datos)
+  - [Eliminar Datos](#eliminar-datos)
+- [Notas Adicionales](#notas-adicionales)
+
+
+
+
 ## Instalación y Configuración Inicial
 ### Instalación de PostgreSQL
 ~~~bash
@@ -228,3 +251,145 @@ ORDER BY table_schema, table_name;
 
 Este documento cubre una amplia gama de aspectos de la administración de bases de datos PostgreSQL, proporcionando queries y configuraciones específicas para cada tarea. Puedes ajustar y expandir este contenido según tus necesidades específicas.
  
+#
+
+Aquí tienes el archivo en formato Markdown con un menú para cada uno de los puntos:
+
+```markdown
+# Comandos Principales de PostgreSQL
+
+## Descripción
+Este documento proporciona una lista de comandos esenciales de PostgreSQL, incluyendo sus descripciones y ejemplos de uso. Estos comandos son útiles para la administración y gestión de bases de datos en PostgreSQL.
+
+
+## Listar Bases de Datos
+- **Comando:** `\l`
+- **Descripción:** Lista todas las bases de datos disponibles en el servidor de PostgreSQL.
+- **Ejemplo:**
+  ```sql
+  \l
+  ```
+
+## Conectar a una Base de Datos
+- **Comando:** `\c nombre_de_la_base_de_datos`
+- **Descripción:** Conecta a una base de datos específica.
+- **Ejemplo:**
+  ```sql
+  \c mi_base_de_datos
+  ```
+
+## Listar Tablas
+- **Comando:** `\dt`
+- **Descripción:** Muestra una lista de todas las tablas en la base de datos actual.
+- **Ejemplo:**
+  ```sql
+  \dt
+  ```
+
+## Describir una Tabla
+- **Comando:** `\d nombre_de_la_tabla`
+- **Descripción:** Muestra la estructura de una tabla específica, incluyendo sus columnas, tipos de datos y restricciones.
+- **Ejemplo:**
+  ```sql
+  \d mi_tabla
+  ```
+
+## Listar Esquemas
+- **Comando:** `\dn`
+- **Descripción:** Muestra una lista de todos los esquemas en la base de datos actual.
+- **Ejemplo:**
+  ```sql
+  \dn
+  ```
+
+## Listar Usuarios
+- **Comando:** `\du`
+- **Descripción:** Lista todos los roles (usuarios y grupos) en el servidor de PostgreSQL.
+- **Ejemplo:**
+  ```sql
+  \du
+  ```
+
+## Salir de psql
+- **Comando:** `\q`
+- **Descripción:** Salir del terminal psql.
+- **Ejemplo:**
+  ```sql
+  \q
+  ```
+
+## Ejecutar un Comando SQL desde un Archivo
+- **Comando:** `\i ruta_del_archivo`
+- **Descripción:** Ejecuta comandos SQL contenidos en un archivo.
+- **Ejemplo:**
+  ```sql
+  \i /ruta/al/archivo.sql
+  ```
+
+## Mostrar Comandos SQL Recientemente Ejecutados
+- **Comando:** `\s`
+- **Descripción:** Muestra el historial de comandos SQL ejecutados en la sesión actual.
+- **Ejemplo:**
+  ```sql
+  \s
+  ```
+
+## Borrar el Historial de Comandos
+- **Comando:** `\clear`
+- **Descripción:** Limpia el historial de comandos en la sesión actual.
+- **Ejemplo:**
+  ```sql
+  \clear
+  ```
+
+## Establecer un Formato de Salida
+- **Comando:** `\pset formato`
+- **Descripción:** Cambia el formato de la salida (ej., alineado, HTML, LaTeX).
+- **Ejemplo:**
+  ```sql
+  \pset format aligned
+  ```
+
+## Mostrar Información de Conexión
+- **Comando:** `\conninfo`
+- **Descripción:** Muestra información sobre la conexión actual a la base de datos.
+- **Ejemplo:**
+  ```sql
+  \conninfo
+  ```
+
+## Ejecución de Consultas SQL Básicas
+
+### Seleccionar Datos
+- **Comando:**
+  ```sql
+  SELECT * FROM nombre_de_la_tabla;
+  ```
+- **Descripción:** Selecciona todos los datos de una tabla específica.
+
+### Insertar Datos
+- **Comando:**
+  ```sql
+  INSERT INTO nombre_de_la_tabla (columna1, columna2) VALUES (valor1, valor2);
+  ```
+- **Descripción:** Inserta un nuevo registro en una tabla.
+
+### Actualizar Datos
+- **Comando:**
+  ```sql
+  UPDATE nombre_de_la_tabla SET columna1 = valor1 WHERE condicion;
+  ```
+- **Descripción:** Actualiza registros existentes en una tabla que cumplen con una condición.
+
+### Eliminar Datos
+- **Comando:**
+  ```sql
+  DELETE FROM nombre_de_la_tabla WHERE condicion;
+  ```
+- **Descripción:** Elimina registros de una tabla que cumplen con una condición.
+
+## Notas Adicionales
+Estos comandos son esenciales para la administración de bases de datos en PostgreSQL y son utilizados frecuentemente en la gestión diaria de bases de datos.
+```
+
+Este archivo incluye un menú de navegación que facilita el acceso a cada uno de los puntos descritos. Puedes copiar este contenido y guardarlo en un archivo `.md` en tu repositorio de GitHub.
