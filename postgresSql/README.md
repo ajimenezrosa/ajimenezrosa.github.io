@@ -502,3 +502,76 @@ Este documento cubre una amplia gama de aspectos de la administración de bases 
 ---
 
 Espero que esta estructura sea de tu agrado y facilite la comprensión y manejo de PostgreSQL.
+
+# 
+
+## Manejo de indices,
+
+### detectar indices Faltantes en una base de datos Postgres
+
+Para generar un script que identifique los índices faltantes y sugiera la creación de los mismos en PostgreSQL, podemos usar una consulta que analice los escaneos secuenciales y genere automáticamente una declaración `CREATE INDEX` para cada caso. 
+
+~~~sql
+WITH seq_scans AS (
+    SELECT 
+        schemaname,
+        relname,
+        seq_scan,
+        idx_scan,
+        (seq_scan - coalesce(idx_scan, 0)) AS too_much_seq
+    FROM 
+        pg_stat_user_tables
+    WHERE 
+        seq_scan - coalesce(idx_scan, 0) > 100 -- Ajusta este valor según tus necesidades
+),
+missing_indexes AS (
+    SELECT
+        s.schemaname,
+        s.relname,
+        a.attname AS column_name,
+        'CREATE INDEX idx_' || s.relname || '_' || a.attname || ' ON ' || s.schemaname || '.' || s.relname || ' (' || a.attname || ');' AS create_index_script
+    FROM 
+        seq_scans s
+    JOIN 
+        pg_attribute a ON s.relname = a.attrelid::regclass::text
+    JOIN 
+        pg_class c ON a.attrelid = c.oid
+    WHERE 
+        a.attnum > 0 
+        AND NOT a.attisdropped
+        AND NOT EXISTS (
+            SELECT 1 
+            FROM pg_index i 
+            JOIN pg_class ic ON ic.oid = i.indexrelid
+            WHERE i.indrelid = c.oid 
+              AND ic.relname = 'idx_' || s.relname || '_' || a.attname
+        )
+    ORDER BY 
+        s.too_much_seq DESC
+)
+SELECT 
+    schemaname,
+    relname,
+    column_name,
+    create_index_script
+FROM 
+    missing_indexes;
+~~~
+
+### Descripción de la consulta
+
+1. **seq_scans**: Esta subconsulta selecciona las tablas que tienen un número de escaneos secuenciales (`seq_scan`) significativamente mayor que los escaneos por índice (`idx_scan`).
+
+2. **missing_indexes**: Esta subconsulta toma las tablas identificadas en `seq_scans` y sus columnas, y genera un script `CREATE INDEX` para cada combinación de tabla-columna que no tenga ya un índice existente.
+
+3. **create_index_script**: La declaración final selecciona el nombre del esquema, el nombre de la tabla, el nombre de la columna y el script `CREATE INDEX` generado.
+
+### Resultado
+
+El resultado de esta consulta incluirá el nombre del esquema, el nombre de la tabla, el nombre de la columna y el script `CREATE INDEX` sugerido. Puedes revisar estos resultados y ejecutar los scripts generados para crear los índices faltantes.
+
+### Nota
+
+Es importante revisar cuidadosamente las sugerencias de índices antes de ejecutarlas, ya que la creación de índices puede afectar el rendimiento de la base de datos en ciertos casos, como en operaciones de escritura intensiva. Además, la lógica puede necesitar ajustes adicionales dependiendo de la estructura específica de tus tablas y consultas.
+
+Si tienes más consultas específicas o necesitas ajustes adicionales en la lógica, no dudes en pedírmelo.
