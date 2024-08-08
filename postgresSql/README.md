@@ -43,9 +43,9 @@ Claro, aquí tienes el documento reorganizado de forma más estructurada y profe
 
 ## Manejo de indices,
 
-101 [detectar indices Faltantes en una base de datos Postgres](#101)
-102 [Detección de Índices Fragmentados](#102)
-103 [Desfragmentación de Índices](#103)
+101. [detectar indices Faltantes en una base de datos Postgres](#101)
+102. [Detección de Índices Fragmentados](#102)
+103. [Desfragmentación de Índices](#103)
 
 
 ---
