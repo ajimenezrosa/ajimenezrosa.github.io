@@ -264,6 +264,8 @@
 - 600 [Query de extraccion de Base de datos y Tablas en Sql Server.](#600)
 
 
+- 601 [Documentación para la Restauración de Bases de Datos ABT](#601)
+
 
 
 #
@@ -13835,6 +13837,54 @@ DROP TABLE #DatabasesAndTables;
 | SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyDatabase   | Customers |
 | SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyDatabase   | Orders    |
 | SERVER1    | Standard Edition - 15.0.2000.5 - RTM - Service Pack 1  | Windows Server 2016 Datacenter | MyOtherDB    | Products  |
+
+
+# 
+
+
+## Documentación para la Restauración de Bases de Datos ABT<a name="601"></a>
+
+#### Introducción
+Este documento detalla el procedimiento a seguir para traer en línea las bases de datos asociadas con los servidores de oficina y sucursales (CNP y SUC) de la institución, conocidos como ABT, después de que el personal de seguridad asigne los permisos de control total (full control) para los discos correspondientes.
+
+#### Contexto
+En los servidores ABT, tanto en oficinas como en sucursales, se ha identificado la necesidad de traer en línea las bases de datos luego de que se realicen ciertos cambios de permisos a nivel de los discos donde estas residen. Este procedimiento es común cuando se presentan problemas de acceso a las bases de datos debido a cambios en la configuración de permisos.
+
+#### Procedimiento
+
+1. **Asignación de Permisos:**
+   - El personal de seguridad deberá asignar permisos de control total (full control) sobre los discos que contienen las bases de datos mencionadas. Este paso es crucial para garantizar que los servicios de SQL Server puedan acceder correctamente a los archivos de las bases de datos.
+
+2. **Ejecución del Script SQL:**
+   - Una vez asignados los permisos, el personal encargado de las bases de datos deberá ejecutar el siguiente script para traer en línea las bases de datos que se encontraban offline:
+   
+     ~~~sql
+     ALTER DATABASE [ABT41] SET ONLINE;
+     ALTER DATABASE [ABT41ROM] SET ONLINE;
+     ALTER DATABASE [ABT41SIG] SET ONLINE;
+     ~~~
+
+3. **Verificación:**
+   - Después de ejecutar el script, se debe verificar que las bases de datos estén en línea y operativas. Esto se puede hacer revisando el estado de las bases de datos desde el SQL Server Management Studio (SSMS) o utilizando la siguiente consulta:
+   
+     ~~~sql
+     SELECT name, state_desc 
+     FROM sys.databases 
+     WHERE name IN ('ABT41', 'ABT41ROM', 'ABT41SIG');
+     ~~~
+
+#### Consideraciones Finales
+- Este procedimiento debe ser realizado por personal autorizado y capacitado para manejar tanto los permisos de seguridad a nivel de discos como la administración de bases de datos en SQL Server.
+- Es importante documentar cualquier incidente relacionado con las bases de datos ABT para mejorar futuros procesos de resolución.
+
+#### Conclusión
+El procedimiento descrito en este documento permite restaurar el acceso a las bases de datos en los servidores ABT después de la asignación de permisos correspondientes. Esto asegura que el personal pueda resolver problemas similares en el futuro de manera eficiente y efectiva.
+
+---
+
+Este  procedimiento debe ser revisado y actualizado según sea necesario para reflejar cambios en la infraestructura o procedimientos relacionados con la administración de bases de datos en la institución.
+
+
 
 
 
