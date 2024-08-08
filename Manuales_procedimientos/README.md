@@ -69,6 +69,7 @@
 
 [Configuración de Clúster y Listener](#custerlistener)
 
+[Cambio de Propietario (Owner) en EndPoints y Availability Groups para AlwaysOn en SQL Server](#owneeraocambio)
 
 
 [Documentación de TSS2](#TSS2)
@@ -902,9 +903,111 @@ Grant-ClusterAccess -User "NombreDelUsuario" -Permission FullControl
 - Asegúrese de tener permisos administrativos adecuados para realizar estas configuraciones.
 - Mantenga un registro de todos los cambios realizados para futuras referencias y auditorías.
 
----
+# 
 
 Esta documentación debe incluirse en el archivo `README.md` de su repositorio de GitHub, o en un archivo de documentación específico si es necesario.
+
+
+
+# 
+
+## **Cambio de Propietario (Owner) en EndPoints y Availability Groups para AlwaysOn en SQL Server**<a name="owneeraocambio">
+
+
+#### **Introducción**
+
+#### El proceso de cambiar el propietario de EndPoints y Availability Groups en una configuración de AlwaysOn en SQL Server es crucial para asegurar que los servicios funcionen correctamente y que las cuentas de servicio apropiadas tengan el control necesario. Este documento proporciona los pasos detallados y los scripts necesarios para realizar estas tareas de manera segura y eficiente.
+
+
+
+### **1. Cambio de Propietario (Owner) de un EndPoint de AlwaysOn**
+
+#### **Paso 1: Verificación de EndPoints Existentes y su Propietario**
+
+Antes de realizar cualquier cambio, es fundamental verificar los EndPoints existentes y su propietario actual. Esto se puede hacer ejecutando el siguiente script en la base de datos `master`:
+
+```sql
+USE master
+GO
+SELECT SUSER_NAME(principal_id) AS endpoint_owner, name AS endpoint_name
+FROM sys.database_mirroring_endpoints
+GO
+```
+
+#### **Paso 2: Verificación de Cuentas de Servicio con Permisos sobre los EndPoints**
+
+Es importante conocer qué cuentas de servicio y usuarios tienen permisos sobre los EndPoints para asegurar que los cambios no afecten el acceso. Utilice el siguiente script:
+
+```sql
+USE master;
+GO
+SELECT EPS.name, SPS.STATE, CONVERT(nvarchar(38), SUSER_NAME(SPS.grantor_principal_id)) AS [GRANTED BY],
+SPS.TYPE AS PERMISSION, CONVERT(nvarchar(46), SUSER_NAME(SPS.grantee_principal_id)) AS [GRANTED TO]
+FROM sys.server_permissions SPS, sys.endpoints EPS 
+WHERE SPS.major_id = EPS.endpoint_id AND name = 'Hadr_endpoint'
+ORDER BY Permission, [GRANTED BY], [GRANTED TO];
+GO
+```
+
+#### **Paso 3: Cambio de Propietario del EndPoint y Asignación de Permisos**
+
+Para garantizar que el propietario del EndPoint sea correcto y que las cuentas de servicio necesarias tengan acceso, se deben ejecutar los siguientes bloques de código **uno a la vez**:
+
+```sql
+BEGIN TRAN
+USE master;
+
+-- Establecer el usuario SA como propietario del EndPoint.
+ALTER AUTHORIZATION ON ENDPOINT::Hadr_endpoint TO corpsa;
+
+-- Conceder permisos sobre el EndPoint a la cuenta de servicio especificada.
+GRANT CONNECT ON ENDPOINT::Hadr_endpoint TO [NTAS\_SSEP-PRORPA];
+
+-- Conceder permisos al EndPoint a la cuenta que administra el servicio principal de SQL Server.
+GRANT CONNECT ON ENDPOINT::Hadr_endpoint TO [NTAS\_SSDS-PRORPA];
+
+COMMIT
+```
+
+---
+
+### **2. Cambio de Propietario (Owner) de un Availability Group**
+
+#### **Paso 1: Verificación del Propietario Actual del Availability Group**
+
+Antes de cambiar el propietario del Availability Group, es importante conocer quién es el propietario actual. Ejecute el siguiente script:
+
+```sql
+USE master
+GO
+SELECT g.name AS GroupName, p.name AS OwnerName
+FROM sys.availability_groups AS g
+JOIN sys.availability_replicas AS r ON g.group_id = r.group_id
+JOIN sys.server_principals AS p ON r.owner_sid = p.sid
+GO
+```
+
+#### **Paso 2: Asignación de Nuevo Propietario al Availability Group**
+
+Finalmente, cambie el propietario del Availability Group a la cuenta de servicio del EndPoint correspondiente:
+
+```sql
+USE master
+GO
+ALTER AUTHORIZATION ON AVAILABILITY GROUP::ALWAYSONPRORPA TO [NTAS\_SSEP-PRORPA]
+GO
+```
+
+
+
+### **Conclusión**
+
+Al seguir estos pasos, asegurará que los EndPoints y Availability Groups de su entorno AlwaysOn estén correctamente configurados y gestionados por las cuentas de servicio adecuadas. Esto es esencial para el correcto funcionamiento y la seguridad de su infraestructura SQL Server.
+
+**Nota:** Cada bloque de código debe ser ejecutado individualmente y con cuidado, asegurándose de que todas las cuentas de servicio sean correctas antes de realizar cualquier cambio.
+
+
+
 
 
 
