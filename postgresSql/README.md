@@ -1,7 +1,3 @@
-Claro, aquí tienes el documento reorganizado de forma más estructurada y profesional, tipo libro, eliminando duplicidades y fusionando secciones repetidas:
-
----
-
 # Guía de Administración de Bases de Datos PostgreSQL
 
 ## Alejandro Jimenez Rosa
