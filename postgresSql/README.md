@@ -590,25 +590,27 @@ Primero, puedes utilizar una consulta que identifique índices que están fragme
 ~~~sql
 WITH index_stats AS (
     SELECT
-        nspname AS schemaname,
-        relname AS tablename,
-        indexrelname AS indexname,
-        pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
-        idx_scan AS index_scans,
-        idx_tup_read AS tuples_read,
-        idx_tup_fetch AS tuples_fetched,
+        ns.nspname AS schemaname,
+        c.relname AS tablename,
+        i.relname AS indexname,
+        pg_size_pretty(pg_relation_size(i.oid)) AS index_size,
+        s.idx_scan AS index_scans,
+        s.idx_tup_read AS tuples_read,
+        s.idx_tup_fetch AS tuples_fetched,
         CASE 
-            WHEN pg_relation_size(indexrelid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
+            WHEN pg_relation_size(i.oid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
             ELSE 'Not Fragmented' 
         END AS fragmentation_status
     FROM 
-        pg_stat_user_indexes
+        pg_stat_user_indexes s
     JOIN 
-        pg_index ON pg_stat_user_indexes.indexrelid = pg_index.indexrelid
+        pg_index ix ON s.indexrelid = ix.indexrelid
     JOIN 
-        pg_class ON pg_index.indexrelid = pg_class.oid
+        pg_class c ON ix.indrelid = c.oid
     JOIN 
-        pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+        pg_class i ON ix.indexrelid = i.oid
+    JOIN 
+        pg_namespace ns ON c.relnamespace = ns.oid
 )
 SELECT 
     schemaname,
@@ -624,7 +626,8 @@ FROM
 WHERE 
     fragmentation_status = 'Fragmented'
 ORDER BY 
-    pg_relation_size(indexrelid) DESC;
+    pg_relation_size(i.oid) DESC;
+
 ~~~
 
 ### Desfragmentación de Índices<a name="103"></a>
@@ -634,25 +637,27 @@ Para desfragmentar los índices identificados como fragmentados, puedes utilizar
 ~~~sql
 WITH index_stats AS (
     SELECT
-        nspname AS schemaname,
-        relname AS tablename,
-        indexrelname AS indexname,
-        pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
-        idx_scan AS index_scans,
-        idx_tup_read AS tuples_read,
-        idx_tup_fetch AS tuples_fetched,
+        ns.nspname AS schemaname,
+        c.relname AS tablename,
+        i.relname AS indexname,
+        pg_size_pretty(pg_relation_size(i.oid)) AS index_size,
+        s.idx_scan AS index_scans,
+        s.idx_tup_read AS tuples_read,
+        s.idx_tup_fetch AS tuples_fetched,
         CASE 
-            WHEN pg_relation_size(indexrelid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
+            WHEN pg_relation_size(i.oid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
             ELSE 'Not Fragmented' 
         END AS fragmentation_status
     FROM 
-        pg_stat_user_indexes
+        pg_stat_user_indexes s
     JOIN 
-        pg_index ON pg_stat_user_indexes.indexrelid = pg_index.indexrelid
+        pg_index ix ON s.indexrelid = ix.indexrelid
     JOIN 
-        pg_class ON pg_index.indexrelid = pg_class.oid
+        pg_class c ON ix.indrelid = c.oid
     JOIN 
-        pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+        pg_class i ON ix.indexrelid = i.oid
+    JOIN 
+        pg_namespace ns ON c.relnamespace = ns.oid
 )
 SELECT 
     'REINDEX INDEX ' || schemaname || '.' || indexname || ';' AS reindex_command
@@ -660,6 +665,7 @@ FROM
     index_stats
 WHERE 
     fragmentation_status = 'Fragmented';
+
 ~~~
 
 ### Recomendaciones y Comentarios
