@@ -40,6 +40,14 @@ Claro, aquí tienes el documento reorganizado de forma más estructurada y profe
 14. [Ejemplos de Consultas en la Base de Datos](#ejemplos-de-consultas-en-la-base-de-datos)
 15. [Referencias](#referencias)
 
+
+## Manejo de indices,
+
+101 [detectar indices Faltantes en una base de datos Postgres](#101)
+102 [Detección de Índices Fragmentados](#102)
+103 [Desfragmentación de Índices](#103)
+
+
 ---
 
 ## Introducción
@@ -507,7 +515,7 @@ Espero que esta estructura sea de tu agrado y facilite la comprensión y manejo 
 
 ## Manejo de indices,
 
-### detectar indices Faltantes en una base de datos Postgres
+### detectar indices Faltantes en una base de datos Postgres<a name="101"></a>
 
 Para generar un script que identifique los índices faltantes y sugiera la creación de los mismos en PostgreSQL, podemos usar una consulta que analice los escaneos secuenciales y genere automáticamente una declaración `CREATE INDEX` para cada caso. 
 
@@ -574,4 +582,102 @@ El resultado de esta consulta incluirá el nombre del esquema, el nombre de la t
 
 Es importante revisar cuidadosamente las sugerencias de índices antes de ejecutarlas, ya que la creación de índices puede afectar el rendimiento de la base de datos en ciertos casos, como en operaciones de escritura intensiva. Además, la lógica puede necesitar ajustes adicionales dependiendo de la estructura específica de tus tablas y consultas.
 
-Si tienes más consultas específicas o necesitas ajustes adicionales en la lógica, no dudes en pedírmelo.
+# 
+
+
+### Detección de Índices Fragmentados<a name="102"></a>
+
+Para detectar y desfragmentar índices fragmentados en PostgreSQL, puedes usar las siguientes consultas. 
+
+Primero, puedes utilizar una consulta que identifique índices que están fragmentados. La fragmentación puede medirse observando la relación entre los tamaños de los índices y los bloques utilizados.
+
+~~~sql
+WITH index_stats AS (
+    SELECT
+        nspname AS schemaname,
+        relname AS tablename,
+        indexrelname AS indexname,
+        pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
+        idx_scan AS index_scans,
+        idx_tup_read AS tuples_read,
+        idx_tup_fetch AS tuples_fetched,
+        CASE 
+            WHEN pg_relation_size(indexrelid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
+            ELSE 'Not Fragmented' 
+        END AS fragmentation_status
+    FROM 
+        pg_stat_user_indexes
+    JOIN 
+        pg_index ON pg_stat_user_indexes.indexrelid = pg_index.indexrelid
+    JOIN 
+        pg_class ON pg_index.indexrelid = pg_class.oid
+    JOIN 
+        pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+)
+SELECT 
+    schemaname,
+    tablename,
+    indexname,
+    index_size,
+    index_scans,
+    tuples_read,
+    tuples_fetched,
+    fragmentation_status
+FROM 
+    index_stats
+WHERE 
+    fragmentation_status = 'Fragmented'
+ORDER BY 
+    pg_relation_size(indexrelid) DESC;
+~~~
+
+### Desfragmentación de Índices<a name="103"></a>
+
+Para desfragmentar los índices identificados como fragmentados, puedes utilizar la operación `REINDEX` en PostgreSQL. A continuación, se presenta una consulta para generar los comandos `REINDEX` necesarios.
+
+~~~sql
+WITH index_stats AS (
+    SELECT
+        nspname AS schemaname,
+        relname AS tablename,
+        indexrelname AS indexname,
+        pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
+        idx_scan AS index_scans,
+        idx_tup_read AS tuples_read,
+        idx_tup_fetch AS tuples_fetched,
+        CASE 
+            WHEN pg_relation_size(indexrelid) / current_setting('block_size')::int > 100 THEN 'Fragmented' 
+            ELSE 'Not Fragmented' 
+        END AS fragmentation_status
+    FROM 
+        pg_stat_user_indexes
+    JOIN 
+        pg_index ON pg_stat_user_indexes.indexrelid = pg_index.indexrelid
+    JOIN 
+        pg_class ON pg_index.indexrelid = pg_class.oid
+    JOIN 
+        pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+)
+SELECT 
+    'REINDEX INDEX ' || schemaname || '.' || indexname || ';' AS reindex_command
+FROM 
+    index_stats
+WHERE 
+    fragmentation_status = 'Fragmented';
+~~~
+
+### Recomendaciones y Comentarios
+
+1. **Ejecución en Horas de Baja Carga**: La operación `REINDEX` puede ser intensiva en recursos, por lo que se recomienda ejecutarla durante períodos de baja actividad para minimizar el impacto en el rendimiento.
+
+2. **Monitoreo de Desfragmentación**: Después de ejecutar los comandos `REINDEX`, es importante monitorear la base de datos para asegurarse de que el rendimiento ha mejorado y no se han introducido nuevos problemas.
+
+3. **Revisar Frecuencia de Desfragmentación**: Dependiendo de la carga de trabajo y el patrón de uso, puede ser necesario ajustar la frecuencia con la que se realiza la desfragmentación de los índices.
+
+4. **Considerar Otras Optimizaciones**: La desfragmentación de índices es solo una parte del mantenimiento de la base de datos. Considera también la optimización de consultas, la actualización de estadísticas y otras prácticas de mantenimiento regular.
+
+
+
+
+
+# No Existe nada debajo de esta linea.
