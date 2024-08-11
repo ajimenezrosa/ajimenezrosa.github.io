@@ -51,7 +51,7 @@
 
 ## Gestión de Roles en PostgreSQL
 301. [Gestión de Roles en PostgreSQL](#301)
-
+302. [Comandos paqra menejo de persmiso y usuarios en postgres](#302)
 
 ---
 
@@ -953,6 +953,42 @@ Esta consulta te proporcionará una lista de todos los roles junto con sus atrib
     GRANT admin TO nombre_del_usuario;
     ```
 
+
+    ~~~cmd
+    transporte=# \h create rol
+    ~~~
+Command:     CREATE ROLE
+Description: define a new database role
+Syntax:
+CREATE ROLE name [ [ WITH ] option [ ... ] ]
+
+where option can be:
+
+      SUPERUSER | NOSUPERUSER
+    | CREATEDB | NOCREATEDB
+    | CREATEROLE | NOCREATEROLE
+    | INHERIT | NOINHERIT
+    | LOGIN | NOLOGIN
+    | REPLICATION | NOREPLICATION
+    | BYPASSRLS | NOBYPASSRLS
+    | CONNECTION LIMIT connlimit
+    | [ ENCRYPTED ] PASSWORD 'password' | PASSWORD NULL
+    | VALID UNTIL 'timestamp'
+    | IN ROLE role_name [, ...]
+    | IN GROUP role_name [, ...]
+    | ROLE role_name [, ...]
+    | ADMIN role_name [, ...]
+    | USER role_name [, ...]
+    | SYSID uid
+
+para listar todos los roles que tenemos en el servidor utilizamos la instruccion 
+  ~~~cmd
+  \dg
+~~~
+
+
+
+
 ## **Mejores Prácticas**
 
 - **Usar Roles para Agrupar Permisos**: En lugar de otorgar permisos directamente a los usuarios, agrupa los permisos en roles y asigna esos roles a los usuarios.
@@ -966,7 +1002,39 @@ La gestión de roles en PostgreSQL es esencial para mantener una base de datos s
 
 
 Esta versión actualizada proporciona una referencia completa para la gestión de roles en PostgreSQL, incluyendo cómo listar todos los roles existentes, lo que es fundamental para auditar y administrar permisos en un entorno de producción.
+# 
 
+## Comandos paqra menejo de persmiso y usuarios en postgres<a name="302"></a>
+
+```sql
+-- Crear un rol llamado usuario_consulta
+CREATE ROLE usuario_consulta;
+
+-- Modificar el rol para permitir el inicio de sesión
+ALTER ROLE usuario_consulta WITH LOGIN;
+
+-- Establecer la contraseña para el rol usuario_consulta
+ALTER ROLE usuario_consulta WITH PASSWORD 'etc123';
+
+-- Comando para listar roles y grupos en PostgreSQL (debe ejecutarse en psql)
+\dg
+```
+
+### **Explicación**
+
+1. **CREATE ROLE usuario_consulta;**
+   - Este comando crea un nuevo rol llamado `usuario_consulta` en PostgreSQL. Este rol no tiene privilegios ni la capacidad de iniciar sesión hasta que se modifique.
+
+2. **ALTER ROLE usuario_consulta WITH LOGIN;**
+   - Este comando modifica el rol `usuario_consulta` para permitir que se pueda utilizar como un usuario que puede iniciar sesión en la base de datos.
+
+3. **ALTER ROLE usuario_consulta WITH PASSWORD 'etc123';**
+   - Este comando asigna una contraseña al rol `usuario_consulta`, lo que es necesario para los roles que tienen permisos de inicio de sesión.
+
+4. **\dg**
+   - Este es un comando específico de la consola `psql` que lista todos los roles y sus permisos. Muestra detalles sobre cada rol, incluidos sus atributos como si pueden iniciar sesión, si son superusuarios, etc.
+
+Este conjunto de comandos es útil para crear y configurar rápidamente un usuario con capacidades de consulta en una base de datos PostgreSQL. El comando `\dg` permite verificar la creación y configuración del rol.
 
 
 # No Existe nada debajo de esta linea.
