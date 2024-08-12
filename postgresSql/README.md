@@ -542,7 +542,8 @@ missing_indexes AS (
         s.schemaname,
         s.relname,
         a.attname AS column_name,
-        'CREATE INDEX idx_' || s.relname || '_' || a.attname || ' ON ' || s.schemaname || '.' || s.relname || ' (' || a.attname || ');' AS create_index_script
+        'CREATE INDEX idx_' || s.relname || '_' || a.attname || ' ON ' || s.schemaname || '.' || s.relname || ' (' || a.attname || ');' AS create_index_script,
+        s.too_much_seq AS estimated_impact
     FROM 
         seq_scans s
     JOIN 
@@ -566,9 +567,11 @@ SELECT
     schemaname,
     relname,
     column_name,
-    create_index_script
+    create_index_script,
+    estimated_impact
 FROM 
     missing_indexes;
+
 ~~~
 
 ### Descripción de la consulta
