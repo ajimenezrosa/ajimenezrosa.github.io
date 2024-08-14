@@ -241,6 +241,7 @@
 
  - 48 [Documentation of SQL Scripts for Backup and Restore with TDE](#tde1)
 
+ - 49 [Como saber si una base de datos tiene TDE](#49)
 
 
 ## Querys para Actividades de Depuracion de DB's 
@@ -13436,6 +13437,37 @@ For each database, the sequence of steps is as follows:
 6. **Set HADR Availability Group on Secondary Replica**: Configures the secondary replica to be part of the Availability Group.
 
 This sequence ensures that the databases are properly backed up, restored, and configured for high availability.
+#
+
+
+## Como saber Cuales DB tienen TDE en un Servidor<a name="49"></a>
+Para determinar si una base de datos tiene Transparent Data Encryption (TDE) habilitado en SQL Server, puedes ejecutar la siguiente consulta en la base de datos:
+
+```sql
+SELECT name, is_encrypted 
+FROM sys.databases
+WHERE name = 'NombreDeTuBaseDeDatos';
+```
+
+Este query devuelve dos columnas:
+
+- `name`: El nombre de la base de datos.
+- `is_encrypted`: Indicador de si la base de datos está encriptada. Si el valor es `1`, la base de datos tiene TDE habilitado; si el valor es `0`, TDE no está habilitado.
+
+Si deseas obtener el estado de todas las bases de datos en la instancia, simplemente ejecuta:
+
+```sql
+SELECT name, is_encrypted 
+FROM sys.databases;
+```
+
+Esta consulta te mostrará el estado de TDE para cada base de datos en la instancia de SQL Server.
+
+
+
+
+
+
 
 # 
 
