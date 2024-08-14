@@ -78,6 +78,11 @@
 [Cambios Estándar y Normales para el Departamento de Bases de Datos del Banco Popular Dominicano](#cambios-estándar-y-normales-para-el-departamento-de-bases-de-datos-del-banco-popular-dominicano)
 
 
+###### SSDT es una herramienta proporcionada por Microsoft que se integra con Visual Studio. Te permite realizar análisis de compatibilidad y actualizaciones de código SQL. Puedes utilizarla para identificar problemas de compatibilidad en el código SQL y hacer las actualizaciones necesarias.
+[SQL Server Data Tools (SSDT)](#101)
+
+
+
 
 # 
 
@@ -1306,6 +1311,76 @@ TSS2 puede ejecutarse en un entorno de Availability Group de SQL Server, pero se
 **Todos estos CH's deberán ser registrados en el sistema de control de cambios y deberán cumplir y pasar todos los pasos de aprobación para poder ser implementados
 
 .**
+# 
+
+
+# Análisis de SQL Server Data Tools (SSDT)<a name="101"></a>
+<img src="https://learn.microsoft.com/es-es/sql/ssdt/media/previous-releases-of-sql-server-data-tools-ssdt-and-ssdt-bi/iso-image.png?view=sql-server-ver16" alt="JuveR" width="800px">
+
+# 
+
+**SQL Server Data Tools (SSDT)** es un conjunto de herramientas integradas en Visual Studio que permite a los desarrolladores y administradores de bases de datos diseñar, construir, probar y desplegar bases de datos de SQL Server, tanto locales como en la nube. SSDT es una herramienta esencial para la gestión del ciclo de vida de bases de datos, proporcionando un entorno de desarrollo unificado para bases de datos y aplicaciones.
+
+#### **Características Principales:**
+
+1. **Diseño y Desarrollo de Bases de Datos:**
+   - SSDT permite crear proyectos de bases de datos en Visual Studio, donde puedes definir el esquema de la base de datos, almacenar procedimientos, funciones, triggers, y otros objetos de base de datos.
+   - Puedes trabajar en un entorno de desarrollo offline, lo que significa que puedes diseñar y modificar la base de datos sin necesidad de conectarte a un servidor SQL.
+
+2. **Compatibilidad de Versiones:**
+   - SSDT incluye herramientas para verificar la compatibilidad de tu código SQL con diferentes versiones de SQL Server. Puedes definir el nivel de compatibilidad y obtener advertencias o errores si utilizas características que no son compatibles con la versión objetivo.
+
+3. **Implementación de Bases de Datos:**
+   - SSDT facilita la implementación de cambios en la base de datos, generando scripts de actualización que se pueden aplicar a diferentes entornos (desarrollo, pruebas, producción).
+   - Puedes comparar esquemas y datos entre diferentes bases de datos y sincronizarlos.
+
+4. **Pruebas Unitarias de Bases de Datos:**
+   - SSDT permite crear y ejecutar pruebas unitarias para asegurarte de que los procedimientos almacenados, funciones, y otras partes de la base de datos funcionen correctamente.
+
+5. **Control de Versiones y CI/CD:**
+   - SSDT se integra con sistemas de control de versiones (como Git) y pipelines de CI/CD (Continuous Integration/Continuous Deployment), permitiendo la automatización del despliegue de bases de datos.
+
+#### **Ejemplos de Uso:**
+
+1. **Creación de un Proyecto de Base de Datos:**
+   - Abre Visual Studio y selecciona "Crear un nuevo proyecto".
+   - Elige "SQL Server Database Project" como tipo de proyecto.
+   - Una vez creado, puedes agregar tablas, procedimientos almacenados, vistas, funciones, etc.
+
+2. **Verificación de Compatibilidad:**
+   - En el proyecto de la base de datos, ve a "Propiedades del proyecto" y selecciona la versión de SQL Server con la que deseas ser compatible.
+   - Al construir el proyecto, SSDT te avisará si hay problemas de compatibilidad.
+
+3. **Implementación de Cambios:**
+   - Haz clic derecho en el proyecto y selecciona "Publicar". Esto te permitirá generar scripts de implementación o aplicar cambios directamente a una base de datos.
+
+4. **Comparación de Esquemas:**
+   - Usa la herramienta "Schema Compare" para comparar el esquema del proyecto con el esquema de una base de datos en vivo y generar scripts de sincronización.
+
+#### **Disponibilidad y Costo:**
+
+- **Gratuito:** SSDT es gratuito y se incluye con Visual Studio. Sin embargo, algunas características avanzadas pueden requerir una edición específica de Visual Studio, como Visual Studio Enterprise. Pero para la mayoría de las tareas relacionadas con bases de datos, la versión gratuita de Visual Studio Community es suficiente.
+  
+#### **Descarga y Requisitos:**
+
+1. **Descargar Visual Studio:**
+   - Puedes descargar Visual Studio (que incluye SSDT) desde [Visual Studio Downloads](https://visualstudio.microsoft.com/downloads/).
+
+2. **Instalación de SSDT:**
+   - Durante la instalación de Visual Studio, asegúrate de seleccionar la carga de trabajo "Data storage and processing" para instalar SSDT.
+   - Si ya tienes Visual Studio instalado, puedes agregar SSDT desde el instalador de Visual Studio seleccionando la misma carga de trabajo.
+
+3. **Documentación Oficial:**
+   - [Documentación de SSDT](https://docs.microsoft.com/en-us/sql/ssdt/sql-server-data-tools?view=sql-server-ver15)
+
+#### **Conclusión:**
+SSDT es una herramienta poderosa y gratuita que te permite gestionar de manera efectiva proyectos de bases de datos en SQL Server. Es ideal para el desarrollo, la verificación de compatibilidad, la implementación de cambios, y el control de versiones. Su integración con Visual Studio lo convierte en una solución integral para desarrolladores y administradores de bases de datos.
+
+
+
+
+
+
 
 *Fin del documento*
 
