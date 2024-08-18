@@ -1024,7 +1024,7 @@ Esta versión actualizada proporciona una referencia completa para la gestión d
 
 ## Comandos paqra menejo de persmiso y usuarios en postgres<a name="302"></a>
 
-```sql
+~~~sql
 -- Crear un rol llamado usuario_consulta
 CREATE ROLE usuario_consulta;
 
@@ -1036,7 +1036,7 @@ ALTER ROLE usuario_consulta WITH PASSWORD 'etc123';
 
 -- Comando para listar roles y grupos en PostgreSQL (debe ejecutarse en psql)
 \dg
-```
+~~~
 
 ### **Explicación**
 
@@ -1117,6 +1117,52 @@ En PostgreSQL, las transacciones permiten agrupar varias operaciones de base de 
 ```
 https://www.postgresql.org/docs/current/sql-rollback.html
 ```
+
+# 
+
+Aquí tienes una breve explicación sobre cómo realizar backups y restores en PostgreSQL, junto con ejemplos y los enlaces a la documentación oficial.
+
+### **1. Realizar Backup en PostgreSQL**
+PostgreSQL proporciona varias formas de hacer backup de tus datos, siendo la más común el uso de la herramienta `pg_dump`. Este comando crea un archivo de respaldo de una base de datos en formato de script SQL o en otros formatos más compactos.
+
+#### **Ejemplo de uso de `pg_dump`:**
+1. **Backup de una base de datos completa en formato SQL:**
+   ```bash
+   pg_dump -U usuario -W -F p nombre_base_de_datos > respaldo.sql
+   ```
+   - `-U`: Especifica el usuario de la base de datos.
+   - `-W`: Solicita la contraseña del usuario.
+   - `-F p`: Especifica que el formato de salida es un archivo de texto plano (plain format).
+   - `nombre_base_de_datos`: Es la base de datos de la que deseas hacer el respaldo.
+
+2. **Backup en formato comprimido:**
+   ```bash
+   pg_dump -U usuario -W -F c nombre_base_de_datos > respaldo.dump
+   ```
+   - `-F c`: Especifica que el formato de salida es comprimido (custom format).
+
+#### **Enlace a la documentación oficial:**
+[Documentación oficial de Backup en PostgreSQL](https://www.postgresql.org/docs/current/backup.html)
+
+---
+
+### **2. Realizar Restore en PostgreSQL**
+El comando `pg_restore` se utiliza para restaurar un respaldo creado en formato no plano (por ejemplo, el formato comprimido). Para restaurar un respaldo en formato de script SQL, se usa `psql`.
+
+#### **Ejemplo de uso de `pg_restore`:**
+1. **Restaurar un respaldo en formato comprimido:**
+   ```bash
+   pg_restore -U usuario -W -d nombre_base_de_datos respaldo.dump
+   ```
+   - `-d`: Especifica la base de datos de destino.
+
+2. **Restaurar un respaldo en formato SQL plano:**
+   ```bash
+   psql -U usuario -W -d nombre_base_de_datos -f respaldo.sql
+   ```
+
+#### **Enlace a la documentación oficial:**
+[Documentación oficial de Restore en PostgreSQL](https://www.postgresql.org/docs/current/backup-dump.html)
 
 
 
