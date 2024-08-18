@@ -53,6 +53,21 @@
 301. [Gestión de Roles en PostgreSQL](#301)
 302. [Comandos paqra menejo de persmiso y usuarios en postgres](#302)
 
+
+## Aquí tienes los índices con los enlaces correspondientes para cada uno de los temas:
+
+1. **Creación de `dblink` en PostgreSQL:**
+   [Documentación oficial de `dblink`](https://www.postgresql.org/docs/current/dblink.html)
+
+2. **Uso de `COMMIT` y `ROLLBACK` en PostgreSQL:**
+   [Documentación oficial de `ROLLBACK`](https://www.postgresql.org/docs/current/sql-rollback.html)
+
+
+
+
+
+
+
 ---
 
 ## Introducción
@@ -1038,6 +1053,71 @@ ALTER ROLE usuario_consulta WITH PASSWORD 'etc123';
    - Este es un comando específico de la consola `psql` que lista todos los roles y sus permisos. Muestra detalles sobre cada rol, incluidos sus atributos como si pueden iniciar sesión, si son superusuarios, etc.
 
 Este conjunto de comandos es útil para crear y configurar rápidamente un usuario con capacidades de consulta en una base de datos PostgreSQL. El comando `\dg` permite verificar la creación y configuración del rol.
+
+# 
+
+Aquí tienes una breve explicación con ejemplos sobre la creación de un `dblink` en PostgreSQL y la utilización de `COMMIT` y `ROLLBACK`, junto con los enlaces que puedes copiar para cada uno de los temas.
+
+### **1. Creación de `dblink` en PostgreSQL**
+El módulo `dblink` en PostgreSQL permite ejecutar consultas en una base de datos remota desde una base de datos local. Es útil para conectarse y trabajar con diferentes bases de datos.
+
+#### **Pasos:**
+1. Instala la extensión `dblink`:
+   ```sql
+   CREATE EXTENSION dblink;
+   ```
+
+2. Para crear un `dblink`, necesitas proporcionar la conexión a la base de datos remota. Esto se hace utilizando la función `dblink_connect()`.
+
+   ```sql
+   SELECT dblink_connect('con1', 'host=localhost dbname=remote_db user=user password=secret');
+   ```
+
+3. Una vez conectado, puedes ejecutar consultas en la base de datos remota:
+   ```sql
+   SELECT * FROM dblink('con1', 'SELECT id, name FROM users') AS t(id int, name text);
+   ```
+
+4. Finalmente, cierra la conexión:
+   ```sql
+   SELECT dblink_disconnect('con1');
+   ```
+
+#### **Enlace directo para copiar:**
+```
+https://www.postgresql.org/docs/current/dblink.html
+```
+
+### **2. Uso de `COMMIT` y `ROLLBACK` en PostgreSQL**
+En PostgreSQL, las transacciones permiten agrupar varias operaciones de base de datos para que se ejecuten como una unidad atómica. `COMMIT` y `ROLLBACK` son comandos utilizados para finalizar o deshacer una transacción.
+
+#### **Ejemplo de uso:**
+1. **Iniciar una transacción:**
+   ```sql
+   BEGIN;
+   ```
+
+2. **Ejecutar consultas:**
+   ```sql
+   INSERT INTO accounts (id, balance) VALUES (1, 1000);
+   UPDATE accounts SET balance = balance - 200 WHERE id = 1;
+   ```
+
+3. **Confirmar la transacción (hacer permanentes los cambios):**
+   ```sql
+   COMMIT;
+   ```
+
+4. **Si algo sale mal, puedes deshacer los cambios ejecutados durante la transacción:**
+   ```sql
+   ROLLBACK;
+   ```
+
+#### **Enlace directo para copiar:**
+```
+https://www.postgresql.org/docs/current/sql-rollback.html
+```
+
 
 
 # No Existe nada debajo de esta linea.
