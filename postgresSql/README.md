@@ -64,8 +64,16 @@
 
 
 
+1. **[Backup en PostgreSQL](#backup-en-postgresql)**
+2. **[Restore en PostgreSQL](#restore-en-postgresql)**
 
 
+### **Creación de un Servidor de Réplica en PostgreSQL:**
+
+1. **[Configuración del Servidor Primario (Master)](#configuración-del-servidor-primario-master)**
+2. **[Configuración del Servidor de Réplica (Slave)](#configuración-del-servidor-de-réplica-slave)**
+3. **[Verificación de la Replicación](#verificación-de-la-replicación)**
+4. **[Promoción del Servidor de Réplica a Primario](#promoción-del-servidor-de-réplica-a-primario)**
 
 
 ---
@@ -1056,7 +1064,6 @@ Este conjunto de comandos es útil para crear y configurar rápidamente un usuar
 
 # 
 
-Aquí tienes una breve explicación con ejemplos sobre la creación de un `dblink` en PostgreSQL y la utilización de `COMMIT` y `ROLLBACK`, junto con los enlaces que puedes copiar para cada uno de los temas.
 
 ### **1. Creación de `dblink` en PostgreSQL**
 El módulo `dblink` en PostgreSQL permite ejecutar consultas en una base de datos remota desde una base de datos local. Es útil para conectarse y trabajar con diferentes bases de datos.
@@ -1120,20 +1127,25 @@ https://www.postgresql.org/docs/current/sql-rollback.html
 
 # 
 
-Aquí tienes una breve explicación sobre cómo realizar backups y restores en PostgreSQL, junto con ejemplos y los enlaces a la documentación oficial.
 
-### **1. Realizar Backup en PostgreSQL**
-PostgreSQL proporciona varias formas de hacer backup de tus datos, siendo la más común el uso de la herramienta `pg_dump`. Este comando crea un archivo de respaldo de una base de datos en formato de script SQL o en otros formatos más compactos.
+Entiendo ahora, deseas un documento que contenga toda la explicación de backup y restore en PostgreSQL con ejemplos, y al final un índice con enlaces para llegar a las secciones correspondientes dentro del mismo documento. A continuación te presento el contenido con los enlaces internos:
+
+---
+
+### **Backup y Restore en PostgreSQL**
+
+### **1. Backup en PostgreSQL**
+PostgreSQL proporciona varias herramientas para realizar respaldos de tus datos. La más común es `pg_dump`, que permite realizar copias de seguridad de bases de datos en formato de script SQL o en formatos comprimidos.
 
 #### **Ejemplo de uso de `pg_dump`:**
-1. **Backup de una base de datos completa en formato SQL:**
+1. **Backup de una base de datos completa en formato SQL plano:**
    ```bash
    pg_dump -U usuario -W -F p nombre_base_de_datos > respaldo.sql
    ```
    - `-U`: Especifica el usuario de la base de datos.
    - `-W`: Solicita la contraseña del usuario.
    - `-F p`: Especifica que el formato de salida es un archivo de texto plano (plain format).
-   - `nombre_base_de_datos`: Es la base de datos de la que deseas hacer el respaldo.
+   - `nombre_base_de_datos`: Es la base de datos que deseas respaldar.
 
 2. **Backup en formato comprimido:**
    ```bash
@@ -1146,15 +1158,15 @@ PostgreSQL proporciona varias formas de hacer backup de tus datos, siendo la má
 
 ---
 
-### **2. Realizar Restore en PostgreSQL**
-El comando `pg_restore` se utiliza para restaurar un respaldo creado en formato no plano (por ejemplo, el formato comprimido). Para restaurar un respaldo en formato de script SQL, se usa `psql`.
+### **2. Restore en PostgreSQL**
+Para restaurar respaldos en PostgreSQL, se utilizan las herramientas `pg_restore` para respaldos en formatos comprimidos o `psql` para respaldos en formato de script SQL.
 
 #### **Ejemplo de uso de `pg_restore`:**
 1. **Restaurar un respaldo en formato comprimido:**
    ```bash
    pg_restore -U usuario -W -d nombre_base_de_datos respaldo.dump
    ```
-   - `-d`: Especifica la base de datos de destino.
+   - `-d`: Especifica la base de datos de destino donde se restaurará el respaldo.
 
 2. **Restaurar un respaldo en formato SQL plano:**
    ```bash
@@ -1163,6 +1175,126 @@ El comando `pg_restore` se utiliza para restaurar un respaldo creado en formato 
 
 #### **Enlace a la documentación oficial:**
 [Documentación oficial de Restore en PostgreSQL](https://www.postgresql.org/docs/current/backup-dump.html)
+
+---
+
+# 
+---
+
+### **Creación de un Servidor de Réplica en PostgreSQL**
+
+La replicación en PostgreSQL permite tener una copia exacta de una base de datos en otro servidor, lo cual es útil para mejorar la disponibilidad, escalabilidad y seguridad de tus datos. PostgreSQL soporta la replicación en caliente, donde la réplica puede ser usada para consultas de solo lectura.
+
+### **1. Configuración del Servidor Primario (Master)**
+
+El servidor primario es la base de datos original que será replicada. Debes configurarlo para permitir la replicación.
+
+#### **Pasos:**
+
+1. **Editar el archivo de configuración `postgresql.conf`:**
+   Abre el archivo `postgresql.conf` en el servidor primario y habilita las siguientes configuraciones:
+   ```bash
+   wal_level = replica
+   max_wal_senders = 3
+   wal_keep_size = 16MB
+   archive_mode = on
+   archive_command = 'cp %p /path_to_archive/%f'
+   ```
+
+2. **Editar el archivo `pg_hba.conf`:**
+   Este archivo se utiliza para controlar el acceso al servidor. Añade una línea para permitir la replicación desde el servidor de réplica:
+   ```bash
+   host    replication     replicator     192.168.1.100/32     md5
+   ```
+   Donde:
+   - `replicator` es el nombre del usuario que tendrá permisos de replicación.
+   - `192.168.1.100` es la IP del servidor de réplica.
+
+3. **Crear un usuario para la replicación:**
+   Debes crear un usuario que tenga permisos de replicación:
+   ```sql
+   CREATE USER replicator REPLICATION LOGIN ENCRYPTED PASSWORD 'password';
+   ```
+
+4. **Reiniciar el servidor PostgreSQL:**
+   Después de hacer estos cambios, reinicia el servidor para que los cambios surtan efecto:
+   ```bash
+   sudo systemctl restart postgresql
+   ```
+
+---
+
+### **2. Configuración del Servidor de Réplica (Slave)**
+
+El servidor de réplica recibirá las actualizaciones del servidor primario y mantendrá una copia exacta de la base de datos.
+
+#### **Pasos:**
+
+1. **Hacer una copia base del servidor primario:**
+   En el servidor de réplica, utiliza `pg_basebackup` para hacer una copia base del servidor primario:
+   ```bash
+   pg_basebackup -h 192.168.1.1 -D /var/lib/postgresql/12/main -U replicator -P -R
+   ```
+   Donde:
+   - `192.168.1.1` es la IP del servidor primario.
+   - `/var/lib/postgresql/12/main` es el directorio de datos del servidor de réplica.
+   - `-R` crea el archivo `recovery.conf` automáticamente.
+
+2. **Configurar `recovery.conf`:**
+   Si no utilizaste la opción `-R`, debes crear manualmente el archivo `recovery.conf` en el directorio de datos del servidor de réplica con el siguiente contenido:
+   ```bash
+   standby_mode = 'on'
+   primary_conninfo = 'host=192.168.1.1 port=5432 user=replicator password=password'
+   trigger_file = '/tmp/failover.trigger'
+   ```
+
+3. **Iniciar el servidor de réplica:**
+   Una vez que la configuración está completa, inicia el servidor PostgreSQL en el servidor de réplica:
+   ```bash
+   sudo systemctl start postgresql
+   ```
+
+---
+
+### **3. Verificación de la Replicación**
+
+Para verificar que la replicación está funcionando correctamente, puedes utilizar las siguientes consultas:
+
+1. **Verificar el estado de la replicación en el servidor primario:**
+   ```sql
+   SELECT * FROM pg_stat_replication;
+   ```
+
+   Este comando te mostrará información sobre las conexiones de replicación activas.
+
+2. **Verificar que el servidor de réplica está en modo de solo lectura:**
+   En el servidor de réplica, intenta realizar una operación de escritura. Debería fallar, indicando que el servidor está en modo de solo lectura:
+   ```sql
+   INSERT INTO test_table VALUES (1); -- Esto debería fallar en el servidor de réplica
+   ```
+
+---
+
+### **4. Promoción del Servidor de Réplica a Primario**
+
+En caso de que el servidor primario falle, puedes promover el servidor de réplica a primario usando el archivo de trigger configurado en `recovery.conf`.
+
+1. **Crear el archivo de trigger:**
+   ```bash
+   touch /tmp/failover.trigger
+   ```
+
+   Esto provocará que el servidor de réplica se convierta en primario y acepte operaciones de escritura.
+
+---
+
+
+---
+
+
+
+
+
 
 
 
