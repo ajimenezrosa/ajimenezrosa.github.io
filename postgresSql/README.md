@@ -54,7 +54,7 @@
 302. [Comandos paqra menejo de persmiso y usuarios en postgres](#302)
 
 
-## Aquí tienes los índices con los enlaces correspondientes para cada uno de los temas:
+## Creacion de `dblink` y manejo de `Commit  Rollbak Backup y Restore` en Postgres
 
 1. **Creación de `dblink` en PostgreSQL:**
    [Documentación oficial de `dblink`](https://www.postgresql.org/docs/current/dblink.html)
