@@ -56,24 +56,24 @@
 
 ## Creacion de `dblink` y manejo de `Commit  Rollbak Backup y Restore` en Postgres
 
-1. **Creación de `dblink` en PostgreSQL:**
-   [Documentación oficial de `dblink`](https://www.postgresql.org/docs/current/dblink.html)
+1. [**Creación de `dblink` en PostgreSQL:**](#401)
+   - [Documentación oficial de `dblink`](https://www.postgresql.org/docs/current/dblink.html)
 
-2. **Uso de `COMMIT` y `ROLLBACK` en PostgreSQL:**
+2. [**Uso de `COMMIT` y `ROLLBACK` en PostgreSQL:**](#402)
    [Documentación oficial de `ROLLBACK`](https://www.postgresql.org/docs/current/sql-rollback.html)
 
 
 
-1. **[Backup en PostgreSQL](#backup-en-postgresql)**
-2. **[Restore en PostgreSQL](#restore-en-postgresql)**
+1. **[Backup en PostgreSQL](#501)**
+2. **[Restore en PostgreSQL](#502)**
 
 
-### **Creación de un Servidor de Réplica en PostgreSQL:**
+### [**Creación de un Servidor de Réplica en PostgreSQL:**](#601)
 
-1. **[Configuración del Servidor Primario (Master)](#configuración-del-servidor-primario-master)**
-2. **[Configuración del Servidor de Réplica (Slave)](#configuración-del-servidor-de-réplica-slave)**
-3. **[Verificación de la Replicación](#verificación-de-la-replicación)**
-4. **[Promoción del Servidor de Réplica a Primario](#promoción-del-servidor-de-réplica-a-primario)**
+1. **[Configuración del Servidor Primario (Master)](#602)**
+2. **[Configuración del Servidor de Réplica (Slave)](#c603)**
+3. **[Verificación de la Replicación](#604)**
+4. **[Promoción del Servidor de Réplica a Primario](#605)**
 
 
 ---
@@ -1065,7 +1065,7 @@ Este conjunto de comandos es útil para crear y configurar rápidamente un usuar
 # 
 
 
-### **1. Creación de `dblink` en PostgreSQL**
+### **1. Creación de `dblink` en PostgreSQL**<a name="401"></a>
 El módulo `dblink` en PostgreSQL permite ejecutar consultas en una base de datos remota desde una base de datos local. Es útil para conectarse y trabajar con diferentes bases de datos.
 
 #### **Pasos:**
@@ -1095,7 +1095,7 @@ El módulo `dblink` en PostgreSQL permite ejecutar consultas en una base de dato
 https://www.postgresql.org/docs/current/dblink.html
 ```
 
-### **2. Uso de `COMMIT` y `ROLLBACK` en PostgreSQL**
+### **2. Uso de `COMMIT` y `ROLLBACK` en PostgreSQL***<a name="402"></a>
 En PostgreSQL, las transacciones permiten agrupar varias operaciones de base de datos para que se ejecuten como una unidad atómica. `COMMIT` y `ROLLBACK` son comandos utilizados para finalizar o deshacer una transacción.
 
 #### **Ejemplo de uso:**
@@ -1128,11 +1128,9 @@ https://www.postgresql.org/docs/current/sql-rollback.html
 # 
 
 
-Entiendo ahora, deseas un documento que contenga toda la explicación de backup y restore en PostgreSQL con ejemplos, y al final un índice con enlaces para llegar a las secciones correspondientes dentro del mismo documento. A continuación te presento el contenido con los enlaces internos:
-
 ---
 
-### **Backup y Restore en PostgreSQL**
+### **Backup y Restore en PostgreSQL***<a name="501"></a>
 
 ### **1. Backup en PostgreSQL**
 PostgreSQL proporciona varias herramientas para realizar respaldos de tus datos. La más común es `pg_dump`, que permite realizar copias de seguridad de bases de datos en formato de script SQL o en formatos comprimidos.
@@ -1158,7 +1156,7 @@ PostgreSQL proporciona varias herramientas para realizar respaldos de tus datos.
 
 ---
 
-### **2. Restore en PostgreSQL**
+### **2. Restore en PostgreSQL**<a name="502"></a>
 Para restaurar respaldos en PostgreSQL, se utilizan las herramientas `pg_restore` para respaldos en formatos comprimidos o `psql` para respaldos en formato de script SQL.
 
 #### **Ejemplo de uso de `pg_restore`:**
@@ -1181,11 +1179,11 @@ Para restaurar respaldos en PostgreSQL, se utilizan las herramientas `pg_restore
 # 
 ---
 
-### **Creación de un Servidor de Réplica en PostgreSQL**
+### **Creación de un Servidor de Réplica en PostgreSQL**<a name="601"></a>
 
 La replicación en PostgreSQL permite tener una copia exacta de una base de datos en otro servidor, lo cual es útil para mejorar la disponibilidad, escalabilidad y seguridad de tus datos. PostgreSQL soporta la replicación en caliente, donde la réplica puede ser usada para consultas de solo lectura.
 
-### **1. Configuración del Servidor Primario (Master)**
+### **1. Configuración del Servidor Primario (Master)**<a name="602"></a>
 
 El servidor primario es la base de datos original que será replicada. Debes configurarlo para permitir la replicación.
 
@@ -1224,7 +1222,7 @@ El servidor primario es la base de datos original que será replicada. Debes con
 
 ---
 
-### **2. Configuración del Servidor de Réplica (Slave)**
+### **2. Configuración del Servidor de Réplica (Slave)**<a name="603"></a>
 
 El servidor de réplica recibirá las actualizaciones del servidor primario y mantendrá una copia exacta de la base de datos.
 
@@ -1256,7 +1254,7 @@ El servidor de réplica recibirá las actualizaciones del servidor primario y ma
 
 ---
 
-### **3. Verificación de la Replicación**
+### **3. Verificación de la Replicación**<a name="604"></a>
 
 Para verificar que la replicación está funcionando correctamente, puedes utilizar las siguientes consultas:
 
@@ -1275,7 +1273,7 @@ Para verificar que la replicación está funcionando correctamente, puedes utili
 
 ---
 
-### **4. Promoción del Servidor de Réplica a Primario**
+### **4. Promoción del Servidor de Réplica a Primario**<a name="605"></a>
 
 En caso de que el servidor primario falle, puedes promover el servidor de réplica a primario usando el archivo de trigger configurado en `recovery.conf`.
 
