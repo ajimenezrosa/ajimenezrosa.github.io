@@ -42,6 +42,11 @@
 - [Script de Reporte de Trabajos SQL](#6)
 # 
 
+- [ Enable Failover Clustering Feature using PowerShell](#7)
+
+
+# 
+--- 
 
 ## A continuación, te proporciono un código en PowerShell que extrae la información del servidor y la formatea en una tabla HTML con títulos en fondo azul:<a name="1"></a>
 <img src="https://www.ionos.es/digitalguide/fileadmin/DigitalGuide/Teaser/was-ist-ein-server-t.jpg?format=jpg&name=large" alt="JuveR" width="800px">
@@ -1086,8 +1091,97 @@ if ($notFound.Count -gt 0) {
 }
 ~~~
 
+# 
 
 
-No hay nada debajo de esta linea
+## Enable Failover Clustering Feature using PowerShell<a name="7"></a>
+
+
+
+    1. Click Start > Windows PowerShell >right-click Windows PowerShell > More > select Run as administrator.
+
+    
+    2. In Windows PowerShell, type the following command.
+
+
+~~~powershell
+Install-WindowsFeature “Failover-Clustering” -IncludeManagementTools
+~~~
+
+## Exercise 3: Creating a 3-node failover cluster
+#### To run the validation tests using PowerShell, you can use the Test-Cluster cmdlet.
+
+
+~~~powershell
+ Example: Validate specified nodes
+Test-Cluster -Node "AlwaysOnN1", "AlwaysOnN2","AlwaysOnN3"
+
+Example: Validate specified nodes for storage tests
+
+Test-Cluster -Node "AlwaysOnN1", "AlwaysOnN2","AlwaysOnN3" -Include "Storage"
+~~~
+[More details can be found here](#https://learn.microsoft.com/en-us/powershell/module/failoverclusters/test-cluster?view=windowsserver2022-ps)
+
+
+
+## To create a cluster using PowerShell, you can use the New-Cluster cmdlet.
+
+~~~powershell
+Example: Create new cluster
+
+New-Cluster -Name “AlwaysOnCluster” -Node AlwaysOnN1, AlwaysOnN2,AlwaysOnN3 -NoStorage
+~~~
+
+#### The above command will create a Windows Server 2022 Failover Cluster with no shared disks. The NoStorage parameter is used as we don't want any storage to be automatically added to the cluster.
+
+#### [More details can be found here](#https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/ee460973(v=technet.10)?redirectedfrom=MSDN)
+
+
+
+
+## Exercise 4: Review the 3-node failover cluster using GUI and PowerShell
+
+## Task 2: Review the 3-node failover cluster using PowerShell.
+
+#### To get a list of all cluster cmdlets, type the following:
+
+~~~Powershell
+Get-command -module FailoverClusters
+~~~
+
+#### Below are some more useful cluster cmdlets:
+
+#### Gets cluster node list
+
+~~~PowerShell
+Get-clusternode 
+~~~
+
+#### Gets cluster resource list
+
+~~~PowerShell
+Get-clusterresource 
+~~~
+
+#### Creates a log file for all nodes, or a specific a node, in a failover cluster. They are stored in the %windir%\Cluster\Reports directory on each node of the cluster.
+
+~~~PowerShell
+Get-clusterlog 
+~~~
+
+
+
+
+
+
+
+
+##   No hay nada debajo de esta linea
+
+
+
+
+
+
 # 
 
