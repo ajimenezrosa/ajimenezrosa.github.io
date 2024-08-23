@@ -209,7 +209,7 @@ Manuales de</th>
 
 #### **15. Auditoría y Verificación de Ambientes**
 - 15.1 [Query de extracción de bases de datos y tablas en SQL Server](#600)  
-- 15.2 [Documentación para la restauración de bases de datos ABT](#601)  
+- 15.2 [Documentación para la Solucionar problemas   de bases de datos ABT `fuera de linea problemas de permisos` ](#601)  
 
 ---
 
