@@ -1284,10 +1284,138 @@ En caso de que el servidor primario falle, puedes promover el servidor de répli
 
    Esto provocará que el servidor de réplica se convierta en primario y acepte operaciones de escritura.
 
+
+
+
 ---
 
 
 ---
+
+
+## 2.- Eliminarlo de la base de datos de MI
+
+realizar busqueda de los registros a eliminar via base de datos sobre las , esto para el tema de tarjetas y cobros...
+
+###  Crear una tabla temporal para almacenar los números de teléfono
+~~~sql
+CREATE TEMP TABLE phone_numbers (
+    phone_number VARCHAR(15)
+);
+
+-- Insertar los números de teléfono en la tabla temporal
+INSERT INTO phone_numbers (phone_number)
+VALUES
+('8099025098'),
+('8297789870'),
+('8294520143'),
+('8492858549'),
+('8094036836'),
+('8496205493'),
+('8098798911'),
+('8295150272'),
+('8097040276'),
+('8296479274'),
+('8098913562'),
+('8296809960'),
+('8294753040'),
+('8297832211'),
+('8296801452'),
+('8494751180'),
+('8097159229'),
+('8094374420'),
+('8293044095'),
+('8498531539'),
+('8295647826'),
+('8298276602'),
+('8096068851'),
+('8299411700'),
+('8094790184'),
+('8096530240'),
+('8093832412'),
+('8093501666'),
+('8093081666'),
+('8297403111'),
+('8292288476'),
+('8292320272'),
+('8293132025'),
+('8094441165'),
+('8096548255'),
+('8098484961'),
+('8099660702'),
+('8297669821'),
+('8297054444'),
+('8096607191'),
+('8299147925'),
+('8295318561'),
+('8299028202'),
+('8494060177'),
+('8494802751'),
+('8097790731'),
+('8295154825'),
+('8293252198'),
+('8493572994'),
+('8293512043'),
+('8295910395'),
+('8295643043'),
+('8293461003'),
+('8293961577'),
+('8297669821'),
+('8493625741'),
+('8297477982'),
+('8098814918'),
+('8298613820'),
+('8292994451'),
+('8097632333'),
+('8097566207'),
+('8297209053'),
+('8097737355'),
+('8099020282'),
+('8099628332'),
+('8298743154');
+~~~
+
+
+###  Seleccionar los registros de las tablas relacionadas
+##  Consulta 1: PRE_GCSCUSTOMER_ENROLLMENT_M
+
+
+-- Verificar información en PRE_GCSCUSTOMER_ENROLLMENT_M
+~~~sql
+-- Verificar información en PRE_GCSCUSTOMER_ENROLLMENT_M
+SELECT *
+FROM PRE_GCSCUSTOMER_ENROLLMENT_M
+WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
+~~~
+
+## Consulta 2: R_GCSCUSTOMER_FUNDING_ACCT_MP
+-- Verificar información en R_GCSCUSTOMER_FUNDING_ACCT_MP
+
+~~~sql
+-- Verificar información en R_GCSCUSTOMER_FUNDING_ACCT_MP
+SELECT *
+FROM R_GCSCUSTOMER_FUNDING_ACCT_MP
+WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
+~~~
+
+## Consulta 3: R_GCSCUSTOMER_ACCOUNT_M
+-- Verificar información en R_GCSCUSTOMER_ACCOUNT_M
+
+~~~sql
+-- Verificar información en R_GCSCUSTOMER_ACCOUNT_M
+SELECT *
+FROM R_GCSCUSTOMER_ACCOUNT_M
+WHERE ID = '00201069358'
+  AND GCS_ACCOUNT_ID = 2082
+  AND MSISDN IN (SELECT phone_number FROM phone_numbers);
+~~~
+
+### 3.- En el servidor de VCASH
+
+Este es un comando `curl` que realiza una operación de desvinculación mediante una solicitud HTTP `DELETE`. No es posible convertir este comando directamente en una consulta `SELECT` porque es una operación en un servicio externo. Sin embargo, podrías intentar verificar la existencia del recurso o realizar un `GET` si el servicio ofrece un endpoint para consultar la información antes de eliminarla.
+
+
+
 
 
 
