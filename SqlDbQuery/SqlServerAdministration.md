@@ -33,19 +33,19 @@ Manuales de</th>
 ---
 
 #### **1. Administración y Conexiones**
-1.1 [Conectar una unidad de red a un servidor SQL Server](#1)  
-1.2 [Eliminar correos del servidor de correos SQL Server](#3)
-- 1.2.1 [Comprobar `sysmail_event_log` vista](#3.1)
-- 1.2.2 [Comprobación del elemento de correo con error específico](#3.2)
-- 1.2.3 [Sysmail_faileditems](#3.3)
-- 1.2.4 [Sysmail_sentitems](#3.4)
-- 1.2.5 [Comprobación de la configuración de Correo electrónico para el servidor SMTP](#3.5)
-- 1.2.6 [Ver log de envío de correos con `sqlmail`](#3.6)
-- 1.2.7 [Ver log de envío de correos fallidos, FAILED MESSAGES LOG](#3.7)
-- 1.2.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)
+- 1.1 [Conectar una unidad de red a un servidor SQL Server](#1)  
+- 1.2 [Eliminar correos del servidor de correos SQL Server](#3)
+    - 1.2.1 [Comprobar `sysmail_event_log` vista](#3.1)
+    - 1.2.2 [Comprobación del elemento de correo con error específico](#3.2)
+    - 1.2.3 [Sysmail_faileditems](#3.3)
+    - 1.2.4 [Sysmail_sentitems](#3.4)
+    - 1.2.5 [Comprobación de la configuración de Correo electrónico para el servidor SMTP](#3.5)
+    - 1.2.6 [Ver log de envío de correos con `sqlmail`](#3.6)
+    - 1.2.7 [Ver log de envío de correos fallidos, FAILED MESSAGES LOG](#3.7)
+    - 1.2.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)
 
-1.3 [Conexiones Activas del Servidor de SQL SERVER](#4)
-1.4 [La conexión de administración dedicada: cuándo y cómo usarla](#7)
+- 1.3 [Conexiones Activas del Servidor de SQL SERVER](#4)
+- 1.4 [La conexión de administración dedicada: cuándo y cómo usarla](#7)
 
 ---
 
@@ -61,44 +61,44 @@ Manuales de</th>
 ---
 
 #### **3. Monitorización y Rendimiento**
-3.1 [Memoria y cache de SQL Server](#8)
-- 3.1.1 [Vista general del uso de la memoria en SQL Server](#8-1)
-- 3.1.2 [Métrica del uso de la caché del búfer por la base de datos](#metricausocachequery)
-- 3.1.3 [Totales de páginas y conteo de bytes](#totalespaginasconteo)
-- 3.1.4 [Porcentaje de tablas en memoria](#percentajecadapagina)
-- 3.1.5 [Número de páginas y tamaño de datos en MB](#numerodepaginas)
-- 3.1.6 [DBCC DROPCLEANBUFFERS](#dbccdropcleanbuffers)
-- 3.1.7 [Expectativa de vida de las páginas](#expectativadevidadelaspaginas)
-- 3.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)
-3.2 [Performance de la base de datos y verificaciones de rendimiento](#performance)
-- 3.2.1 [Consultar última fecha de acceso de login en MS SQL Server](#consultaulfechaacceso)
-- 3.2.2 [Identificar latencia de disco en SQL Server](#disklatency)
-- 3.2.3 [Uso de memoria de SQL Server por base de datos y objeto](#disklatency2)
-- 3.2.4 [Buscar las consultas TOP N](#buscarconsultatop)
-- 3.2.5 [Rendimiento de las consultas](#rendimientoconsultas2)
-- 3.2.6 [Top 10 procedimientos almacenados con mayor tiempo transcurrido](#10procmayortiemeje)
-- 3.2.7 [Consultas SQL más ejecutadas](#lasconsultassqlmasejecutadas)
-- 3.2.8 [Consultas SQL con mayor consumo de CPU](#consultassqlmayorconsumodecpu)
-3.3 [Detección de actividad del servidor en tiempo real](#dectectandoactenservidor)
-- 3.3.1 [Información sobre sesiones en tiempo real](#20.1)
-3.4 [Verificar logs de errores del SQL Server](#errorlogsql)
+- 3.1 [Memoria y cache de SQL Server](#8)
+    - 3.1.1 [Vista general del uso de la memoria en SQL Server](#8-1)
+    - 3.1.2 [Métrica del uso de la caché del búfer por la base de datos](#metricausocachequery)
+    - 3.1.3 [Totales de páginas y conteo de bytes](#totalespaginasconteo)
+    - 3.1.4 [Porcentaje de tablas en memoria](#percentajecadapagina)
+    - 3.1.5 [Número de páginas y tamaño de datos en MB](#numerodepaginas)
+    - 3.1.6 [DBCC DROPCLEANBUFFERS](#dbccdropcleanbuffers)
+    - 3.1.7 [Expectativa de vida de las páginas](#expectativadevidadelaspaginas)
+    - 3.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)
+- 3.2 [Performance de la base de datos y verificaciones de rendimiento](#performance)
+    - 3.2.1 [Consultar última fecha de acceso de login en MS SQL Server](#consultaulfechaacceso)
+    - 3.2.2 [Identificar latencia de disco en SQL Server](#disklatency)
+    - 3.2.3 [Uso de memoria de SQL Server por base de datos y objeto](#disklatency2)
+    - 3.2.4 [Buscar las consultas TOP N](#buscarconsultatop)
+    - 3.2.5 [Rendimiento de las consultas](#rendimientoconsultas2)
+    - 3.2.6 [Top 10 procedimientos almacenados con mayor tiempo transcurrido](#10procmayortiemeje)
+    - 3.2.7 [Consultas SQL más ejecutadas](#lasconsultassqlmasejecutadas)
+    - 3.2.8 [Consultas SQL con mayor consumo de CPU](#consultassqlmayorconsumodecpu)
+- 3.3 [Detección de actividad del servidor en tiempo real](#dectectandoactenservidor)
+    - 3.3.1 [Información sobre sesiones en tiempo real](#20.1)
+- 3.4 [Verificar logs de errores del SQL Server](#errorlogsql)
 
 ---
 
 #### **4. Mantenimiento de Índices**
-4.1 [Información general sobre mantenimiento de índices en SQL](#inf_mant_indices)
-- 4.1.1 [Localizar tablas sin `Clustered Index`](#tablasinclusterindex)
-- 4.1.2 [Detección de índices no utilizados](#indicesnoutilizados)
-- 4.1.3 [Tablas de montón](#tablasmonton)
-- 4.1.4 [Detectar índices no utilizados – Parte 2](#indicesnoutilizados2)
-- 4.1.5 [Identificar posibles índices NC incorrectos](#escrituraslecturas)
-- 4.1.6 [Identificación de índices duplicados](#indicesduplicados)
-- 4.1.7 [Conceptos básicos del diseño de índices](#disenoindices)
-- 4.1.8 [Tareas y consideraciones del diseño de índices](#tareadisind)
-- 4.1.9 [Eliminar y recrear índices de forma ONLINE=ON](#6.8)
-- 4.1.10 [Listado de los índices en una base de datos](#6.9)
-- 4.1.11 [Missing Index Script](#missinindex)
-- 4.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)
+- 4.1 [Información general sobre mantenimiento de índices en SQL](#inf_mant_indices)
+    - 4.1.1 [Localizar tablas sin `Clustered Index`](#tablasinclusterindex)
+    - 4.1.2 [Detección de índices no utilizados](#indicesnoutilizados)
+    - 4.1.3 [Tablas de montón](#tablasmonton)
+    - 4.1.4 [Detectar índices no utilizados – Parte 2](#indicesnoutilizados2)
+    - 4.1.5 [Identificar posibles índices NC incorrectos](#escrituraslecturas)
+    - 4.1.6 [Identificación de índices duplicados](#indicesduplicados)
+    - 4.1.7 [Conceptos básicos del diseño de índices](#disenoindices)
+    - 4.1.8 [Tareas y consideraciones del diseño de índices](#tareadisind)
+    - 4.1.9 [Eliminar y recrear índices de forma ONLINE=ON](#6.8)
+    - 4.1.10 [Listado de los índices en una base de datos](#6.9)
+    - 4.1.11 [Missing Index Script](#missinindex)
+    - 4.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)
 
 ---
 
@@ -151,9 +151,7 @@ Manuales de</th>
 * 8.3 [Jobs del sistema SQL Server: nombre y base de datos](#28.2.1)
 * 8.4 [Jobs del sistema SQL Server para control M](#28.2.2)
 * 8.5 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)
-* 8.6 [Migración de jobs entre
-
- servidores SQL Server](#migrarjobs)
+* 8.6 [Migración de jobs entre servidores SQL Server](#migrarjobs)
 
 ---
 
