@@ -43,19 +43,20 @@ Manuales de</th>
 - 1.2.6 [Ver log de envío de correos con `sqlmail`](#3.6)
 - 1.2.7 [Ver log de envío de correos fallidos, FAILED MESSAGES LOG](#3.7)
 - 1.2.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)
+
 1.3 [Conexiones Activas del Servidor de SQL SERVER](#4)
 1.4 [La conexión de administración dedicada: cuándo y cómo usarla](#7)
 
 ---
 
 #### **2. Mantenimiento de Bases de Datos**
-2.1 [Crecimiento automático de los ficheros de la base de datos](#2)
-2.2 [Cómo mover `TempDB` a otra unidad y carpeta](#21)
-2.3 [Consultas y soluciones para bases de datos en estado `DB recovery Pending`](#2_recovery1)
-2.4 [Reducir tamaño de `TempDB`](#6)
-2.5 [DBCC CHECKDB ](#5)
-2.6 [Sacar una base de datos de modo `restoring`](#sacarrestoring)
-2.7 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)
+- 2.1 [Crecimiento automático de los ficheros de la base de datos](#2)
+- 2.2 [Cómo mover `TempDB` a otra unidad y carpeta](#21)
+- 2.3 [Consultas y soluciones para bases de datos en estado `DB recovery Pending`](#2_recovery1)
+- 2.4 [Reducir tamaño de `TempDB`](#6)
+- 2.5 [DBCC CHECKDB ](#5)
+- 2.6 [Sacar una base de datos de modo `restoring`](#sacarrestoring)
+- 2.7 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)
 
 ---
 
@@ -102,66 +103,66 @@ Manuales de</th>
 ---
 
 #### **5. Copias de Seguridad y Recuperación**
-5.1 [Tamaños de los backups de bases de datos](#querybackup)
-5.2 [Envío por correo electrónico del tamaño de los backups](#querybackup2)
-5.3 [Últimos backups realizados en un servidor](#ultimobackup)
-5.4 [Últimos restores realizados en un servidor](#queryrestoresql)
-5.5 [Seguimiento en tiempo real de operaciones de backup y restore](#tiemporestore)
-5.6 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)
-5.7 [Limpiar y reducir el log de transacciones SQL Server](#limpiarlog)
-5.8 [Fecha de última restauración de un backup](#ultimarestauracion)
-5.9 [Consulta para verificar la restauración de bases de datos ABT](#601)
+* 5.1 [Tamaños de los backups de bases de datos](#querybackup)
+* 5.2 [Envío por correo electrónico del tamaño de los backups](#querybackup2)
+* 5.3 [Últimos backups realizados en un servidor](#ultimobackup)
+* 5.4 [Últimos restores realizados en un servidor](#queryrestoresql)
+* 5.5 [Seguimiento en tiempo real de operaciones de backup y restore](#tiemporestore)
+* 5.6 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)
+* 5.7 [Limpiar y reducir el log de transacciones SQL Server](#limpiarlog)
+* 5.8 [Fecha de última restauración de un backup](#ultimarestauracion)
+* 5.9 [Consulta para verificar la restauración de bases de datos ABT](#601)
 
 ---
-
-#### **6. Auditoría y Seguridad**
-6.1 [Detener un proceso de auditoría en SQL Server](#13)
-6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)
-6.3 [Cambio del esquema de una tabla por Query](#cambiarsquemad)
-6.4 [Lista de permisos por usuario](#listausuariosdb)
-6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)
-6.6 [Objetos modificados en los últimos 10 días](#objectosmodificadosultimosdias)
-6.7 [Saber si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)
-6.8 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)
-6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)
-6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)
-6.11 [Cómo saber si una base de datos tiene TDE](#49)
-6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)
+* 
+* #### **6. Auditoría y Seguridad**
+* 6.1 [Detener un proceso de auditoría en SQL Server](#13)
+* 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)
+* 6.3 [Cambio del esquema de una tabla por Query](#cambiarsquemad)
+* 6.4 [Lista de permisos por usuario](#listausuariosdb)
+* 6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)
+* 6.6 [Objetos modificados en los últimos 10 días](#objectosmodificadosultimosdias)
+* 6.7 [Saber si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)
+* 6.8 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)
+* 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)
+* 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)
+* 6.11 [Cómo saber si una base de datos tiene TDE](#49)
+* 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)
 
 ---
 
 #### **7. Consultas Especiales y Utilidades**
-7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)
-7.2 [Lista de todos los objetos de una base de datos](#14.3)
-7.3 [Documentación del query para la captura de logs en grupos de disponibilidad Always On](#501)
-7.4 [Conectar a un dominio de Windows y leer información](#leerdominio)
-7.5 [Información sobre los estados de cifrado de las bases de datos](#cifrado)
-7.6 [Espacio utilizado por tablas y archivos de base de datos](#cuantoocupantablas)
-7.7 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
-7.8 [Query de la última vez que se ejecutó un procedimiento](#ultejecproc1)
-7.9 [Última vez que se usó una tabla](#ultejecproc3)
-7.10 [Última vez que se utilizó un índice](#ultejecproc2)
+* 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)
+* 7.2 [Lista de todos los objetos de una base de datos](#14.3)
+* 7.3 [Documentación del query para la captura de logs en grupos de disponibilidad Always On](#501)
+* 7.4 [Conectar a un dominio de Windows y leer información](#leerdominio)
+* 7.5 [Información sobre los estados de cifrado de las bases de datos](#cifrado)
+* 7.6 [Espacio utilizado por tablas y archivos de base de datos](#cuantoocupantablas)
+* 7.7 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
+* 7.8 [Query de la última vez que se ejecutó un procedimiento](#ultejecproc1)
+* 7.9 [Última vez que se usó una tabla](#ultejecproc3)
+* 7.10 [Última vez que se utilizó un índice](#ultejecproc2)
 
 ---
 
 #### **8. Administración de Jobs**
-8.1 [Listar jobs de SQL Server](#listajob28)
-8.2 [Jobs con días de ejecución por steps](#listajob282)
-8.3 [Jobs del sistema SQL Server: nombre y base de datos](#28.2.1)
-8.4 [Jobs del sistema SQL Server para control M](#28.2.2)
-8.5 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)
-8.6 [Migración de jobs entre
+* 8.1 [Listar jobs de SQL Server](#listajob28)
+* 8.2 [Jobs con días de ejecución por steps](#listajob282)
+* 8.3 [Jobs del sistema SQL Server: nombre y base de datos](#28.2.1)
+* 8.4 [Jobs del sistema SQL Server para control M](#28.2.2)
+* 8.5 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)
+* 8.6 [Migración de jobs entre
 
  servidores SQL Server](#migrarjobs)
 
 ---
 
 #### **9. Sistemas Integrados: Genesis y Soluflex**
-9.1 [Query para la Sincronización de los empleados de Soluflex con el reloj](#procedurecargadatossoluflex)
-9.2 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)
-9.3 [Sincronizar datos tabla TA_ponchesreloj con datos de SQL Server](#ta_ponchesrelojjob)
-9.4 [Ejecutar `procedure` que actualiza las tablas con los datos de ponches para reportes de RRHH](#genesiscargadatosreloj1)
-
+* 9.1 [Query para la Sincronización de los empleados de Soluflex con el reloj](#procedurecargadatossoluflex)
+* 9.2 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)
+* 9.3 [Sincronizar datos tabla TA_ponchesreloj con datos de SQL Server](#ta_ponchesrelojjob)
+* 9.4 [Ejecutar `procedure` que actualiza las tablas con los datos de ponches para reportes de RRHH](#genesiscargadatosreloj1)
+* 
 ---
 
 
