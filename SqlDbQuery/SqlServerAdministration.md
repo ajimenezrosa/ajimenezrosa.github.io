@@ -27,140 +27,196 @@ Manuales de</th>
 </table>
 
 # 
-
 ### SQL Server: Compendio de Consultas Administrativas y Mantenimiento
 
 ---
 
-#### **1. Administración y Conexiones**
+#### **1. Administración**
 - 1.1 [Conectar una unidad de red a un servidor SQL Server](#1)  
-- 1.2 [Eliminar correos del servidor de correos SQL Server](#3)
-    - 1.2.1 [Comprobar `sysmail_event_log` vista](#3.1)
-    - 1.2.2 [Comprobación del elemento de correo con error específico](#3.2)
-    - 1.2.3 [Sysmail_faileditems](#3.3)
-    - 1.2.4 [Sysmail_sentitems](#3.4)
-    - 1.2.5 [Comprobación de la configuración de Correo electrónico para el servidor SMTP](#3.5)
-    - 1.2.6 [Ver log de envío de correos con `sqlmail`](#3.6)
-    - 1.2.7 [Ver log de envío de correos fallidos, FAILED MESSAGES LOG](#3.7)
-    - 1.2.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)
-
-- 1.3 [Conexiones Activas del Servidor de SQL SERVER](#4)
-- 1.4 [La conexión de administración dedicada: cuándo y cómo usarla](#7)
-
----
-
-#### **2. Mantenimiento de Bases de Datos**
-- 2.1 [Crecimiento automático de los ficheros de la base de datos](#2)
-- 2.2 [Cómo mover `TempDB` a otra unidad y carpeta](#21)
-- 2.3 [Consultas y soluciones para bases de datos en estado `DB recovery Pending`](#2_recovery1)
-- 2.4 [Reducir tamaño de `TempDB`](#6)
-- 2.5 [DBCC CHECKDB ](#5)
-- 2.6 [Sacar una base de datos de modo `restoring`](#sacarrestoring)
-- 2.7 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)
+- 1.2 [Crecimiento automático de los ficheros de la base de datos](#2)  
+    - 1.2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)  
+    - 1.2.2 [Consultas y soluciones para bases de datos en SQL Server DB recovery Pending](#2_recovery1)  
+- 1.3 [Eliminar correos del servidor de correos SQL Server](#3)  
+    - 1.3.1 [Comprobar `sysmail_event_log` vista](#3.1)  
+    - 1.3.2 [Comprobación del elemento de correo con error específico](#3.2)  
+    - 1.3.3 [Sysmail_faileditems](#3.3)  
+    - 1.3.4 [Sysmail_sentitems](#3.4)  
+    - 1.3.5 [Comprobación de la configuración de correo electrónico de base de datos para el servidor SMTP](#3.5)  
+    - 1.3.6 [Ver log de envío de correos `sql mail`](#3.6)  
+    - 1.3.7 [Ver log de envío de correos fallidos, FAILED MESSAGES LOG](#3.7)  
+    - 1.3.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)  
+- 1.4 [Conexiones activas del servidor de SQL Server](#4)  
+- 1.5 [DBCC CHECKDB](#5)  
+- 1.6 [Reducir tamaño de `Tempdb`](#6)  
+- 1.7 [Conexión de administración dedicada: cuándo y cómo usarla](#7)  
 
 ---
 
-#### **3. Monitorización y Rendimiento**
-- 3.1 [Memoria y cache de SQL Server](#8)
-    - 3.1.1 [Vista general del uso de la memoria en SQL Server](#8-1)
-    - 3.1.2 [Métrica del uso de la caché del búfer por la base de datos](#metricausocachequery)
-    - 3.1.3 [Totales de páginas y conteo de bytes](#totalespaginasconteo)
-    - 3.1.4 [Porcentaje de tablas en memoria](#percentajecadapagina)
-    - 3.1.5 [Número de páginas y tamaño de datos en MB](#numerodepaginas)
-    - 3.1.6 [DBCC DROPCLEANBUFFERS](#dbccdropcleanbuffers)
-    - 3.1.7 [Expectativa de vida de las páginas](#expectativadevidadelaspaginas)
-    - 3.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)
-- 3.2 [Performance de la base de datos y verificaciones de rendimiento](#performance)
-    - 3.2.1 [Consultar última fecha de acceso de login en MS SQL Server](#consultaulfechaacceso)
-    - 3.2.2 [Identificar latencia de disco en SQL Server](#disklatency)
-    - 3.2.3 [Uso de memoria de SQL Server por base de datos y objeto](#disklatency2)
-    - 3.2.4 [Buscar las consultas TOP N](#buscarconsultatop)
-    - 3.2.5 [Rendimiento de las consultas](#rendimientoconsultas2)
-    - 3.2.6 [Top 10 procedimientos almacenados con mayor tiempo transcurrido](#10procmayortiemeje)
-    - 3.2.7 [Consultas SQL más ejecutadas](#lasconsultassqlmasejecutadas)
-    - 3.2.8 [Consultas SQL con mayor consumo de CPU](#consultassqlmayorconsumodecpu)
-- 3.3 [Detección de actividad del servidor en tiempo real](#dectectandoactenservidor)
-    - 3.3.1 [Información sobre sesiones en tiempo real](#20.1)
-- 3.4 [Verificar logs de errores del SQL Server](#errorlogsql)
+#### **2. Memoria y Caché de SQL Server**
+- 2.1 [Una vista dentro de la caché del búfer de SQL Server](#8)  
+    - 2.1.1 [Vista general del uso de la memoria en SQL Server](#8-1)  
+    - 2.1.2 [Métrica del uso de la caché del búfer por la base de datos](#metricausocachequery)  
+    - 2.1.3 [Totales de páginas y conteo de bytes](#totalespaginasconteo)  
+    - 2.1.4 [Porcentaje de cada tabla en memoria](#percentajecadapagina)  
+    - 2.1.5 [Número de páginas y tamaño de datos en MB](#numerodepaginas)  
+    - 2.1.6 [DBCC DROPCLEANBUFFERS](#dbccdropcleanbuffers)  
+    - 2.1.7 [Expectativa de vida de las páginas](#expectativadevidadelaspaginas)  
+    - 2.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)  
 
 ---
 
-#### **4. Mantenimiento de Índices**
-- 4.1 [Información general sobre mantenimiento de índices en SQL](#inf_mant_indices)
-    - 4.1.1 [Localizar tablas sin `Clustered Index`](#tablasinclusterindex)
-    - 4.1.2 [Detección de índices no utilizados](#indicesnoutilizados)
-    - 4.1.3 [Tablas de montón](#tablasmonton)
-    - 4.1.4 [Detectar índices no utilizados – Parte 2](#indicesnoutilizados2)
-    - 4.1.5 [Identificar posibles índices NC incorrectos](#escrituraslecturas)
-    - 4.1.6 [Identificación de índices duplicados](#indicesduplicados)
-    - 4.1.7 [Conceptos básicos del diseño de índices](#disenoindices)
-    - 4.1.8 [Tareas y consideraciones del diseño de índices](#tareadisind)
-    - 4.1.9 [Eliminar y recrear índices de forma ONLINE=ON](#6.8)
-    - 4.1.10 [Listado de los índices en una base de datos](#6.9)
-    - 4.1.11 [Missing Index Script](#missinindex)
-    - 4.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)
+#### **3. Mantenimiento de Índices**
+- 3.1 [Información general de mantenimiento de índices en SQL Server](#inf_mant_indices)  
+    - 3.1.1 [Localizar tablas sin `Clustered Index`](#tablasinclusterindex)  
+    - 3.1.2 [Detección de índices no utilizados – Parte 1](#indicesnoutilizados)  
+    - 3.1.3 [Tablas de montón](#tablasmonton)  
+    - 3.1.4 [Detección de índices no utilizados – Parte 2](#indicesnoutilizados2)  
+    - 3.1.5 [Posibles índices NC incorrectos](#escrituraslecturas)  
+    - 3.1.6 [Identificación de índices duplicados](#indicesduplicados)  
+    - 3.1.7 [Conceptos básicos del diseño de índices](#disenoindices)  
+    - 3.1.8 [Tareas y consideraciones del diseño de índices](#tareadisind)  
+    - 3.1.9 [Eliminar y recrear índices de forma ONLINE=ON](#6.8)  
+    - 3.1.10 [Listado de los índices en una base de datos](#6.9)  
+    - 3.1.11 [Missing Index Script](#missinindex)  
+    - 3.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)  
 
 ---
 
-#### **5. Copias de Seguridad y Recuperación**
-* 5.1 [Tamaños de los backups de bases de datos](#querybackup)
-* 5.2 [Envío por correo electrónico del tamaño de los backups](#querybackup2)
-* 5.3 [Últimos backups realizados en un servidor](#ultimobackup)
-* 5.4 [Últimos restores realizados en un servidor](#queryrestoresql)
-* 5.5 [Seguimiento en tiempo real de operaciones de backup y restore](#tiemporestore)
-* 5.6 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)
-* 5.7 [Limpiar y reducir el log de transacciones SQL Server](#limpiarlog)
-* 5.8 [Fecha de última restauración de un backup](#ultimarestauracion)
-* 5.9 [Consulta para verificar la restauración de bases de datos ABT](#601)
-
----
- 
- #### **6. Auditoría y Seguridad**
-* 6.1 [Detener un proceso de auditoría en SQL Server](#13)
-* 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)
-* 6.3 [Cambio del esquema de una tabla por Query](#cambiarsquemad)
-* 6.4 [Lista de permisos por usuario](#listausuariosdb)
-* 6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)
-* 6.6 [Objetos modificados en los últimos 10 días](#objectosmodificadosultimosdias)
-* 6.7 [Saber si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)
-* 6.8 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)
-* 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)
-* 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)
-* 6.11 [Cómo saber si una base de datos tiene TDE](#49)
-* 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)
+#### **4. Recuperación y Backup**
+- 4.1 [Cuánta data puedo perder](#dataperder)  
+- 4.2 [Query de los tamaños de los backups de base de datos](#querybackup)  
+    - 4.2.1 [Envío por correo electrónico del tamaño de los backups](#querybackup2)  
+- 4.3 [Últimos backups realizados en un servidor de bases de datos](#ultimobackup)  
+- 4.4 [Query que muestra los últimos restores realizados en un servidor](#queryrestoresql)  
+- 4.5 [Limpiar y reducir el log de transacciones SQL Server](#limpiarlog)  
+- 4.6 [Seguimiento en tiempo real de operaciones de backup y restore](#tiemporestore)  
+- 4.7 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)  
+- 4.8 [Fecha de última restauración de un backup](#ultimarestauracion)  
+- 4.9 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)  
 
 ---
 
-#### **7. Consultas Especiales y Utilidades**
-* 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)
-* 7.2 [Lista de todos los objetos de una base de datos](#14.3)
-* 7.3 [Documentación del query para la captura de logs en grupos de disponibilidad Always On](#501)
-* 7.4 [Conectar a un dominio de Windows y leer información](#leerdominio)
-* 7.5 [Información sobre los estados de cifrado de las bases de datos](#cifrado)
-* 7.6 [Espacio utilizado por tablas y archivos de base de datos](#cuantoocupantablas)
-* 7.7 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)
-* 7.8 [Query de la última vez que se ejecutó un procedimiento](#ultejecproc1)
-* 7.9 [Última vez que se usó una tabla](#ultejecproc3)
-* 7.10 [Última vez que se utilizó un índice](#ultejecproc2)
+#### **5. Performance**
+* 5.1 [Performance de la base de datos](#performance)  
+* 5.2 [Consultar última fecha de acceso de login en MS SQL Server](#consultaulfechaacceso)  
+* 5.3 [Identificar latencia de disco en SQL Server](#disklatency)  
+* 5.4 [Uso de memoria de SQL Server por base de datos y objeto](#disklatency2)  
+* 5.5 [Listar todos los procedimientos almacenados de una base de datos](#procalmacenados)  
+    - 5.5.1 [Buscar las consultas TOP N](#buscarconsultatop)  
+    - 5.5.2 [Espacios en disco ocupados por base de datos](#espacioendiscodb)  
+    - 5.5.3 [Vía 2: Rendimiento de las consultas](#rendimientoconsultas2)  
+    - 5.5.4 [Top 10 procedimientos almacenados con mayor tiempo transcurrido](#10procmayortiemeje)  
+    - 5.5.5 [Consultas SQL más ejecutadas](#lasconsultassqlmasejecutadas)  
+    - 5.5.6 [Consultas SQL con mayor consumo de CPU](#consultassqlmayorconsumodecpu)  
 
 ---
 
-#### **8. Administración de Jobs**
-* 8.1 [Listar jobs de SQL Server](#listajob28)
-* 8.2 [Jobs con días de ejecución por steps](#listajob282)
-* 8.3 [Jobs del sistema SQL Server: nombre y base de datos](#28.2.1)
-* 8.4 [Jobs del sistema SQL Server para control M](#28.2.2)
-* 8.5 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)
-* 8.6 [Migración de jobs entre servidores SQL Server](#migrarjobs)
+#### **6. Auditoría y Seguridad**
+* 6.1 [Detener un proceso de auditoría en SQL Server](#13)  
+* 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)  
+* 6.3 [Cambio del esquema de una tabla por query](#cambiarsquemad)  
+* 6.4 [Lista de permisos por usuario](#listausuariosdb)  
+* 6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)  
+* 6.6 [Objetos modificados en los últimos 10 días](#objectosmodificadosultimosdias)  
+* 6.7 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)  
+* 6.8 [Verificar logs de errores del SQL Server](#errorlogsql)  
+* 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)  
+* 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)  
+* 6.11 [Cómo saber si una base de datos tiene TDE](#49)  
+* 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
 
 ---
 
-#### **9. Sistemas Integrados: Genesis y Soluflex**
-* 9.1 [Query para la Sincronización de los empleados de Soluflex con el reloj](#procedurecargadatossoluflex)
-* 9.2 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)
-* 9.3 [Sincronizar datos tabla TA_ponchesreloj con datos de SQL Server](#ta_ponchesrelojjob)
-* 9.4 [Ejecutar `procedure` que actualiza las tablas con los datos de ponches para reportes de RRHH](#genesiscargadatosreloj1)
-* 
+#### **7. Consultas Especiales**
+* 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
+* 7.2 [Listar todos los objetos de una base de datos](#14.3)  
+* 7.3 [Query de la última vez que se ejecutó un procedimiento](#ultejecproc1)  
+* 7.4 [Última vez que se usó una tabla](#ultejecproc3)  
+* 7.5 [Última vez que se utilizó un índice](#ultejecproc2)  
+* 7.6 [Cuánto ocupan mis tablas](#cuantoocupantablas)  
+* 7.7 [Defragmentación](#desfragmentacionalrescate)  
+* 7.8 [Detectar actividad del servidor](#dectectandoactenservidor)  
+    - 7.8.1 [Información sobre sesiones en tiempo real](#20.1)  
+* 7.9 [Cuántos cores tiene mi base de datos](#cuantoscoretengo)  
+* 7.10 [Query de listado de tablas con su tamaño y cantidad de registros](#listadotablas)  
+
+---
+
+#### **8. Sistemas Integrados: Genesis y Soluflex**
+
+- 8.1 [Sistema Genesis](#sistemaponchesgenesis)  
+    - 8.1.1 [Ejecutar procedimiento que actualiza las tablas con los datos de ponches para reportes de RRHH](#genesiscargadatosreloj1)  
+    - 8.1.2 [Cargar datos reloj](#genesiscargadatosreloj)  
+    - 8.1.3 [Horas de almuerzo](#genesishorasdealmuerzo)  
+    - 8.1.4 [Personas que deben ponchar y no ponchan con envío a supervisores](#genesispersonasdebenponcharynoponc)  
+    - 8.1.5 [Insertar datos reloj a Soluflex](#queryinsertardatossoluflex25)  
+    - 8.1.6 [Verificación de salida INABIMA](#geneissalidasinabiama)  
+    - 8.1.7 [Ejecutar procedimiento de carga de datos a Soluflex](#procedurecargadatossoluflex)  
+    - 8.1.8 [Jobs deshabilitados utilizados por Soluflex](#soluflexjobdisable)  
+    - 8.1.9 [Sincronización de empleados de Soluflex con el reloj](#procedurecargadatossoluflex)  
+- 8.2 [Sincronizar datos de la tabla TA_ponchesreloj con SQL Server](#ta_ponchesrelojjob)  
+
+---
+
+#### **9. Notificaciones de SQL Mail**
+- 9.1 [Reporte de variación de espacio en disco K:\](#reporteespacioendiscok)  
+- 9.2 [Notificar cambios en el padrón electoral](#notificarcambios2)  
+- 9.3 [Consulta para enviar por correo de e-Flow citas](#consultaseflowcitas)  
+- 9.4 [Remisión de encuesta de satisfacción de servicios de mensajería](#encuestamensajeria)  
+- 9.5 [Reporte de registros modificados en las tablas de afiliados del INABIMA](#repafiliadosinabima)  
+
+---
+
+#### **10. Central Telefónica**
+- 10.1 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)  
+
+---
+
+#### **11. Interacción con el Dominio de Windows**
+- 11.1 [Conectar a un dominio de Windows y leer información](#leerdominio)  
+
+---
+
+#### **12. BPD: Administración de Jobs**
+- 12.1 [Listar jobs de SQL Server](#listajob28)  
+- 12.2 [Jobs con sus días de ejecución por steps](#listajob282)  
+    - 12.2.1 [Jobs del sistema SQL Server, con nombre y base de datos](#28.2.1)  
+    - 12.2.2 [Jobs del sistema SQL Server para control M](#28.2.2)  
+- 12.3 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)  
+- 12.4 [Configurar max worker threads](#autogrowmaxime)  
+- 12.5 [Query para saber el Max/memory de un servidor SQL](#querymamemory)  
+- 12.6 [Shrink DB](#shrinkfilebpd)  
+- 12.7 [Ver espacio libre en archivos MDF y LDF](#espaciodbLibres)  
+- 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)  
+- 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
+
+---
+
+#### **13. AlwaysOn y Replicación**
+- 13.1 [Determinar si un nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)  
+- 13.2 [Verificar si un servidor SQL Server AlwaysOn hizo failover](#failover)  
+    - 13.2.1 [Información detallada sobre failover de servidores](#failover2)  
+- 13.3 [Cambiar el "collation" de todas las bases de datos en un servidor SQL Server](#collectionchange)  
+- 13.4 [Verificar si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)  
+
+---
+
+#### **14. Scripts de Monitoreo y Optimización**
+* 14.1 [Script de monitoreo y optimización del rendimiento de SQL Server](#500)  
+* 14.2 [Captura de logs en grupos de disponibilidad Always On](#501)  
+
+---
+
+#### **15. Auditoría y Verificación de Ambientes**
+- 15.1 [Query de extracción de bases de datos y tablas en SQL Server](#600)  
+- 15.2 [Documentación para la restauración de bases de datos ABT](#601)  
+
+---
+
+#### **16. Soluciones para GCS-SYSTEMS**
+- 16.1 [Eliminar número enganchado en Dakota/Café GCS-SYSTEMS](#700)  
+
+---
 ---
 
 
