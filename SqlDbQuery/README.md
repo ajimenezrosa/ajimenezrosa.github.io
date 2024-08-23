@@ -268,6 +268,10 @@
 - 601 [Documentación para la Restauración de Bases de Datos ABT](#601)
 
 
+# Query y soluciones para GCS-SYSTEMS.
+ - 700 [LIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS](#700)
+
+
 
 #
 <!-- ConsultasEflowCitas -->
@@ -13916,8 +13920,80 @@ El procedimiento descrito en este documento permite restaurar el acceso a las ba
 
 Este  procedimiento debe ser revisado y actualizado según sea necesario para reflejar cambios en la infraestructura o procedimientos relacionados con la administración de bases de datos en la institución.
 
+--- 
+# ELIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS<a name="700"></a>
 
 
+## 1.- EN LA BASE DE DATOS DE SQLSERVER
+
+## Eliminar registro de la base de datos `[SII.Omega.GCS]`  
+
+El error que estás viendo se debe a un conflicto entre dos intercalaciones (collations) diferentes en las columnas que estás comparando o usando en las consultas. Este problema es común cuando las bases de datos o las tablas utilizan diferentes configuraciones de intercalación.
+
+Para resolver este problema, puedes forzar a que las comparaciones se hagan usando la misma intercalación (`collation`). A continuación, te muestro cómo ajustar tu consulta para forzar la intercalación en las comparaciones.
+
+### Solución:
+Puedes usar la cláusula `COLLATE` en las columnas afectadas para asegurarte de que ambas columnas tengan la misma intercalación en la comparación.
+
+### Ejemplo Modificado:
+
+Si sabes que las columnas están usando diferentes collation (por ejemplo, `Modern_Spanish_CI_AS` y `SQL_Latin1_General_CP1_CI_AS`), puedes forzar una de las intercalaciones en las comparaciones. Aquí te dejo un ejemplo para una de las consultas.
+
+~~~sql
+USE [SII.Omega.GCS]
+GO
+
+DECLARE @phoneNumber VARCHAR(max)
+
+-- Aquí insertas todos los números como antes
+
+-- Forzar intercalación en la comparación para evitar conflictos de collation
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesAccounts 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesSecurityCodes 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesLogs 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+IN (SELECT PhoneNumber FROM #PhoneNumbers)
+~~~
+
+
+## Esto ser hizo para solucionar el `Error` de Collate que presento el query
+### Detalles del Ajuste:
+1. **Uso de `COLLATE`:** En las comparaciones de la columna `phoneNumber`, se fuerza la intercalación a `SQL_Latin1_General_CP1_CI_AS`. Si prefieres usar otra intercalación, puedes reemplazarla por la que desees.
+2. **Compatibilidad:** Asegúrate de que la intercalación elegida sea compatible con la intercalación de las columnas en la base de datos o tablas que estás utilizando.
+
+Este ajuste debería eliminar el error de conflicto de collation. Si el conflicto ocurre en otra columna o parte de la consulta, aplica la misma lógica de `COLLATE` en esa columna.
+
+## 3.- En el servidor de VCASH
+#### Este es un comando curl que realiza una operación de desvinculación mediante una solicitud HTTP DELETE. No es posible convertir este comando directamente en una consulta SELECT porque es una operación en un servicio externo. Sin embargo, podrías intentar verificar la existencia del recurso o realizar un GET si el servicio ofrece un endpoint para consultar la información antes de eliminarla.
+
+
+--- 
 
 
 # No existe nada debajo de esta linea
