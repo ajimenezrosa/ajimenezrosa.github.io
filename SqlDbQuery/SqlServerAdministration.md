@@ -114,8 +114,8 @@ Manuales de</th>
 * 5.9 [Consulta para verificar la restauración de bases de datos ABT](#601)
 
 ---
-* 
-* #### **6. Auditoría y Seguridad**
+ 
+ #### **6. Auditoría y Seguridad**
 * 6.1 [Detener un proceso de auditoría en SQL Server](#13)
 * 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)
 * 6.3 [Cambio del esquema de una tabla por Query](#cambiarsquemad)
