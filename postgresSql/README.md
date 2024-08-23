@@ -1297,6 +1297,8 @@ En caso de que el servidor primario falle, puedes promover el servidor de répli
 
 realizar busqueda de los registros a eliminar via base de datos sobre las , esto para el tema de tarjetas y cobros...
 
+***para nuestro caso , realizamos una identificacion de los registros que se deben eliminar,  luego de esto solo debemos sustituir la instruccion `Select` por `Delete`*** 
+
 ###  Crear una tabla temporal para almacenar los números de teléfono
 ~~~sql
 CREATE TEMP TABLE phone_numbers (
