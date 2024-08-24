@@ -111,7 +111,22 @@
 4. [Conclusión](#conclusión)
 
 ---
+### Operaciones y Extracción de Tiempos
 
+1. [Descripción del Código](#descripción-del-código)
+2. [1. Seleccionar Resultados que No se Encuentran en un Set](#1-seleccionar-resultados-que-no-se-encuentran-en-un-set)
+   - [a) Usando `NOT IN` con un Array](#a-usando-not-in-con-un-array)
+   - [b) Usando `NOT IN` con una Subquery](#b-usando-not-in-con-una-subquery)
+3. [2. Extraer Partes de una Fecha](#2-extraer-partes-de-una-fecha)
+   - [a) Usando `EXTRACT`](#a-usando-extract)
+   - [b) Usando `DATE_PART`](#b-usando-date_part)
+4. [3. Operaciones y Extracción de Tiempos](#3-operaciones-y-extracción-de-tiempos)
+   - [a) Extraer Hora, Minutos y Segundos](#a-extraer-hora-minutos-y-segundos)
+   - [b) Sumar o Restar Intervalos de Tiempo](#b-sumar-o-restar-intervalos-de-tiempo)
+   - [c) Calcular Diferencia entre Tiempos](#c-calcular-diferencia-entre-tiempos)
+5. [Conclusión](#conclusión)
+
+---
 
 ## Introducción
 
@@ -1672,6 +1687,107 @@ Estas consultas demuestran diferentes enfoques para manipular conjuntos de datos
 Estas soluciones pueden ser útiles como referencia en tu repositorio de GitHub para resolver problemas comunes de manipulación de datos.
 
 ---
+
+Aquí tienes la continuación de la documentación, centrada en operaciones y extracción de datos de tiempo, horas, minutos y segundos, utilizando la misma tabla `platzi.alumnos`.
+
+---
+
+
+
+## Descripción del Código
+
+Este conjunto de consultas SQL se amplía con operaciones y extracción de tiempos (horas, minutos y segundos) utilizando la tabla `platzi.alumnos`. Veremos cómo extraer componentes específicos de una columna de tipo `time` o `timestamp`, así como realizar operaciones con intervalos de tiempo.
+
+---
+
+## 3. Operaciones y Extracción de Tiempos
+
+En esta sección, trabajaremos con tiempos (horas, minutos y segundos), realizando extracciones y operaciones en la columna `hora_incorporacion` de la tabla `platzi.alumnos`.
+
+### a) Extraer Hora, Minutos y Segundos
+
+Este reto consiste en extraer la hora, los minutos y los segundos de un campo de tipo `time` o `timestamp`.
+
+#### Usando `EXTRACT`
+
+```sql
+SELECT EXTRACT(HOUR FROM hora_incorporacion) AS hora,
+       EXTRACT(MINUTE FROM hora_incorporacion) AS minutos,
+       EXTRACT(SECOND FROM hora_incorporacion) AS segundos
+FROM platzi.alumnos;
+```
+
+- **Explicación:** En este caso, usamos la función `EXTRACT` para extraer la hora, los minutos y los segundos de la columna `hora_incorporacion`. Este método es útil cuando se necesita trabajar con componentes individuales de un campo de tiempo.
+
+#### Usando `DATE_PART`
+
+```sql
+SELECT DATE_PART('HOUR', hora_incorporacion) AS hora,
+       DATE_PART('MINUTE', hora_incorporacion) AS minutos,
+       DATE_PART('SECOND', hora_incorporacion) AS segundos
+FROM platzi.alumnos;
+```
+
+- **Explicación:** Similar a `EXTRACT`, `DATE_PART` extrae partes específicas de una columna de tiempo o fecha. Aquí, se usa para obtener la hora, los minutos y los segundos de la columna `hora_incorporacion`.
+
+---
+
+### b) Sumar o Restar Intervalos de Tiempo
+
+Este reto implica sumar o restar intervalos de tiempo a una columna de tipo `time` o `timestamp`.
+
+#### Sumar Intervalos de Tiempo
+
+```sql
+SELECT hora_incorporacion,
+       hora_incorporacion + INTERVAL '1 HOUR' AS hora_mas_una_hora
+FROM platzi.alumnos;
+```
+
+- **Explicación:** Esta consulta suma un intervalo de una hora a la columna `hora_incorporacion`. Los intervalos pueden ser especificados en diferentes unidades, como minutos, segundos, días, etc.
+
+#### Restar Intervalos de Tiempo
+
+```sql
+SELECT hora_incorporacion,
+       hora_incorporacion - INTERVAL '30 MINUTES' AS hora_menos_treinta_minutos
+FROM platzi.alumnos;
+```
+
+- **Explicación:** Aquí, restamos 30 minutos de la columna `hora_incorporacion`, lo que es útil cuando se necesita ajustar tiempos de forma dinámica.
+
+---
+
+### c) Calcular Diferencia entre Tiempos
+
+Este reto consiste en calcular la diferencia entre dos columnas de tipo `time` o `timestamp`.
+
+#### Diferencia en Horas
+
+```sql
+SELECT hora_incorporacion, hora_salida,
+       EXTRACT(EPOCH FROM (hora_salida - hora_incorporacion)) / 3600 AS diferencia_horas
+FROM platzi.alumnos;
+```
+
+- **Explicación:** En esta consulta, calculamos la diferencia entre `hora_salida` y `hora_incorporacion` en horas. Primero, se extrae la diferencia en segundos (`EPOCH`) y luego se divide por 3600 para obtener el resultado en horas.
+
+#### Diferencia en Minutos
+
+```sql
+SELECT hora_incorporacion, hora_salida,
+       EXTRACT(EPOCH FROM (hora_salida - hora_incorporacion)) / 60 AS diferencia_minutos
+FROM platzi.alumnos;
+```
+
+- **Explicación:** Similar al cálculo anterior, pero aquí obtenemos la diferencia en minutos dividiendo el valor en segundos por 60.
+
+---
+
+## Conclusión
+
+Estas consultas amplían las operaciones sobre campos de tiempo, mostrando cómo extraer partes específicas de una columna de tiempo, sumar o restar intervalos, y calcular diferencias entre tiempos. Estas soluciones son útiles para manejar datos temporales en sistemas que requieren un seguimiento detallado de horas y fechas.
+
 
 
 
