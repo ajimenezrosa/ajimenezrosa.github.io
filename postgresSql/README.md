@@ -75,6 +75,11 @@
 3. **[Verificación de la Replicación](#604)**
 4. **[Promoción del Servidor de Réplica a Primario](#605)**
 
+--- 
+
+## Eliminarlo de la base de datos de MI
+- [Eliminarlo de la base de datos de MI](#eliminarmi)
+
 
 ---
 
@@ -1343,7 +1348,7 @@ En caso de que el servidor primario falle, puedes promover el servidor de répli
 ---
 
 
-## 2.- Eliminarlo de la base de datos de MI
+## 2.- Eliminarlo de la base de datos de MI<a name="eliminarmi"></a>
 
 realizar busqueda de los registros a eliminar via base de datos sobre las , esto para el tema de tarjetas y cobros...
 
