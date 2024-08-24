@@ -97,6 +97,20 @@
 
 
 
+###  Seleccionar Resultados que No se Encuentran en un Set
+
+1. [Descripción del Código](#descripción-del-código)
+2. [1. Seleccionar Resultados que No se Encuentran en un Set](#1-seleccionar-resultados-que-no-se-encuentran-en-un-set)
+   - [a) Usando `NOT IN` con un Array](#a-usando-not-in-con-un-array)
+   - [b) Usando `NOT IN` con una Subquery](#b-usando-not-in-con-una-subquery)
+
+### Extraer Partes de una Fecha   
+3. [2. Extraer Partes de una Fecha](#2-extraer-partes-de-una-fecha)
+   - [a) Usando `EXTRACT`](#a-usando-extract)
+   - [b) Usando `DATE_PART`](#b-usando-date_part)
+4. [Conclusión](#conclusión)
+
+---
 
 
 ## Introducción
@@ -1571,6 +1585,93 @@ En tu repositorio de GitHub, estas consultas pueden ser útiles como referencia 
 ---
 
 
+Aquí tienes la documentación completa para los nuevos retos con un índice que te permitirá navegar fácilmente en tu repositorio de GitHub.
+
+---
+
+
+## Descripción del Código
+
+Este conjunto de consultas SQL aborda dos retos adicionales relacionados con la manipulación de datos en la base de datos `platzi.alumnos`:
+
+1. Seleccionar resultados que no se encuentran en un conjunto específico de valores o registros.
+2. Extraer partes de una fecha, como el año, el mes o el día, desde un campo de fecha.
+
+Cada bloque de código ofrece diferentes enfoques para resolver estos problemas, utilizando operadores como `NOT IN`, funciones de ventana, y funciones de manipulación de fechas como `EXTRACT` y `DATE_PART`.
+
+---
+
+## 1. Seleccionar Resultados que No se Encuentran en un Set
+
+Este reto implica seleccionar registros que no están presentes en un conjunto de valores específicos. A continuación se muestran dos enfoques diferentes para resolver este problema.
+
+### a) Usando `NOT IN` con un Array
+
+```sql
+SELECT  *
+FROM (
+    SELECT ROW_NUMBER() OVER() AS row_id, *
+    FROM platzi.alumnos
+) AS alumnos_with_row_num
+WHERE row_id NOT IN (1, 2, 3, 4, 5);
+```
+
+- **Explicación:** En este enfoque, se utiliza la función de ventana `ROW_NUMBER()` para asignar un número de fila a cada registro. Luego, se seleccionan los registros cuyo `row_id` no está en el conjunto `(1, 2, 3, 4, 5)` utilizando el operador `NOT IN`. Este método es útil cuando deseas excluir un conjunto específico de registros basados en un índice de fila.
+
+### b) Usando `NOT IN` con una Subquery
+
+```sql
+SELECT  *
+FROM platzi.alumnos
+WHERE id NOT IN (
+    SELECT id
+    FROM platzi.alumnos
+    WHERE tutor_id = 30
+);
+```
+
+- **Explicación:** Este enfoque utiliza una subconsulta para seleccionar todos los `id` de alumnos con `tutor_id = 30`. Luego, en la consulta principal, se seleccionan todos los registros cuya `id` no está presente en el conjunto devuelto por la subconsulta. Este método es ideal cuando deseas excluir registros basados en criterios específicos de otra consulta.
+
+---
+
+## 2. Extraer Partes de una Fecha
+
+Este reto implica extraer partes individuales de un campo de fecha, como el año, el mes y el día. A continuación se presentan dos formas de hacerlo utilizando las funciones `EXTRACT` y `DATE_PART`.
+
+### a) Usando `EXTRACT`
+
+```sql
+SELECT EXTRACT(YEAR FROM fecha_incorporacion) AS anio_incorporacion
+FROM platzi.alumnos;
+```
+
+- **Explicación:** La función `EXTRACT` permite extraer una parte específica de un campo de fecha. En este caso, se extrae el año de la columna `fecha_incorporacion`. Es compatible con varios sistemas de bases de datos, como PostgreSQL y Oracle.
+
+### b) Usando `DATE_PART`
+
+```sql
+SELECT DATE_PART('YEAR', fecha_incorporacion) AS anio_incorporacion
+FROM platzi.alumnos;
+```
+
+```sql
+SELECT  DATE_PART('YEAR', fecha_incorporacion) AS anio_incorporacion,
+        DATE_PART('MONTH', fecha_incorporacion) AS mes_incorporacion,
+        DATE_PART('DAY', fecha_incorporacion) AS dia_incorporacion
+FROM platzi.alumnos;
+```
+
+- **Explicación:** La función `DATE_PART` es similar a `EXTRACT`, pero se utiliza con una sintaxis diferente, específica de PostgreSQL. En estos ejemplos, se extraen el año, el mes y el día de la columna `fecha_incorporacion`. Este enfoque es útil cuando necesitas trabajar con partes específicas de una fecha en varias columnas al mismo tiempo.
+
+---
+
+## Conclusión
+
+Estas consultas demuestran diferentes enfoques para manipular conjuntos de datos y trabajar con fechas en SQL. La elección entre `NOT IN` con arrays o subconsultas, y entre `EXTRACT` o `DATE_PART` para manipular fechas, depende del motor de base de datos y de las necesidades específicas de la consulta.
+
+Estas soluciones pueden ser útiles como referencia en tu repositorio de GitHub para resolver problemas comunes de manipulación de datos.
+
+---
 
 
 
