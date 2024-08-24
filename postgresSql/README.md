@@ -78,6 +78,27 @@
 
 ---
 
+### Seleccionar los Primeros 5 Registros 
+
+1. [Descripción del Código](#descripción-del-código)
+2. [1. Seleccionar los Primeros 5 Registros](#1-seleccionar-los-primeros-5-registros)
+   - [a) Usando FETCH FIRST](#a-usando-fetch-first)
+   - [b) Usando LIMIT](#b-usando-limit)
+   - [c) Usando Subquery y Función de Ventana](#c-usando-subquery-y-función-de-ventana)
+
+### Encontrar la Segunda Colegiatura Más Alta   
+3. [2. Encontrar la Segunda Colegiatura Más Alta](#2-encontrar-la-segunda-colegiatura-más-alta)
+   - [a) Contar por JOIN entre las Tablas](#a-contar-por-join-entre-las-tablas)
+   - [b) Usando LIMIT con OFFSET](#b-usando-limit-con-offset)
+   - [c) JOIN con Subconsulta](#c-join-con-subconsulta)
+   - [d) Subquery en WHERE](#d-subquery-en-where)
+4. [Conclusión](#conclusión)
+
+
+
+
+
+
 ## Introducción
 
 La consola en PostgreSQL es una herramienta muy potente para crear, administrar y depurar nuestra base de datos. Podemos acceder a ella después de instalar PostgreSQL y haber seleccionado la opción de instalar la consola junto a la base de datos.
@@ -1417,10 +1438,137 @@ WHERE ID = '00201069358'
 Este es un comando `curl` que realiza una operación de desvinculación mediante una solicitud HTTP `DELETE`. No es posible convertir este comando directamente en una consulta `SELECT` porque es una operación en un servicio externo. Sin embargo, podrías intentar verificar la existencia del recurso o realizar un `GET` si el servicio ofrece un endpoint para consultar la información antes de eliminarla.
 
 
+---
+
+Aquí tienes la documentación con un índice que te permitirá navegar fácilmente a cada sección en tu repositorio de GitHub.
+
+---
 
 
+---
 
+## Descripción del Código
 
+Este conjunto de consultas SQL está diseñado para abordar dos retos específicos en una base de datos de ejemplo denominada `platzi.alumnos`. El código cubre dos escenarios:
+
+1. Seleccionar los primeros 5 registros de la tabla sin tener en cuenta el campo `ID`.
+2. Encontrar la segunda colegiatura más alta y todos los alumnos que tienen esa misma colegiatura.
+
+Cada bloque de código ofrece diferentes enfoques para resolver estos problemas, utilizando funciones como `FETCH`, `LIMIT`, subconsultas, funciones de ventana, y `JOIN`.
+
+---
+
+## 1. Seleccionar los Primeros 5 Registros
+
+Este reto implica seleccionar los primeros 5 registros de la tabla `platzi.alumnos` sin contar con el campo `ID`.
+
+### a) Usando `FETCH FIRST`
+
+```sql
+SELECT *
+FROM platzi.alumnos
+FETCH FIRST 5 ROWS ONLY;
+```
+
+- **Explicación:** La cláusula `FETCH FIRST 5 ROWS ONLY` limita el número de filas devueltas a las primeras 5. Esta es una forma estándar y eficiente de realizar esta tarea en bases de datos compatibles con SQL ANSI.
+
+### b) Usando `LIMIT`
+
+```sql
+SELECT *
+FROM platzi.alumnos
+LIMIT 5;
+```
+
+- **Explicación:** La cláusula `LIMIT` especifica directamente cuántas filas se deben devolver. Este es el enfoque más común en sistemas como PostgreSQL y MySQL para limitar resultados.
+
+### c) Usando Subquery y Función de Ventana
+
+```sql
+SELECT *
+FROM (
+    SELECT ROW_NUMBER() OVER() AS row_id, *
+    FROM platzi.alumnos
+) AS alumnos_with_row_num
+WHERE row_id <= 5;
+```
+
+- **Explicación:** En este enfoque, se utiliza la función de ventana `ROW_NUMBER()` para asignar un número de fila a cada registro. Luego, se filtran los primeros 5 registros basados en este número. Este método es útil cuando necesitas un control más detallado sobre el orden de las filas o cuando trabajas en escenarios complejos.
+
+---
+
+## 2. Encontrar la Segunda Colegiatura Más Alta
+
+Este reto implica encontrar la segunda colegiatura más alta en la tabla `platzi.alumnos` y luego listar a todos los alumnos que tienen esa colegiatura.
+
+### a) Contar por `JOIN` entre las Tablas
+
+```sql
+SELECT DISTINCT colegiatura
+FROM platzi.alumnos a1
+WHERE 2 = (
+    SELECT COUNT(DISTINCT colegiatura)
+    FROM platzi.alumnos a2
+    WHERE a1.colegiatura <= a2.colegiatura
+);
+```
+
+- **Explicación:** Este enfoque utiliza una subconsulta correlacionada para contar cuántas colegiaturas distintas son mayores o iguales a la colegiatura actual. La cláusula `WHERE 2=` asegura que se selecciona la segunda colegiatura más alta.
+
+### b) Usando `LIMIT` con `OFFSET`
+
+```sql
+SELECT DISTINCT colegiatura, tutor_id
+FROM platzi.alumnos
+WHERE tutor_id = 20
+ORDER BY colegiatura DESC
+LIMIT 1 OFFSET 1;
+```
+
+- **Explicación:** Este enfoque es directo. Se ordenan las colegiaturas en orden descendente y se utiliza `LIMIT 1 OFFSET 1` para seleccionar la segunda colegiatura más alta. Es sencillo y eficiente cuando se quiere obtener un solo valor.
+
+### c) `JOIN` con Subconsulta
+
+```sql
+SELECT *
+FROM platzi.alumnos AS datos_alumnos
+INNER JOIN (
+    SELECT DISTINCT colegiatura
+    FROM platzi.alumnos
+    WHERE tutor_id = 20
+    ORDER BY colegiatura DESC
+    LIMIT 1 OFFSET 1
+) AS segunda_mayor_colegiatura
+ON datos_alumnos.colegiatura = segunda_mayor_colegiatura.colegiatura;
+```
+
+- **Explicación:** Aquí se usa una subconsulta para encontrar la segunda colegiatura más alta y luego se realiza un `JOIN` con la tabla original para obtener todos los registros que coincidan con esa colegiatura.
+
+### d) Subquery en `WHERE`
+
+```sql
+SELECT *
+FROM platzi.alumnos AS datos_alumnos
+WHERE colegiatura = (
+    SELECT DISTINCT colegiatura
+    FROM platzi.alumnos
+    WHERE tutor_id = 20
+    ORDER BY colegiatura DESC
+    LIMIT 1 OFFSET 1;
+);
+```
+
+- **Explicación:** En este enfoque, se utiliza una subconsulta dentro de la cláusula `WHERE` para filtrar los alumnos cuya colegiatura es igual a la segunda más alta. Este método es simple y efectivo cuando necesitas una solución rápida basada en una sola subconsulta.
+
+---
+
+## Conclusión
+
+Estas consultas muestran diferentes formas de abordar problemas comunes en SQL, desde la selección de un número limitado de registros hasta la identificación de valores específicos dentro de un conjunto de datos. La elección del enfoque adecuado depende del contexto y las capacidades del motor de base de datos que se esté utilizando.
+
+En tu repositorio de GitHub, estas consultas pueden ser útiles como referencia para desarrolladores o administradores de bases de datos que busquen soluciones prácticas a retos similares.
+
+---
 
 
 
