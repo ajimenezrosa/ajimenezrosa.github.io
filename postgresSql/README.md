@@ -1350,6 +1350,12 @@ En caso de que el servidor primario falle, puedes promover el servidor de répli
 
 ## 2.- Eliminarlo de la base de datos de MI<a name="eliminarmi"></a>
 
+<img src="https://www.consolidatedcredit.org/es/wp-content/uploads/2018/11/Fotolia_251139041_Subscription_Monthly_M-l%C3%ADmites-de-las-tarjetas-de-cr%C3%A9dito.jpg?format=jpgname=large" alt="JuveR" width="800px">
+
+
+
+
+
 realizar busqueda de los registros a eliminar via base de datos sobre las , esto para el tema de tarjetas y cobros...
 
 ***para nuestro caso , realizamos una identificacion de los registros que se deben eliminar,  luego de esto solo debemos sustituir la instruccion `Select` por `Delete`*** 
