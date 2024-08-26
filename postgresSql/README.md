@@ -1367,6 +1367,7 @@ CREATE TEMP TABLE phone_numbers (
 );
 
 -- Insertar los números de teléfono en la tabla temporal
+-- Insertar los números de teléfono en la tabla temporal
 INSERT INTO phone_numbers (phone_number)
 VALUES
 ('8099025098'),
@@ -1436,6 +1437,7 @@ VALUES
 ('8099020282'),
 ('8099628332'),
 ('8298743154');
+
 ~~~
 
 
@@ -1448,7 +1450,10 @@ VALUES
 -- Verificar información en PRE_GCSCUSTOMER_ENROLLMENT_M
 SELECT *
 FROM PRE_GCSCUSTOMER_ENROLLMENT_M
-WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
+WHERE MSISDN IN ( 
+      SELECT phone_number FROM phone_numbers 
+      );
+
 ~~~
 
 ## Consulta 2: R_GCSCUSTOMER_FUNDING_ACCT_MP
@@ -1458,7 +1463,10 @@ WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
 -- Verificar información en R_GCSCUSTOMER_FUNDING_ACCT_MP
 SELECT *
 FROM R_GCSCUSTOMER_FUNDING_ACCT_MP
-WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
+WHERE MSISDN IN ( 
+      SELECT phone_number FROM phone_numbers
+      
+      );
 ~~~
 
 ## Consulta 3: R_GCSCUSTOMER_ACCOUNT_M
@@ -1466,11 +1474,20 @@ WHERE MSISDN IN (SELECT phone_number FROM phone_numbers);
 
 ~~~sql
 -- Verificar información en R_GCSCUSTOMER_ACCOUNT_M
+-- Verificar información en R_GCSCUSTOMER_ACCOUNT_M
 SELECT *
 FROM R_GCSCUSTOMER_ACCOUNT_M
-WHERE ID = '00201069358'
-  AND GCS_ACCOUNT_ID = 2082
-  AND MSISDN IN (SELECT phone_number FROM phone_numbers);
+WHERE 
+gcs_account_id in (
+SELECT gcs_account_id
+FROM R_GCSCUSTOMER_FUNDING_ACCT_MP
+WHERE MSISDN IN ( 
+      SELECT phone_number FROM phone_numbers
+      
+      )
+      
+      );
+
 ~~~
 
 ### 3.- En el servidor de VCASH
