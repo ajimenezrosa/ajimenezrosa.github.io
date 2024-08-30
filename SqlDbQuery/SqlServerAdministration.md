@@ -124,6 +124,9 @@ Manuales de</th>
 * 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)  
 * 6.11 [Cómo saber si una base de datos tiene TDE](#49)  
 * 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
+---
+- 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
+- 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
 
 ---
 
@@ -13942,6 +13945,213 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 
 --- 
 
+---
+# Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos<a name="602"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://previews.123rf.com/images/r4yhan/r4yhan1908/r4yhan190800073/128376160-ilustraci%C3%B3n-relacionada-con-el-an%C3%A1lisis-de-datos-vector-logo-de-investigaci%C3%B3n-informaci%C3%B3n.jpg" alt="JuveYell" width="700px">
+</p>
+</div>
+
+
+Para obtener los logs de las consultas ejecutadas en SQL Server, puedes utilizar las vistas de catálogo del sistema, como `sys.dm_exec_query_stats`, junto con otras vistas que te permitan ver el texto de la consulta y detalles adicionales como el plan de ejecución y la sesión en la que se ejecutó.
+
+Aquí te muestro un ejemplo de cómo puedes extraer información sobre las consultas que se han ejecutado en el servidor SQL:
+
+~~~sql
+SELECT 
+    qs.sql_handle,
+    qs.execution_count,
+    qs.total_worker_time AS CPU_Time,
+    qs.total_physical_reads AS Physical_Reads,
+    qs.total_logical_reads AS Logical_Reads,
+    qs.total_logical_writes AS Logical_Writes,
+    qs.total_elapsed_time AS Duration,
+    SUBSTRING(st.text, (qs.statement_start_offset/2) + 1, 
+              ((CASE qs.statement_end_offset 
+                  WHEN -1 THEN DATALENGTH(st.text)
+                  ELSE qs.statement_end_offset 
+              END - qs.statement_start_offset)/2) + 1) AS query_text,
+    DB_NAME(dbid) AS DatabaseName,
+    OBJECT_NAME(st.objectid, dbid) AS ObjectName,
+    qs.creation_time
+FROM 
+    sys.dm_exec_query_stats qs
+CROSS APPLY 
+    sys.dm_exec_sql_text(qs.sql_handle) st
+ORDER BY 
+    qs.total_worker_time DESC;  -- Ordenar por el tiempo total de CPU utilizado
+~~~
+
+### Explicación de la consulta:
+
+- **`sys.dm_exec_query_stats`**: Esta vista devuelve estadísticas agregadas de las consultas que se han ejecutado en el servidor SQL.
+- **`sys.dm_exec_sql_text(qs.sql_handle)`**: Esta función devuelve el texto de la consulta SQL asociado con un `sql_handle`.
+- **`execution_count`**: Número de veces que se ha ejecutado la consulta.
+- **`total_worker_time`**: Tiempo total de CPU utilizado por la consulta.
+- **`total_physical_reads`**: Número total de lecturas físicas (desde el disco).
+- **`total_logical_reads`**: Número total de lecturas lógicas (desde la memoria).
+- **`total_logical_writes`**: Número total de escrituras lógicas.
+- **`total_elapsed_time`**: Tiempo total de duración de la consulta.
+- **`query_text`**: El texto de la consulta ejecutada.
+- **`DatabaseName`**: Nombre de la base de datos en la que se ejecutó la consulta.
+- **`ObjectName`**: Nombre del objeto (por ejemplo, procedimiento almacenado) al que pertenece la consulta.
+- **`creation_time`**: Hora en la que se creó la entrada de estadísticas.
+
+Este query te da una visión general de las consultas que han consumido más recursos en tu servidor. Ten en cuenta que `sys.dm_exec_query_stats` solo mantiene las estadísticas de las consultas que aún están en caché. Si una consulta ya no está en caché, no aparecerá en los resultados.
+
+Si necesitas logs más detallados o históricos, deberías considerar la habilitación de `SQL Server Audit` o el uso de `Extended Events`. También puedes habilitar la traza de SQL Server, aunque esta última opción está obsoleta en versiones más recientes.
+
+---
+
+
+
+
+
+## 1.- EN LA BASE DE DATOS DE SQLSERVER
+
+## Eliminar registro de la base de datos `[SII.Omega.GCS]`  
+
+El error que estás viendo se debe a un conflicto entre dos intercalaciones (collations) diferentes en las columnas que estás comparando o usando en las consultas. Este problema es común cuando las bases de datos o las tablas utilizan diferentes configuraciones de intercalación.
+
+Para resolver este problema, puedes forzar a que las comparaciones se hagan usando la misma intercalación (`collation`). A continuación, te muestro cómo ajustar tu consulta para forzar la intercalación en las comparaciones.
+
+### Solución:
+Puedes usar la cláusula `COLLATE` en las columnas afectadas para asegurarte de que ambas columnas tengan la misma intercalación en la comparación.
+
+### Ejemplo Modificado:
+
+Si sabes que las columnas están usando diferentes collation (por ejemplo, `Modern_Spanish_CI_AS` y `SQL_Latin1_General_CP1_CI_AS`), puedes forzar una de las intercalaciones en las comparaciones. Aquí te dejo un ejemplo para una de las consultas.
+
+~~~sql
+USE [SII.Omega.GCS]
+GO
+
+DECLARE @phoneNumber VARCHAR(max)
+
+-- Aquí insertas todos los números como antes
+
+-- Forzar intercalación en la comparación para evitar conflictos de collation
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesAccounts 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesSecurityCodes 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.MobilesLogs 
+WHERE mobileID IN (
+    SELECT ID 
+    FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+    WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+    IN (SELECT PhoneNumber FROM #PhoneNumbers)
+)
+
+SELECT * 
+FROM [SII.Omega.GCS].dbo.CustomersMobiles 
+WHERE phoneNumber COLLATE SQL_Latin1_General_CP1_CI_AS 
+IN (SELECT PhoneNumber FROM #PhoneNumbers)
+~~~
+
+
+## Esto ser hizo para solucionar el `Error` de Collate que presento el query
+### Detalles del Ajuste:
+1. **Uso de `COLLATE`:** En las comparaciones de la columna `phoneNumber`, se fuerza la intercalación a `SQL_Latin1_General_CP1_CI_AS`. Si prefieres usar otra intercalación, puedes reemplazarla por la que desees.
+2. **Compatibilidad:** Asegúrate de que la intercalación elegida sea compatible con la intercalación de las columnas en la base de datos o tablas que estás utilizando.
+
+Este ajuste debería eliminar el error de conflicto de collation. Si el conflicto ocurre en otra columna o parte de la consulta, aplica la misma lógica de `COLLATE` en esa columna.
+
+## 3.- En el servidor de VCASH
+#### Este es un comando curl que realiza una operación de desvinculación mediante una solicitud HTTP DELETE. No es posible convertir este comando directamente en una consulta SELECT porque es una operación en un servicio externo. Sin embargo, podrías intentar verificar la existencia del recurso o realizar un GET si el servicio ofrece un endpoint para consultar la información antes de eliminarla.
+
+
+--- 
+
+
+
+
+# **"Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server"**
+<div>
+<p style = 'text-align:center;'>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLNTZk49IjJKvo4QJY8oFvtclV2b3PNOPlFA&s" alt="JuveYell" width="700px">
+</p>
+</div>
+
+El archivo `YourAuditFilePath\YourAuditName*.sqlaudit` es un ejemplo genérico. Para encontrar la ubicación real de tus archivos de auditoría (`.sqlaudit`), sigue estos pasos:
+
+### **1. Consultar la configuración de la auditoría en SQL Server**
+
+Ejecuta la siguiente consulta en SQL Server para obtener la ubicación del archivo de auditoría:
+
+```sql
+SELECT 
+    audit_name,
+    audit_file_path,
+    audit_guid,
+    status_desc,
+    queue_delay,
+    on_failure,
+    max_size,
+    max_rollover_files
+FROM 
+    sys.server_file_audits;
+```
+
+- **audit_name**: El nombre de la auditoría configurada.
+- **audit_file_path**: La ruta del sistema de archivos donde se almacenan los archivos de auditoría.
+
+### **2. Localizar el archivo en el sistema operativo**
+
+Una vez que obtengas la ruta (`audit_file_path`), sigue estos pasos:
+
+- **En Windows**:
+  1. Abre el Explorador de Archivos.
+  2. Copia y pega la ruta obtenida de la consulta en la barra de direcciones del Explorador.
+  3. Presiona `Enter`.
+
+  Aquí deberías encontrar uno o varios archivos con la extensión `.sqlaudit` que corresponden a los eventos auditados.
+
+### **3. Revisar el archivo de auditoría**
+
+Puedes abrir el archivo `.sqlaudit` con SQL Server Management Studio (SSMS) para revisar su contenido, o usar la función `sys.fn_get_audit_file` para consultar los datos desde SQL Server:
+
+```sql
+SELECT 
+    event_time,
+    server_principal_name,
+    database_name,
+    schema_name,
+    object_name,
+    statement
+FROM 
+    sys.fn_get_audit_file('C:\Ruta\AuditFolder\YourAuditName*.sqlaudit', NULL, NULL);
+```
+
+Asegúrate de reemplazar `'C:\Ruta\AuditFolder\YourAuditName*.sqlaudit'` con la ruta y nombre correctos obtenidos en los pasos anteriores.
+
+Este proceso te permitirá encontrar y revisar los archivos de auditoría en SQL Server.
+
+
+
+
+# No existe nada debajo de esta linea
+
+
+
+# 
 
 # No existe nada debajo de esta linea
 
