@@ -268,6 +268,7 @@
 - 601 [Documentación para la Restauración de Bases de Datos ABT](#601)
 
 - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
+- 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
 
 # Query y soluciones para GCS-SYSTEMS.
  - 700 [LIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS](#700)
@@ -14058,6 +14059,72 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 
 
 --- 
+
+
+
+
+# **"Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server"**
+<div>
+<p style = 'text-align:center;'>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLNTZk49IjJKvo4QJY8oFvtclV2b3PNOPlFA&s" alt="JuveYell" width="700px">
+</p>
+</div>
+
+El archivo `YourAuditFilePath\YourAuditName*.sqlaudit` es un ejemplo genérico. Para encontrar la ubicación real de tus archivos de auditoría (`.sqlaudit`), sigue estos pasos:
+
+### **1. Consultar la configuración de la auditoría en SQL Server**
+
+Ejecuta la siguiente consulta en SQL Server para obtener la ubicación del archivo de auditoría:
+
+```sql
+SELECT 
+    audit_name,
+    audit_file_path,
+    audit_guid,
+    status_desc,
+    queue_delay,
+    on_failure,
+    max_size,
+    max_rollover_files
+FROM 
+    sys.server_file_audits;
+```
+
+- **audit_name**: El nombre de la auditoría configurada.
+- **audit_file_path**: La ruta del sistema de archivos donde se almacenan los archivos de auditoría.
+
+### **2. Localizar el archivo en el sistema operativo**
+
+Una vez que obtengas la ruta (`audit_file_path`), sigue estos pasos:
+
+- **En Windows**:
+  1. Abre el Explorador de Archivos.
+  2. Copia y pega la ruta obtenida de la consulta en la barra de direcciones del Explorador.
+  3. Presiona `Enter`.
+
+  Aquí deberías encontrar uno o varios archivos con la extensión `.sqlaudit` que corresponden a los eventos auditados.
+
+### **3. Revisar el archivo de auditoría**
+
+Puedes abrir el archivo `.sqlaudit` con SQL Server Management Studio (SSMS) para revisar su contenido, o usar la función `sys.fn_get_audit_file` para consultar los datos desde SQL Server:
+
+```sql
+SELECT 
+    event_time,
+    server_principal_name,
+    database_name,
+    schema_name,
+    object_name,
+    statement
+FROM 
+    sys.fn_get_audit_file('C:\Ruta\AuditFolder\YourAuditName*.sqlaudit', NULL, NULL);
+```
+
+Asegúrate de reemplazar `'C:\Ruta\AuditFolder\YourAuditName*.sqlaudit'` con la ruta y nombre correctos obtenidos en los pasos anteriores.
+
+Este proceso te permitirá encontrar y revisar los archivos de auditoría en SQL Server.
+
+
 
 
 # No existe nada debajo de esta linea
