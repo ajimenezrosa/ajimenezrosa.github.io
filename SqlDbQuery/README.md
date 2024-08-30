@@ -267,6 +267,7 @@
 
 - 601 [Documentación para la Restauración de Bases de Datos ABT](#601)
 
+- 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
 
 # Query y soluciones para GCS-SYSTEMS.
  - 700 [LIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS](#700)
@@ -13922,6 +13923,69 @@ Este  procedimiento debe ser revisado y actualizado según sea necesario para re
 
 --- 
 # ELIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS<a name="700"></a>
+
+---
+# Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos<a name="602"></a>
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://previews.123rf.com/images/r4yhan/r4yhan1908/r4yhan190800073/128376160-ilustraci%C3%B3n-relacionada-con-el-an%C3%A1lisis-de-datos-vector-logo-de-investigaci%C3%B3n-informaci%C3%B3n.jpg" alt="JuveYell" width="700px">
+</p>
+</div>
+
+
+Para obtener los logs de las consultas ejecutadas en SQL Server, puedes utilizar las vistas de catálogo del sistema, como `sys.dm_exec_query_stats`, junto con otras vistas que te permitan ver el texto de la consulta y detalles adicionales como el plan de ejecución y la sesión en la que se ejecutó.
+
+Aquí te muestro un ejemplo de cómo puedes extraer información sobre las consultas que se han ejecutado en el servidor SQL:
+
+~~~sql
+SELECT 
+    qs.sql_handle,
+    qs.execution_count,
+    qs.total_worker_time AS CPU_Time,
+    qs.total_physical_reads AS Physical_Reads,
+    qs.total_logical_reads AS Logical_Reads,
+    qs.total_logical_writes AS Logical_Writes,
+    qs.total_elapsed_time AS Duration,
+    SUBSTRING(st.text, (qs.statement_start_offset/2) + 1, 
+              ((CASE qs.statement_end_offset 
+                  WHEN -1 THEN DATALENGTH(st.text)
+                  ELSE qs.statement_end_offset 
+              END - qs.statement_start_offset)/2) + 1) AS query_text,
+    DB_NAME(dbid) AS DatabaseName,
+    OBJECT_NAME(st.objectid, dbid) AS ObjectName,
+    qs.creation_time
+FROM 
+    sys.dm_exec_query_stats qs
+CROSS APPLY 
+    sys.dm_exec_sql_text(qs.sql_handle) st
+ORDER BY 
+    qs.total_worker_time DESC;  -- Ordenar por el tiempo total de CPU utilizado
+~~~
+
+### Explicación de la consulta:
+
+- **`sys.dm_exec_query_stats`**: Esta vista devuelve estadísticas agregadas de las consultas que se han ejecutado en el servidor SQL.
+- **`sys.dm_exec_sql_text(qs.sql_handle)`**: Esta función devuelve el texto de la consulta SQL asociado con un `sql_handle`.
+- **`execution_count`**: Número de veces que se ha ejecutado la consulta.
+- **`total_worker_time`**: Tiempo total de CPU utilizado por la consulta.
+- **`total_physical_reads`**: Número total de lecturas físicas (desde el disco).
+- **`total_logical_reads`**: Número total de lecturas lógicas (desde la memoria).
+- **`total_logical_writes`**: Número total de escrituras lógicas.
+- **`total_elapsed_time`**: Tiempo total de duración de la consulta.
+- **`query_text`**: El texto de la consulta ejecutada.
+- **`DatabaseName`**: Nombre de la base de datos en la que se ejecutó la consulta.
+- **`ObjectName`**: Nombre del objeto (por ejemplo, procedimiento almacenado) al que pertenece la consulta.
+- **`creation_time`**: Hora en la que se creó la entrada de estadísticas.
+
+Este query te da una visión general de las consultas que han consumido más recursos en tu servidor. Ten en cuenta que `sys.dm_exec_query_stats` solo mantiene las estadísticas de las consultas que aún están en caché. Si una consulta ya no está en caché, no aparecerá en los resultados.
+
+Si necesitas logs más detallados o históricos, deberías considerar la habilitación de `SQL Server Audit` o el uso de `Extended Events`. También puedes habilitar la traza de SQL Server, aunque esta última opción está obsoleta en versiones más recientes.
+
+---
+
+
+
 
 
 ## 1.- EN LA BASE DE DATOS DE SQLSERVER
