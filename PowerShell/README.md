@@ -1104,7 +1104,7 @@ if ($notFound.Count -gt 0) {
     2. In Windows PowerShell, type the following command.
 
 
-~~~powershell
+~~~sql
 Install-WindowsFeature “Failover-Clustering” -IncludeManagementTools
 ~~~
 
@@ -1112,7 +1112,7 @@ Install-WindowsFeature “Failover-Clustering” -IncludeManagementTools
 #### To run the validation tests using PowerShell, you can use the Test-Cluster cmdlet.
 
 
-~~~powershell
+~~~sql
  Example: Validate specified nodes
 Test-Cluster -Node "AlwaysOnN1", "AlwaysOnN2","AlwaysOnN3"
 
@@ -1126,7 +1126,7 @@ Test-Cluster -Node "AlwaysOnN1", "AlwaysOnN2","AlwaysOnN3" -Include "Storage"
 
 ## To create a cluster using PowerShell, you can use the New-Cluster cmdlet.
 
-~~~powershell
+~~~sql
 Example: Create new cluster
 
 New-Cluster -Name “AlwaysOnCluster” -Node AlwaysOnN1, AlwaysOnN2,AlwaysOnN3 -NoStorage
@@ -1145,7 +1145,7 @@ New-Cluster -Name “AlwaysOnCluster” -Node AlwaysOnN1, AlwaysOnN2,AlwaysOnN3 
 
 #### To get a list of all cluster cmdlets, type the following:
 
-~~~Powershell
+~~~sql
 Get-command -module FailoverClusters
 ~~~
 
@@ -1153,21 +1153,26 @@ Get-command -module FailoverClusters
 
 #### Gets cluster node list
 
-~~~PowerShell
+~~~sql
 Get-clusternode 
 ~~~
 
 #### Gets cluster resource list
 
-~~~PowerShell
+~~~sql
 Get-clusterresource 
 ~~~
 
 #### Creates a log file for all nodes, or a specific a node, in a failover cluster. They are stored in the %windir%\Cluster\Reports directory on each node of the cluster.
 
-~~~PowerShell
+~~~sql
 Get-clusterlog 
 ~~~
+
+
+
+
+
 
 
 
