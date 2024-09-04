@@ -127,9 +127,9 @@ Manuales de</th>
 ---
 - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
 - 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
-
 ---
-
+- 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
+---
 #### **7. Consultas Especiales**
 * 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
 * 7.2 [Listar todos los objetos de una base de datos](#14.3)  
@@ -168,7 +168,7 @@ Manuales de</th>
 - 9.4 [Remisión de encuesta de satisfacción de servicios de mensajería](#encuestamensajeria)  
 - 9.5 [Reporte de registros modificados en las tablas de afiliados del INABIMA](#repafiliadosinabima)  
 
----
+ ---
 
 #### **10. Central Telefónica**
 - 10.1 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)  
@@ -14143,6 +14143,52 @@ FROM
 Asegúrate de reemplazar `'C:\Ruta\AuditFolder\YourAuditName*.sqlaudit'` con la ruta y nombre correctos obtenidos en los pasos anteriores.
 
 Este proceso te permitirá encontrar y revisar los archivos de auditoría en SQL Server.
+
+--- 
+
+## Auto-fix para Usuarios Huérfanos en SQL Server<a name="604"></a>
+
+```sql
+-- Script: Auto-fix SQL Server Login/User Mismatch
+-- Database: myDB
+
+-- Description:
+-- This script is used to automatically link an existing SQL Server login 
+-- with a database user that has become orphaned, i.e., a database user 
+-- that is not mapped to a login. The 'Auto_Fix' option of the 
+-- sp_change_users_login stored procedure attempts to fix the mismatch 
+-- between a login and a user by finding a login with the same name and 
+-- associating it with the specified user.
+
+-- Usage:
+-- This script is executed in the context of the 'myDB' database. 
+-- Replace 'myDB' with the name of your database and 'myUser' with the 
+-- database username you wish to fix. Ensure that the login name in 
+-- the server matches the username in the database.
+
+USE myDB
+EXEC sp_change_users_login 'Auto_Fix', 'myUser'
+```
+
+### Additional Notes:
+- **sp_change_users_login** is a deprecated stored procedure, so consider using `ALTER USER` or other methods in future developments.
+- This script is typically used in environments where users might become orphaned after a database restoration or migration.
+- **'Auto_Fix'** will automatically associate the database user with a login of the same name. If the login does not exist, it won't create a new one.
+
+### Example:
+```sql
+-- Assuming you have a database 'SalesDB' and a user 'john_doe' that is orphaned:
+USE SalesDB
+EXEC sp_change_users_login 'Auto_Fix', 'john_doe'
+```
+
+You can include this documentation in a `README.md` file in your GitHub repository, along with the SQL script file for better organization and understanding for others who might view or use your code.
+
+
+
+---
+
+
 
 
 
