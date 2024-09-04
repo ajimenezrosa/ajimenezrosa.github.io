@@ -223,17 +223,17 @@ Manuales de</th>
 
 ## Configuraciones Post-Instalación de SQL Server
 
-- 17.1 [Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema](#1-actualizar-políticas-de-crecimiento-y-tamaños-de-las-bases-de-datos-del-sistema)
-- 17.2  [Adicionar Nuevos Archivos de TempDB](#2-adicionar-nuevos-archivos-de-tempdb)
-    - [Paso 1: Validar Archivos](#paso-1-validar-archivos)
-    - [Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)](#paso-2-crear-nuevos-archivos-para-tempdb-4-cores)
-    - [Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)](#paso-3-crear-nuevos-archivos-para-tempdb-8-12-y-16-cores)
-    - [Paso 4: Modificar Nombres y Tamaños de Archivos](#paso-4-modificar-nombres-y-tamaños-de-archivos)
-- 17.3 [Cálculo del MAXDOP](#3-cálculo-del-maxdop)
-- 17.4 [Ajustar Valores de Parámetros de Configuración de la Instancia](#4-ajustar-valores-de-parámetros-de-configuración-de-la-instancia)
-- 17.5 [Actualizar Valor del Parámetro Server Name](#5-actualizar-valor-del-parámetro-server-name)
-- 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#6-crear-bases-de-datos-administrativas-stos_admin-y-stos_pto)
-- 17.7 [Licencia](#7-licencia)
+- 17.1 [Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema](#17.1)
+- 17.2  [Adicionar Nuevos Archivos de TempDB](#17.1)
+    - [Paso 1: Validar Archivos](#17.21)
+    - [Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)](#17.22)
+    - [Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)](#17.23)
+    - [Paso 4: Modificar Nombres y Tamaños de Archivos](#17.24)
+- 17.3 [Cálculo del MAXDOP](#17.3)
+- 17.4 [Ajustar Valores de Parámetros de Configuración de la Instancia](#17.4)
+- 17.5 [Actualizar Valor del Parámetro Server Name](#17.5)
+- 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#17.6)
+- 17.7 [Licencia](#17.7)
 
 ---
 
@@ -7604,7 +7604,7 @@ openquery( [SOLUFLEX RRHH], N'Select * from TA_PONCHESRELOJ')
 
 
 
-# Query para la Sincronizacion de los empleados de soluflex con el Reloj.<a name="procedurecargadatossoluflex"></a>
+# Query para la Sincronizacion de los empleados de soluflex con el Reloj.<a name="17.7"></a>
 
 #### Porque las licencias del reloj de control de asistencias expiraron. Nos encontramos en la necesidad de realizar cargas manuales a las Bases de Datos del nuevo personal.
 
@@ -14216,23 +14216,9 @@ You can include this documentation in a `README.md` file in your GitHub reposito
 
 Este repositorio contiene una serie de scripts SQL diseñados para realizar configuraciones post-instalación en servidores SQL Server. Las configuraciones incluyen la actualización de políticas de crecimiento y tamaños iniciales en las bases de datos del sistema, la configuración de TempDB, ajustes de parámetros de configuración de la instancia, renombramiento del servidor, y la creación de bases de datos administrativas.
 
-## Tabla de Contenidos
-
-1. [Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema](#1-actualizar-políticas-de-crecimiento-y-tamaños-de-las-bases-de-datos-del-sistema)
-2. [Adicionar Nuevos Archivos de TempDB](#2-adicionar-nuevos-archivos-de-tempdb)
-    - [Paso 1: Validar Archivos](#paso-1-validar-archivos)
-    - [Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)](#paso-2-crear-nuevos-archivos-para-tempdb-4-cores)
-    - [Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)](#paso-3-crear-nuevos-archivos-para-tempdb-8-12-y-16-cores)
-    - [Paso 4: Modificar Nombres y Tamaños de Archivos](#paso-4-modificar-nombres-y-tamaños-de-archivos)
-3. [Cálculo del MAXDOP](#3-cálculo-del-maxdop)
-4. [Ajustar Valores de Parámetros de Configuración de la Instancia](#4-ajustar-valores-de-parámetros-de-configuración-de-la-instancia)
-5. [Actualizar Valor del Parámetro Server Name](#5-actualizar-valor-del-parámetro-server-name)
-6. [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#6-crear-bases-de-datos-administrativas-stos_admin-y-stos_pto)
-7. [Licencia](#7-licencia)
-
 ---
 
-## 1. Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema
+## 1. Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema<a name="17.1"></a>
 
 Este script actualiza las políticas de crecimiento y los tamaños iniciales en las bases de datos del sistema: `master`, `model` y `msdb`. Es aplicable a servidores recién instalados o que requieren remediación en sus configuraciones.
 
@@ -14303,7 +14289,7 @@ GO
 
 ---
 
-## 2. Adicionar Nuevos Archivos de TempDB
+## 2. Adicionar Nuevos Archivos de TempDB<a name="17.1"></a>
 
 Este script adiciona nuevos archivos a TempDB según los requerimientos del servidor, basándose en el número de cores de CPU. Aplica para servidores recién instalados y aquellos que requieren remediación en sus configuraciones.
 
@@ -14311,7 +14297,7 @@ Este script adiciona nuevos archivos a TempDB según los requerimientos del serv
 **Compilado:** 21 de Septiembre de 2020  
 **Modificado por:** 1 de Octubre de 2020
 
-### Paso 1: Validar Archivos
+### Paso 1: Validar Archivos<a name="17.21"></a>
 
 Este paso verifica la configuración actual de TempDB.
 
@@ -14325,7 +14311,7 @@ SP_HELPDB TempDB
 GO
 ```
 
-### Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)
+### Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)<a name="17.22"></a>
 
 Aplica para instalaciones convencionales de 4 cores.
 
@@ -14345,7 +14331,7 @@ ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev4', FILENAME = N'T:\MSSQL\Temp
 GO
 ```
 
-### Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)
+### Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)<a name="17.23"></a>
 
 Estos pasos agregan archivos adicionales para instalaciones con más cores, utilizando diferentes discos según el número de cores.
 
@@ -14403,7 +14389,7 @@ GO
 */
 ```
 
-### Paso 4: Modificar Nombres y Tamaños de Archivos
+### Paso 4: Modificar Nombres y Tamaños de Archivos<a name="17.24"></a>
 
 Este paso renombra los archivos lógicos y modifica las rutas físicas de los archivos recién creados. Requiere reiniciar el servicio de SQL Server para aplicar los cambios. Después del reinicio, los archivos anteriores deben ser eliminados.
 
@@ -14461,7 +14447,7 @@ GO
 
 ---
 
-## 3. Cálculo del MAXDOP
+## 3. Cálculo del MAXDOP<a name="17.3"></a>
 
 Este script calcula el valor óptimo para el parámetro `MAXDOP` en SQL Server (versiones > 2016). Está basado en Microsoft KB# 2806535 y el calculador MaxDOP de MSDN. Se recomienda ejecutar este script en modo SQLCMD.
 
@@ -14661,7 +14647,7 @@ SET NOEXEC OFF;
 
 ---
 
-## 4. Ajustar Valores de Parámetros de Configuración de la Instancia
+## 4. Ajustar Valores de Parámetros de Configuración de la Instancia<a name=17.4""></a>
 
 Este script ajusta diversos parámetros de configuración de la instancia de SQL Server, tales como la memoria mínima y máxima, MAXDOP, fill factor, compresión de backups, costo del umbral para paralelismo, y configuraciones de conexiones remotas.
 
@@ -14826,7 +14812,7 @@ GO
 
 ---
 
-## 5. Actualizar Valor del Parámetro Server Name
+## 5. Actualizar Valor del Parámetro Server Name<a name="17.5"></a>
 
 Este script actualiza el valor del parámetro `Server Name` en casos donde el servidor fue creado con un nombre inicial y necesita ser renombrado. Requiere reiniciar el servicio principal de SQL Server para aplicar los cambios.
 
@@ -14868,7 +14854,7 @@ GO
 
 ---
 
-## 6. Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO
+## 6. Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO<a name="17.6"></a>
 
 Este script crea las bases de datos administrativas `STOS_ADMIN` y `STOS_PTO` con configuraciones específicas de crecimiento y almacenamiento. Cada base de datos incluye un archivo primario, un grupo de archivos para índices y un archivo de log.
 
