@@ -220,6 +220,23 @@ Manuales de</th>
 - 16.1 [Eliminar número enganchado en Dakota/Café GCS-SYSTEMS](#700)  
 
 ---
+
+## Configuraciones Post-Instalación de SQL Server
+
+- 17.1 [Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema](#1-actualizar-políticas-de-crecimiento-y-tamaños-de-las-bases-de-datos-del-sistema)
+- 17.2  [Adicionar Nuevos Archivos de TempDB](#2-adicionar-nuevos-archivos-de-tempdb)
+    - [Paso 1: Validar Archivos](#paso-1-validar-archivos)
+    - [Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)](#paso-2-crear-nuevos-archivos-para-tempdb-4-cores)
+    - [Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)](#paso-3-crear-nuevos-archivos-para-tempdb-8-12-y-16-cores)
+    - [Paso 4: Modificar Nombres y Tamaños de Archivos](#paso-4-modificar-nombres-y-tamaños-de-archivos)
+- 17.3 [Cálculo del MAXDOP](#3-cálculo-del-maxdop)
+- 17.4 [Ajustar Valores de Parámetros de Configuración de la Instancia](#4-ajustar-valores-de-parámetros-de-configuración-de-la-instancia)
+- 17.5 [Actualizar Valor del Parámetro Server Name](#5-actualizar-valor-del-parámetro-server-name)
+- 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#6-crear-bases-de-datos-administrativas-stos_admin-y-stos_pto)
+- 17.7 [Licencia](#7-licencia)
+
+---
+
 ---
 
 
@@ -14982,10 +14999,6 @@ permisión de licencia en todas las copias o partes sustanciales del software.
 
 
 
-
-
-
-# No existe nada debajo de esta linea
 
 
 
