@@ -14190,6 +14190,798 @@ You can include this documentation in a `README.md` file in your GitHub reposito
 
 
 
+# Configuraciones Post-Instalación de SQL Server
+<div>
+<p style = 'text-align:center;'>
+<img src="https://i.ytimg.com/vi/fyyGKLtZIvk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLD9NcEAkiG5SKjC7wCmMCnKH1PTLA" alt="JuveYell" width="700px">
+</p>
+</div>
+
+Este repositorio contiene una serie de scripts SQL diseñados para realizar configuraciones post-instalación en servidores SQL Server. Las configuraciones incluyen la actualización de políticas de crecimiento y tamaños iniciales en las bases de datos del sistema, la configuración de TempDB, ajustes de parámetros de configuración de la instancia, renombramiento del servidor, y la creación de bases de datos administrativas.
+
+## Tabla de Contenidos
+
+1. [Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema](#1-actualizar-políticas-de-crecimiento-y-tamaños-de-las-bases-de-datos-del-sistema)
+2. [Adicionar Nuevos Archivos de TempDB](#2-adicionar-nuevos-archivos-de-tempdb)
+    - [Paso 1: Validar Archivos](#paso-1-validar-archivos)
+    - [Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)](#paso-2-crear-nuevos-archivos-para-tempdb-4-cores)
+    - [Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)](#paso-3-crear-nuevos-archivos-para-tempdb-8-12-y-16-cores)
+    - [Paso 4: Modificar Nombres y Tamaños de Archivos](#paso-4-modificar-nombres-y-tamaños-de-archivos)
+3. [Cálculo del MAXDOP](#3-cálculo-del-maxdop)
+4. [Ajustar Valores de Parámetros de Configuración de la Instancia](#4-ajustar-valores-de-parámetros-de-configuración-de-la-instancia)
+5. [Actualizar Valor del Parámetro Server Name](#5-actualizar-valor-del-parámetro-server-name)
+6. [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#6-crear-bases-de-datos-administrativas-stos_admin-y-stos_pto)
+7. [Licencia](#7-licencia)
+
+---
+
+## 1. Actualizar Políticas de Crecimiento y Tamaños de las Bases de Datos del Sistema
+
+Este script actualiza las políticas de crecimiento y los tamaños iniciales en las bases de datos del sistema: `master`, `model` y `msdb`. Es aplicable a servidores recién instalados o que requieren remediación en sus configuraciones.
+
+**Autores:** Charles Díaz Falette, Departamento de Soporte de Bases de Datos  
+**Compilado:** 1 de Febrero de 2018  
+**Modificado por:** Carlos Manuel Lesta, 16 de Septiembre de 2022
+
+### Script
+
+```sql
+/*
+    Tipo: Configuraciones post-instalación.
+    Acción: Actualiza políticas de crecimiento y tamaños iniciales en bases de datos del sistema.
+    Escenario: Servidores recién instalados y servidores que requieren remediación en sus configuraciones.
+    Bases de datos: Master, model, msdb.
+    Autores: Charles Díaz Falette, Depto. Soporte Bases De Datos.
+    Compilado: 1/Febrero/2018.
+    Modificado: Carlos Manuel Lesta, 16/Septiembre/2022.
+*/
+
+-- Modifica tamaño y política de crecimiento de los archivos de la base de datos master.
+-- Tamaño: Datafile: 2000MB | Logfile: 1000MB
+-- Crecimiento: Datafile: 1000MB | Logfile: 1000MB
+
+USE [master]
+GO
+
+ALTER DATABASE [master] MODIFY FILE (NAME = N'master', SIZE = 2048000KB, FILEGROWTH = 1024000KB)
+GO
+
+ALTER DATABASE [master] MODIFY FILE (NAME = N'mastlog', SIZE = 1024000KB, FILEGROWTH = 1024000KB)
+GO
+
+-- Modifica tamaño y política de crecimiento de los archivos de la base de datos model.
+-- Tamaño: Datafile: 2000MB | Logfile: 1000MB
+-- Crecimiento: Datafile: 1000MB | Logfile: 1000MB
+
+USE [master]
+GO
+
+ALTER DATABASE [model] MODIFY FILE (NAME = N'modeldev', SIZE = 2048000KB, FILEGROWTH = 1024000KB)
+GO
+
+ALTER DATABASE [model] MODIFY FILE (NAME = N'modellog', SIZE = 1024000KB, FILEGROWTH = 1024000KB)
+GO
+
+-- Modifica modelo de recuperación a Full
+
+USE [master]
+GO
+
+ALTER DATABASE [model] SET RECOVERY FULL WITH NO_WAIT
+GO
+
+-- Modifica tamaño y política de crecimiento de los archivos de la base de datos msdb.
+-- Tamaño: Datafile: 2000MB | Logfile: 1000MB
+-- Crecimiento: Datafile: 1000MB | Logfile: 1000MB
+
+USE [master]
+GO
+
+ALTER DATABASE [msdb] MODIFY FILE (NAME = N'MSDBData', SIZE = 2048000KB, FILEGROWTH = 1024000KB)
+GO
+
+ALTER DATABASE [msdb] MODIFY FILE (NAME = N'MSDBLog', SIZE = 1024000KB, FILEGROWTH = 1024000KB)
+GO
+```
+
+---
+
+## 2. Adicionar Nuevos Archivos de TempDB
+
+Este script adiciona nuevos archivos a TempDB según los requerimientos del servidor, basándose en el número de cores de CPU. Aplica para servidores recién instalados y aquellos que requieren remediación en sus configuraciones.
+
+**Autores:** Charles Díaz Falette, Departamento de Soporte de Bases de Datos  
+**Compilado:** 21 de Septiembre de 2020  
+**Modificado por:** 1 de Octubre de 2020
+
+### Paso 1: Validar Archivos
+
+Este paso verifica la configuración actual de TempDB.
+
+```sql
+-- Paso 1: validar archivos
+
+USE master
+GO
+
+SP_HELPDB TempDB
+GO
+```
+
+### Paso 2: Crear Nuevos Archivos para TempDB (4 Cores)
+
+Aplica para instalaciones convencionales de 4 cores.
+
+```sql
+-- Paso 2: Crea nuevos archivos para TempDB. Aplica para instalaciones convencionales de 4 cores.
+
+USE [master]
+GO
+
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev2', FILENAME = N'T:\MSSQL\TempDB\tempdb2.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev3', FILENAME = N'T:\MSSQL\TempDB\tempdb3.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev4', FILENAME = N'T:\MSSQL\TempDB\tempdb4.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+```
+
+### Paso 3: Crear Nuevos Archivos para TempDB (8, 12, y 16 Cores)
+
+Estos pasos agregan archivos adicionales para instalaciones con más cores, utilizando diferentes discos según el número de cores.
+
+#### Para 8 Cores (Drive S)
+
+```sql
+-- Paso 3: Crea nuevos archivos para TempDB. Aplica para instalaciones de 8 cores.
+-- Se emplea un disco adicional para TempDB con el drive S.
+
+/*
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev5', FILENAME = N'S:\MSSQL\TempDB\tempdb5.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev6', FILENAME = N'S:\MSSQL\TempDB\tempdb6.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev7', FILENAME = N'S:\MSSQL\TempDB\tempdb7.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev8', FILENAME = N'S:\MSSQL\TempDB\tempdb8.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+*/
+```
+
+#### Para 12 Cores (Drive X)
+
+```sql
+-- Paso 3: Crea nuevos archivos para TempDB. Aplica para instalaciones de 12 cores.
+-- Se emplea un disco adicional para TempDB con el drive X.
+
+/*
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev9', FILENAME = N'X:\MSSQL\TempDB\tempdb9.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev10', FILENAME = N'X:\MSSQL\TempDB\tempdb10.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev11', FILENAME = N'X:\MSSQL\TempDB\tempdb11.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev12', FILENAME = N'X:\MSSQL\TempDB\tempdb12.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+*/
+```
+
+#### Para 16 Cores o más (Drive Y)
+
+```sql
+-- Paso 3: Crea nuevos archivos para TempDB. Aplica para instalaciones de 16 cores o más.
+-- Se emplea un disco adicional para TempDB con el drive Y.
+
+/*
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev13', FILENAME = N'Y:\MSSQL\TempDB\tempdb13.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev14', FILENAME = N'Y:\MSSQL\TempDB\tempdb14.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev15', FILENAME = N'Y:\MSSQL\TempDB\tempdb15.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+ALTER DATABASE [tempdb] ADD FILE (NAME = N'tempdev16', FILENAME = N'Y:\MSSQL\TempDB\tempdb16.ndf', SIZE = 2048000KB, FILEGROWTH = 512000KB)
+GO
+*/
+```
+
+### Paso 4: Modificar Nombres y Tamaños de Archivos
+
+Este paso renombra los archivos lógicos y modifica las rutas físicas de los archivos recién creados. Requiere reiniciar el servicio de SQL Server para aplicar los cambios. Después del reinicio, los archivos anteriores deben ser eliminados.
+
+```sql
+-- Paso 3: Modificar nombres de archivos en el script.
+-- El ejemplo muestra cambio de nombre del archivo lógico "temp2" a "tempdev2" y así sucesivamente.
+
+USE [master]
+GO
+
+ALTER DATABASE [tempdb] MODIFY FILE (NAME=N'temp2', NEWNAME=N'tempdev2')
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME=N'temp3', NEWNAME=N'tempdev3')
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME=N'temp4', NEWNAME=N'tempdev4')
+GO
+
+-- Paso 3: Modificar nombres de archivos físicos.
+-- NOTA: este cambio NO RENOMBRA archivos físicos de la TempDB. Sólo modifica el catálogo para la creación de nuevos archivos.
+-- Este cambio requiere reinicio del servicio de SQL Server para ser aplicado.
+-- Los archivos anteriores deben ser eliminados posterior al reinicio del servicio.
+
+USE [master]
+GO
+
+ALTER DATABASE tempdb MODIFY FILE
+(NAME = tempdev2, FILENAME = 'T:\MSSQL\TempDB\tempdb2.ndf')
+GO
+ALTER DATABASE tempdb MODIFY FILE
+(NAME = tempdev3, FILENAME = 'T:\MSSQL\TempDB\tempdb3.ndf')
+GO
+ALTER DATABASE tempdb MODIFY FILE
+(NAME = tempdev4, FILENAME = 'T:\MSSQL\TempDB\tempdb4.ndf')
+GO
+
+-- Paso 4: Modificar tamaños de archivos.
+-- Modifica tamaños iniciales y políticas de crecimiento para archivos existentes:
+-- Tamaño: Datafile: 4000MB | Logfile: 2000MB
+-- Crecimiento: Datafile: 1000MB | Logfile: 1000MB
+
+USE [master]
+GO
+
+ALTER DATABASE [tempdb] MODIFY FILE (NAME = N'tempdev2', SIZE = 4096000KB, FILEGROWTH = 1024000KB)
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME = N'tempdev3', SIZE = 4096000KB, FILEGROWTH = 1024000KB)
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME = N'tempdev4', SIZE = 4096000KB, FILEGROWTH = 1024000KB)
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME = N'tempdev', SIZE = 4096000KB, FILEGROWTH = 1024000KB)
+GO
+ALTER DATABASE [tempdb] MODIFY FILE (NAME = N'templog', SIZE = 2048000KB, FILEGROWTH = 1024000KB)
+GO
+```
+
+---
+
+## 3. Cálculo del MAXDOP
+
+Este script calcula el valor óptimo para el parámetro `MAXDOP` en SQL Server (versiones > 2016). Está basado en Microsoft KB# 2806535 y el calculador MaxDOP de MSDN. Se recomienda ejecutar este script en modo SQLCMD.
+
+**Autor:** Carlos Robles  
+**Fuente:** DBA Mastery  
+**Licencia:** MIT
+
+### Script
+
+```sql
+/*
+-- +----------------------------------------------------------------------------+
+-- |                                                        DBA Mastery                                      |
+-- |                        dbamastery@outlook.com                              |
+-- |                      http://www.dbamastery.com                             |
+-- |----------------------------------------------------------------------------|
+-- |                                                                            |
+-- |----------------------------------------------------------------------------|
+-- | DATABASE : SQL Server                                                      |
+-- | FILE     : maxdop_calculator.sql                                        |
+-- | CLASS    : Performance tuning                                              |
+-- | PURPOSE  :  Calculates the optimal value for MAXDOP (> SQL 2016 )                  |
+-- |                                                                                                                                                          |
+-- | NOTE     : As with any code, ensure to test this script in a development   |
+-- |            environment before attempting to run it in production.          |
+-- |                                                                            |
+-- |            Based on Microsoft KB# 2806535: https://goo.gl/4FD9BH and       |
+-- |            MSDN MaxDOP calculator: https://goo.gl/hzyxY1                   |
+-- +----------------------------------------------------------------------------+
+
+AUTHOR: CARLOS ROBLES
+
+Copyright (c) 2019 DBA Mastery
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+SET NOEXEC OFF;
+
+:SETVAR IsSqlCmdEnabled "True"
+
+:OUT STDOUT
+
+GO
+
+IF ('$(IsSqlCmdEnabled)' = '$' + '(IsSqlCmdEnabled)')
+BEGIN
+    -- Disabling script execution in case SQLCMD mode is not enabled in SSMS
+    PRINT N'SQLCMD mode must be enabled to successfully execute this script.';
+    PRINT N'For instructions on how to use SQLCMD mode in SSMS, please visit this post from my blog:';
+    PRINT N'http://www.dbamastery.com/tips/SQLCMD-mode-SSMS'
+    SET NOEXEC ON;
+END;
+ELSE
+BEGIN
+    SET NOCOUNT ON;
+    USE MASTER;
+
+    -- Dropping temp table in case it exists
+    IF EXISTS (SELECT * FROM tempdb.dbo.sysobjects o WHERE o.XTYPE IN ('U') AND o.id = OBJECT_ID(N'tempdb..#MaxDOPDB')) 
+        DROP TABLE #MaxDOPDB;
+
+    DECLARE
+        @SQLVersion INT,
+        @NumaNodes INT,
+        @NumCPUs INT,
+        @MaxDop SQL_VARIANT,
+        @RecommendedMaxDop INT;
+
+    -- Getting SQL Server version
+    SELECT @SQLVersion = SUBSTRING(CONVERT(VARCHAR, SERVERPROPERTY('ProductVersion')), 1, 2);
+
+    -- Getting number of NUMA nodes
+    SELECT @NumaNodes = COUNT(DISTINCT memory_node_id) 
+    FROM sys.dm_os_memory_clerks 
+    WHERE memory_node_id != 64;
+
+    -- Getting number of CPUs (cores)
+    SELECT @NumCPUs = COUNT(scheduler_id) 
+    FROM sys.dm_os_schedulers 
+    WHERE status = 'VISIBLE ONLINE';
+
+    -- Getting current MAXDOP at instance level
+    SELECT @MaxDop = value_in_use 
+    FROM sys.configurations 
+    WHERE name = 'max degree of parallelism';
+
+    -- MAXDOP calculation (Instance level)
+    -- If SQL Server has single NUMA node
+    IF @NumaNodes = 1
+        IF @NumCPUs < 8
+            -- If number of logical processors is less than 8, MAXDOP equals number of logical processors
+            SET @RecommendedMaxDop = @NumCPUs;
+        ELSE
+            -- Keep MAXDOP at 8
+            SET @RecommendedMaxDop = 8;
+    ELSE
+        -- If SQL Server has multiple NUMA nodes
+        IF (@NumCPUs / @NumaNodes) < 8
+            -- IF number of logical processors per NUMA node is less than 8, MAXDOP equals or below logical processors per NUMA node
+            SET @RecommendedMaxDop = (@NumCPUs / @NumaNodes);
+        ELSE
+            -- If greater than 8 logical processors per NUMA node - Keep MAXDOP at 8
+            SET @RecommendedMaxDop = 8;
+
+    -- If SQL Server is > 2016
+    IF CONVERT(INT, @SQLVersion) > 12
+    BEGIN
+        -- Getting current MAXDOP at database level
+
+        -- Creating temp table
+        CREATE TABLE #MaxDOPDB
+        (
+            DBName sysname, 
+            configuration_id int, 
+            name nvarchar(120), 
+            value_for_primary sql_variant, 
+            value_for_secondary sql_variant
+        );
+
+        INSERT INTO #MaxDOPDB
+        EXEC sp_msforeachdb 'USE [?]; SELECT DB_NAME(), configuration_id, name, value, value_for_secondary FROM sys.database_scoped_configurations WHERE name =''MAXDOP''';
+
+        -- Displaying database MAXDOP configuration
+        PRINT '------------------------------------------------------------------------';
+        PRINT 'MAXDOP at Database level:';
+        PRINT '------------------------------------------------------------------------';
+        SELECT 
+            CONVERT(VARCHAR(30), dbname) AS DatabaseName, 
+            CONVERT(VARCHAR(10), name) AS ConfigurationName, 
+            CONVERT(INT, value_for_primary) AS "MAXDOP Configured Value" 
+        FROM #MaxDOPDB
+        WHERE dbname NOT IN ('master', 'msdb', 'tempdb', 'model');
+
+        PRINT '';
+
+        -- Displaying current and recommended MAXDOP
+        PRINT '--------------------------------------------------------------';
+        PRINT 'MAXDOP at Instance level:';
+        PRINT '--------------------------------------------------------------';
+        PRINT 'MAXDOP configured value: ' + CHAR(9) + CAST(@MaxDop AS CHAR);
+        PRINT 'MAXDOP recommended value: ' + CHAR(9) + CAST(@RecommendedMaxDop AS CHAR);
+        PRINT '--------------------------------------------------------------';
+        PRINT '';
+
+        IF (@MaxDop <> @RecommendedMaxDop)
+        BEGIN
+            PRINT 'In case you want to change MAXDOP to the recommended value, please use this script:';
+            PRINT '';
+            PRINT 'EXEC sp_configure ''max degree of parallelism'', ' + CAST(@RecommendedMaxDop AS CHAR);
+            PRINT 'GO';
+            PRINT 'RECONFIGURE WITH OVERRIDE;';
+        END
+    END;
+    ELSE
+    BEGIN
+        -- Displaying current and recommended MAXDOP
+        PRINT '--------------------------------------------------------------';
+        PRINT 'MAXDOP at Instance level:';
+        PRINT '--------------------------------------------------------------';
+        PRINT 'MAXDOP configured value: ' + CHAR(9) + CAST(@MaxDop AS CHAR);
+        PRINT 'MAXDOP recommended value: ' + CHAR(9) + CAST(@RecommendedMaxDop AS CHAR);
+        PRINT '--------------------------------------------------------------';
+        PRINT '';
+
+        IF (@MaxDop <> @RecommendedMaxDop)
+        BEGIN
+            PRINT 'In case you want to change MAXDOP to the recommended value, please use this script:';
+            PRINT '';
+            PRINT 'EXEC sp_configure ''max degree of parallelism'', ' + CAST(@RecommendedMaxDop AS CHAR);
+            PRINT 'GO';
+            PRINT 'RECONFIGURE WITH OVERRIDE;';
+        END
+    END;
+END;
+
+SET NOEXEC OFF;
+```
+
+**Nota:** Este script debe ejecutarse en modo SQLCMD en SQL Server Management Studio (SSMS) para que las variables y comandos de SQLCMD funcionen correctamente.
+
+---
+
+## 4. Ajustar Valores de Parámetros de Configuración de la Instancia
+
+Este script ajusta diversos parámetros de configuración de la instancia de SQL Server, tales como la memoria mínima y máxima, MAXDOP, fill factor, compresión de backups, costo del umbral para paralelismo, y configuraciones de conexiones remotas.
+
+**Autores:** Ricardo Ledesma, Charles Díaz Falette, Departamento de Soporte de Bases de Datos  
+**Compilado:** 15 de Septiembre de 2016  
+**Modificado por:** 1 de Octubre de 2020
+
+### Scripts
+
+#### Ajuste de Memoria Mínima y Máxima
+
+Configura los valores mínimos y máximos de memoria para la instancia de SQL Server.
+
+```sql
+--------------------------------------------------------------------------------
+-- Set Minimun and Maximun memory values [Depending of total RAM installed].
+--------------------------------------------------------------------------------
+
+-- Siempre dejar al menos un mínimo de 4GB disponibles para el S.O.
+-- Todo servidor de bases de datos debe tener al menos 8GB RAM asignados.
+-- Todo escenario está sujeto a análisis.
+
+USE master
+GO
+
+-- Sets minimun memory value.
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'min server memory (MB)', N'2048'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+
+-- Sets maximun memory value.
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'max server memory (MB)', N'55705'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+#### Set Max Degree of Parallelism
+
+Configura el valor de `MAXDOP`. Se recomienda ejecutar previamente el script de cálculo de MAXDOP para determinar el valor óptimo.
+
+```sql
+--------------------------------------------------------------------------------
+-- Set Max Degree of Parallelism.
+--------------------------------------------------------------------------------
+
+-- Ejecutar antes el script "03 - Cálculo del MAXDOP.sql" para determinar el valor del MAX DOP.
+
+USE master
+GO
+
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'max degree of parallelism', N'6'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+#### Set Fill Factor
+
+Establece el valor de `fill factor` al 75%.
+
+```sql
+--------------------------------------------------------------------------------
+-- Set fill factor value in (75%).
+--------------------------------------------------------------------------------
+
+USE master
+GO
+
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'fill factor (%)', N'75'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+#### Enable Backup Compression
+
+Habilita la compresión de backups por defecto.
+
+```sql
+--------------------------------------------------------------------------------
+-- Enable backup compression
+--------------------------------------------------------------------------------
+
+USE master
+GO
+
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'backup compression default', N'1'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+#### Set Cost Threshold for Parallelism
+
+Configura el umbral de costo para paralelismo a 50.
+
+```sql
+--------------------------------------------------------------------------------
+-- Set Cost Threshold for Parallelism in 50
+--------------------------------------------------------------------------------
+
+USE master
+GO
+
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'cost threshold for parallelism', N'50'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+#### Enable Remote DAC
+
+Habilita las conexiones administrativas remotas (DAC).
+
+```sql
+--------------------------------------------------------------------------------
+-- Enable Remote DAC
+--------------------------------------------------------------------------------
+
+USE master
+GO
+
+sp_configure 'remote admin connections', 1;
+GO 
+RECONFIGURE;
+GO
+```
+
+#### Enable Allow Remote Connections
+
+Permite las conexiones remotas al servidor SQL.
+
+```sql
+--------------------------------------------------------------------------------
+-- Enable Allow Remote Connections
+--------------------------------------------------------------------------------
+
+USE master
+GO
+
+EXEC sys.sp_configure N'show advanced options', N'1'
+GO
+EXEC sys.sp_configure N'remote access', N'1'
+GO
+RECONFIGURE WITH OVERRIDE
+GO
+```
+
+---
+
+## 5. Actualizar Valor del Parámetro Server Name
+
+Este script actualiza el valor del parámetro `Server Name` en casos donde el servidor fue creado con un nombre inicial y necesita ser renombrado. Requiere reiniciar el servicio principal de SQL Server para aplicar los cambios.
+
+**Autores:** Charles Díaz Falette, Departamento de Soporte de Bases de Datos  
+**Modificado por:** 1 de Octubre de 2020
+
+### Script
+
+```sql
+/*
+    Tipo: Configuraciones post-instalación.
+    Acción: Actualiza valor del parámetro Server Name.
+    Escenario: Servidores para migraciones que han sido creados con un nombre y luego tendrán que ser renombrados.
+    Bases de datos: No tiene efecto en bases de datos.
+    Autores: Charles Díaz Falette, Depto. Soporte Bases De Datos.
+    Modificado: 1/Octubre/2020
+*/
+
+-- Verifica el valor actual del parámetro Server Name en Serverproperty('Servername')
+SELECT @@SERVERNAME
+
+-- Remueve el actual nombre de servidor [Server Name].
+-- Requiere reinicio del servicio principal de SQL Server para aplicar el cambio.
+EXEC Sp_dropserver 'NAP01VDBSDPN'
+GO
+
+-- Agrega un nuevo valor para nombre de servidor [Server Name].
+-- Requiere reinicio del servicio principal de SQL Server para aplicar el cambio.
+EXEC Sp_addserver 'NAP01VDBSDP', 'local'
+GO
+```
+
+**Instrucciones:**
+1. Verifica el nombre actual del servidor ejecutando `SELECT @@SERVERNAME`.
+2. Remueve el nombre actual del servidor con `Sp_dropserver`.
+3. Agrega el nuevo nombre del servidor con `Sp_addserver`.
+4. Reinicia el servicio de SQL Server para aplicar los cambios.
+5. Verifica nuevamente el nombre del servidor después del reinicio.
+
+---
+
+## 6. Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO
+
+Este script crea las bases de datos administrativas `STOS_ADMIN` y `STOS_PTO` con configuraciones específicas de crecimiento y almacenamiento. Cada base de datos incluye un archivo primario, un grupo de archivos para índices y un archivo de log.
+
+**Autores:** Charles Díaz Falette, Departamento de Soporte de Bases De Datos  
+**Compilado:**  
+**Modificado por:** 19 de Agosto de 2022
+
+### Script
+
+```sql
+/*
+    Tipo: Configuraciones post-instalación.
+    Acción: Crea base de datos administrativa STOS_ADMIN.
+    Escenario: Todos los servidores.
+    Bases de datos: STOS_ADMIN | STOS_PTO
+    Autores: Charles Díaz Falette, Depto. Soporte Bases De Datos.
+    Modificado: 19/Agosto/2022
+*/
+
+-- Crea base de datos [STOS_ADMIN con crecimiento a 1000MB y archivos de 5GB cada uno.
+
+USE [master]
+GO
+
+CREATE DATABASE [STOS_ADMIN]
+ON  PRIMARY
+(
+    NAME = N'STOS_ADMIN', 
+    FILENAME = N'E:\MSSQL\Data\STOS_ADMIN.mdf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = UNLIMITED, 
+    FILEGROWTH = 1024000KB
+),
+FILEGROUP [INDEXES]
+(
+    NAME = N'STOS_ADMIN_Index', 
+    FILENAME = N'I:\MSSQL\Index\STOS_ADMIN_Index.ndf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = UNLIMITED, 
+    FILEGROWTH = 1024000KB
+)
+LOG ON
+(
+    NAME = N'STOS_ADMIN_log', 
+    FILENAME = N'L:\MSSQL\Log\STOS_ADMIN_log.ldf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = 2048GB, 
+    FILEGROWTH = 1024000KB
+)
+GO
+
+ALTER DATABASE [STOS_ADMIN] SET RECOVERY FULL
+GO
+
+ALTER DATABASE [STOS_ADMIN] SET MULTI_USER
+GO
+
+ALTER DATABASE [STOS_ADMIN] SET PAGE_VERIFY CHECKSUM
+GO
+
+-- Crea base de datos [STOS_PTO con crecimiento a 1000MB y archivos de 5GB cada uno.
+
+USE [master]
+GO
+
+CREATE DATABASE [STOS_PTO]
+ON  PRIMARY
+(
+    NAME = N'STOS_PTO', 
+    FILENAME = N'E:\MSSQL\Data\STOS_PTO.mdf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = UNLIMITED, 
+    FILEGROWTH = 1024000KB
+),
+FILEGROUP [INDEXES]
+(
+    NAME = N'STOS_PTO_Index', 
+    FILENAME = N'I:\MSSQL\Index\STOS_PTO_Index.ndf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = UNLIMITED, 
+    FILEGROWTH = 1024000KB
+)
+LOG ON
+(
+    NAME = N'STOS_PTO_log', 
+    FILENAME = N'L:\MSSQL\Log\STOS_PTO_log.ldf', 
+    SIZE = 5120000KB, 
+    MAXSIZE = 2048GB, 
+    FILEGROWTH = 1024000KB
+)
+GO
+
+ALTER DATABASE [STOS_PTO] SET RECOVERY FULL
+GO
+
+ALTER DATABASE [STOS_PTO] SET MULTI_USER
+GO
+
+ALTER DATABASE [STOS_PTO] SET PAGE_VERIFY CHECKSUM
+GO
+```
+
+**Descripción de Componentes:**
+
+- **PRIMARY:** Archivo principal de datos (`.mdf`).
+- **FILEGROUP [INDEXES]:** Grupo de archivos para índices (`.ndf`).
+- **LOG ON:** Archivo de log (`.ldf`).
+
+**Configuraciones Comunes:**
+
+- **Tamaño Inicial:** 5 GB (`5120000KB`).
+- **Crecimiento:** 1 GB (`1024000KB`).
+- **Máximo Tamaño:** Ilimitado para datos, 2 TB (`2048GB`) para logs.
+- **Recuperación:** Full.
+- **Modo de Usuario:** Multi-user.
+- **Verificación de Página:** Checksum.
+
+---
+
+## 7. Licencia
+
+Los scripts incluidos en este repositorio están licenciados bajo la licencia [MIT](https://opensource.org/licenses/MIT). Esto permite el uso, copia, modificación, fusión, publicación, distribución, sublicenciamiento y/o venta de copias del software, siempre que se incluya el aviso de copyright y la
+permisión de licencia en todas las copias o partes sustanciales del software.
+
+---
+
+**Nota Final:** Antes de ejecutar cualquier script en un entorno de producción, se recomienda probarlos en un entorno de desarrollo o pruebas para asegurar que cumplen con los requisitos y no causan efectos adversos en las configuraciones existentes.
+
+
+
 
 
 
