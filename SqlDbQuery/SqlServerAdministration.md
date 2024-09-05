@@ -192,6 +192,8 @@ Manuales de</th>
 - 12.7 [Ver espacio libre en archivos MDF y LDF](#espaciodbLibres)  
 - 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)  
 - 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
+- 13 -- [Cambiar Owner de Múltiples Jobs en SQL Server](#13.00)
+
 
 ---
 
@@ -10631,6 +10633,56 @@ order by name
 
 #### Recuerda que ejecutar consultas dinámicas y manipular objetos del sistema debe hacerse con precaución en un entorno de producción. Realiza pruebas en un entorno controlado antes de aplicar este tipo de scripts en un entorno de producción y asegúrate de comprender completamente el impacto que puedan tener en tu sistema.<a name="extraerjobssql"></a>
 # 
+
+
+---
+
+### Cambiar Owner de Múltiples Jobs en SQL Server<a name="13.00"></a>
+
+Este script permite listar los jobs actuales y su dueño (owner) en SQL Server, y cambiar el owner de múltiples jobs utilizando el procedimiento almacenado `sp_manage_jobs_by_login`.
+
+#### Requisitos
+
+Este script debe ejecutarse en el entorno de `msdb`, ya que esta base de datos contiene los detalles de los jobs de SQL Server.
+
+#### Pasos para usar el script
+
+1. **Listar los jobs y el owner actual**
+
+   El siguiente script muestra los jobs que están habilitados en SQL Server junto con su owner (dueño) actual:
+
+   ```sql
+   SELECT s.name AS JobName, l.name AS JobOwner, enabled
+   FROM msdb..sysjobs s
+   LEFT JOIN master.sys.syslogins l ON s.owner_sid = l.sid
+   WHERE enabled = 1
+   ORDER BY l.name;
+   ```
+
+   Esto te permitirá visualizar cuáles jobs tienen un owner específico antes de proceder a realizar cambios.
+
+2. **Cambiar el owner de los jobs**
+
+   Utiliza el siguiente comando para cambiar el owner de los jobs. Debes reemplazar los valores de `@current_owner_login_name` y `@new_owner_login_name` con los usuarios correspondientes.
+
+   ```sql
+   USE msdb;
+   GO
+   EXEC dbo.sp_manage_jobs_by_login
+      @action = N'REASSIGN',
+      @current_owner_login_name = N'owner anterior',
+      @new_owner_login_name = N'Nuevo owner';
+   GO
+   ```
+
+#### Consideraciones
+
+- Asegúrate de tener los permisos necesarios para ejecutar cambios sobre los jobs en SQL Server.
+- Este script solo cambiará el owner de los jobs que tienen el `@current_owner_login_name` especificado.
+- Si tienes que realizar estos cambios en un entorno productivo, se recomienda probar primero en un entorno de desarrollo o staging.
+
+---
+
 
 ## Determinar si un Nodo es primario o secundario en un AlwaysOn<a name="queestestenodoAO"></a>
 #### En un grupo de disponibilidad de AlwaysOn en SQL Server, los roles de los servidores se denominan "nodo primario" y "nodo secundario". Puedes utilizar la siguiente consulta en el servidor SQL para determinar si un servidor específico es el nodo primario o el nodo secundario en un grupo de disponibilidad AlwaysOn:
