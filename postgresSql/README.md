@@ -6,7 +6,7 @@
 <thead>
 <tr>
   <th>Manuales de</th>
-  <th>Bases de Datos PostgreSQL -- AJ</th>
+  <th>Guía de Administración de Bases de Datos PostgreSQL -- Alejandro Jimenez</th>
 </tr>
 </thead>
 <tbody>
