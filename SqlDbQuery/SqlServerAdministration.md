@@ -5722,7 +5722,7 @@ WHERE type_desc IN('SQL_LOGIN', 'WINDOWS_LOGIN', 'WINDOWS_GROUP');
 # Lista de permisos por Usuario<a name="listausuariosdb"></a>
 # 
 
-
+Este codigo nos lista todos los permisos de los usuarios creados e nuna base de datos,  esto es util en caso de que se quiera hacer una migracion o compracion con otros servidores o DB's
 ~~~sql
 --- LISTAR PERMISOS DE LOS USUARIOS
 select dp.NAME usuario, dp.type_desc AS tipo, o.NAME AS nombre_de_objeto,
@@ -5735,6 +5735,99 @@ order by
 usuario
 ~~~
 # 
+
+
+Este codigo nos lista los usuarios de todas las bases de datos de un servidor especifico.
+
+es util en caso que se quiera extraer todas las db's y no nos es necesario hacerlo manual una por una
+
+```sql
+DECLARE @DBName NVARCHAR(128)
+DECLARE @SQL NVARCHAR(MAX)
+
+-- Crear tabla temporal para almacenar los resultados de todas las bases de datos
+IF OBJECT_ID('tempdb..#PermisosUsuarios') IS NOT NULL
+    DROP TABLE #PermisosUsuarios
+
+CREATE TABLE #PermisosUsuarios (
+    DBName NVARCHAR(128),
+    Usuario NVARCHAR(128),
+    Tipo NVARCHAR(128),
+    NombreObjeto NVARCHAR(128),
+    NombrePermiso NVARCHAR(128),
+    Permisos NVARCHAR(128)
+)
+
+-- Cursor para recorrer todas las bases de datos del servidor
+DECLARE db_cursor CURSOR FOR
+SELECT name
+FROM sys.databases
+WHERE state_desc = 'ONLINE'  -- Excluir bases de datos offline
+  AND name NOT IN ('master', 'tempdb', 'model', 'msdb') -- Excluir las bases del sistema
+
+OPEN db_cursor
+FETCH NEXT FROM db_cursor INTO @DBName
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Crear consulta dinámica para extraer los permisos de cada base de datos
+    SET @SQL = N'
+    USE [' + @DBName + '];
+    INSERT INTO #PermisosUsuarios (DBName, Usuario, Tipo, NombreObjeto, NombrePermiso, Permisos)
+    SELECT 
+        ''' + @DBName + ''', 
+        dp.NAME AS Usuario, 
+        dp.type_desc AS Tipo, 
+        o.NAME AS NombreObjeto, 
+        p.permission_name AS NombrePermiso, 
+        p.state_desc AS Permisos
+    FROM 
+        sys.database_permissions p
+    LEFT OUTER JOIN 
+        sys.all_objects o ON p.major_id = o.OBJECT_ID
+    INNER JOIN 
+        sys.database_principals dp ON p.grantee_principal_id = dp.principal_id
+    ORDER BY 
+        dp.NAME;'
+
+    -- Ejecutar la consulta para la base de datos actual
+    EXEC sp_executesql @SQL
+
+    FETCH NEXT FROM db_cursor INTO @DBName
+END
+
+-- Cerrar y liberar el cursor
+CLOSE db_cursor
+DEALLOCATE db_cursor
+
+-- Mostrar los resultados
+SELECT *
+FROM #PermisosUsuarios
+ORDER BY DBName, Usuario
+
+-- Opcional: Limpiar la tabla temporal si no deseas mantenerla
+-- DROP TABLE #PermisosUsuarios
+```
+
+### Descripción:
+
+1. **Cursor**: Este cursor recorre todas las bases de datos de la instancia que están en estado "ONLINE", excluyendo las bases de datos del sistema (`master`, `tempdb`, `model`, `msdb`).
+   
+2. **Consulta dinámica**: Por cada base de datos, se ejecuta la consulta que extrae los permisos de los usuarios en esa base de datos. No necesitas especificar el nombre de las bases de datos de forma manual.
+
+3. **Tabla temporal**: Todos los resultados de cada base de datos se almacenan en la tabla temporal `#PermisosUsuarios`.
+
+4. **Resultados**: Al final, se seleccionan todos los datos almacenados en la tabla temporal y se muestran los permisos de cada usuario en cada base de datos.
+
+Este código está diseñado para ejecutarse en un servidor SQL Server y devolver los permisos de los usuarios en todas las bases de datos sin necesidad de modificarlo o especificar manualmente los nombres de las bases.
+
+
+
+---
+
+
+
+
 
 
 
