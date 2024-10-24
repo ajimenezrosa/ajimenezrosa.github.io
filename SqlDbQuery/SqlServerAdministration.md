@@ -10832,7 +10832,7 @@ WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
 
 ---
 
-## 2. Eliminación de subplanes asociados a un Joba name="14.2"></a>
+## 2. Eliminación de subplanes asociados a un Job<a name="14.2"></a>
 
 Si deseas eliminar un subplan de mantenimiento asociado a un Job específico, puedes usar la siguiente instrucción:
 
@@ -10848,7 +10848,7 @@ WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
 
 ---
 
-## 3. Comando para eliminar un Job específicoa name="14.3"></a>
+## 3. Comando para eliminar un Job específico<a name="14.3"></a>
 
 Si el Job sigue sin poder eliminarse después de eliminar el subplan, puedes intentar con este procedimiento almacenado del sistema:
 
@@ -10864,7 +10864,7 @@ EXEC msdb.dbo.sp_delete_job @job_name = 'STOS_Update Statistics';
 
 ---
 
-## 4. Eliminación de registros en el log de mantenimientoa name="14.4"></a>
+## 4. Eliminación de registros en el log de mantenimiento<a name="14.4"></a>
 
 Es posible que los registros en el log de mantenimiento también estén evitando la eliminación completa del Job. Usa este código para eliminar esos registros:
 
@@ -10881,7 +10881,7 @@ WHERE subplan_id = 'FE31FD6B-516E-4F05-A4CF-126D2A7D1F3E';
 
 ---
 
-## 5. Verificación de logs de mantenimientoa name="14.5"></a>
+## 5. Verificación de logs de mantenimiento<a name="14.5"></a>
 
 Finalmente, puedes verificar los logs relacionados con los subplanes de mantenimiento usando el siguiente código:
 
