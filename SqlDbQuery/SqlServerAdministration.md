@@ -193,12 +193,12 @@ Manuales de</th>
 - 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)  
 - 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
 - 13 -- [Cambiar Owner de Múltiples Jobs en SQL Server](#13.00)
-- #### 14 [Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar](#consulta-de-subplanes-asociados-a-un-job)
-- 14.1 [Consulta de subplanes asociados a un Job](#14.1)
-- 14.2. [Eliminación de subplanes asociados a un Job](#14.2)
-- 14.3. [Comando para eliminar un job específico](#14.3)
-- 14.4. [Eliminación de registros en el log de mantenimiento](#14.4)
-- 14.5. [Verificación de logs de mantenimiento](#14.5)
+- 14  [Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar](#14.1)
+- 14.1 [___Consulta de subplanes asociados a un Job](#14.1)
+- 14.2. [___Eliminación de subplanes asociados a un Job](#14.2)
+- 14.3. [___Comando para eliminar un job específico](#14.3)
+- 14.4. [___Eliminación de registros en el log de mantenimiento](#14.4)
+- 14.5. [___Verificación de logs de mantenimiento](#14.5)
 ---
 
 #### **13. AlwaysOn y Replicación**
