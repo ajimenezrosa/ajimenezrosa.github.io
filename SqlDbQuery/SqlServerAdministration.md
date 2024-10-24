@@ -193,8 +193,12 @@ Manuales de</th>
 - 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)  
 - 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
 - 13 -- [Cambiar Owner de Múltiples Jobs en SQL Server](#13.00)
-
-
+- #### 14 [Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar](#consulta-de-subplanes-asociados-a-un-job)
+- 14.1 [Consulta de subplanes asociados a un Job](#consulta-de-subplanes-asociados-a-un-job)
+- 14.2. [Eliminación de subplanes asociados a un Job](#eliminación-de-subplanes-asociados-a-un-job)
+- 14.3. [Comando para eliminar un job específico](#comando-para-eliminar-un-job-específico)
+- 14.4. [Eliminación de registros en el log de mantenimiento](#eliminación-de-registros-en-el-log-de-mantenimiento)
+- 14.5. [Verificación de logs de mantenimiento](#verificación-de-logs-de-mantenimiento)
 ---
 
 #### **13. AlwaysOn y Replicación**
@@ -10732,6 +10736,8 @@ order by name
 
 ### Cambiar Owner de Múltiples Jobs en SQL Server<a name="13.00"></a>
 
+
+
 Este script permite listar los jobs actuales y su dueño (owner) en SQL Server, y cambiar el owner de múltiples jobs utilizando el procedimiento almacenado `sp_manage_jobs_by_login`.
 
 #### Requisitos
@@ -10775,6 +10781,149 @@ Este script debe ejecutarse en el entorno de `msdb`, ya que esta base de datos c
 - Si tienes que realizar estos cambios en un entorno productivo, se recomienda probar primero en un entorno de desarrollo o staging.
 
 ---
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+
+Aquí te presento una estructura de la documentación para solucionar problemas de jobs que no se pueden eliminar en SQL Server, incluyendo los ejemplos de código y comentarios. Puedes usar este formato para tu repositorio de GitHub:
+
+---
+
+# Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar
+
+## Descripción del Problema
+
+A veces en SQL Server, los jobs que se configuran a través de planes de mantenimiento pueden fallar al intentar eliminarlos por medios convencionales, ya sea por corrupción en las entradas relacionadas en las tablas del sistema o por dependencias incorrectamente gestionadas en la base de datos `msdb`. Este documento proporciona algunos ejemplos prácticos para eliminar jobs problemáticos que no se pueden remover de manera convencional.
+
+### Índice
+
+1. [Consulta de subplanes asociados a un Job](#consulta-de-subplanes-asociados-a-un-job)
+2. [Eliminación de subplanes asociados a un Job](#eliminación-de-subplanes-asociados-a-un-job)
+3. [Comando para eliminar un job específico](#comando-para-eliminar-un-job-específico)
+4. [Eliminación de registros en el log de mantenimiento](#eliminación-de-registros-en-el-log-de-mantenimiento)
+5. [Verificación de logs de mantenimiento](#verificación-de-logs-de-mantenimiento)
+
+---
+
+## 1. Consulta de subplanes asociados a un Job
+
+Este código permite verificar si un subplan de mantenimiento está asociado a un Job específico en la tabla `sysmaintplan_subplans`.
+
+```sql
+-- Consulta de subplanes asociados a un Job en particular
+SELECT * 
+FROM msdb.dbo.sysmaintplan_subplans 
+WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
+```
+
+### Explicación:
+
+- `msdb.dbo.sysmaintplan_subplans`: Esta tabla contiene los subplanes de mantenimiento que están vinculados a los jobs.
+- `job_id`: El identificador único (UUID) del Job problemático.
+
+---
+
+## 2. Eliminación de subplanes asociados a un Job
+
+Si deseas eliminar un subplan de mantenimiento asociado a un Job específico, puedes usar la siguiente instrucción:
+
+```sql
+-- Eliminar subplanes asociados a un Job
+DELETE FROM msdb.dbo.sysmaintplan_subplans 
+WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
+```
+
+### Explicación:
+
+- El comando `DELETE` eliminará las filas de la tabla `sysmaintplan_subplans` asociadas al `job_id` especificado, lo que puede desbloquear la eliminación del Job.
+
+---
+
+## 3. Comando para eliminar un Job específico
+
+Si el Job sigue sin poder eliminarse después de eliminar el subplan, puedes intentar con este procedimiento almacenado del sistema:
+
+```sql
+-- Eliminar un Job específico utilizando su nombre
+EXEC msdb.dbo.sp_delete_job @job_name = 'STOS_Update Statistics';
+```
+
+### Explicación:
+
+- `sp_delete_job`: Es un procedimiento almacenado que elimina un job con el nombre especificado.
+- `@job_name`: El nombre del job que se desea eliminar. Asegúrate de proporcionar el nombre correcto.
+
+---
+
+## 4. Eliminación de registros en el log de mantenimiento
+
+Es posible que los registros en el log de mantenimiento también estén evitando la eliminación completa del Job. Usa este código para eliminar esos registros:
+
+```sql
+-- Eliminar registros en el log de mantenimiento asociados al subplan
+DELETE FROM msdb.dbo.sysmaintplan_log 
+WHERE subplan_id = 'FE31FD6B-516E-4F05-A4CF-126D2A7D1F3E';
+```
+
+### Explicación:
+
+- `msdb.dbo.sysmaintplan_log`: Esta tabla contiene los logs de ejecución de subplanes de mantenimiento.
+- `subplan_id`: El identificador del subplan cuyos registros se desean eliminar.
+
+---
+
+## 5. Verificación de logs de mantenimiento
+
+Finalmente, puedes verificar los logs relacionados con los subplanes de mantenimiento usando el siguiente código:
+
+```sql
+-- Consulta de los logs de mantenimiento
+SELECT * 
+FROM msdb.dbo.sysmaintplan_log;
+```
+
+### Explicación:
+
+- Esta consulta te permitirá ver los registros almacenados en el log de los planes de mantenimiento para obtener más detalles sobre el subplan.
+
+---
+
+## Conclusión
+
+Este documento proporciona instrucciones claras y directas para solucionar el problema de eliminar jobs problemáticos en SQL Server. Si bien estos pasos deben realizarse con precaución, pueden ser muy útiles para la administración de jobs y mantenimiento de bases de datos.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+
 
 
 ## Determinar si un Nodo es primario o secundario en un AlwaysOn<a name="queestestenodoAO"></a>
