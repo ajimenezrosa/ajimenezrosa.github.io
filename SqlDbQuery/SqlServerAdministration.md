@@ -194,11 +194,11 @@ Manuales de</th>
 - 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
 - 13 -- [Cambiar Owner de Múltiples Jobs en SQL Server](#13.00)
 - #### 14 [Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar](#consulta-de-subplanes-asociados-a-un-job)
-- 14.1 [Consulta de subplanes asociados a un Job](#consulta-de-subplanes-asociados-a-un-job)
-- 14.2. [Eliminación de subplanes asociados a un Job](#eliminación-de-subplanes-asociados-a-un-job)
-- 14.3. [Comando para eliminar un job específico](#comando-para-eliminar-un-job-específico)
-- 14.4. [Eliminación de registros en el log de mantenimiento](#eliminación-de-registros-en-el-log-de-mantenimiento)
-- 14.5. [Verificación de logs de mantenimiento](#verificación-de-logs-de-mantenimiento)
+- 14.1 [Consulta de subplanes asociados a un Job](#14.1)
+- 14.2. [Eliminación de subplanes asociados a un Job](#14.2)
+- 14.3. [Comando para eliminar un job específico](#14.3)
+- 14.4. [Eliminación de registros en el log de mantenimiento](#14.4)
+- 14.5. [Verificación de logs de mantenimiento](#14.5)
 ---
 
 #### **13. AlwaysOn y Replicación**
@@ -10806,15 +10806,15 @@ A veces en SQL Server, los jobs que se configuran a través de planes de manteni
 
 ### Índice
 
-1. [Consulta de subplanes asociados a un Job](#consulta-de-subplanes-asociados-a-un-job)
-2. [Eliminación de subplanes asociados a un Job](#eliminación-de-subplanes-asociados-a-un-job)
-3. [Comando para eliminar un job específico](#comando-para-eliminar-un-job-específico)
-4. [Eliminación de registros en el log de mantenimiento](#eliminación-de-registros-en-el-log-de-mantenimiento)
-5. [Verificación de logs de mantenimiento](#verificación-de-logs-de-mantenimiento)
+1. [Consulta de subplanes asociados a un Job](#14.1)
+2. [Eliminación de subplanes asociados a un Job](#14.2)
+3. [Comando para eliminar un job específico](#14.3)
+4. [Eliminación de registros en el log de mantenimiento](#14.4)
+5. [Verificación de logs de mantenimiento](#14.5)
 
 ---
 
-## 1. Consulta de subplanes asociados a un Job
+## 1. Consulta de subplanes asociados a un Job<a name="14.1"></a>
 
 Este código permite verificar si un subplan de mantenimiento está asociado a un Job específico en la tabla `sysmaintplan_subplans`.
 
@@ -10832,7 +10832,7 @@ WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
 
 ---
 
-## 2. Eliminación de subplanes asociados a un Job
+## 2. Eliminación de subplanes asociados a un Joba name="14.2"></a>
 
 Si deseas eliminar un subplan de mantenimiento asociado a un Job específico, puedes usar la siguiente instrucción:
 
@@ -10848,7 +10848,7 @@ WHERE job_id = '056064f0-19ff-4a21-a2ca-0ea72d7f7dc4';
 
 ---
 
-## 3. Comando para eliminar un Job específico
+## 3. Comando para eliminar un Job específicoa name="14.3"></a>
 
 Si el Job sigue sin poder eliminarse después de eliminar el subplan, puedes intentar con este procedimiento almacenado del sistema:
 
@@ -10864,7 +10864,7 @@ EXEC msdb.dbo.sp_delete_job @job_name = 'STOS_Update Statistics';
 
 ---
 
-## 4. Eliminación de registros en el log de mantenimiento
+## 4. Eliminación de registros en el log de mantenimientoa name="14.4"></a>
 
 Es posible que los registros en el log de mantenimiento también estén evitando la eliminación completa del Job. Usa este código para eliminar esos registros:
 
@@ -10881,7 +10881,7 @@ WHERE subplan_id = 'FE31FD6B-516E-4F05-A4CF-126D2A7D1F3E';
 
 ---
 
-## 5. Verificación de logs de mantenimiento
+## 5. Verificación de logs de mantenimientoa name="14.5"></a>
 
 Finalmente, puedes verificar los logs relacionados con los subplanes de mantenimiento usando el siguiente código:
 
