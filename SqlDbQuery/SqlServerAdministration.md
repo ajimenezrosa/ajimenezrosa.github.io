@@ -130,6 +130,8 @@ Manuales de</th>
 ---
 - 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
 ---
+- 605 [Clonación de Permisos y Roles de un Usuario en SQL Server ](#605)
+---
 #### **7. Consultas Especiales**
 * 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
 * 7.2 [Listar todos los objetos de una base de datos](#14.3)  
@@ -14498,7 +14500,119 @@ You can include this documentation in a `README.md` file in your GitHub reposito
 
 
 ---
+# 
 
+Aquí tienes una propuesta para una documentación en GitHub para el script SQL que permite copiar permisos y roles de un usuario existente a un nuevo usuario en SQL Server. Esta documentación incluye un índice, descripción del script, y pasos detallados para su ejecución.
+
+---
+
+# Clonación de Permisos y Roles de un Usuario en SQL Server<a name="605"></a>
+
+Este repositorio contiene un script de SQL Server que permite clonar los permisos y roles de un usuario existente (`@ExistingUser`) a un nuevo usuario (`@NewUser`). Es útil cuando se necesita crear un usuario con la misma configuración de permisos en una base de datos.
+
+## Tabla de Contenidos
+
+### 1. Descripción
+
+Este script está diseñado para clonar permisos y roles de un usuario existente a un nuevo usuario en una base de datos de SQL Server. El script sigue estos pasos:
+
+- Define variables de entrada para el usuario existente y el nuevo usuario.
+- Crea un nuevo `Login` y `User` para el nuevo usuario.
+- Copia permisos de nivel de base de datos, objetos, esquemas y roles del usuario existente al nuevo usuario.
+
+### 2. Requisitos
+
+Para utilizar este script, necesitas:
+- Permisos de administrador en SQL Server para crear y asignar permisos a usuarios.
+- Conexión a la base de datos donde se van a clonar los permisos.
+
+### 3. Uso del Script
+
+1. **Establecer valores de usuario**: Define el nombre del usuario existente (`@ExistingUser`) y el nuevo usuario (`@NewUser`) en las variables al inicio del script.
+2. **Ejecutar el script**: Ejecuta el script completo para clonar los permisos y roles.
+3. **Verificar**: Comprueba que el nuevo usuario tiene los permisos y roles clonados correctamente desde el usuario existente.
+
+### 4. Código
+
+```sql
+-- Variables
+DECLARE @ExistingUser NVARCHAR(50) = 'UsuarioExistente'
+DECLARE @NewUser NVARCHAR(50) = 'NuevoUsuario'
+DECLARE @Password NVARCHAR(50) = 'ContraseñaSegura'
+
+-- Crear nuevo usuario
+CREATE LOGIN [@NewUser] WITH PASSWORD = @Password;
+CREATE USER [@NewUser] FOR LOGIN [@NewUser];
+
+-- Asignar permisos del usuario existente al nuevo usuario
+DECLARE @SQL NVARCHAR(MAX) = '';
+
+-- Permisos a nivel de base de datos
+SELECT @SQL = @SQL + 'USE ' + QUOTENAME(DB_NAME()) + ';
+GRANT ' + dp.permission_name + ' ON ' +
+    CASE dp.class
+        WHEN 0 THEN 'DATABASE::' + QUOTENAME(DB_NAME())
+        WHEN 1 THEN 'OBJECT::' + QUOTENAME(OBJECT_SCHEMA_NAME(dp.major_id)) + '.' + QUOTENAME(OBJECT_NAME(dp.major_id))
+        WHEN 3 THEN 'SCHEMA::' + QUOTENAME(OBJECT_SCHEMA_NAME(dp.major_id))
+        WHEN 4 THEN 'APPLICATION ROLE::' + QUOTENAME(OBJECT_NAME(dp.major_id))
+        ELSE 'UNKNOWN'
+    END + ' TO ' + QUOTENAME(@NewUser) + ';
+'
+FROM sys.database_permissions dp
+JOIN sys.database_principals dp2 ON dp.grantee_principal_id = dp2.principal_id
+WHERE dp2.name = @ExistingUser;
+
+-- Ejecutar el script de permisos
+EXEC sp_executesql @SQL;
+
+-- Roles de base de datos
+DECLARE @Role NVARCHAR(128);
+DECLARE RoleCursor CURSOR FOR
+SELECT dp.name
+FROM sys.database_principals dp
+JOIN sys.database_role_members drm ON dp.principal_id = drm.role_principal_id
+JOIN sys.database_principals dp2 ON drm.member_principal_id = dp2.principal_id
+WHERE dp2.name = @ExistingUser;
+
+OPEN RoleCursor;
+FETCH NEXT FROM RoleCursor INTO @Role;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    EXEC sp_addrolemember @Role, @NewUser;
+    FETCH NEXT FROM RoleCursor INTO @Role;
+END
+
+CLOSE RoleCursor;
+DEALLOCATE RoleCursor;
+```
+
+### 5. Explicación del Código
+
+1. **Definición de Variables**:
+   - `@ExistingUser`: Nombre del usuario existente cuyos permisos y roles se copiarán.
+   - `@NewUser`: Nombre del nuevo usuario que recibirá los permisos.
+   - `@Password`: Contraseña para el nuevo usuario.
+
+2. **Creación del Nuevo Usuario**:
+   - Crea un `Login` y un `User` en la base de datos para el nuevo usuario.
+
+3. **Clonación de Permisos**:
+   - Se genera un script dinámico para copiar todos los permisos (base de datos, objetos, esquemas) del usuario existente al nuevo usuario.
+
+4. **Asignación de Roles**:
+   - Utiliza un cursor para asignar al nuevo usuario los roles que tenía el usuario existente.
+
+---
+
+
+
+
+
+
+
+# 
+# 
 
 
 # Configuraciones Post-Instalación de SQL Server
