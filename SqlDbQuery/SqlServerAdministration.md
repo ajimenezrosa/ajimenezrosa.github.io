@@ -128,9 +128,7 @@ Manuales de</th>
 ---
  - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
  - 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
----
  - 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
----
  - 605 [Clonación de Permisos y Roles de un Usuario en SQL Server ](#605)
 ---
 #### **7. Consultas Especiales**
