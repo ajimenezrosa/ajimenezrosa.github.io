@@ -125,12 +125,14 @@ Manuales de</th>
  -  6.11 [Cómo saber si una base de datos tiene TDE](#49)  
  - 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
 
----
+# 
  - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
  - 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
  - 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
  - 605 [Clonación de Permisos y Roles de un Usuario en SQL Server ](#605)
----
+
+# 
+
 #### **7. Consultas Especiales**
 * 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
 * 7.2 [Listar todos los objetos de una base de datos](#14.3)  
