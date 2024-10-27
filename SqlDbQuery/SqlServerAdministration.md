@@ -14201,7 +14201,11 @@ Este  procedimiento debe ser revisado y actualizado según sea necesario para re
 
 --- 
 # ELIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS<a name="700"></a>
-
+<div>
+<p style = 'text-align:center;'>
+<img src="https://gcscertification.com/wp-content/uploads/2024/10/logogcs-1024x500.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
 
 ## 1.- EN LA BASE DE DATOS DE SQLSERVER
 
@@ -14293,7 +14297,14 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 
 # Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS<a name="1601"></a>
 
-Este documento proporciona los scripts necesarios para la creación de usuarios en la base de datos `GCS SII_OMGGA_GCS`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
+<div>
+<p style = 'text-align:center;'>
+<img src="https://gcscertification.com/wp-content/uploads/2024/10/logogcs-1024x500.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div>
+
+
+a la creación de usuarios en la base de datos `GCS SII_OMGGA_GCS`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
 
 ---
 
@@ -14314,6 +14325,8 @@ Este código permite crear usuarios en la base de datos `GCS SII_OMGGA_GCS` de m
 - **Segunda Opción**: Duplicar un usuario existente como registro, basándose en un usuario modelo y personalizando solo algunos campos (como el nombre de usuario, nombre, apellido y correo electrónico).
 
 ---
+
+
 
 ## Requerimientos<a name="1602"></a>
 
@@ -14471,7 +14484,14 @@ WHERE UserName = @ModelUserName;
 
 ---
 
+
+
+
+
 ## Instrucciones de Uso<a name="1604"></a>
+
+
+
 
 1. Selecciona el script adecuado según el método de inserción que prefieras.
 2. Modifica los valores necesarios:
@@ -14486,7 +14506,7 @@ WHERE UserName = @ModelUserName;
 
 ### Notas
 
-Este documento está diseñado para integrarse en un repositorio de GitHub y proporcionar una referencia clara para la creación de registros en la tabla `PartnersUsers` en `GCS SII_OMGGA_GCS`. Ajusta el código según tus necesidades específicas.
+Este documento está diseñado para integrarse en un repositorio de GitHub y proporcionar una referencia clara para la creación de registros en la tabla `PartnersUsers` en `GCS SII-OMGGA-GCS` 10.226.196.30. Ajusta el código según tus necesidades específicas.
 ---
 
 
