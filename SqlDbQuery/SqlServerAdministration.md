@@ -223,6 +223,25 @@ Manuales de</th>
 - 15.1 [Query de extracción de bases de datos y tablas en SQL Server](#600)  
 - 15.2 [Documentación para la Solucionar problemas   de bases de datos ABT `fuera de linea problemas de permisos` ](#601)  
 
+
+
+
+
+---
+
+#### **16. Soluciones para GCS-SYSTEMS**
+- 16.1 [Eliminar número enganchado en Dakota/Café GCS-SYSTEMS](#700)  
+
+---
+ - 16.2. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1601)
+    - [Requerimientos](#1602)
+    - [Scripts](#1603)
+    - [Insertar usando Variables](#1631)
+    - [Insertar usando `INSERT ... SELECT` con Usuario Modelo](#1632)
+    - [Instrucciones de Uso](#1604)
+
+
+
 ---
 
 
@@ -240,18 +259,6 @@ Manuales de</th>
 - 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#17.6)
 - 17.7 [Licencia](#17.7)
 
----
-
-#### **16. Soluciones para GCS-SYSTEMS**
-- 16.1 [Eliminar número enganchado en Dakota/Café GCS-SYSTEMS](#700)  
-
----
- - 18.1. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1801)
- - 18.2. [Requerimientos](#1802)
- - 18.3. [Scripts](#1803)
-   - 18.3.1 [Insertar usando Variables](#1831)
-   - 18.3.2 [Insertar usando `INSERT ... SELECT` con Usuario Modelo](#1832)
- - 18.4. [Instrucciones de Uso](#1804)
 
 
 ---
@@ -14268,6 +14275,223 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 --- 
 
 ---
+
+
+
+
+
+
+
+
+
+
+
+# 
+
+---
+
+
+# Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS<a name="1601"></a>
+
+Este documento proporciona los scripts necesarios para la creación de usuarios en la base de datos `GCS SII_OMGGA_GCS`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
+
+---
+
+## Tabla de Contenidos
+1. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1801)
+2. [Requerimientos](#1802)
+3. [Scripts](#1803)
+   - [Insertar usando Variables](#1831)
+   - [Insertar usando `INSERT ... SELECT` con Usuario Modelo](#1832)
+4. [Instrucciones de Uso](#1804)
+
+---
+
+## Descripción
+
+Este código permite crear usuarios en la base de datos `GCS SII_OMGGA_GCS` de manera eficiente:
+- **Primera Opción**: Insertar un nuevo usuario especificando valores personalizados mediante variables.
+- **Segunda Opción**: Duplicar un usuario existente como registro, basándose en un usuario modelo y personalizando solo algunos campos (como el nombre de usuario, nombre, apellido y correo electrónico).
+
+---
+
+## Requerimientos<a name="1602"></a>
+
+- **SQL Server**: Base de datos `GCS SII_OMGGA_GCS` donde existe la tabla `PartnersUsers`.
+- **Permisos**: Permisos de escritura para ejecutar comandos `INSERT` en la base de datos.
+
+---
+
+## Scripts<a name="1603"></a>
+
+### Insertar usando Variables<a name="1831"></a>
+
+Este script permite la creación de un nuevo usuario en la tabla `PartnersUsers` especificando valores personalizados para cada campo.
+
+```sql
+DECLARE @PartnerID INT = 213;
+DECLARE @AgencyID INT = 616;
+DECLARE @TerminalID INT = 172;
+DECLARE @ShiftID INT = 201;
+DECLARE @UserName NVARCHAR(50) = 'joguzman';
+DECLARE @FirstName NVARCHAR(50) = 'Joaquin';
+DECLARE @LastName NVARCHAR(50) = 'Guzman';
+DECLARE @Email NVARCHAR(100) = 'jeabreu@gcs-systems.com';
+DECLARE @SOP_UpdUser INT = 3;
+DECLARE @id_Ent INT = 309;
+DECLARE @titleID INT = 1;
+DECLARE @identificationType INT = 1;
+DECLARE @identificationNumber NVARCHAR(20) = '00117167619';
+DECLARE @userRoleId INT = 35;
+DECLARE @creationDate DATE = '2024-10-25';
+DECLARE @enabled BIT = 1;
+DECLARE @SYS_Attr INT = 0;
+DECLARE @SYS_Order INT = 0;
+DECLARE @SOP_LockUpd BIT = 0;
+DECLARE @SOP_LockDel BIT = 0;
+DECLARE @SOP_InsStamp BIGINT = 20130418200238077;
+DECLARE @SOP_InsUser INT = 3;
+DECLARE @SOP_UpdStamp BIGINT = 20130418200238077;
+
+INSERT INTO dbo.PartnersUsers (
+    PartnerID,
+    AgencyID,
+    TerminalID,
+    ShiftID,
+    UserName,
+    FirstName,
+    LastName,
+    Email,
+    SOP_UpdUser,
+    id_Ent,
+    titleID,
+    identificationType,
+    identificationNumber,
+    userRoleId,
+    creationDate,
+    enabled,
+    SYS_Attr,
+    SYS_Order,
+    SOP_LockUpd,
+    SOP_LockDel,
+    SOP_InsStamp,
+    SOP_InsUser,
+    SOP_UpdStamp
+)
+VALUES (
+    @PartnerID,
+    @AgencyID,
+    @TerminalID,
+    @ShiftID,
+    @UserName,
+    @FirstName,
+    @LastName,
+    @Email,
+    @SOP_UpdUser,
+    @id_Ent,
+    @titleID,
+    @identificationType,
+    @identificationNumber,
+    @userRoleId,
+    @creationDate,
+    @enabled,
+    @SYS_Attr,
+    @SYS_Order,
+    @SOP_LockUpd,
+    @SOP_LockDel,
+    @SOP_InsStamp,
+    @SOP_InsUser,
+    @SOP_UpdStamp
+);
+```
+
+### Insertar usando `INSERT ... SELECT` con Usuario Modelo<a name="1632"></a>
+
+Este script permite duplicar un usuario existente en la base de datos `GCS SII_OMGGA_GCS` copiando sus datos y personalizando campos específicos, como el nombre de usuario, nombre, apellido y correo electrónico.
+
+```sql
+DECLARE @NewUserName NVARCHAR(50) = 'joguzman';
+DECLARE @NewFirstName NVARCHAR(50) = 'Joaquin';
+DECLARE @NewLastName NVARCHAR(50) = 'Guzman';
+DECLARE @NewEmail NVARCHAR(100) = 'jeabreu@gcs-systems.com';
+DECLARE @ModelUserName NVARCHAR(50) = 'modelUser';  -- Especifica aquí el UserName del usuario modelo
+
+INSERT INTO dbo.PartnersUsers (
+    PartnerID,
+    AgencyID,
+    TerminalID,
+    ShiftID,
+    UserName,
+    FirstName,
+    LastName,
+    Email,
+    SOP_UpdUser,
+    id_Ent,
+    titleID,
+    identificationType,
+    identificationNumber,
+    userRoleId,
+    creationDate,
+    enabled,
+    SYS_Attr,
+    SYS_Order,
+    SOP_LockUpd,
+    SOP_LockDel,
+    SOP_InsStamp,
+    SOP_InsUser,
+    SOP_UpdStamp
+)
+SELECT 
+    PartnerID,
+    AgencyID,
+    TerminalID,
+    ShiftID,
+    @NewUserName AS UserName,
+    @NewFirstName AS FirstName,
+    @NewLastName AS LastName,
+    @NewEmail AS Email,
+    SOP_UpdUser,
+    id_Ent,
+    titleID,
+    identificationType,
+    identificationNumber,
+    userRoleId,
+    creationDate,
+    enabled,
+    SYS_Attr,
+    SYS_Order,
+    SOP_LockUpd,
+    SOP_LockDel,
+    SOP_InsStamp,
+    SOP_InsUser,
+    SOP_UpdStamp
+FROM dbo.PartnersUsers
+WHERE UserName = @ModelUserName;
+```
+
+---
+
+## Instrucciones de Uso<a name="1604"></a>
+
+1. Selecciona el script adecuado según el método de inserción que prefieras.
+2. Modifica los valores necesarios:
+   - En el primer script, ajusta las variables para los valores que deseas.
+   - En el segundo script, especifica el nombre de usuario del usuario modelo y los nuevos valores.
+3. Ejecuta el script en SQL Server Management Studio o en tu entorno de SQL preferido.
+
+
+1. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1801)
+
+---
+
+### Notas
+
+Este documento está diseñado para integrarse en un repositorio de GitHub y proporcionar una referencia clara para la creación de registros en la tabla `PartnersUsers` en `GCS SII_OMGGA_GCS`. Ajusta el código según tus necesidades específicas.
+---
+
+
+
+# 
 # Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos<a name="602"></a>
 
 <div>
@@ -15404,208 +15628,6 @@ permisión de licencia en todas las copias o partes sustanciales del software.
 
 Aquí tienes el archivo `README.md` con la descripción adicional que especifica que este código se usa para crear usuarios en `GCS SII_OMGGA_GCS`, permitiendo duplicar un usuario como registro en la base de datos.
 
----
-
-
-# Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS<a name="1801"></a>
-
-Este documento proporciona los scripts necesarios para la creación de usuarios en la base de datos `GCS SII_OMGGA_GCS`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
-
----
-
-## Tabla de Contenidos
-1. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1801)
-2. [Requerimientos](#1802)
-3. [Scripts](#1803)
-   - [Insertar usando Variables](#1831)
-   - [Insertar usando `INSERT ... SELECT` con Usuario Modelo](#1832)
-4. [Instrucciones de Uso](#1804)
-
----
-
-## Descripción
-
-Este código permite crear usuarios en la base de datos `GCS SII_OMGGA_GCS` de manera eficiente:
-- **Primera Opción**: Insertar un nuevo usuario especificando valores personalizados mediante variables.
-- **Segunda Opción**: Duplicar un usuario existente como registro, basándose en un usuario modelo y personalizando solo algunos campos (como el nombre de usuario, nombre, apellido y correo electrónico).
-
----
-
-## Requerimientos<a name="1802"></a>
-
-- **SQL Server**: Base de datos `GCS SII_OMGGA_GCS` donde existe la tabla `PartnersUsers`.
-- **Permisos**: Permisos de escritura para ejecutar comandos `INSERT` en la base de datos.
-
----
-
-## Scripts<a name="1803"></a>
-
-### Insertar usando Variables<a name="1831"></a>
-
-Este script permite la creación de un nuevo usuario en la tabla `PartnersUsers` especificando valores personalizados para cada campo.
-
-```sql
-DECLARE @PartnerID INT = 213;
-DECLARE @AgencyID INT = 616;
-DECLARE @TerminalID INT = 172;
-DECLARE @ShiftID INT = 201;
-DECLARE @UserName NVARCHAR(50) = 'joguzman';
-DECLARE @FirstName NVARCHAR(50) = 'Joaquin';
-DECLARE @LastName NVARCHAR(50) = 'Guzman';
-DECLARE @Email NVARCHAR(100) = 'jeabreu@gcs-systems.com';
-DECLARE @SOP_UpdUser INT = 3;
-DECLARE @id_Ent INT = 309;
-DECLARE @titleID INT = 1;
-DECLARE @identificationType INT = 1;
-DECLARE @identificationNumber NVARCHAR(20) = '00117167619';
-DECLARE @userRoleId INT = 35;
-DECLARE @creationDate DATE = '2024-10-25';
-DECLARE @enabled BIT = 1;
-DECLARE @SYS_Attr INT = 0;
-DECLARE @SYS_Order INT = 0;
-DECLARE @SOP_LockUpd BIT = 0;
-DECLARE @SOP_LockDel BIT = 0;
-DECLARE @SOP_InsStamp BIGINT = 20130418200238077;
-DECLARE @SOP_InsUser INT = 3;
-DECLARE @SOP_UpdStamp BIGINT = 20130418200238077;
-
-INSERT INTO dbo.PartnersUsers (
-    PartnerID,
-    AgencyID,
-    TerminalID,
-    ShiftID,
-    UserName,
-    FirstName,
-    LastName,
-    Email,
-    SOP_UpdUser,
-    id_Ent,
-    titleID,
-    identificationType,
-    identificationNumber,
-    userRoleId,
-    creationDate,
-    enabled,
-    SYS_Attr,
-    SYS_Order,
-    SOP_LockUpd,
-    SOP_LockDel,
-    SOP_InsStamp,
-    SOP_InsUser,
-    SOP_UpdStamp
-)
-VALUES (
-    @PartnerID,
-    @AgencyID,
-    @TerminalID,
-    @ShiftID,
-    @UserName,
-    @FirstName,
-    @LastName,
-    @Email,
-    @SOP_UpdUser,
-    @id_Ent,
-    @titleID,
-    @identificationType,
-    @identificationNumber,
-    @userRoleId,
-    @creationDate,
-    @enabled,
-    @SYS_Attr,
-    @SYS_Order,
-    @SOP_LockUpd,
-    @SOP_LockDel,
-    @SOP_InsStamp,
-    @SOP_InsUser,
-    @SOP_UpdStamp
-);
-```
-
-### Insertar usando `INSERT ... SELECT` con Usuario Modelo<a name="1832"></a>
-
-Este script permite duplicar un usuario existente en la base de datos `GCS SII_OMGGA_GCS` copiando sus datos y personalizando campos específicos, como el nombre de usuario, nombre, apellido y correo electrónico.
-
-```sql
-DECLARE @NewUserName NVARCHAR(50) = 'joguzman';
-DECLARE @NewFirstName NVARCHAR(50) = 'Joaquin';
-DECLARE @NewLastName NVARCHAR(50) = 'Guzman';
-DECLARE @NewEmail NVARCHAR(100) = 'jeabreu@gcs-systems.com';
-DECLARE @ModelUserName NVARCHAR(50) = 'modelUser';  -- Especifica aquí el UserName del usuario modelo
-
-INSERT INTO dbo.PartnersUsers (
-    PartnerID,
-    AgencyID,
-    TerminalID,
-    ShiftID,
-    UserName,
-    FirstName,
-    LastName,
-    Email,
-    SOP_UpdUser,
-    id_Ent,
-    titleID,
-    identificationType,
-    identificationNumber,
-    userRoleId,
-    creationDate,
-    enabled,
-    SYS_Attr,
-    SYS_Order,
-    SOP_LockUpd,
-    SOP_LockDel,
-    SOP_InsStamp,
-    SOP_InsUser,
-    SOP_UpdStamp
-)
-SELECT 
-    PartnerID,
-    AgencyID,
-    TerminalID,
-    ShiftID,
-    @NewUserName AS UserName,
-    @NewFirstName AS FirstName,
-    @NewLastName AS LastName,
-    @NewEmail AS Email,
-    SOP_UpdUser,
-    id_Ent,
-    titleID,
-    identificationType,
-    identificationNumber,
-    userRoleId,
-    creationDate,
-    enabled,
-    SYS_Attr,
-    SYS_Order,
-    SOP_LockUpd,
-    SOP_LockDel,
-    SOP_InsStamp,
-    SOP_InsUser,
-    SOP_UpdStamp
-FROM dbo.PartnersUsers
-WHERE UserName = @ModelUserName;
-```
-
----
-
-## Instrucciones de Uso<a name="1804"></a>
-
-1. Selecciona el script adecuado según el método de inserción que prefieras.
-2. Modifica los valores necesarios:
-   - En el primer script, ajusta las variables para los valores que deseas.
-   - En el segundo script, especifica el nombre de usuario del usuario modelo y los nuevos valores.
-3. Ejecuta el script en SQL Server Management Studio o en tu entorno de SQL preferido.
-
-
-1. [Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS](#1801)
-
----
-
-### Notas
-
-Este documento está diseñado para integrarse en un repositorio de GitHub y proporcionar una referencia clara para la creación de registros en la tabla `PartnersUsers` en `GCS SII_OMGGA_GCS`. Ajusta el código según tus necesidades específicas.
-```
-
----
 
 
 
