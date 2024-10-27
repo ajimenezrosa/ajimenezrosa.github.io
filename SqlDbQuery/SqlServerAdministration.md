@@ -240,10 +240,7 @@ Manuales de</th>
     - [Insertar usando `INSERT ... SELECT` con Usuario Modelo](#1632)
     - [Instrucciones de Uso](#1604)
 
-
-
 ---
-
 
 ## Configuraciones Post-Instalación de SQL Server
 
@@ -14295,16 +14292,16 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 ---
 
 
-# Documentación de Inserción de Usuarios en SQL Server para GCS SII_OMGGA_GCS<a name="1601"></a>
+# Documentación de Inserción de Usuarios en SQL Server para GCS `[SII.Omega.GCS]`<a name="1601"></a>
 
 <div>
 <p style = 'text-align:center;'>
-<img src="https://gcscertification.com/wp-content/uploads/2024/10/logogcs-1024x500.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
+<img src="https://gcs-international.com/wp-content/uploads/2017/05/GCS-International-Logo.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
 </p>
 </div>
 
 
-a la creación de usuarios en la base de datos `GCS SII_OMGGA_GCS`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
+a la creación de usuarios en la base de datos `[SII.Omega.GCS]`. Los scripts aquí presentados permiten duplicar un usuario existente como un nuevo registro en la tabla `PartnersUsers`, ajustando los valores necesarios para el nuevo usuario.
 
 ---
 
@@ -15663,6 +15660,18 @@ Aquí tienes el archivo `README.md` con la descripción adicional que especifica
 # 
 
 # No existe nada debajo de esta linea
+
+
+
+<!-- 
+
+<div>
+<p style = 'text-align:center;'>
+<img src="https://gcs-international.com/wp-content/uploads/2017/05/GCS-International-Logo.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
+</p>
+</div> 
+
+-->
 
 
 
