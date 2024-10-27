@@ -112,25 +112,26 @@ Manuales de</th>
 ---
 
 #### **6. Auditoría y Seguridad**
-* 6.1 [Detener un proceso de auditoría en SQL Server](#13)  
-* 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)  
-* 6.3 [Cambio del esquema de una tabla por query](#cambiarsquemad)  
-* 6.4 [Lista de permisos por usuario](#listausuariosdb)  
-* 6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)  
+- 6.1 [Detener un proceso de auditoría en SQL Server](#13)  
+- 6.2 [Cambiar el Collation en una instancia de SQL Server](#cambiarcollattionsql)  
+- 6.3 [Cambio del esquema de una tabla por query](#cambiarsquemad)  
+- 6.4 [Lista de permisos por usuario](#listausuariosdb)  
+- 6.5 [Número de sesiones por usuario en SQL Server](#numeroseccionessqlserver)  
 * 6.6 [Objetos modificados en los últimos 10 días](#objectosmodificadosultimosdias)  
-* 6.7 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)  
-* 6.8 [Verificar logs de errores del SQL Server](#errorlogsql)  
-* 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)  
-* 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)  
-* 6.11 [Cómo saber si una base de datos tiene TDE](#49)  
-* 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
+ - 6.7 [Listado de transacciones bloqueadas en un servidor DB](#bloqueos2)  
+ - 6.8 [Verificar logs de errores del SQL Server](#errorlogsql)  
+ - 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)  
+ - 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)  
+ -  6.11 [Cómo saber si una base de datos tiene TDE](#49)  
+ - 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
+
 ---
-- 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
-- 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
+ - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
+ - 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
 ---
-- 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
+ - 604 [Auto-fix para Usuarios Huérfanos en SQL Server](#604)
 ---
-- 605 [Clonación de Permisos y Roles de un Usuario en SQL Server ](#605)
+ - 605 [Clonación de Permisos y Roles de un Usuario en SQL Server ](#605)
 ---
 #### **7. Consultas Especiales**
 * 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
@@ -14404,7 +14405,7 @@ Este ajuste debería eliminar el error de conflicto de collation. Si el conflict
 
 
 
-# **"Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server"**
+# **"Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server"**<a name="603"></a>
 <div>
 <p style = 'text-align:center;'>
 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLNTZk49IjJKvo4QJY8oFvtclV2b3PNOPlFA&s" alt="JuveYell" width="700px">
