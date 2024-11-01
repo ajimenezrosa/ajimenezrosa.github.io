@@ -1170,15 +1170,652 @@ Get-clusterlog
 ~~~
 
 
+# 
+
+# Powershell para leer los discos , memorias y si el servidor esta conectado y si es un AO y cual es su role en el (Primario , Secundario)
+
+
+~~~sql
+
+
+#*********************************************************#
+
+#* Monitor de espacio en Disco                           *#
+
+#*Alejandro Jimenez                                      *#
+
+#*********************************************************#
+
+#* Modificado por Alejandro Jimenez 2024-10-31           *#
+
+#*********************************************************#
+
+ 
+
+# Continua aun encuentre algun error
+
+$ErrorActionPreference = "Continue";
+
+ 
+
+# Ajustamos el nivel de umbral para la alerta
+
+$percentWarning = 30;
+
+$percentCritcal = 20;
+
+ 
+
+# REPORT PROPERTIES
+
+# Path to the report
+
+$reportPath = "C:\CleanSenseF\Logs\";  # Configurar la ruta donde se guardaran los reportes de logs
+
+ 
+
+# Report name
+
+$reportName = "EspacioDiscoRpt_$(get-date -format ddMMyyyy).html";
+
+ 
+
+# Path and Report name together
+
+$diskReport = $reportPath + $reportName
+
+ 
+
+#Set colors for table cell backgrounds
+
+$redColor = "#FF0000"
+
+$orangeColor = "#FBB917"
+
+$whiteColor  = "#FFFFFF"
+
+$greenColor  =  "#00FF00"
+
+ 
+
+# Obtiene el Listado de Servidores\PC para realizar la verificacion del Espacion en Disco
+
+$computers = Get-Content "C:\CleanSenseF\servers.txt";  #proveemos la ruta del archivo server.txt que contiene los equipos que queremos monitorear.
+
+ 
+
+# Validate that $computers is not null or empty
+
+if (-not $computers) {
+
+    Write-Host "No servers found in the servers.txt file. Please ensure the file contains server names."
+
+    exit
+
+}
+
+ 
+
+Write-Host "Servers to be checked: $computers"
+
+ 
+
+$datetime = Get-Date -Format "MM-dd-yyyy_HHmmss";
+
+ 
+
+# Elimina el reporte si ya se ha ejecutado hoy para que no se agregue al reporte existente
+
+If (Test-Path $diskReport)
+
+{
+
+    Remove-Item $diskReport
+
+}
+
+ 
+
+# Eliminando los archivos viejos del el log de Monitoreo..
+
+$Daysback = "-20"  #Configuramos la limpieza de los reportes que son mayores de 20 días
+
+$CurrentDate = Get-Date;
+
+$DateToDelete = $CurrentDate.AddDays($Daysback);
+
+Get-ChildItem $reportPath | Where-Object { $_.LastWriteTime -lt $DateToDelete } | Remove-Item;
+
+ 
+
+# Creamos el  HTML Header del reporte
+
+$titleDate = get-date -uformat "%m-%d-%Y - %A %H:%M:%S"
+
+$header = "
+
+  <html>
+
+  <head>
+
+  <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
+
+  <title>DiskSpace Report</title>
+
+  <STYLE TYPE='text/css'>
+
+  <!--
+
+  td {
+
+   font-family: Calibri;
+
+   font-size: 12px;
+
+   border-top: 1px solid #999999;
+
+   border-right: 1px solid #999999;
+
+   border-bottom: 1px solid #999999;
+
+   border-left: 1px solid #999999;
+
+   padding-top: 0px;
+
+   padding-right: 0px;
+
+   padding-bottom: 0px;
+
+   padding-left: 0px;
+
+  }
+
+  body {
+
+   margin-left: 5px;
+
+   margin-top: 5px;
+
+   margin-right: 0px;
+
+   margin-bottom: 10px;
+
+   table {
+
+   border: thin solid #000000;
+
+  }
+
+  -->
+
+  </style>
+
+  </head>
+
+  <body>
+
+  <table width='100%'>
+
+  <tr bgcolor='#548DD4'>
+
+  <td colspan='7' height='30' align='center'>
+
+  <font face='calibri' color='#003399' size='4'><strong>Reporte de Monitoreo $titledate</strong></font>
+
+  </td>
+
+  </tr>
+
+  </table>
+
+"
+
+Add-Content $diskReport $header
+
+ 
+
+# Start processing disk space
+
+foreach($computer in $computers)
+
+{ 
+
+    if ([string]::IsNullOrEmpty($computer)) {
+
+        Write-Host "Skipping empty computer name."
+
+        continue
+
+    }
+
+ 
+
+    Write-Host "Checking computer: $computer"
+
+ 
+
+    # Separar el nombre del servidor y la instancia si existe
+
+    $parts = $computer -split '\\'
+
+    if ($parts.Length -eq 2) {
+
+        $serverName = $parts[0]
+
+        $instanceName = $parts[1]
+
+    } elseif ($parts.Length -eq 1) {
+
+        $serverName = $parts[0]
+
+        $instanceName = ""
+
+    } else {
+
+        Write-Host "Formato incorrecto para $computer. Asegúrate de que la cadena contenga un '\\' o solo el nombre del servidor."
+
+        continue
+
+    }
+
+ 
+
+    Write-Host "Servidor: $serverName, Instancia: $instanceName"
+
+ 
+
+    # Verificar disponibilidad del servidor SQL Server
+
+    $sqlStatus = "OK"
+
+    $availabilityGroup = "N/A"
+
+    $role = "N/A"
+
+   # $listener = "N/A"
+
+ 
+
+   ##
+
+ 
+
+   $serverInstance = $computers
+
+##   $serverInstance = "CA01VAO2014\ALWAYSONI2"
+
+# $databaseName = "master"
+
+$connectionString = "Server=$serverInstance;Database=$databaseName;Integrated Security=True;"
+
+ 
+
+$connection = New-Object System.Data.SqlClient.SqlConnection
+
+# $connection.ConnectionString = $connectionString
+
+##$connection.Open()
+
+##$connection.close()
+
+ 
+
+ 
+
+   ##
+
+ 
+
+ 
+
+ 
+
+    try {
+
+        $sqlTest = Test-NetConnection -ComputerName $serverName -Port 1433
+
+ 
+
+        # if ($sqlTest.TcpTestSucceeded -eq $false) {
+
+        if ( $connectionString -eq $false) {
+
+       
+
+            $sqlStatus = "Problemas Verificar Entorno... $Computer"
+
+           
+
+        } else {
+
+            # Verificar si el servidor es parte de un Availability Group
+
+            $query = @"
+
+     SELECT
+
+                ags.name AS [AvailabilityGroupName],
+
+                arcs.replica_server_name,
+
+                CASE
+
+                    WHEN adr.role_desc = 'PRIMARY' THEN 'Nodo Primario'
+
+                    WHEN adr.role_desc = 'SECONDARY' THEN 'Nodo Secundario'
+
+                    ELSE 'Desconocido'
+
+                END AS [Role]
+
+            FROM sys.availability_groups AS ags
+
+            INNER JOIN sys.dm_hadr_availability_replica_states AS ar
+
+                ON ags.group_id = ar.group_id
+
+            INNER JOIN sys.dm_hadr_availability_replica_cluster_states AS arcs
+
+                ON ar.replica_id = arcs.replica_id
+
+            INNER JOIN sys.dm_hadr_availability_replica_states AS adr
+
+                ON ar.replica_id = adr.replica_id
+
+            WHERE arcs.replica_server_name = (select @@SERVERNAME)
+
+ 
+
+ 
+
+ 
+
+                                               
+
+"@
+
+            if ($instanceName) {
+
+                $result = Invoke-Sqlcmd -ServerInstance "$serverName\$instanceName" -Query $query
+
+            } else {
+
+                $result = Invoke-Sqlcmd -ServerInstance $serverName -Query $query
+
+            }
+
+            if ($result) {
+
+                $availabilityGroup = $result.AvailabilityGroupName
+
+                $role = $result.Role
+
+                # $listener = $result.ListenerDnsName
+
+            }
+
+        }
+
+    } catch {
+
+        $sqlStatus = "Problemas Verificar Entorno... $Computer"
+
+    }
+
+ 
+
+    try {
+
+        $disks = Get-WmiObject -ComputerName $serverName -Class Win32_LogicalDisk -Filter "Size > 0"
+
+        if ($disks -eq $null) {
+
+            Write-Host "No disks found for $serverName."
+
+            continue
+
+        }
+
+    } catch {
+
+        Write-Host "Failed to get WMI object for $serverName. Error: $_"
+
+        continue
+
+    }
+
+ 
+
+    $serverName = $serverName.toupper()
+
+ 
+
+    # Añadir un encabezado para cada servidor
+
+    $serverHeader = "
+
+    <h2>Servidor: $serverName</h2>
+
+    <p>Estado del SQL Server: $sqlStatus</p>
+
+    <p>Availability Group: $availabilityGroup</p>
+
+    <p>Role: $role</p>
+
+    <p>Listener: $listener</p>
+
+    <table width='100%'><tbody>
+
+    <tr bgcolor=#548DD4>
+
+    <td width='10%' align='center'>Server</td>
+
+    <td width='5%'  align='center'>Drive</td>
+
+    <td width='15%' align='center'>Drive Label</td>
+
+    <td width='10%' align='center'>Total Capacity(GB)</td>
+
+    <td width='10%' align='center'>Used Capacity(GB)</td>
+
+    <td width='10%' align='center'>Free Space(GB)</td>
+
+    <td width='5%'  align='center'>Freespace %</td>
+
+    </tr>
+
+    "
+
+    Add-Content $diskReport $serverHeader
+
+ 
+
+    foreach($disk in $disks)
+
+    {
+
+        $deviceID = $disk.DeviceID;
+
+        $volName = $disk.VolumeName;
+
+        [float]$size = $disk.Size;
+
+        [float]$freespace = $disk.FreeSpace; 
+
+        $percentFree = [Math]::Round(($freespace / $size) * 100);
+
+        $sizeGB = [Math]::Round($size / 1073741824, 2);
+
+        $freeSpaceGB = [Math]::Round($freespace / 1073741824, 2);
+
+        $usedSpaceGB = $sizeGB - $freeSpaceGB;
+
+        $color = $whiteColor;
+
+ 
+
+ 
+
+        # Ajustamos el background color a Naranja si es solo Advertencia
+
+        if($percentFree -lt $percentWarning)      
+
+        {
+
+            $color = $orangeColor 
+
+        }
+
+        else
+
+        {
+
+            $color = $greenColor 
+
+        }
+
+ 
+
+        # Ajustamos el Color del background de Naranja a Rojo si el espacio es critico
+
+        if($percentFree -lt $percentCritcal)
+
+        {
+
+            $color = $redColor
+
+        }        
+
+ 
+
+        # Creamos el table data rows 
+
+        $dataRow = "
+
+        <tr>
+
+            <td width='10%'>$computer</td>
+
+            <td width='5%' align='center'>$deviceID</td>
+
+            <td width='10%' >$volName</td>
+
+            <td width='10%' align='center'>$sizeGB GB</td>
+
+            <td width='10%' align='center'>$usedSpaceGB GB</td>
+
+            <td width='10%' align='center'>$freeSpaceGB GB</td>
+
+            <td width='5%' bgcolor=`'$color`' align='center'>$percentFree %</td>
+
+        </tr>
+
+        "
+
+        Add-Content $diskReport $dataRow;
+
+        Write-Host -ForegroundColor DarkYellow "$computer $deviceID percentage free space = $percentFree";
+
+    }
+
+ 
+
+    # Cerrar la tabla para cada servidor
+
+    Add-Content $diskReport "</tbody></table><br>"
 
 
 
 
+        # Obtener información de memoria
+    try {
+        $memoryInfo = Get-WmiObject -ComputerName $serverName -Class Win32_OperatingSystem
+        $totalMemory = [Math]::Round($memoryInfo.TotalVisibleMemorySize / 1MB, 2)
+        $freeMemory = [Math]::Round($memoryInfo.FreePhysicalMemory / 1MB, 2)
+        $usedMemory = $totalMemory - $freeMemory
+        $percentFreeMemory = [Math]::Round(($freeMemory / $totalMemory) * 100)
+
+        # Determinar color según el porcentaje de memoria libre
+        $memoryColor = $greenColor
+        if ($percentFreeMemory -lt $percentWarning) { $memoryColor = $orangeColor }
+        if ($percentFreeMemory -lt $percentCritcal) { $memoryColor = $redColor }
+
+        # Sección de reporte de memoria
+        $memorySection = @"
+        <h3>Consumo de Memoria del Servidor: $serverName</h3>
+        <table width='100%'>
+            <tr bgcolor='#548DD4'>
+                <td width='25%' align='center'>Total Memoria (GB)</td>
+                <td width='25%' align='center'>Memoria Utilizada (GB)</td>
+                <td width='25%' align='center'>Memoria Libre (GB)</td>
+                <td width='25%' align='center'>Porcentaje Libre</td>
+            </tr>
+            <tr>
+                <td width='25%' align='center'>$totalMemory GB</td>
+                <td width='25%' align='center'>$usedMemory GB</td>
+                <td width='25%' align='center'>$freeMemory GB</td>
+                <td width='25%' align='center' bgcolor='$memoryColor'>$percentFreeMemory %</td>
+            </tr>
+        </table><br>
+"@
+        Add-Content $diskReport $memorySection
+    } catch {
+        Write-Host "No se pudo obtener la información de memoria para $serverName. Error: $_"
+    }
+
+    # Información del disco
+    try {
+        $disks = Get-WmiObject -ComputerName $serverName -Class Win32_LogicalDisk -Filter "Size > 0"
+        if ($disks -eq $null) {
+            Write-Host "No disks found for $serverName."
+            continue
+        }
+    } catch {
+        Write-Host "Failed to get WMI object for $serverName. Error: $_"
+        continue
+    }
+
+    $serverName = $serverName.ToUpper()
+
+
+
+}
+
+ 
+
+# Creamos una tabla al final del informe que muestre la leyenda de colores para la crítica y la advertencia
+
+$tableDescription = "
+
+<br><table width='20%'>
+
+<tr bgcolor='White'>
+
+    <td width='10%' align='center' bgcolor='#FBB917'>Warning less than 30% free space</td>
+
+    <td width='10%' align='center' bgcolor='#FF0000'>Critical less than 20% free space</td>
+
+</tr>
+
+"
+
+Add-Content $diskReport $tableDescription
+
+Add-Content $diskReport "</body></html>"
+
+ 
+ 
+
+ 
+
+ 
+
+ 
 
 
 
 
-
+~~~
 
 
 ##   No hay nada debajo de esta linea
