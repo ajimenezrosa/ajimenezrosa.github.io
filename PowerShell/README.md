@@ -44,6 +44,7 @@
 
 - [ Enable Failover Clustering Feature using PowerShell](#7)
 
+- [Powershell para leer los discos , memorias y si el servidor esta conectado y si es un AO y cual es su role en el (Primario , Secundario)](#20241031)
 
 # 
 --- 
@@ -1172,7 +1173,7 @@ Get-clusterlog
 
 # 
 
-# Powershell para leer los discos , memorias y si el servidor esta conectado y si es un AO y cual es su role en el (Primario , Secundario)
+# Powershell para leer los discos , memorias y si el servidor esta conectado y si es un AO y cual es su role en el (Primario , Secundario)<a name="20241031"></a>
 
 
 ~~~sql
