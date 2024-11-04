@@ -211,6 +211,7 @@ Manuales de</th>
 - 13.3 [Cambiar el "collation" de todas las bases de datos en un servidor SQL Server](#collectionchange)  
 - 13.4 [Verificar si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)  
 
+- 13.5 [ALTER DATABASE ... SET HADR RESUME](#135)
 ---
 
 #### **14. Scripts de Monitoreo y Optimización**
@@ -11151,6 +11152,53 @@ DEALLOCATE db_cursor
 #### Si no obtienes resultados o recibes un mensaje de error indicando que la tabla `sys.objects` no existe, es posible que no tengas permisos suficientes para consultar el catálogo o que la característica de replicación no esté instalada en tu instancia de SQL Server.
 
 #### Recuerda que la replicación es una característica que se puede instalar o desinstalar durante la instalación de SQL Server o posteriormente a través del instalador de SQL Server. Si necesitas habilitar o deshabilitar la replicación, puedes hacerlo a través del instalador de SQL Server o de la configuración de características de SQL Server en el Panel de Control de Windows.
+
+
+
+# 
+#
+## documentación para el comando `ALTER DATABASE ... SET HADR RESUME;`<a name="135"></a>
+
+---
+
+### Resumen del Comando `ALTER DATABASE ... SET HADR RESUME;`
+
+**Comando:** 
+```sql
+ALTER DATABASE [Nombre_Base_Datos] SET HADR RESUME;
+```
+
+**Descripción:**  
+Este comando reanuda la sincronización de una base de datos en un grupo de disponibilidad de SQL Server AlwaysOn (HADR - High Availability Disaster Recovery). Es particularmente útil cuando la sincronización de la base de datos ha sido suspendida por cualquier motivo (como un fallo temporal o una suspensión manual) y se requiere restablecer el flujo de datos entre las réplicas de alta disponibilidad.
+
+**Sintaxis:**
+```sql
+ALTER DATABASE [Nombre_Base_Datos] SET HADR RESUME;
+```
+
+- **[Nombre_Base_Datos]:** Nombre de la base de datos que necesita reanudar la sincronización en el grupo de disponibilidad AlwaysOn.
+
+**Ejemplo:**
+```sql
+ALTER DATABASE [RSA_CM_AA] SET HADR RESUME;
+```
+
+Este ejemplo reanuda la sincronización de la base de datos llamada `RSA_CM_AA` en el grupo de disponibilidad AlwaysOn.
+
+**Uso común:**
+1. Situaciones donde la sincronización fue suspendida manualmente o por problemas técnicos.
+2. Permite restablecer la comunicación y la replicación de datos entre las réplicas sin interrumpir la disponibilidad de la base de datos primaria.
+
+**Consideraciones importantes:**
+- El usuario que ejecuta este comando necesita permisos elevados, generalmente de administrador, sobre la base de datos y el entorno de alta disponibilidad.
+- La base de datos debe estar configurada previamente en un grupo de disponibilidad AlwaysOn para que el comando sea efectivo.
+
+**Referencias:**
+- Documentación oficial de [Microsoft SQL Server](https://learn.microsoft.com/en-us/sql) para más detalles sobre AlwaysOn y comandos HADR.
+
+---
+
+
 
 
 # 
