@@ -1808,10 +1808,9 @@ Add-Content $diskReport "</body></html>"
  ~~~
 
 
-# en este tenemos los servidores no encontrados
+# en este tenemos los servidores que presentan algun tipo de Alertas, o problemas
 
 ~~~sql
-
 #*********************************************************#
 #* Monitor de espacio en Disco                           *#
 #* Alejandro Jimenez                                     *#
@@ -1825,6 +1824,7 @@ $ErrorActionPreference = "Continue";
 # Ajustamos el nivel de umbral para la alerta
 $percentWarning = 30;
 $percentCritcal = 20;
+$percentMemoryWarning = 90  # Warning si el consumo de memoria es mayor o igual al 90%
 
 # REPORT PROPERTIES
 # Path to the report
@@ -1980,42 +1980,6 @@ foreach($computer in $computers) {
         $sqlStatus = "No se pudo conectar"
     }
 
-    # Obtener información de memoria
-    try {
-        $memoryInfo = Get-WmiObject -ComputerName $serverName -Class Win32_OperatingSystem
-        $totalMemory = [Math]::Round($memoryInfo.TotalVisibleMemorySize / 1MB, 2)
-        $freeMemory = [Math]::Round($memoryInfo.FreePhysicalMemory / 1MB, 2)
-        $usedMemory = $totalMemory - $freeMemory
-        $percentFreeMemory = [Math]::Round(($freeMemory / $totalMemory) * 100)
-
-        # Determinar color según el porcentaje de memoria libre
-        $memoryColor = $greenColor
-        if ($percentFreeMemory -lt $percentWarning) { $memoryColor = $orangeColor }
-        if ($percentFreeMemory -lt $percentCritcal) { $memoryColor = $redColor }
-
-        # Sección de reporte de memoria
-        $memorySection = @"
-        <h3>Consumo de Memoria del Servidor: $serverName</h3>
-        <table width='100%'>
-            <tr bgcolor='#548DD4'>
-                <td width='25%' align='center'>Total Memoria (GB)</td>
-                <td width='25%' align='center'>Memoria Utilizada (GB)</td>
-                <td width='25%' align='center'>Memoria Libre (GB)</td>
-                <td width='25%' align='center'>Porcentaje Libre</td>
-            </tr>
-            <tr>
-                <td width='25%' align='center'>$totalMemory GB</td>
-                <td width='25%' align='center'>$usedMemory GB</td>
-                <td width='25%' align='center'>$freeMemory GB</td>
-                <td width='25%' align='center' bgcolor='$memoryColor'>$percentFreeMemory %</td>
-            </tr>
-        </table><br>
-"@
-        Add-Content $diskReport $memorySection
-    } catch {
-        Write-Host "No se pudo obtener la información de memoria para $serverName. Error: $_"
-    }
-
     # Obtener información del disco
     try {
         $disks = Get-WmiObject -ComputerName $serverName -Class Win32_LogicalDisk -Filter "Size > 0"
@@ -2080,8 +2044,45 @@ foreach($computer in $computers) {
         Write-Host -ForegroundColor DarkYellow "$computer $deviceID porcentaje de espacio libre = $percentFree";
     }
 
-    # Cerrar la tabla para cada servidor
+    # Cerrar la tabla para cada servidor (ya contiene discos)
     Add-Content $diskReport "</tbody></table><br>"
+
+    # Obtener información de memoria y mostrar solo si es warning o critical
+    try {
+        $memoryInfo = Get-WmiObject -ComputerName $serverName -Class Win32_OperatingSystem
+        $totalMemory = [Math]::Round($memoryInfo.TotalVisibleMemorySize / 1MB, 2)
+        $freeMemory = [Math]::Round($memoryInfo.FreePhysicalMemory / 1MB, 2)
+        $usedMemory = $totalMemory - $freeMemory
+        $percentUsedMemory = [Math]::Round(($usedMemory / $totalMemory) * 100)
+
+        # Determinar color según el porcentaje de memoria usada
+        $memoryColor = $greenColor
+        if ($percentUsedMemory -ge $percentMemoryWarning) { $memoryColor = $orangeColor }
+
+        # Solo agregar sección si está en estado de advertencia o crítico
+        if ($percentUsedMemory -ge $percentMemoryWarning) {
+            $memorySection = @"
+            <h3>Consumo de Memoria del Servidor: $serverName</h3>
+            <table width='100%'>
+                <tr bgcolor='#548DD4'>
+                    <td width='25%' align='center'>Total Memoria (GB)</td>
+                    <td width='25%' align='center'>Memoria Utilizada (GB)</td>
+                    <td width='25%' align='center'>Memoria Libre (GB)</td>
+                    <td width='25%' align='center'>Porcentaje Usado</td>
+                </tr>
+                <tr>
+                    <td width='25%' align='center'>$totalMemory GB</td>
+                    <td width='25%' align='center'>$usedMemory GB</td>
+                    <td width='25%' align='center'>$freeMemory GB</td>
+                    <td width='25%' align='center' bgcolor='$memoryColor'>$percentUsedMemory %</td>
+                </tr>
+            </table><br>
+"@
+            Add-Content $diskReport $memorySection
+        }
+    } catch {
+        Write-Host "No se pudo obtener la información de memoria para $serverName. Error: $_"
+    }
 }
 
 # Agregar los servidores no encontrados al final del reporte
