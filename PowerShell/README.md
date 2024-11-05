@@ -1941,11 +1941,13 @@ foreach($computer in $computers) {
     $sqlStatus = "OK"
     $availabilityGroup = "N/A"
     $role = "N/A"
+    $addServerToReport = $false  # Solo agregaremos el servidor si cumple con alguna condición de alerta
 
     try {
         $sqlTest = Test-NetConnection -ComputerName $serverName -Port 1433
         if ($sqlTest.TcpTestSucceeded -eq $false) {
             $sqlStatus = "No se pudo conectar"
+            $addServerToReport = $true  # Añadir servidor al reporte por falla de conexión SQL
         } else {
             # Verificar si el servidor es parte de un Availability Group
             $query = @"
@@ -1978,6 +1980,7 @@ foreach($computer in $computers) {
         }
     } catch {
         $sqlStatus = "No se pudo conectar"
+        $addServerToReport = $true
     }
 
     # Obtener información del disco
@@ -1994,27 +1997,7 @@ foreach($computer in $computers) {
         continue
     }
 
-    $serverName = $serverName.ToUpper()
-
-    # Añadir un encabezado para cada servidor
-    $serverHeader = "
-    <h2>Servidor: $serverName</h2>
-    <p>Estado del SQL Server: $sqlStatus</p>
-    <p>Availability Group: $availabilityGroup</p>
-    <p>Role: $role</p>
-    <table width='100%'><tbody>
-    <tr bgcolor='#548DD4'>
-    <td width='10%' align='center'>Server</td>
-    <td width='5%' align='center'>Drive</td>
-    <td width='15%' align='center'>Drive Label</td>
-    <td width='10%' align='center'>Total Capacity(GB)</td>
-    <td width='10%' align='center'>Used Capacity(GB)</td>
-    <td width='10%' align='center'>Free Space(GB)</td>
-    <td width='5%' align='center'>Freespace %</td>
-    </tr>
-    "
-    Add-Content $diskReport $serverHeader
-
+    $diskRows = ""
     foreach($disk in $disks) {
         $deviceID = $disk.DeviceID;
         $volName = $disk.VolumeName;
@@ -2026,10 +2009,16 @@ foreach($computer in $computers) {
         $usedSpaceGB = $sizeGB - $freeSpaceGB;
         $color = $whiteColor;
 
-        if($percentFree -lt $percentWarning) { $color = $orangeColor }
-        if($percentFree -lt $percentCritcal) { $color = $redColor }
+        if($percentFree -lt $percentWarning) { 
+            $color = $orangeColor 
+            $addServerToReport = $true  # Añadir servidor al reporte si tiene espacio libre bajo
+        }
+        if($percentFree -lt $percentCritcal) { 
+            $color = $redColor 
+            $addServerToReport = $true
+        }
 
-        $dataRow = "
+        $diskRows += "
         <tr>
             <td width='10%'>$computer</td>
             <td width='5%' align='center'>$deviceID</td>
@@ -2040,14 +2029,9 @@ foreach($computer in $computers) {
             <td width='5%' bgcolor=`'$color`' align='center'>$percentFree %</td>
         </tr>
         "
-        Add-Content $diskReport $dataRow;
-        Write-Host -ForegroundColor DarkYellow "$computer $deviceID porcentaje de espacio libre = $percentFree";
     }
 
-    # Cerrar la tabla para cada servidor (ya contiene discos)
-    Add-Content $diskReport "</tbody></table><br>"
-
-    # Obtener información de memoria y mostrar solo si es warning o critical
+    # Obtener información de memoria y determinar si es un servidor para reporte
     try {
         $memoryInfo = Get-WmiObject -ComputerName $serverName -Class Win32_OperatingSystem
         $totalMemory = [Math]::Round($memoryInfo.TotalVisibleMemorySize / 1MB, 2)
@@ -2055,12 +2039,13 @@ foreach($computer in $computers) {
         $usedMemory = $totalMemory - $freeMemory
         $percentUsedMemory = [Math]::Round(($usedMemory / $totalMemory) * 100)
 
-        # Determinar color según el porcentaje de memoria usada
-        $memoryColor = $greenColor
-        if ($percentUsedMemory -ge $percentMemoryWarning) { $memoryColor = $orangeColor }
-
-        # Solo agregar sección si está en estado de advertencia o crítico
         if ($percentUsedMemory -ge $percentMemoryWarning) {
+            $addServerToReport = $true
+        }
+
+        # Sección de reporte de memoria solo si cumple condición de alerta
+        if ($percentUsedMemory -ge $percentMemoryWarning) {
+            $memoryColor = $orangeColor
             $memorySection = @"
             <h3>Consumo de Memoria del Servidor: $serverName</h3>
             <table width='100%'>
@@ -2078,10 +2063,33 @@ foreach($computer in $computers) {
                 </tr>
             </table><br>
 "@
-            Add-Content $diskReport $memorySection
         }
     } catch {
         Write-Host "No se pudo obtener la información de memoria para $serverName. Error: $_"
+    }
+
+    # Solo añadir al reporte si cumple alguna de las condiciones de alerta
+    if ($addServerToReport) {
+        $serverHeader = "
+        <h2>Servidor: $serverName</h2>
+        <p>Estado del SQL Server: $sqlStatus</p>
+        <p>Availability Group: $availabilityGroup</p>
+        <p>Role: $role</p>
+        <table width='100%'><tbody>
+        <tr bgcolor='#548DD4'>
+        <td width='10%' align='center'>Server</td>
+        <td width='5%' align='center'>Drive</td>
+        <td width='15%' align='center'>Drive Label</td>
+        <td width='10%' align='center'>Total Capacity(GB)</td>
+        <td width='10%' align='center'>Used Capacity(GB)</td>
+        <td width='10%' align='center'>Free Space(GB)</td>
+        <td width='5%' align='center'>Freespace %</td>
+        </tr>
+        "
+        Add-Content $diskReport $serverHeader
+        Add-Content $diskReport $diskRows
+        Add-Content $diskReport "</tbody></table><br>"
+        if ($memorySection) { Add-Content $diskReport $memorySection }
     }
 }
 
