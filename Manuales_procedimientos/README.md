@@ -65,11 +65,10 @@
 
  - [Plantilla para Eliminación de Bases de Datos en SQL Server](#eliminardb)
 
+ - [Manual para la Migración de una Base de Datos SQL Server de un Servidor Antiguo a un Nuevo Servidor](#migrardbsql)
+--- 
 
 ---
-
-
-
 
 [Documentación del Proceso de Solicitud de Pago de Horas Extras](#horasextras)
 
@@ -789,6 +788,273 @@ Es necesario verificar el Owner con el que se restauró la nueva base de datos. 
 
 
 # 
+
+# ------------------------------------------
+
+
+---
+
+# **Manual para la Migración de una Base de Datos SQL Server de un Servidor Antiguo a un Nuevo Servidor**<a name="migrardbsql"></a>
+
+Este manual proporciona una guía detallada paso a paso para realizar una migración de una base de datos SQL Server de un servidor antiguo a un nuevo servidor. El proceso incluye la coordinación con el equipo de Cintoteca, responsable de realizar los respaldos, para asegurar una transición adecuada y continua.
+
+## **1. Preparativos Iniciales**
+
+### 1.1 Verificar Configuración del Nuevo Servidor
+- **Objetivo**: Asegurarse de que el nuevo servidor SQL Server esté operativo y bien configurado antes de migrar cualquier base de datos.
+- **Acciones**:
+  - Verificar la versión de SQL Server instalada para asegurarse de la compatibilidad.
+  - Revisar configuraciones de red y permisos de acceso para garantizar que todas las aplicaciones puedan conectarse al nuevo servidor.
+  - Probar la conexión al servidor mediante SQL Server Management Studio (SSMS) ejecutando consultas simples.
+
+## **2. Detener Backups en el Servidor Antiguo**
+
+### 2.1 Notificación a Cintoteca para la Migración
+- **Objetivo**: Informar al equipo de Cintoteca que se llevará a cabo la migración de la base de datos y que necesitarán ajustar los procesos de backup.
+- **Acciones**:
+  - Notificar a Cintoteca acerca de la fecha y hora programada para la migración.
+  - Informar sobre el tiempo estimado de inactividad y los pasos a seguir para reconfigurar los backups.
+
+### 2.2 Crear RQ para Detener Backups en el Servidor Antiguo
+- **Objetivo**: Solicitar formalmente la detención de los trabajos automáticos de backup en el servidor antiguo.
+- **Acciones**:
+  - Crear una solicitud de requerimiento (RQ) formal para detener los backups programados en el servidor antiguo.
+  - Asegurarse de que los backups automáticos se desactiven antes de iniciar la migración para evitar posibles inconsistencias.
+
+## **3. Exportar la Base de Datos desde el Servidor Antiguo**
+
+### 3.1 Generar Copia de Seguridad
+- **Objetivo**: Crear un archivo `.bak` de la base de datos para transferirla al nuevo servidor.
+- **Acciones**:
+  - Utilizar SQL Server Management Studio (SSMS) para crear una copia de seguridad completa.
+  - Asegurarse de que se seleccionen todas las opciones necesarias para que los datos y registros de transacciones sean incluidos en el backup.
+
+### 3.2 Transferir el Archivo de Backup al Nuevo Servidor
+- **Objetivo**: Mover el archivo de copia de seguridad al nuevo servidor.
+- **Acciones**:
+  - Transferir el archivo utilizando una herramienta segura como `SCP` o `FTP seguro`.
+  - Verificar que el archivo se haya transferido de forma completa y sin errores.
+
+## **4. Restaurar la Base de Datos en el Nuevo Servidor**
+
+### 4.1 Restaurar la Base de Datos Usando SSMS
+- **Objetivo**: Restaurar la base de datos en el nuevo servidor desde el archivo de backup.
+- **Acciones**:
+  - Restaurar la base de datos utilizando SSMS.
+  - **Comando SQL**:
+    ```sql
+    RESTORE DATABASE [NombreBaseDeDatos] FROM DISK = 'C:\ruta\de\backup.bak'
+    ```
+  - Ajustar las rutas de los archivos de datos (`.mdf`) y registros (`.ldf`) según la estructura del nuevo servidor.
+
+## **5. Configurar Frecuencias de Backup en el Nuevo Servidor**
+
+### 5.1 Notificar a Cintoteca para Configurar Backups en el Nuevo Servidor
+- **Objetivo**: Informar al equipo de Cintoteca que ahora deben comenzar a realizar los backups en el nuevo servidor.
+- **Acciones**:
+  - Notificar al equipo de Cintoteca que los backups regulares deben ser configurados y ejecutados en el nuevo servidor.
+  - Informar sobre las frecuencias de backup que deben ser replicadas del servidor antiguo:
+    - **Copia Completa**: Semanalmente.
+    - **Copias Diferenciales**: A diario.
+    - **Copia de Logs de Transacciones**: Cada pocas horas según los requisitos de la empresa.
+
+### 5.2 Crear RQ para Configurar Backups
+- **Objetivo**: Formalizar la solicitud para que Cintoteca configure los backups en el nuevo servidor.
+- **Acciones**:
+  - Crear una solicitud de requerimiento (RQ) para que el equipo de Cintoteca configure los procesos de backup con las mismas políticas que en el servidor antiguo.
+
+### 5.3 Confirmación de Ruta de Backup
+- **Objetivo**: Garantizar que los respaldos sean almacenados en la ubicación definida.
+- **Ruta para crear rq a Cintoteca**: 
+  ```
+  IT.Interno.Operaciones TI.Area Producción.Div Data Center Respaldos y Automatización.Automatizaciones y Respaldos.Respaldos y Recuperaciones.Cambio ejecución Respaldo
+  ```
+
+Esta accion se realizara luego de la migracion , al finalizar las pruebas.
+
+
+
+## **6. Actualizar Configuraciones de Aplicaciones**
+
+### 6.1 Actualizar Conexiones
+- **Objetivo**: Cambiar las configuraciones para que las aplicaciones apunten al nuevo servidor.
+- **Acciones**:
+  - Modificar las cadenas de conexión en los archivos de configuración de las aplicaciones.
+  - Asegurarse de que todos los permisos y usuarios estén correctamente configurados en el nuevo servidor.
+
+
+
+
+## **7. Verificación de la Migración**
+
+### 7.1 Verificar la Integridad de los Datos
+- **Objetivo**: Asegurar que todos los datos se hayan migrado sin pérdida ni corrupción.
+- **Acciones**:
+  - Ejecutar consultas de validación para comparar datos entre el servidor antiguo y el nuevo.
+
+### 7.2 Pruebas de Funcionalidad
+- **Objetivo**: Verificar que todas las aplicaciones funcionen adecuadamente con la base de datos en el nuevo servidor.
+- **Acciones**:
+  - Probar todas las funcionalidades clave de las aplicaciones que dependen de la base de datos para asegurar que no haya interrupciones.
+
+
+
+## **8. Monitoreo y Soporte Post-Migración**
+
+### 8.1 Monitorear el Rendimiento del Servidor
+- **Objetivo**: Detectar problemas de rendimiento que puedan surgir tras la migración.
+- **Acciones**:
+  - Monitorear el rendimiento del servidor mediante herramientas como SQL Server,  Foglight , Dynatrace, etc.
+  - Revisar los registros (`logs`) del servidor para detectar cualquier alerta o error.
+
+### 8.2 Soporte Técnico
+- **Objetivo**: Estar preparado para responder a cualquier problema que surja.
+- **Acciones**:
+  - Tener un equipo de soporte de Infraestructura y seguridad disponible para solucionar cualquier inconveniente inesperado.
+
+## **9. Documentación del Proceso**
+
+### 9.1 Documentar la Migración
+- **Objetivo**: Registrar todos los pasos y decisiones tomadas durante la migración.
+- **Acciones**:
+  - Documentar cada paso realizado y los detalles técnicos específicos.
+
+---
+
+
+
+
+
+Este manual proporciona una guía detallada paso a paso para realizar una migración de una base de datos SQL Server de un servidor antiguo a un nuevo servidor. El proceso incluye la coordinación con el equipo de Cintoteca, responsable de los respaldos, para asegurar una transición adecuada y continua.
+
+## **1. Preparativos Iniciales**
+
+### 1.1 Verificar Configuración del Nuevo Servidor
+- **Objetivo**: Asegurarse de que el nuevo servidor SQL Server esté operativo y bien configurado antes de migrar cualquier base de datos.
+- **Acciones**:
+  - Verificar la versión de SQL Server instalada para asegurarse de la compatibilidad.
+  - Revisar configuraciones de red y permisos de acceso para garantizar que todas las aplicaciones puedan conectarse al nuevo servidor.
+  - Probar la conexión al servidor mediante SQL Server Management Studio (SSMS) ejecutando consultas simples.
+
+### 1.2 Realizar una Copia de Seguridad Completa en el Servidor Antiguo
+- **Objetivo**: Tener una copia completa y reciente de la base de datos antes de la migración.
+- **Acciones**:
+  - Utilizar SSMS para realizar una copia de seguridad completa de la base de datos.
+  - **Comando SQL**:
+    ```sql
+    BACKUP DATABASE [NombreBaseDeDatos] TO DISK = 'C:\ruta\de\backup.bak'
+    ```
+  - Verificar la integridad del archivo `.bak` para evitar problemas durante la restauración.
+
+## **2. Detener Backups en el Servidor Antiguo**
+
+### 2.1 Notificación a Cintoteca para la Migración
+- **Objetivo**: Informar al equipo de Cintoteca que se llevará a cabo la migración de la base de datos y que necesitarán ajustar los procesos de backup.
+- **Acciones**:
+  - Notificar a Cintoteca acerca de la fecha y hora programada para la migración.
+  - Informar sobre el tiempo estimado de inactividad y los pasos a seguir para reconfigurar los backups.
+
+### 2.2 Crear RQ para Detener Backups en el Servidor Antiguo
+- **Objetivo**: Solicitar formalmente la detención de los trabajos automáticos de backup en el servidor antiguo.
+- **Acciones**:
+  - Crear una solicitud de requerimiento (RQ) formal para detener los backups programados en el servidor antiguo.
+  - Asegurarse de que los backups automáticos se desactiven antes de iniciar la migración para evitar posibles inconsistencias.
+
+## **3. Exportar la Base de Datos desde el Servidor Antiguo**
+
+### 3.1 Generar Copia de Seguridad
+- **Objetivo**: Crear un archivo `.bak` de la base de datos para transferirla al nuevo servidor.
+- **Acciones**:
+  - Utilizar SSMS para crear una copia de seguridad completa.
+  - Asegurarse de que se seleccionen todas las opciones necesarias para que los datos y registros de transacciones sean incluidos en el backup.
+
+### 3.2 Transferir el Archivo de Backup al Nuevo Servidor
+- **Objetivo**: Mover el archivo de copia de seguridad al nuevo servidor.
+- **Acciones**:
+  - Transferir el archivo utilizando una herramienta segura como `SCP` o `FTP seguro`.
+  - Verificar que el archivo se haya transferido de forma completa y sin errores.
+
+## **4. Restaurar la Base de Datos en el Nuevo Servidor**
+
+### 4.1 Restaurar la Base de Datos Usando SSMS
+- **Objetivo**: Restaurar la base de datos en el nuevo servidor desde el archivo de backup.
+- **Acciones**:
+  - Restaurar la base de datos utilizando SSMS.
+  - **Comando SQL**:
+    ```sql
+    RESTORE DATABASE [NombreBaseDeDatos] FROM DISK = 'C:\ruta\de\backup.bak'
+    ```
+  - Ajustar las rutas de los archivos de datos (`.mdf`) y registros (`.ldf`) según la estructura del nuevo servidor.
+
+## **5. Configurar Frecuencias de Backup en el Nuevo Servidor**
+
+### 5.1 Notificar a Cintoteca para Configurar Backups en el Nuevo Servidor
+- **Objetivo**: Informar al equipo de Cintoteca que ahora deben comenzar a realizar los backups en el nuevo servidor.
+- **Acciones**:
+  - Notificar al equipo de Cintoteca que los backups regulares deben ser configurados y ejecutados en el nuevo servidor.
+  - Informar sobre las frecuencias de backup que deben ser replicadas del servidor antiguo:
+    - **Copia Completa**: Semanalmente.
+    - **Copias Diferenciales**: A diario.
+    - **Copia de Logs de Transacciones**: Cada pocas horas según los requisitos de la empresa.
+
+### 5.2 Crear RQ para Configurar Backups
+- **Objetivo**: Formalizar la solicitud para que Cintoteca configure los backups en el nuevo servidor.
+- **Acciones**:
+  - Crear una solicitud de requerimiento (RQ) para que el equipo de Cintoteca configure los procesos de backup con las mismas políticas que en el servidor antiguo.
+
+### 5.3 Confirmación de Ruta de Backup
+- **Objetivo**: Garantizar que los respaldos sean almacenados en la ubicación definida.
+- **Ruta de Referencia para Backups**: 
+  ```
+  IT.Interno.Operaciones TI.Area Producción.Div Data Center Respaldos y Automatización.Automatizaciones y Respaldos.Respaldos y Recuperaciones.Cambio ejecución Respaldo
+  ```
+  - Confirmar con Cintoteca que la ruta de backup es correcta y accesible desde el nuevo servidor.
+
+## **6. Verificación de la Migración**
+
+### 6.1 Verificar la Integridad de los Datos
+- **Objetivo**: Asegurar que todos los datos se hayan migrado sin pérdida ni corrupción.
+- **Acciones**:
+  - Ejecutar consultas de validación para comparar datos entre el servidor antiguo y el nuevo.
+
+### 6.2 Pruebas de Funcionalidad
+- **Objetivo**: Verificar que todas las aplicaciones funcionen adecuadamente con la base de datos en el nuevo servidor.
+- **Acciones**:
+  - Probar todas las funcionalidades clave de las aplicaciones que dependen de la base de datos para asegurar que no haya interrupciones.
+
+## **7. Actualizar Configuraciones de Aplicaciones**
+
+### 7.1 Actualizar Conexiones
+- **Objetivo**: Cambiar las configuraciones para que las aplicaciones apunten al nuevo servidor.
+- **Acciones**:
+  - Modificar las cadenas de conexión en los archivos de configuración de las aplicaciones.
+  - Asegurarse de que todos los permisos y usuarios estén correctamente configurados en el nuevo servidor.
+
+## **8. Monitoreo y Soporte Post-Migración**
+
+### 8.1 Monitorear el Rendimiento del Servidor
+- **Objetivo**: Detectar problemas de rendimiento que puedan surgir tras la migración.
+- **Acciones**:
+  - Monitorear el rendimiento del servidor mediante herramientas como SQL Server Performance Monitor.
+  - Revisar los registros (`logs`) del servidor para detectar cualquier alerta o error.
+
+### 8.2 Soporte Técnico
+- **Objetivo**: Estar preparado para responder a cualquier problema que surja.
+- **Acciones**:
+  - Tener un equipo de soporte disponible para solucionar cualquier inconveniente inesperado.
+
+## **9. Documentación del Proceso**
+
+### 9.1 Documentar la Migración
+- **Objetivo**: Registrar todos los pasos y decisiones tomadas durante la migración.
+- **Acciones**:
+  - Documentar cada paso realizado y los detalles técnicos específicos.
+  - Actualizar la documentación interna de los sistemas de bases de datos y los procedimientos de respaldo.
+
+---
+
+# --------------------------------------------
+
 
 
 ### Paso a Paso para la Solicitud de Pago de Horas Extras<a name="horasextras"></a>
