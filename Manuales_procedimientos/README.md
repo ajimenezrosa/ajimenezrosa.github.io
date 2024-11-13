@@ -61,7 +61,15 @@
 
  - [Documentación de Cambios en Listener de SolarWinds en caso de presentar problemas](#cambiolistener)
 
- -  [Procedimientos Post Migración de Base de Datos](#migraciondebasededatos)
+ -  [Procedimientos Post Migración de Base de Datos](#migraciondebasededatos)`
+
+ - [Plantilla para Eliminación de Bases de Datos en SQL Server](#eliminardb)
+
+
+---
+
+
+
 
 [Documentación del Proceso de Solicitud de Pago de Horas Extras](#horasextras)
 
@@ -672,6 +680,95 @@ La asistencia del Sr. Roberto Antonio Rodríguez Rincón fue fundamental para su
 Nota: Asegúrese de adaptar los comandos y nombres de objetos según la configuración específica de su entorno SolarWinds.
 
 # 
+
+
+
+---
+# Plantilla para Eliminación de Bases de Datos en SQL Server<a name="eliminardb"></a>
+
+## Descripción de la Orden
+
+Se procederá a eliminar la base de datos `AmericanAirLine` del servidor `servidor Origen` debido a que la misma ya NO está brindando servicio. Esta acción tiene como objetivo mantener los entornos de trabajo limpios y organizados, asegurando un mejor rendimiento y gestión de los recursos.
+
+### Antecedentes
+
+- Esta base de datos fue colocada offline mediante la ejecución del cambio `CH000000`.
+- La base de datos fue movida a los servidores `servidor Destino` y `servidor Destino`.
+
+---
+
+## Plan de Implementación
+
+### Paso a Paso
+
+1. **Conectar al servidor SQL Server**:
+
+   - Asegúrate de tener acceso administrativo al servidor `servidor Origen`.
+
+2. **Respaldo de la base de datos**:
+
+   - Realiza un respaldo de la base de datos `AmericanAirLine` antes de eliminarla.
+   - Nota: Este respaldo ya se encuentra en las siguientes rutas:
+     - `\\servidor Destino`\u$\MSSQL\Backup`
+     - `U:\MSSQL\Backup`
+
+3. **Ejecutar el script de eliminación**:
+
+   - Utiliza el siguiente script para eliminar la base de datos:
+
+```sql
+-- Conectar al servidor
+USE master;
+GO
+
+-- Eliminar la base de datos
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'AmericanAirLine')
+BEGIN
+    DROP DATABASE AmericanAirLine;
+    PRINT 'La base de datos AmericanAirLine ha sido eliminada exitosamente.';
+END
+ELSE
+BEGIN
+    PRINT 'La base de datos AmericanAirLine no existe.';
+END
+GO
+```
+
+4. **Verificar la eliminación**:
+
+   - Confirma que la base de datos ha sido eliminada correctamente.
+
+5. **Plan de reverso**:
+
+   - En caso de ser necesario, restaura la base de datos desde el respaldo.
+
+---
+
+## Plan de Reverso
+
+En caso de que necesites restaurar la base de datos, sigue estos pasos:
+
+1. **Restaurar desde el respaldo**:
+   - Utiliza el siguiente script para restaurar la base de datos desde el archivo de respaldo:
+
+```sql
+-- Restaurar la base de datos desde el archivo de respaldo
+RESTORE DATABASE [AmericanAirLine]
+FROM DISK = N'U:\MSSQL\AmericanAirLine.bak'
+WITH FILE = 1, NOUNLOAD, STATS = 1
+GO
+```
+
+2. **Verificar la restauración**:
+   - Asegúrate de que la base de datos se haya restaurado correctamente y que todas las tablas y datos estén intactos.
+
+---
+
+Este documento puede ser utilizado como referencia y plantilla para futuras eliminaciones de bases de datos en SQL Server. Asegúrate de adaptar la información a los detalles específicos de cada caso.
+
+--- 
+
+
 
 ## Procedimientos Post Migración de Base de Datos<a name="migraciondebasededatos">
 #### Después de completar exitosamente la migración de la base de datos y asegurarnos de su correcto funcionamiento a nivel técnico, es crucial llevar a cabo una serie de pasos operativos para garantizar la integridad y eficiencia del sistema. A continuación, se detallan los procedimientos a seguir:
