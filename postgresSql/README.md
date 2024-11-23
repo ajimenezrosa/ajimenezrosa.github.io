@@ -135,7 +135,7 @@
 
 ### Montar un Servidor Postgress en linux y configurar su acceso.
 
-  - [Paso 1: Instalación de PostgreSQL](#501)
+  - [Paso 1: Instalación de PostgreSQL](#601)
 
 
 
@@ -1829,7 +1829,7 @@ Este documento explica todos los pasos necesarios para instalar PostgreSQL en un
 
 
 
-## Paso 1: Instalación de PostgreSQL<a name="501"></a>
+## Paso 1: Instalación de PostgreSQL<a name="601"></a>
 
 
 
