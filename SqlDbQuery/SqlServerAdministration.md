@@ -79,7 +79,7 @@ Manuales de</th>
     - 3.1.10 [Listado de los índices en una base de datos](#6.9)  
     - 3.1.11 [Missing Index Script](#missinindex)  
     - 3.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)  
-
+    - 3.1.13 [Evaluación de Índices en SQL Server](3113)
 ---
 
 #### **4. Recuperación y Backup**
@@ -2927,8 +2927,124 @@ ORDER BY
 
 #### Esta consulta filtra los tipos de índices para mostrar solo los índices clustered y nonclustered. Si necesitas información sobre otros tipos de índices, puedes ajustar la consulta según tus necesidades.
 
+# 
 
 
+# Evaluación de Índices en SQL Server<a name="3113"></a>
+
+## Descripción General
+Este script tiene como objetivo evaluar la efectividad de los últimos índices creados en una base de datos de SQL Server. A través del análisis de los índices más recientes, se busca determinar si estos han tenido un impacto positivo en el rendimiento de la base de datos, y cuantificar el impacto en términos de uso de CPU, memoria y almacenamiento.
+
+El código se divide en varias partes utilizando Common Table Expressions (CTEs) que permiten la evaluación de los índices desde distintas perspectivas: la creación reciente, el uso de los índices y el impacto en términos de memoria.
+
+## Componentes del Código
+
+### 1. **RecentIndexes**
+En esta sección, se seleccionan los índices creados recientemente en la base de datos, filtrando únicamente tablas de usuario (`o.type = 'U'`). Se incluyen detalles relevantes como el nombre del índice, la tabla a la que pertenece, el tipo de índice, y si es único o una clave primaria. Los índices se ordenan de manera descendente por el identificador del índice (`index_id`) para listar los más recientes primero.
+
+### 2. **IndexEffectiveness**
+Esta sección permite evaluar la efectividad de cada índice considerando su uso y actualizaciones. Los datos se obtienen de la vista de sistema `sys.dm_db_index_usage_stats`, que contiene información sobre búsquedas (`user_seeks`), exploraciones (`user_scans`), y actualizaciones (`user_updates`) realizadas sobre los índices. También se proporciona un cálculo del `effectiveness_ratio`, que muestra la relación entre la cantidad de lecturas y las actualizaciones realizadas sobre el índice.
+
+### 3. **IndexImpact**
+Esta parte del código proporciona información sobre el impacto del índice en términos de uso de memoria y almacenamiento. Se calculan dos métricas principales: el uso de memoria (`memory_usage_mb`) y el almacenamiento total utilizado (`total_storage_mb`). Los valores se obtienen de la vista `sys.dm_db_partition_stats` y se expresan en megabytes (MB).
+
+### 4. **Consulta Final**
+La consulta final combina los resultados de las tres CTEs para proporcionar una visión integral de los índices recientes, mostrando:
+- **Nombre del Índice** y **Tabla**.
+- **Tipo de Índice**, si es único (**is_unique**) y si es clave primaria (**is_primary_key**).
+- **Uso del Índice**: la cantidad de búsquedas, exploraciones, y actualizaciones.
+- **Impacto en Rendimiento**: el uso de memoria y almacenamiento.
+
+Los resultados se ordenan de manera descendente para mostrar los índices más recientes primero.
+
+## Código Completo
+```sql
+WITH RecentIndexes AS
+(
+    SELECT TOP 100 PERCENT
+        i.name AS index_name,
+        i.object_id,
+        i.index_id,
+        i.type_desc,
+        i.is_unique,
+        i.is_primary_key,
+        i.fill_factor,
+        OBJECT_NAME(i.object_id) AS table_name
+    FROM sys.indexes i
+    JOIN sys.objects o ON i.object_id = o.object_id
+    WHERE o.type = 'U' -- Only user tables
+    ORDER BY i.index_id DESC
+),
+IndexEffectiveness AS
+(
+    SELECT
+        i.name AS index_name,
+        i.object_id,
+        s.user_seeks + s.user_scans + s.user_lookups AS usage_count,
+        s.user_updates AS update_count,
+        s.last_user_seek,
+        s.last_user_scan,
+        s.last_user_lookup,
+        s.last_user_update,
+        CASE
+            WHEN s.user_updates = 0 THEN 'N/A'
+            ELSE CAST((s.user_seeks + s.user_scans + s.user_lookups) / CAST(s.user_updates AS FLOAT) AS VARCHAR(50))
+        END AS effectiveness_ratio
+    FROM sys.dm_db_index_usage_stats s
+    JOIN sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
+    WHERE database_id = DB_ID()
+),
+IndexImpact AS
+(
+    SELECT
+        i.index_id,
+        i.name AS index_name,
+        i.object_id,
+        ps.used_page_count * 8.0 / 1024 AS memory_usage_mb, -- Memory usage in MB
+        (ps.in_row_data_page_count + ps.lob_used_page_count + ps.row_overflow_used_page_count) * 8.0 / 1024 AS total_storage_mb -- Storage usage in MB
+    FROM sys.dm_db_partition_stats ps
+    JOIN sys.indexes i ON ps.object_id = i.object_id AND ps.index_id = i.index_id
+)
+SELECT
+    r.index_name,
+    r.table_name,
+    r.type_desc,
+    r.is_unique,
+    r.is_primary_key,
+    r.fill_factor,
+    ie.usage_count,
+    ie.update_count,
+    ie.last_user_seek,
+    ie.last_user_scan,
+    ie.last_user_lookup,
+    ie.last_user_update,
+    ie.effectiveness_ratio,
+    ii.memory_usage_mb,
+    ii.total_storage_mb
+FROM RecentIndexes r
+LEFT JOIN IndexEffectiveness ie ON r.index_name = ie.index_name AND r.object_id = ie.object_id
+LEFT JOIN IndexImpact ii ON r.index_name = ii.index_name AND r.object_id = ii.object_id
+ORDER BY r.index_id DESC;
+```
+
+## Uso del Script
+- **Evaluación de Impacto**: Ejecutar este script permitirá evaluar si los índices recién creados están siendo utilizados de forma efectiva y si están mejorando el rendimiento de la base de datos.
+- **Análisis de Recursos**: Los resultados obtenidos también mostrarán el uso de memoria y almacenamiento, ayudando a identificar si algún índice está consumiendo demasiados recursos y podría necesitar ajuste o eliminación.
+
+## Recomendaciones
+- Ejecuta el script en un entorno de pruebas antes de usarlo en producción.
+- Monitorea los índices que tienen bajo `effectiveness_ratio` o un alto uso de memoria para optimizar la base de datos.
+
+## Consideraciones Finales
+La efectividad de los índices depende de cómo las consultas se ejecutan contra la base de datos. Un índice que no se utiliza adecuadamente puede afectar el rendimiento de la base de datos, ocupando espacio y ralentizando las operaciones de inserción o actualización. Este script es útil para detectar esos índices y tomar acciones correctivas. Puedes ajustar la lógica según las necesidades específicas de tu entorno.
+
+
+
+
+
+
+
+# 
 
 # 
 # Cuanta data puedo perder<a name="dataperder"></a>
