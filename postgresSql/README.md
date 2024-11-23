@@ -133,6 +133,15 @@
 
 ---
 
+### Montar un Servidor Postgress en linux y configurar su acceso.
+
+  - [Paso 1: Instalación de PostgreSQL](#501)
+
+
+
+
+
+
 ## Introducción
 
 La consola en PostgreSQL es una herramienta muy potente para crear, administrar y depurar nuestra base de datos. Podemos acceder a ella después de instalar PostgreSQL y haber seleccionado la opción de instalar la consola junto a la base de datos.
@@ -1813,7 +1822,202 @@ FROM platzi.alumnos;
 
 Estas consultas amplían las operaciones sobre campos de tiempo, mostrando cómo extraer partes específicas de una columna de tiempo, sumar o restar intervalos, y calcular diferencias entre tiempos. Estas soluciones son útiles para manejar datos temporales en sistemas que requieren un seguimiento detallado de horas y fechas.
 
+---
+# Instalación y Configuración de PostgreSQL en Linux Fedora (IP: 192.168.100.226)
+
+Este documento explica todos los pasos necesarios para instalar PostgreSQL en una máquina con Linux Fedora, configurar un servidor PostgreSQL, crear una base de datos llamada `fondos_de_pensiones_Minerd`, y realizar ajustes para conectarse al servidor desde otro equipo. Incluye todos los scripts necesarios para facilitar la copia y ejecución.
 
 
 
+## Paso 1: Instalación de PostgreSQL<a name="501"></a>
+
+
+
+1. **Conectar al Servidor Linux**
+
+   Conéctate a tu servidor con la IP `192.168.100.226` usando SSH:
+
+   ```bash
+   ssh usuario@192.168.100.226
+   ```
+
+2. **Agregar el Repositorio de PostgreSQL**
+
+   Descarga el repositorio adecuado desde la página oficial de PostgreSQL:
+
+   ```bash
+   wget https://download.postgresql.org/pub/repos/yum/reporpms/F-$(rpm -E %fedora)-x86_64/pgdg-fedora-repo-latest.noarch.rpm
+   sudo dnf install -y pgdg-fedora-repo-latest.noarch.rpm
+   ```
+
+3. **Desactivar el Módulo Predeterminado de PostgreSQL**
+
+   ```bash
+   sudo dnf -qy module disable postgresql
+   ```
+
+4. **Instalar PostgreSQL**
+
+   Instala PostgreSQL 16 (u otra versión si es necesario):
+
+   ```bash
+   sudo dnf install -y postgresql16-server
+   ```
+
+5. **Inicializar la Base de Datos**
+
+   ```bash
+   sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
+   ```
+
+6. **Habilitar e Iniciar el Servicio de PostgreSQL**
+
+   ```bash
+   sudo systemctl enable postgresql-16
+   sudo systemctl start postgresql-16
+   ```
+
+## Paso 2: Crear la Base de Datos y el Usuario
+
+1. **Cambiar al Usuario `postgres`**
+
+   ```bash
+   sudo -i -u postgres
+   ```
+
+2. **Acceder al Cliente `psql`**
+
+   ```bash
+   psql
+   ```
+
+3. **Crear la Base de Datos**
+
+   Ejecuta el siguiente comando para crear la base de datos `fondos_de_pensiones_Minerd`:
+
+   ```sql
+   CREATE DATABASE fondos_de_pensiones_Minerd;
+   ```
+
+4. **Crear un Usuario**
+
+   Crea un usuario llamado `UsuarioAdmin` con una contraseña segura:
+
+   ```sql
+   CREATE USER UsuarioAdmin WITH PASSWORD 'TuContraseñaSegura';
+   ```
+
+5. **Asignar Privilegios a la Base de Datos**
+
+   Otorga todos los privilegios sobre la base de datos `fondos_de_pensiones_Minerd` al usuario `UsuarioAdmin`:
+
+   ```sql
+   GRANT ALL PRIVILEGES ON DATABASE fondos_de_pensiones_Minerd TO UsuarioAdmin;
+   ```
+
+6. **Asignar Privilegios en el Esquema `public`**
+
+   Conéctate a la base de datos y asigna los privilegios sobre el esquema `public`:
+
+   ```sql
+   \c fondos_de_pensiones_Minerd
+   GRANT ALL ON SCHEMA public TO UsuarioAdmin;
+   ```
+
+7. **Salir del Cliente `psql`**
+
+   ```sql
+   \q
+   ```
+
+## Paso 3: Configurar el Acceso Remoto
+
+1. **Editar el Archivo `postgresql.conf`**
+
+   Permitir conexiones desde cualquier dirección IP editando el archivo `postgresql.conf`:
+
+   ```bash
+   sudo nano /var/lib/pgsql/16/data/postgresql.conf
+   ```
+
+   Busca la línea `listen_addresses` y cámbiala para permitir conexiones externas:
+
+   ```plaintext
+   listen_addresses = '*'
+   ```
+
+2. **Editar el Archivo `pg_hba.conf`**
+
+   Edita el archivo `pg_hba.conf` para permitir conexiones desde la red local:
+
+   ```bash
+   sudo nano /var/lib/pgsql/16/data/pg_hba.conf
+   ```
+
+   Añade la siguiente línea al final del archivo para permitir conexiones desde la red `192.168.100.0/24`:
+
+   ```plaintext
+   host    all             all             192.168.100.0/24          md5
+   ```
+
+3. **Reiniciar el Servicio de PostgreSQL**
+
+   Después de hacer los cambios, reinicia el servicio:
+
+   ```bash
+   sudo systemctl restart postgresql-16
+   ```
+
+## Paso 4: Crear Tablas en la Base de Datos
+
+1. **Conectar a `psql` con el Usuario `postgres`**
+
+   ```bash
+   sudo -i -u postgres
+   psql -d fondos_de_pensiones_Minerd
+   ```
+
+2. **Crear Tablas Ejemplo**
+
+   Aquí tienes un ejemplo para crear algunas tablas en la base de datos:
+
+   ```sql
+   CREATE TABLE empleados (
+       empleado_id SERIAL PRIMARY KEY,
+       nombre VARCHAR(100) NOT NULL,
+       puesto VARCHAR(50),
+       fecha_contratacion DATE
+   );
+
+   CREATE TABLE aportes (
+       aporte_id SERIAL PRIMARY KEY,
+       empleado_id INTEGER REFERENCES empleados(empleado_id),
+       monto NUMERIC(10, 2) NOT NULL,
+       fecha_aporte DATE NOT NULL
+   );
+   ```
+
+3. **Salir del Cliente `psql`**
+
+   ```sql
+   \q
+   ```
+
+## Paso 5: Conectar al Servidor PostgreSQL desde Otro Equipo
+
+Para conectarte desde otro equipo, puedes usar **pgAdmin** o cualquier cliente compatible con PostgreSQL. Los detalles de conexión serían:
+
+- **Host**: `192.168.100.226`
+- **Puerto**: `5432`
+- **Base de Datos**: `fondos_de_pensiones_Minerd`
+- **Usuario**: `UsuarioAdmin`
+- **Contraseña**: la contraseña que especificaste.
+
+Con esto ya deberías poder conectarte de forma remota y administrar la base de datos desde tu equipo Windows o cualquier otra máquina en la red local.
+
+
+
+
+
+---
 # No Existe nada debajo de esta linea.
