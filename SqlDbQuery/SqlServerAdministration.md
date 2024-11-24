@@ -79,7 +79,7 @@ Manuales de</th>
     - 3.1.10 [Listado de los índices en una base de datos](#6.9)  
     - 3.1.11 [Missing Index Script](#missinindex)  
     - 3.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)  
-    - 3.1.13 [Evaluación de Índices en SQL Server](#3113)  
+- 3.2 [Evaluación de Índices en SQL Server](#3113)  
     <!-- - 3.1.13 [Evaluación de Índices en SQL Server](#3113) -->
 
 ---
