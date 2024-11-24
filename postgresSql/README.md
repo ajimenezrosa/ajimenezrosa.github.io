@@ -1840,6 +1840,102 @@ Este documento explica todos los pasos necesarios para instalar PostgreSQL en un
    ```bash
    ssh usuario@192.168.100.226
    ```
+# ----
+
+Para eliminar los permisos de un usuario en PostgreSQL, se utiliza el comando `REVOKE`. Este comando revoca los permisos o privilegios que han sido otorgados a un usuario o rol. Puedes eliminar permisos específicos sobre bases de datos, tablas, secuencias, esquemas y otros objetos.
+
+### Sintaxis Básica de `REVOKE`
+
+```sql
+REVOKE permisos ON objeto FROM usuario;
+```
+
+Donde:
+- **`permisos`**: Los privilegios a revocar, como `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `ALL PRIVILEGES`, etc.
+- **`objeto`**: El objeto del cual se van a revocar los permisos. Puede ser una tabla, una vista, una secuencia, etc.
+- **`usuario`**: El nombre del usuario o rol del cual se quieren revocar los permisos.
+
+### Ejemplos Comunes
+
+1. **Revocar Permisos sobre una Tabla**
+
+   Si deseas revocar permisos `SELECT` e `INSERT` de un usuario específico sobre una tabla, puedes usar:
+
+   ```sql
+   REVOKE SELECT, INSERT ON tabla_ejemplo FROM usuario_ejemplo;
+   ```
+
+2. **Revocar Todos los Permisos sobre una Tabla**
+
+   Para revocar todos los permisos que tiene un usuario sobre una tabla:
+
+   ```sql
+   REVOKE ALL PRIVILEGES ON tabla_ejemplo FROM usuario_ejemplo;
+   ```
+
+3. **Revocar Permisos sobre una Base de Datos**
+
+   Puedes revocar permisos de conexión sobre una base de datos:
+
+   ```sql
+   REVOKE CONNECT ON DATABASE nombre_base FROM usuario_ejemplo;
+   ```
+
+4. **Revocar Permisos sobre un Esquema**
+
+   Si un usuario tiene permisos para crear objetos en un esquema, puedes revocárselos:
+
+   ```sql
+   REVOKE CREATE ON SCHEMA nombre_esquema FROM usuario_ejemplo;
+   ```
+
+5. **Revocar Permisos sobre una Secuencia**
+
+   Si deseas revocar permisos `USAGE` o `SELECT` sobre una secuencia:
+
+   ```sql
+   REVOKE USAGE, SELECT ON SEQUENCE nombre_secuencia FROM usuario_ejemplo;
+   ```
+
+### Verificar los Permisos Actuales
+
+Para ver los permisos que tiene un usuario sobre un determinado objeto, puedes ejecutar:
+
+```sql
+\dp nombre_objeto
+```
+
+Esto mostrará una lista de permisos asociados al objeto específico. El comando `\dp` se usa dentro de `psql`, el cliente interactivo de PostgreSQL, para mostrar los privilegios de acceso.
+
+### Ejemplo Completo
+
+Supongamos que deseas revocar todos los permisos del usuario `usuario_test` sobre una tabla llamada `clientes`:
+
+1. Conéctate al servidor PostgreSQL usando `psql`:
+
+   ```sh
+   psql -U postgres -d nombre_base_de_datos
+   ```
+
+2. Luego, ejecuta el comando:
+
+   ```sql
+   REVOKE ALL PRIVILEGES ON clientes FROM usuario_test;
+   ```
+
+Esto eliminará todos los permisos que `usuario_test` tenía sobre la tabla `clientes`.
+
+
+
+
+
+
+
+
+
+
+
+
 
 2. **Agregar el Repositorio de PostgreSQL**
 
