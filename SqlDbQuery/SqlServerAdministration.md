@@ -206,6 +206,7 @@ Manuales de</th>
 - 14.3. [___Comando para eliminar un job específico](#14.3)
 - 14.4. [___Eliminación de registros en el log de mantenimiento](#14.4)
 - 14.5. [___Verificación de logs de mantenimiento](#14.5)
+- 14.6 [Query para Listar Jobs en Ejecución en SQL Server con Fecha de Inicio](#14.6)
 ---
 
 #### **13. AlwaysOn y Replicación**
@@ -11060,7 +11061,70 @@ Este documento proporciona instrucciones claras y directas para solucionar el pr
 # 
 # 
 
+### **Query para Listar Jobs en Ejecución en SQL Server con Fecha de Inicio**<a name="14.6"></a>
 
+#### **Descripción**
+Este script permite listar los jobs que están actualmente en ejecución en SQL Server Agent. Muestra información clave como el nombre del job, el paso que está ejecutándose, y la fecha de inicio del job. Es una herramienta útil para el monitoreo y diagnóstico en tiempo real de la actividad del SQL Server Agent.
+
+---
+
+#### **Código**
+
+```sql
+-- List running jobs in SQL Server with Job Start Time
+
+-- This script lists all SQL Agent jobs that are currently running.
+
+SELECT ja.job_id,
+       j.name AS job_name,
+       ja.start_execution_date,
+       ISNULL(ja.last_executed_step_id, 0) + 1 AS current_executed_step_id,
+       js.step_name
+FROM msdb.dbo.sysjobactivity ja
+    LEFT JOIN msdb.dbo.sysjobhistory jh
+        ON ja.job_history_id = jh.instance_id
+    JOIN msdb.dbo.sysjobs j
+        ON ja.job_id = j.job_id
+    JOIN msdb.dbo.sysjobsteps js
+        ON ja.job_id = js.job_id
+           AND ISNULL(ja.last_executed_step_id, 0) + 1 = js.step_id
+WHERE ja.session_id =
+(
+    SELECT TOP (1)
+           session_id
+    FROM msdb.dbo.syssessions
+    ORDER BY agent_start_date DESC
+)
+      AND ja.start_execution_date IS NOT NULL
+      AND ja.stop_execution_date IS NULL;
+```
+
+---
+
+#### **Columnas del Resultado**
+
+1. **`job_id`**: Identificador único del job en SQL Server.
+2. **`job_name`**: Nombre del job configurado en SQL Server Agent.
+3. **`start_execution_date`**: Fecha y hora en que el job comenzó a ejecutarse.
+4. **`current_executed_step_id`**: Identificador del paso del job que actualmente está en ejecución.
+5. **`step_name`**: Nombre del paso del job que está ejecutándose.
+
+---
+
+#### **Uso Práctico**
+- **Monitoreo en tiempo real**: Ver qué jobs están ejecutándose actualmente.
+- **Diagnóstico de problemas**: Identificar jobs que están tardando más de lo esperado.
+- **Auditoría y control**: Validar que los jobs programados están funcionando correctamente.
+
+---
+
+#### **Nota**
+Para ejecutar este query, asegúrese de usar la base de datos `msdb` y contar con permisos de administrador o acceso a las tablas de sistema del SQL Server Agent. Es una consulta de solo lectura, diseñada para propósitos de monitoreo y diagnóstico.
+
+
+
+
+---
 
 ## Determinar si un Nodo es primario o secundario en un AlwaysOn<a name="queestestenodoAO"></a>
 #### En un grupo de disponibilidad de AlwaysOn en SQL Server, los roles de los servidores se denominan "nodo primario" y "nodo secundario". Puedes utilizar la siguiente consulta en el servidor SQL para determinar si un servidor específico es el nodo primario o el nodo secundario en un grupo de disponibilidad AlwaysOn:
