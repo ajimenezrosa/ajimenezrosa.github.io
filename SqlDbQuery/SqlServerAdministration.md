@@ -13232,8 +13232,56 @@ ORDER BY
 
 ### **Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server**<a name="7.11"></a>
 
+
 #### **Descripción**
-Este script proporciona una visión detallada de las sesiones activas en un servidor SQL Server, incluyendo información sobre las consultas en ejecución, la base de datos involucrada, el plan de ejecución, y otros detalles relacionados con el rendimiento y bloqueo de transacciones. Es útil para administradores de bases de datos que necesitan diagnosticar problemas de rendimiento, identificar consultas bloqueadas o analizar patrones de uso.
+Este script proporciona una visión detallada de las sesiones activas en un servidor SQL Server, incluyendo información sobre las consultas en ejecución, la base de datos involucrada, el plan de ejecución y otros detalles relacionados con el rendimiento y bloqueo de transacciones. Es útil para administradores de bases de datos que necesitan diagnosticar problemas de rendimiento, identificar consultas bloqueadas o analizar patrones de uso.
+
+---
+
+#### **Código**
+
+```sql
+SELECT 
+    es.session_id,
+    es.status,
+    es.login_name,
+    DB_NAME(er.database_id) AS database_name,
+    es.host_name,
+    es.program_name,
+    er.blocking_session_id,
+    er.command,
+    es.reads,
+    es.writes,
+    es.cpu_time,
+    er.wait_type,
+    er.wait_time,
+    er.last_wait_type,
+    er.wait_resource,
+    CASE es.transaction_isolation_level 
+        WHEN 0 THEN 'Unspecified'
+        WHEN 1 THEN 'ReadUncommitted'
+        WHEN 2 THEN 'ReadCommitted'
+        WHEN 3 THEN 'Repeatable'
+        WHEN 4 THEN 'Serializable'
+        WHEN 5 THEN 'Snapshot'
+    END AS transaction_isolation_level,
+    OBJECT_NAME(st.objectid, er.database_id) AS object_name,
+    SUBSTRING(st.text, er.statement_start_offset / 2,
+        (CASE 
+            WHEN er.statement_end_offset = -1 
+                THEN LEN(CONVERT(nvarchar(max), st.text)) * 2
+            ELSE er.statement_end_offset 
+         END - er.statement_start_offset) / 2) AS query_text,
+    ph.query_plan
+FROM sys.dm_exec_connections ec
+LEFT OUTER JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
+LEFT OUTER JOIN sys.dm_exec_requests er ON ec.connection_id = er.connection_id
+OUTER APPLY sys.dm_exec_sql_text(sql_handle) st
+OUTER APPLY sys.dm_exec_query_plan(plan_handle) ph
+WHERE ec.session_id <> @@SPID
+  AND es.status = 'running'
+ORDER BY es.session_id;
+```
 
 ---
 
@@ -13261,24 +13309,6 @@ Este script proporciona una visión detallada de las sesiones activas en un serv
 
 ---
 
-#### **Detalles Técnicos**
-
-- **Vistas Dinámicas del Sistema Utilizadas**:
-  - `sys.dm_exec_connections`: Proporciona detalles sobre las conexiones activas al servidor.
-  - `sys.dm_exec_sessions`: Contiene información sobre las sesiones actuales.
-  - `sys.dm_exec_requests`: Muestra información sobre las solicitudes actualmente en ejecución.
-  - `sys.dm_exec_sql_text`: Permite recuperar el texto completo de una consulta SQL en ejecución.
-  - `sys.dm_exec_query_plan`: Proporciona el plan de ejecución estimado para una consulta.
-
-- **Filtros Aplicados**:
-  - Se excluye la sesión actual (`ec.session_id <> @@SPID`).
-  - Se limita a sesiones con estado `running` (`es.status = 'running'`).
-
-- **Orden**:
-  - Los resultados están ordenados por el identificador de sesión (`es.session_id`).
-
----
-
 #### **Uso Práctico**
 Este query es ideal para:
 
@@ -13291,9 +13321,6 @@ Este query es ideal para:
 
 #### **Nota**
 Ejecute este query con permisos de administrador o con acceso a las vistas dinámicas del sistema. Usar este tipo de consultas en entornos de producción debe ser controlado, especialmente en sistemas con alta carga, ya que puede introducir alguna latencia en la recolección de datos.
-
-
-
 
 
 ---
