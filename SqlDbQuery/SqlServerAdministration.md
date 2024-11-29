@@ -148,6 +148,8 @@ Manuales de</th>
 * 7.9 [Cuántos cores tiene mi base de datos](#cuantoscoretengo)  
 * 7.10 [Query de listado de tablas con su tamaño y cantidad de registros](#listadotablas)  
 
+* 7.11 [Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server](#7.11)
+
 ---
 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
@@ -13164,7 +13166,73 @@ ORDER BY
 
 # 
 
+### **Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server**<a name="7.11"></a>
 
+#### **Descripción**
+Este script proporciona una visión detallada de las sesiones activas en un servidor SQL Server, incluyendo información sobre las consultas en ejecución, la base de datos involucrada, el plan de ejecución, y otros detalles relacionados con el rendimiento y bloqueo de transacciones. Es útil para administradores de bases de datos que necesitan diagnosticar problemas de rendimiento, identificar consultas bloqueadas o analizar patrones de uso.
+
+---
+
+#### **Columnas del Resultado**
+
+1. **`session_id`**: Identificador único de la sesión en SQL Server.
+2. **`status`**: Estado actual de la sesión (en este caso, filtra las sesiones en estado `running`).
+3. **`login_name`**: Usuario que inició sesión en SQL Server.
+4. **`database_name`**: Nombre de la base de datos a la que está asociada la sesión.
+5. **`host_name`**: Nombre del host desde el cual se inició la sesión.
+6. **`program_name`**: Programa cliente que inició la conexión.
+7. **`blocking_session_id`**: Identificador de la sesión que está bloqueando a esta sesión, si aplica.
+8. **`command`**: Comando SQL actual que se está ejecutando.
+9. **`reads`**: Número de lecturas lógicas realizadas por la sesión.
+10. **`writes`**: Número de escrituras realizadas por la sesión.
+11. **`cpu_time`**: Tiempo de CPU consumido por la sesión, medido en milisegundos.
+12. **`wait_type`**: Tipo actual de espera de la sesión (si aplica).
+13. **`wait_time`**: Tiempo que la sesión ha estado en espera (en milisegundos).
+14. **`last_wait_type`**: Último tipo de espera registrado.
+15. **`wait_resource`**: Recurso que está causando la espera.
+16. **`transaction_isolation_level`**: Nivel de aislamiento de la transacción para la sesión.
+17. **`object_name`**: Nombre del objeto (tabla, vista, procedimiento almacenado) involucrado en la consulta.
+18. **`query_text`**: Texto SQL de la consulta actualmente en ejecución.
+19. **`query_plan`**: Plan de ejecución estimado de la consulta.
+
+---
+
+#### **Detalles Técnicos**
+
+- **Vistas Dinámicas del Sistema Utilizadas**:
+  - `sys.dm_exec_connections`: Proporciona detalles sobre las conexiones activas al servidor.
+  - `sys.dm_exec_sessions`: Contiene información sobre las sesiones actuales.
+  - `sys.dm_exec_requests`: Muestra información sobre las solicitudes actualmente en ejecución.
+  - `sys.dm_exec_sql_text`: Permite recuperar el texto completo de una consulta SQL en ejecución.
+  - `sys.dm_exec_query_plan`: Proporciona el plan de ejecución estimado para una consulta.
+
+- **Filtros Aplicados**:
+  - Se excluye la sesión actual (`ec.session_id <> @@SPID`).
+  - Se limita a sesiones con estado `running` (`es.status = 'running'`).
+
+- **Orden**:
+  - Los resultados están ordenados por el identificador de sesión (`es.session_id`).
+
+---
+
+#### **Uso Práctico**
+Este query es ideal para:
+
+1. **Identificar bloqueos**: Revisar sesiones bloqueadas o que están bloqueando otras.
+2. **Diagnóstico de consultas lentas**: Analizar las consultas en ejecución que consumen muchos recursos.
+3. **Revisión de patrones de uso**: Entender qué aplicaciones, usuarios o programas están accediendo al servidor.
+4. **Optimización**: Inspeccionar el plan de ejecución para mejorar consultas SQL.
+
+---
+
+#### **Nota**
+Ejecute este query con permisos de administrador o con acceso a las vistas dinámicas del sistema. Usar este tipo de consultas en entornos de producción debe ser controlado, especialmente en sistemas con alta carga, ya que puede introducir alguna latencia en la recolección de datos.
+
+
+
+
+
+---
 # Script de Monitoreo y Optimización del Rendimiento de SQL Server<a name="500"></a>
 
 ## DESCARGO DE RESPONSABILIDAD
