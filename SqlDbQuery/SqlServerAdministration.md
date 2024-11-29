@@ -110,7 +110,7 @@ Manuales de</th>
     - 5.5.4 [Top 10 procedimientos almacenados con mayor tiempo transcurrido](#10procmayortiemeje)  
     - 5.5.5 [Consultas SQL más ejecutadas](#lasconsultassqlmasejecutadas)  
     - 5.5.6 [Consultas SQL con mayor consumo de CPU](#consultassqlmayorconsumodecpu)  
-
+    - 5.6 [Consulta SQL para Identificar Usuarios Ejecutando Procedimientos Almacenados](#5.6)
 ---
 
 #### **6. Auditoría y Seguridad**
@@ -15970,7 +15970,91 @@ permisión de licencia en todas las copias o partes sustanciales del software.
 
 Aquí tienes el archivo `README.md` con la descripción adicional que especifica que este código se usa para crear usuarios en `GCS SII_OMGGA_GCS`, permitiendo duplicar un usuario como registro en la base de datos.
 
+# 
 
+
+```markdown
+# Consulta SQL para Identificar Usuarios Ejecutando Procedimientos Almacenados<a name="5.6"></a>
+
+**Autor:** Alejandro Jiménez  
+**Propiedad de:** José Alejandro Jiménez Rosa  
+**Fecha:** Noviembre 19, 2024  
+
+---
+
+## **Descripción**
+Esta consulta SQL está diseñada para identificar qué usuario está ejecutando un procedimiento almacenado específico en una base de datos SQL Server. Proporciona información detallada sobre la sesión, el usuario y el comando que se está ejecutando.
+
+---
+
+## **Código**
+
+```sql
+SELECT 
+    r.session_id,
+    r.status,
+    r.start_time,
+    r.command,
+    r.database_id,
+    r.user_id,
+    s.login_name,
+    s.host_name,
+    s.program_name,
+    t.text AS sql_text
+FROM 
+    sys.dm_exec_requests r
+JOIN 
+    sys.dm_exec_sessions s ON r.session_id = s.session_id
+CROSS APPLY 
+    sys.dm_exec_sql_text(r.sql_handle) t
+WHERE 
+    t.text LIKE '%nombre_del_procedimiento%'
+```
+
+---
+
+## **Instrucciones**
+
+1. **Reemplazar `nombre_del_procedimiento`:**  
+   Sustituye `nombre_del_procedimiento` con el nombre del procedimiento almacenado que deseas monitorear.
+
+2. **Ejecutar la consulta:**  
+   Ejecuta la consulta en tu entorno de SQL Server.
+
+3. **Interpretar los resultados:**  
+   La consulta devolverá información sobre las sesiones activas que están ejecutando el procedimiento almacenado especificado, incluyendo:
+   - ID de sesión
+   - Estado
+   - Tiempo de inicio
+   - Comando
+   - ID de la base de datos
+   - ID de usuario
+   - Nombre de inicio de sesión
+   - Nombre del host
+   - Nombre del programa
+   - Texto SQL
+
+---
+
+## **Campos Devueltos**
+
+- **`session_id`:** Identificador de la sesión.
+- **`status`:** Estado de la solicitud.
+- **`start_time`:** Hora de inicio de la solicitud.
+- **`command`:** Comando que se está ejecutando.
+- **`database_id`:** Identificador de la base de datos.
+- **`user_id`:** Identificador del usuario.
+- **`login_name`:** Nombre de inicio de sesión del usuario.
+- **`host_name`:** Nombre del host desde donde se ejecuta la solicitud.
+- **`program_name`:** Nombre del programa que ejecuta la solicitud.
+- **`sql_text`:** Texto del comando SQL que se está ejecutando.
+
+---
+
+## **Notas**
+- Asegúrate de contar con permisos adecuados para ejecutar la consulta en el entorno de SQL Server.
+- Este script es útil para monitorear el uso de procedimientos almacenados en tiempo real y diagnosticar posibles problemas de rendimiento.
+```
 
 
 
