@@ -150,6 +150,7 @@ Manuales de</th>
 
 * 7.11 [Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server](#7.11)
 * 7.12 [Buscar Caracteres Especiales en una Tabla de SQL Server](#7.12)
+* 7.13 [Detección y Análisis de Workers en SQL Server](#7.13)
 ---
 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
@@ -13684,7 +13685,143 @@ go
 
 # 
 
+# Detección y Análisis de Workers en SQL Server<a name="7.13"></a>
 
+---
+
+# **Detección y Análisis de Workers en SQL Server**
+
+Este documento presenta un script que permite detectar y analizar el uso de los *workers* en un servidor SQL Server, proporcionando información detallada sobre su estado, actividad y asociación con tareas y solicitudes activas.
+
+---
+
+## **Objetivo**
+
+El objetivo principal del script es:
+
+- Identificar el estado actual de los *workers* en el servidor.
+- Analizar su relación con las solicitudes (*requests*) y tareas (*tasks*).
+- Ayudar en la optimización y resolución de problemas relacionados con la administración de recursos del servidor.
+
+---
+
+## **Script**
+
+```sql
+SELECT s.session_id,
+       r.command,
+       r.status,
+       r.wait_type,
+       r.scheduler_id,
+       w.worker_address,
+       w.is_preemptive,
+       w.state,
+       t.task_state,
+       t.session_id,
+       t.exec_context_id,
+       t.request_id
+FROM sys.dm_exec_sessions AS s
+    INNER JOIN sys.dm_exec_requests AS r
+        ON s.session_id = r.session_id
+    INNER JOIN sys.dm_os_tasks AS t
+        ON r.task_address = t.task_address
+    INNER JOIN sys.dm_os_workers AS w
+        ON t.worker_address = w.worker_address
+WHERE s.is_user_process = 0;
+```
+
+---
+
+## **Descripción del Código**
+
+### **1. Columnas Seleccionadas**
+
+- **`s.session_id`**: Identificador único de la sesión.
+- **`r.command`**: Comando que está ejecutando la solicitud.
+- **`r.status`**: Estado actual de la solicitud (Ejecutando, En Espera, etc.).
+- **`r.wait_type`**: Tipo de espera asociado a la solicitud.
+- **`r.scheduler_id`**: Identificador del programador (*scheduler*) en uso.
+- **`w.worker_address`**: Dirección del *worker* en la memoria.
+- **`w.is_preemptive`**: Indica si el *worker* está operando en modo preemptivo (fuera del control de SQL Server).
+- **`w.state`**: Estado del *worker* (activo, suspendido, etc.).
+- **`t.task_state`**: Estado de la tarea asociada.
+- **`t.session_id`**: Identificador de la sesión asociada a la tarea.
+- **`t.exec_context_id`**: Contexto de ejecución de la tarea.
+- **`t.request_id`**: Solicitud asociada a la tarea.
+
+### **2. Fuentes de Datos**
+
+El script utiliza vistas dinámicas de administración (*Dynamic Management Views - DMVs*), que son:
+
+- **`sys.dm_exec_sessions`**: Contiene información sobre las sesiones activas.
+- **`sys.dm_exec_requests`**: Detalla las solicitudes activas y sus estados.
+- **`sys.dm_os_tasks`**: Información sobre tareas ejecutadas por SQL Server.
+- **`sys.dm_os_workers`**: Información sobre los *workers* asignados.
+
+### **3. Filtro Aplicado**
+
+```sql
+WHERE s.is_user_process = 0;
+```
+
+Este filtro selecciona únicamente procesos del sistema, excluyendo aquellos iniciados por usuarios.
+
+---
+
+## **Explicación de los Workers**
+
+### **¿Qué son los Workers?**
+
+- Los *workers* son unidades internas de ejecución en SQL Server que gestionan tareas como procesamiento de consultas, operaciones de mantenimiento, entre otras.
+- Cada *worker* está asociado a un hilo (*thread*) del sistema operativo, y SQL Server administra su programación de manera cooperativa para maximizar el rendimiento.
+
+### **Estados de los Workers**
+
+1. **Activo:** Ejecutando una tarea asignada.
+2. **Suspendido:** En espera de recursos o finalización de una operación.
+3. **Inactivo:** Disponible para nuevas tareas.
+
+### **Importancia de Monitorear los Workers**
+
+- Los *workers* limitan el nivel de concurrencia del servidor.
+- Si todos los *workers* están ocupados, las solicitudes adicionales deben esperar, lo que puede causar latencia o cuellos de botella.
+
+---
+
+## **Cómo Usarlo**
+
+1. Ejecute este script en su instancia de SQL Server.
+2. Analice los resultados:
+   - Identifique el estado de los *workers*.
+   - Verifique posibles bloqueos o tiempos de espera prolongados.
+   - Determine si es necesario ajustar la configuración de **max worker threads**.
+3. Use esta información para tomar decisiones informadas sobre el escalamiento de recursos o la optimización de cargas de trabajo.
+
+---
+
+## **Notas Importantes**
+
+1. **Configuración de Max Worker Threads:**
+   - Puede ajustarse mediante la opción `max worker threads`. El valor predeterminado es adecuado para la mayoría de los escenarios, pero en servidores con alta carga puede ser necesario incrementarlo.
+
+2. **Uso de Recursos:**
+   - Un número excesivo de *workers* puede causar sobrecarga en la CPU. Monitoree cuidadosamente su utilización.
+
+---
+
+## **Contribuciones**
+
+Si tienes sugerencias, mejoras o encuentras problemas con este script, siéntete libre de:
+
+- Crear un **Pull Request**.
+- Abrir un **Issue** en este repositorio.
+
+---
+
+**Autor:** José Alejandro Jiménez Rosa  
+
+
+# 
 ---
 
 # Buscar Caracteres Especiales en una Tabla de SQL Server<a name="7.12"></a>
