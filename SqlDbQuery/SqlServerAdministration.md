@@ -151,6 +151,7 @@ Manuales de</th>
 * 7.11 [Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server](#7.11)
 * 7.12 [Buscar Caracteres Especiales en una Tabla de SQL Server](#7.12)
 * 7.13 [Detección y Análisis de Workers en SQL Server](#7.13)
+* 7.14 [Monitorización de Sesiones Activas en SQL Server](#7.14)
 
 ---
 
@@ -13823,7 +13824,90 @@ Si tienes sugerencias, mejoras o encuentras problemas con este script, siéntete
 
 
 # 
----
+
+# Monitorización de Sesiones Activas en SQL Server<a name="7.14"></a>
+
+Este script en SQL Server está diseñado para obtener información detallada sobre las sesiones activas en el servidor que están en estado "running". Es especialmente útil para diagnosticar problemas de rendimiento, analizar bloqueos y comprender las características de las consultas en ejecución.
+
+## ¿Qué hace este script?
+
+1. **Identifica sesiones activas**: Obtiene sesiones activas que no corresponden a la conexión actual.
+2. **Proporciona detalles sobre las consultas**:
+   - Texto de la consulta ejecutada.
+   - Nombre del objeto (tabla o vista) relacionado con la consulta.
+3. **Muestra métricas de rendimiento**:
+   - Lecturas, escrituras y uso de CPU.
+   - Tipo y duración de espera.
+4. **Bloqueos y dependencias**:
+   - Identifica sesiones bloqueadoras.
+5. **Información adicional**:
+   - Nombre de la base de datos.
+   - Nombre del programa que ejecuta la consulta.
+   - Nivel de aislamiento de la transacción.
+
+## ¿Cuándo utilizarlo?
+
+Este script es útil para:
+- Monitorear la actividad de las consultas en ejecución.
+- Diagnosticar problemas de rendimiento relacionados con bloqueos o esperas.
+- Obtener información adicional para optimizar consultas o identificar patrones de uso.
+
+## Código SQL
+
+A continuación, copia y pega el siguiente código en tu entorno de SQL Server Management Studio (SSMS) para ejecutarlo:
+
+```sql
+SELECT
+    es.session_id,
+    es.status,
+    es.login_name,
+    DB_NAME(er.database_id) as database_name,
+    es.host_name,
+    es.program_name,
+    er.blocking_session_id,
+    er.command,
+    es.reads,
+    es.writes,
+    es.cpu_time,
+    er.wait_type,
+    er.wait_time,
+    er.last_wait_type,
+    er.wait_resource,
+    CASE es.transaction_isolation_level 
+        WHEN 0 THEN 'Unspecified'
+        WHEN 1 THEN 'ReadUncommitted'
+        WHEN 2 THEN 'ReadCommitted'
+        WHEN 3 THEN 'Repeatable'
+        WHEN 4 THEN 'Serializable'
+        WHEN 5 THEN 'Snapshot'
+    END AS transaction_isolation_level,
+    OBJECT_NAME(st.objectid, er.database_id) as object_name,
+    SUBSTRING(st.text, er.statement_start_offset / 2,
+        (CASE 
+            WHEN er.statement_end_offset = -1 THEN LEN(CONVERT(nvarchar(max), st.text)) * 2
+            ELSE er.statement_end_offset 
+        END - er.statement_start_offset) / 2) AS query_text,
+    ph.query_plan
+FROM sys.dm_exec_connections ec
+LEFT OUTER JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
+LEFT OUTER JOIN sys.dm_exec_requests er ON ec.connection_id = er.connection_id
+OUTER APPLY sys.dm_exec_sql_text(sql_handle) st
+OUTER APPLY sys.dm_exec_query_plan(plan_handle) ph
+WHERE ec.session_id <> @@SPID
+AND es.status = 'running'
+ORDER BY es.session_id;
+```
+
+## Notas
+
+1. **Permisos requeridos**: Para ejecutar este script, necesitas permisos de administrador en SQL Server o pertenecer al rol `sysadmin`.
+2. **Uso responsable**: Este script debe ejecutarse con precaución en entornos de producción, ya que podría impactar el rendimiento si el servidor tiene una alta carga.
+
+
+
+# 
+
+
 
 # Buscar Caracteres Especiales en una Tabla de SQL Server<a name="7.12"></a>
 
