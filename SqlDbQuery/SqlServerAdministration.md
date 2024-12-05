@@ -149,7 +149,7 @@ Manuales de</th>
 * 7.10 [Query de listado de tablas con su tamaño y cantidad de registros](#listadotablas)  
 
 * 7.11 [Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server](#7.11)
-
+* 7.12 [Buscar Caracteres Especiales en una Tabla de SQL Server](#7.12)
 ---
 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
@@ -13684,6 +13684,104 @@ go
 
 # 
 
+
+---
+
+# Buscar Caracteres Especiales en una Tabla de SQL Server<a name="7.12"></a>
+
+Este script permite generar dinámicamente una consulta que valida si las columnas de una tabla específica contienen caracteres especiales. La validación incluye varios tipos de datos como `char`, `varchar`, `nchar`, `nvarchar`, `text`, `ntext`, `int`, `decimal`, `float`, y `datetime`.
+
+## Propósito
+
+El propósito de este script es automatizar la validación de datos en una tabla, asegurando que los valores en cada columna cumplan con un formato esperado, como ausencia de caracteres especiales.
+
+## Instrucciones
+
+### 1. Configuración del Script
+
+1. Cambia el nombre de la tabla en la variable `@tableName` por el de la tabla que deseas analizar:
+    ```sql
+    DECLARE @tableName NVARCHAR(MAX) = 'nombre_de_tu_tabla';
+    ```
+2. Asegúrate de que la tabla exista en la base de datos actual y contenga columnas con los tipos de datos soportados.
+
+### 2. Tipos de Datos Soportados
+
+El script considera las columnas con los siguientes tipos de datos:
+- `char`
+- `varchar`
+- `nchar`
+- `nvarchar`
+- `text`
+- `ntext`
+- `int`
+- `decimal`
+- `float`
+- `datetime`
+
+Puedes modificar esta lista ajustando la cláusula `DATA_TYPE IN` dentro del script.
+
+### 3. Ejecución del Script
+
+Ejecuta el script completo en tu entorno de SQL Server. El script realiza los siguientes pasos:
+
+1. Construye dinámicamente una consulta para analizar cada columna de la tabla.
+2. Verifica si los valores en cada columna contienen caracteres especiales.
+3. Genera un resultado indicando si cada campo tiene caracteres especiales o no.
+
+### 4. Salida
+
+La salida es una tabla con las siguientes columnas:
+- **Campo**: Nombre de la columna analizada.
+- **Validación**: Resultado indicando si la columna contiene caracteres especiales (`Contiene caracteres especiales`) o no (`No contiene caracteres especiales`).
+
+## Código
+
+```sql
+DECLARE @sql NVARCHAR(MAX) = '';
+DECLARE @tableName NVARCHAR(MAX) = 'diskdetails'; -- Cambia por el nombre de tu tabla
+
+-- Construye dinámicamente la consulta
+SELECT @sql += 
+    'SELECT ''' + COLUMN_NAME + ''' AS Campo, ' +
+    'CASE ' +
+    'WHEN TRY_CAST([' + COLUMN_NAME + '] AS NVARCHAR(MAX)) LIKE ''%[^a-zA-Z0-9]%'' ' +
+    'THEN ''Contiene caracteres especiales'' ' +
+    'ELSE ''No contiene caracteres especiales'' END AS Validación ' +
+    'FROM [' + @tableName + '] UNION ALL '
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = @tableName
+  AND DATA_TYPE IN ('char', 'varchar', 'nchar', 'nvarchar', 'text', 'ntext', 'int', 'decimal', 'float', 'datetime'); -- Incluye más tipos
+
+-- Remueve el último 'UNION ALL'
+SET @sql = LEFT(@sql, LEN(@sql) - 10);
+
+-- Ejecuta la consulta generada dinámicamente
+EXEC sp_executesql @sql;
+```
+
+## Notas
+
+- Si no se genera ninguna consulta dinámica, verifica:
+  1. Que el nombre de la tabla (`@tableName`) sea correcto.
+  2. Que la tabla contenga columnas con tipos de datos compatibles.
+- Usa `PRINT @sql` para inspeccionar la consulta generada antes de ejecutarla.
+
+### Depuración
+
+Para depurar posibles problemas:
+1. Ejecuta el siguiente fragmento para verificar las columnas disponibles:
+    ```sql
+    SELECT COLUMN_NAME, DATA_TYPE
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'diskdetails';
+    ```
+2. Asegúrate de que el script genere una consulta válida usando `PRINT @sql`.
+
+
+
+
+# 
 
 ### Documentación del Query para la Captura de Logs en Grupos de Disponibilidad Always On<a name="501"></a>
 
