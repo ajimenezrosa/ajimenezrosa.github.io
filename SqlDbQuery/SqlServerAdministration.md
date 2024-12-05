@@ -210,6 +210,8 @@ Manuales de</th>
 - 14.4. [___Eliminación de registros en el log de mantenimiento](#14.4)
 - 14.5. [___Verificación de logs de mantenimiento](#14.5)
 - 14.6 [Query para Listar Jobs en Ejecución en SQL Server con Fecha de Inicio](#14.6)
+- 14.7 [Script para Listar los Jobs en Ejecución en SQL Server](#14.7)
+
 ---
 
 #### **13. AlwaysOn y Replicación**
@@ -11124,7 +11126,97 @@ WHERE ja.session_id =
 #### **Nota**
 Para ejecutar este query, asegúrese de usar la base de datos `msdb` y contar con permisos de administrador o acceso a las tablas de sistema del SQL Server Agent. Es una consulta de solo lectura, diseñada para propósitos de monitoreo y diagnóstico.
 
+# 
 
+# Script para Listar los Jobs en Ejecución en SQL Server<a name="14.7"></a>
+
+Este script está diseñado para listar los trabajos (jobs) del SQL Server Agent que se encuentran en ejecución, junto con detalles importantes como el nombre del trabajo, la fecha de inicio de la ejecución, el paso actual que se está ejecutando y el nombre de dicho paso.
+
+---
+
+## **Propósito del Script**
+
+El propósito principal de este script es ayudar a los administradores de bases de datos (DBA) a identificar rápidamente los trabajos que se encuentran en ejecución en un momento dado. Esto es especialmente útil en escenarios de monitoreo y solución de problemas, tales como:
+
+1. Verificar si algún job está en ejecución antes de realizar tareas de mantenimiento en el servidor.
+2. Diagnosticar problemas relacionados con la duración de trabajos en ejecución.
+3. Supervisar el progreso de trabajos largos o críticos.
+
+---
+
+## **Descripción del Código**
+
+- **Consulta Principal:**
+    - El script consulta las tablas del sistema de SQL Server en la base de datos `msdb`.
+    - Utiliza las tablas `sysjobactivity`, `sysjobhistory`, `sysjobs`, y `sysjobsteps` para obtener información detallada sobre los trabajos.
+- **Claves del Script:**
+    - Filtra los trabajos que están en ejecución (`start_execution_date IS NOT NULL` y `stop_execution_date IS NULL`).
+    - Obtiene el último `session_id` del SQL Server Agent para garantizar que está consultando la sesión actual.
+    - Devuelve el ID y el nombre del trabajo, la fecha de inicio de la ejecución, el paso actual en ejecución y su nombre.
+
+---
+
+## **Código**
+
+```sql
+-- List running jobs in SQL Server with Job Start Time
+-- This script lists all SQL Agent jobs that are currently running.
+
+SELECT ja.job_id,
+       j.name AS job_name,
+       ja.start_execution_date,
+       ISNULL(ja.last_executed_step_id, 0) + 1 AS current_executed_step_id,
+       js.step_name
+FROM msdb.dbo.sysjobactivity ja
+    LEFT JOIN msdb.dbo.sysjobhistory jh
+        ON ja.job_history_id = jh.instance_id
+    JOIN msdb.dbo.sysjobs j
+        ON ja.job_id = j.job_id
+    JOIN msdb.dbo.sysjobsteps js
+        ON ja.job_id = js.job_id
+           AND ISNULL(ja.last_executed_step_id, 0) + 1 = js.step_id
+WHERE ja.session_id =
+(
+    SELECT TOP (1)
+           session_id
+    FROM msdb.dbo.syssessions
+    ORDER BY agent_start_date DESC
+)
+      AND ja.start_execution_date IS NOT NULL
+      AND ja.stop_execution_date IS NULL;
+```
+
+---
+
+## **Cómo Utilizar este Script**
+
+1. **Abrir SQL Server Management Studio (SSMS):**
+   - Conéctese al servidor donde desea ejecutar el script.
+2. **Seleccionar la Base de Datos:**
+   - Asegúrese de estar conectado a la base de datos `msdb`.
+3. **Ejecutar el Script:**
+   - Pegue el script en una nueva ventana de consulta y ejecútelo.
+4. **Interpretar los Resultados:**
+   - El resultado mostrará todos los trabajos que están en ejecución en ese momento, con los detalles mencionados.
+
+---
+
+## **Nota Importante**
+
+- Este script solo es válido si el SQL Server Agent está habilitado y en ejecución.
+- Para poder ejecutarlo, el usuario debe tener permisos para acceder a la base de datos `msdb` y consultar las tablas del sistema mencionadas.
+
+---
+
+## **Casos de Uso**
+
+- **Monitoreo:** Determinar qué trabajos están en ejecución durante un periodo de alta actividad.
+- **Auditoría:** Verificar qué pasos de los trabajos están tardando más de lo esperado.
+- **Soporte:** Identificar rápidamente si un job crítico sigue en progreso.
+
+
+================
+# 
 
 
 ---
