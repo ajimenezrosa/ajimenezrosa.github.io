@@ -151,6 +151,7 @@ Manuales de</th>
 * 7.11 [Query para Monitorear Sesiones Activas y Consultas en Ejecución en SQL Server](#7.11)
 * 7.12 [Buscar Caracteres Especiales en una Tabla de SQL Server](#7.12)
 * 7.13 [Detección y Análisis de Workers en SQL Server](#7.13)
+
 ---
 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
