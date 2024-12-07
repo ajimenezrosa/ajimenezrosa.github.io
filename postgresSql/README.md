@@ -215,6 +215,9 @@ GRANT nombre_rol TO nombre_usuario;
 ~~~bash
 pg_dump nombre_base_datos > backup.sql
 ~~~
+~~~bash
+psql -U ajimenez -h 192.168.100.226 -p 5432 -d hidra -f BackupPostGres/pensiones.sql
+~~~
 
 ### Restauración
 
