@@ -16470,18 +16470,7 @@ WHERE
 
 
 
-
-
-
-
----
-
-
-
-
 # 
---- 
-
 
 # Guía para Verificar la Salud de una Base de Datos en SQL Server<a name="18.01"></a>
 
