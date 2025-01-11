@@ -267,8 +267,9 @@ Manuales de</th>
 - 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#17.6)
 - 17.7 [Licencia](#17.7)
 
+--- 
 
-
+- 18.01 [Guía para Verificar la Salud de una Base de Datos en SQL Server](#18.01)
 ---
 
 
@@ -16466,7 +16467,7 @@ WHERE
 ## **Notas**
 - Asegúrate de contar con permisos adecuados para ejecutar la consulta en el entorno de SQL Server.
 - Este script es útil para monitorear el uso de procedimientos almacenados en tiempo real y diagnosticar posibles problemas de rendimiento.
-```
+
 
 
 
@@ -16479,20 +16480,119 @@ WHERE
 
 
 # 
+--- 
+
+
+# Guía para Verificar la Salud de una Base de Datos en SQL Server<a name="18.01"></a>
+
+Como administrador de bases de datos (DBA), es fundamental garantizar el correcto funcionamiento de las bases de datos en SQL Server. A continuación, se presentan pasos, herramientas y scripts prácticos para verificar la salud de una base de datos de manera efectiva.
+
+---
+
+## 1. Verificar el estado de los servicios de SQL Server
+
+Asegúrate de que todos los servicios esenciales de SQL Server estén en funcionamiento. Usa los siguientes comandos:
+
+```sql
+EXEC master.dbo.xp_servicecontrol 'QUERYSTATE', 'MSSQLServer';
+EXEC master.dbo.xp_servicecontrol 'QUERYSTATE', 'SQLServerAgent';
+EXEC master.dbo.xp_servicecontrol 'QUERYSTATE', 'SQLBrowser';
+```
+
+---
+
+## 2. Revisar los registros de errores
+
+Consulta los registros de errores de SQL Server para identificar problemas críticos:
+
+```sql
+EXEC xp_readerrorlog 0, 1, N'error';
+```
+
+---
+
+## 3. Verificar el estado de las bases de datos
+
+Revisa el estado de todas las bases de datos utilizando la vista `sys.databases`:
+
+```sql
+SELECT name, state_desc FROM sys.databases;
+```
+
+---
+
+## 4. Comprobar la integridad de la base de datos
+
+Ejecuta el comando `DBCC CHECKDB` para verificar la integridad de una base de datos específica:
+
+```sql
+DBCC CHECKDB('NombreDeTuBaseDeDatos') WITH NO_INFOMSGS, ALL_ERRORMSGS;
+```
+
+---
+
+## 5. Revisar los backups
+
+Asegúrate de que los respaldos se estén realizando correctamente con la siguiente consulta:
+
+```sql
+SELECT
+    d.name AS DatabaseName,
+    MAX(b.backup_finish_date) AS LastBackupDate
+FROM
+    sys.databases d
+LEFT JOIN
+    msdb.dbo.backupset b ON d.name = b.database_name
+GROUP BY
+    d.name;
+```
+
+---
+
+## 6. Monitorear el rendimiento
+
+Utiliza herramientas como el Monitor de Actividad de SQL Server o SQL Server Management Studio (SSMS) para analizar el rendimiento y detectar posibles cuellos de botella.
+
+---
+
+## 7. Scripts de salud automatizados
+
+Automatiza la generación de reportes de salud con scripts personalizados. A continuación, un ejemplo:
+
+```sql
+DECLARE @DatabaseHealthReport NVARCHAR(MAX);
+
+SET @DatabaseHealthReport =
+    'Server: ' + @@SERVERNAME + CHAR(13) +
+    'SQL Server Version: ' + @@VERSION + CHAR(13) +
+    'Database Health Report: ' + CHAR(13) +
+    '---------------------------------' + CHAR(13);
+
+SELECT @DatabaseHealthReport = @DatabaseHealthReport +
+    'Database: ' + name + ', State: ' + state_desc + CHAR(13)
+FROM sys.databases;
+
+PRINT @DatabaseHealthReport;
+```
+
+---
+
+## Conclusión
+
+Siguiendo estos pasos, podrás identificar y resolver problemas en tus bases de datos de manera proactiva. Si necesitas más detalles o deseas agregar herramientas adicionales, no dudes en contribuir al repositorio.
+
+
+
+
+--- 
+---
+---
+
+
 
 # No existe nada debajo de esta linea
 
 
-
-<!-- 
-
-<div>
-<p style = 'text-align:center;'>
-<img src="https://gcs-international.com/wp-content/uploads/2017/05/GCS-International-Logo.png?auto=format&q=50?format=jpg&name=small" alt="JuveYell" width="750px">
-</p>
-</div> 
-
--->
 
 
 
