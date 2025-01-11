@@ -16386,7 +16386,7 @@ Aquí tienes el archivo `README.md` con la descripción adicional que especifica
 # 
 
 
-```markdown
+
 # Consulta SQL para Identificar Usuarios Ejecutando Procedimientos Almacenados<a name="5.6"></a>
 
 **Autor:** Alejandro Jiménez  
