@@ -153,6 +153,10 @@ Manuales de</th>
 * 7.13 [Detección y Análisis de Workers en SQL Server](#7.13)
 * 7.14 [Monitorización de Sesiones Activas en SQL Server](#7.14)
 
+# Análisis de Procedimientos Almacenados en SQL Server
+- [Identificar Procedimientos Almacenados con Mayor Tiempo de Duración](#identificar-procedimientos-almacenados-con-mayor-tiempo-de-duracion)
+- [Buscar un Procedimiento Almacenado en Todas las Bases de Datos](#buscar-un-procedimiento-almacenado-en-todas-las-bases-de-datos)
+
 ---
 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
@@ -6004,6 +6008,90 @@ FROM sys.objects
 WHERE modify_date > GETDATE() - 10
 ORDER BY modify_date;
 ~~~
+# 
+
+
+---
+
+## Identificar Procedimientos Almacenados con Mayor Tiempo de Duración
+![](https://www.revealbi.io/wp-content/uploads/2021/08/what-is-stored-procedure.png)
+
+### Explicación
+
+- `sys.dm_exec_procedure_stats`: Vista de administración dinámica que proporciona estadísticas de ejecución de procedimientos almacenados.
+- `qs.total_elapsed_time / qs.execution_count AS avg_elapsed_time`: Calcula el tiempo promedio de ejecución del procedimiento almacenado.
+- `qs.total_elapsed_time`: Tiempo total de ejecución de todas las instancias del procedimiento.
+- `qs.execution_count`: Número de veces que el procedimiento ha sido ejecutado.
+- `qs.creation_time`: Fecha y hora en la que el procedimiento fue compilado.
+- `qs.last_execution_time`: Última vez que el procedimiento fue ejecutado.
+- `OBJECT_NAME(qs.object_id) AS procedure_name`: Obtiene el nombre del procedimiento almacenado.
+- `qs.database_id = DB_ID('nombre_de_tu_base_de_datos')`: Filtra los procedimientos de la base de datos especificada.
+- `ORDER BY avg_elapsed_time DESC`: Ordena los resultados por el tiempo promedio de ejecución en orden descendente.
+
+### Consulta SQL
+
+```sql
+SELECT
+    qs.total_elapsed_time / qs.execution_count AS avg_elapsed_time,
+    qs.total_elapsed_time,
+    qs.execution_count,
+    qs.creation_time,
+    qs.last_execution_time,
+    OBJECT_NAME(qs.object_id) AS procedure_name
+FROM
+    sys.dm_exec_procedure_stats AS qs
+WHERE
+    qs.database_id = DB_ID('nombre_de_tu_base_de_datos')
+ORDER BY
+    avg_elapsed_time DESC;
+```
+
+[⬆ Volver al inicio](#contenido)
+
+---
+
+## Buscar un Procedimiento Almacenado en Todas las Bases de Datos
+![](https://amif.mx/wp-content/uploads/grafico-de-base-de-datos-y-procedimientos.jpg)
+
+
+### Explicación
+
+- `DECLARE @ProcedureName NVARCHAR(128)`: Declara una variable para almacenar el nombre del procedimiento que se desea buscar.
+- `DECLARE @SQL NVARCHAR(MAX)`: Declara una variable para construir la consulta dinámica.
+- `SELECT @SQL = @SQL + ...`: Construye dinámicamente una consulta para verificar la existencia del procedimiento en cada base de datos.
+- `sys.databases`: Contiene la lista de todas las bases de datos en el servidor.
+- `sys.procedures`: Tabla del sistema que almacena información sobre los procedimientos almacenados en una base de datos específica.
+- `sp_executesql @SQL`: Ejecuta la consulta dinámica construida.
+
+### Consulta SQL
+
+```sql
+DECLARE @ProcedureName NVARCHAR(128) = 'nombre_del_procedimiento';
+DECLARE @SQL NVARCHAR(MAX);
+
+SET @SQL = '';
+
+SELECT @SQL = @SQL +
+    'IF EXISTS (SELECT 1 FROM [' + name + '].sys.procedures WHERE name = ''' + @ProcedureName + ''')
+    BEGIN
+        PRINT ''Procedimiento encontrado en la base de datos: ' + name + '''
+    END
+    '
+FROM sys.databases;
+
+EXEC sp_executesql @SQL;
+```
+
+[⬆ Volver al inicio](#contenido)
+
+---
+
+Este documento puede ser utilizado para futuras referencias en la administración de procedimientos almacenados en SQL Server.
+
+
+
+
+
 # 
 
 
