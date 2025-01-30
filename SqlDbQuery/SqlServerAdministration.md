@@ -153,7 +153,7 @@ Manuales de</th>
 * 7.13 [Detección y Análisis de Workers en SQL Server](#7.13)
 * 7.14 [Monitorización de Sesiones Activas en SQL Server](#7.14)
 
-# Análisis de Procedimientos Almacenados en SQL Server
+#### Análisis de Procedimientos Almacenados en SQL Server
 - [Identificar Procedimientos Almacenados con Mayor Tiempo de Duración](#identificar-procedimientos-almacenados-con-mayor-tiempo-de-duracion)
 - [Buscar un Procedimiento Almacenado en Todas las Bases de Datos](#buscar-un-procedimiento-almacenado-en-todas-las-bases-de-datos)
 
@@ -6013,7 +6013,7 @@ ORDER BY modify_date;
 
 ---
 
-## Identificar Procedimientos Almacenados con Mayor Tiempo de Duración
+## Identificar Procedimientos Almacenados con Mayor Tiempo de Duración<a name="identificar-procedimientos-almacenados-con-mayor-tiempo-de-duracion"></a>
 ![](https://www.revealbi.io/wp-content/uploads/2021/08/what-is-stored-procedure.png)
 
 ### Explicación
@@ -6050,7 +6050,7 @@ ORDER BY
 
 ---
 
-## Buscar un Procedimiento Almacenado en Todas las Bases de Datos
+## Buscar un Procedimiento Almacenado en Todas las Bases de Datos<a name="buscar-un-procedimiento-almacenado-en-todas-las-bases-de-datos"></a>
 ![](https://amif.mx/wp-content/uploads/grafico-de-base-de-datos-y-procedimientos.jpg)
 
 
