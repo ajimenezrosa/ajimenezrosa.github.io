@@ -3513,7 +3513,8 @@ SELECT rs.destination_database_name,
 #  
 
 # Limpiar y Reducir el Log de Transacciones SQL Server. [Fuente SoporteSQL](https://soportesql.wordpress.com/2014/04/22/limpiar-y-reducir-el-log-de-transacciones-sql-server/)  <a name="limpiarlog"></a>
-
+#### Ultima Modificacion: ***Jose Alejandro Jimenez Rosa*** 
+#### ***Fecha: 2025-02-01***
 <img src="https://soportesql.files.wordpress.com/2014/04/fa932-log.png?format=jpg&name=large" alt="JuveR" width="800px">
 
 Este documento detalla los procedimientos para limpiar y reducir el log de transacciones en SQL Server tanto en entornos **Stand-Alone** como en **Grupos de Disponibilidad (AlwaysOn Availability Groups)**.
