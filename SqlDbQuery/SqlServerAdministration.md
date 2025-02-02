@@ -3516,44 +3516,75 @@ SELECT rs.destination_database_name,
 
 <img src="https://soportesql.files.wordpress.com/2014/04/fa932-log.png?format=jpg&name=large" alt="JuveR" width="800px">
 
-## Script de Ejemplo que permite limpiar y reducir el log de transacciones de una base de datos, no es posible limpiar el log sin realizar primero un backup del log, realizaremos nuestro ejemplo con una base de datos a la que llamaremos PrimaveraNew
-# 
+Este documento detalla los procedimientos para limpiar y reducir el log de transacciones en SQL Server tanto en entornos **Stand-Alone** como en **Grupos de Disponibilidad (AlwaysOn Availability Groups)**.
 
+## 1. Reducción del Log de Transacciones en un Entorno Stand-Alone
 
-~~~sql
---Para Limpiar el Log de Transacciones es necesario realizar un Backup del Log
---Backup log PrimaveraNeW
-to disk  =‘C:\test\BackupLog.bak’
+### **Pasos:**
+1. **Realizar un backup del log de transacciones** (obligatorio antes de la reducción):
 
+   ```sql
+   BACKUP LOG [NombreBaseDatos] TO DISK = 'C:\Backup\NombreBaseDatosLog.bak';
+   ```
 
---–Una vez hecho el backup consultamos el nombre lógico de los archivos del log
-sp_helpdb PrimaveraNeW
-~~~
-# 
+2. **Obtener el nombre lógico de los archivos de log**:
 
-#### Resultado:
-<img src="https://soportesql.files.wordpress.com/2014/04/fa932-log.png?format=jpg&name=large" alt="JuveR" width="800px">
+   ```sql
+   sp_helpdb [NombreBaseDatos];
+   ```
 
+3. **Cambiar el modelo de recuperación a SIMPLE**:
 
-#### El Siguiente Código nos permite realizar la reduccion de los log de la base de datos.  El mismo puede ser utilizado como ejemplo para nuestros trabajos
-# 
+   ```sql
+   ALTER DATABASE [NombreBaseDatos] SET RECOVERY SIMPLE;
+   GO
+   ```
 
-~~~sql
---- Alejandro Jimenez Rosa
---- 11 de Marzo 2022
+4. **Reducir el log de transacciones a 1 MB**:
 
----— Antes de truncar el log cambiamos el modelo de recuperación a SIMPLE.
-ALTER DATABASE PrimaveraNeW
-SET RECOVERY SIMPLE;
-GO
-–Reducimos el log de transacciones a  1 MB.
-DBCC SHRINKFILE(PrimaveraNeW_Log, 1);
-GO
-— Cambiamos nuevamente el modelo de recuperación a Completo.
-ALTER DATABASE PrimaveraNeW
-SET RECOVERY FULL;
-GO
-~~~
+   ```sql
+   DBCC SHRINKFILE (NombreBaseDatos_Log, 1);
+   GO
+   ```
+
+5. **Restaurar el modelo de recuperación a COMPLETO**:
+
+   ```sql
+   ALTER DATABASE [NombreBaseDatos] SET RECOVERY FULL;
+   GO
+   ```
+
+## 2. Reducción del Log de Transacciones en un Entorno AlwaysOn Availability Groups
+
+En un entorno de alta disponibilidad con Grupos de Disponibilidad, **no es posible cambiar el modelo de recuperación a SIMPLE**. Para reducir el tamaño del log de transacciones sin comprometer la alta disponibilidad, sigue los siguientes pasos:
+
+### **Pasos:**
+1. **Realizar un backup del log de transacciones**:
+
+   ```sql
+   BACKUP LOG [NombreBaseDatos] TO DISK = 'C:\Backup\NombreBaseDatosLog.bak';
+   ```
+
+2. **Reducir el tamaño del log de transacciones**:
+
+   ```sql
+   DBCC SHRINKFILE (NombreBaseDatos_Log, 1);
+   ```
+
+## 3. Monitoreo y Mantenimiento del Tamaño del Log
+Para evitar el crecimiento excesivo del log de transacciones, es recomendable:
+
+- **Realizar backups frecuentes** del log de transacciones.
+- **Configurar alertas** para monitorear el tamaño del log y tomar acciones preventivas.
+- **Monitorear el rendimiento del servidor** y ajustar la configuración según sea necesario.
+
+## 4. Notas Adicionales
+
+- Es importante realizar **backups completos** de la base de datos regularmente para asegurar la integridad de los datos.
+- En entornos AlwaysOn, el backup del log debe realizarse desde la réplica primaria.
+
+Este documento proporciona un procedimiento detallado y preciso para gestionar el tamaño del log de transacciones en diferentes entornos de SQL Server.
+
 # 
 
 ## Seguimiento en Tiempo Real de Operaciones de Backup y Restore<a name="tiemporestore"></a>
