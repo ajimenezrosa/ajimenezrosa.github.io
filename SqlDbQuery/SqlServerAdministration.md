@@ -132,7 +132,13 @@ Manuales de</th>
  - 6.8 [Verificar logs de errores del SQL Server](#errorlogsql)  
  - 6.9 [Cerrar todas las conexiones a una base de datos](#cerrarconexionessql)  
  - 6.10 [Documentación de SQL Scripts para backup y restore con TDE](#tde1)  
+
  -  6.11 [Cómo saber si una base de datos tiene TDE](#49)  
+ -  6.11.1 [Validación de Bases de Datos: TDE y Columnas Encriptadas]
+    - [Introducción](#introducción)
+    - [Consulta de Columnas Encriptadas](#consulta-de-columnas-encriptadas)
+    - [Consulta de Bases de Datos con TDE Habilitado](#consulta-de-bases-de-datos-con-tde-habilitado)
+
  - 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
 
 # 
@@ -283,6 +289,9 @@ Manuales de</th>
 
 - 18.01 [Guía para Verificar la Salud de una Base de Datos en SQL Server](#18.01)
 ---
+
+
+- 19.00 [Documentation of SQL Scripts for Backup and Restore with TDE](#19.00)
 
 
 #
@@ -14743,6 +14752,90 @@ For each database, the sequence of steps is as follows:
 
 This sequence ensures that the databases are properly backed up, restored, and configured for high availability.
 #
+---
+
+# Validación de Bases de Datos: TDE y Columnas Encriptadas
+
+**Propiedad de JOSE ALEJANDRO JIMENEZ ROSA**  
+Última actualización: _ayer a las 4:32 p. m._  
+
+## Índice
+
+- [Introducción](#introducción)
+- [Consulta de Columnas Encriptadas](#consulta-de-columnas-encriptadas)
+- [Consulta de Bases de Datos con TDE Habilitado](#consulta-de-bases-de-datos-con-tde-habilitado)
+
+## Introducción
+
+Este documento contiene consultas SQL para validar bases de datos con características de seguridad avanzadas en SQL Server. Se incluyen scripts para:
+
+- Identificar columnas encriptadas utilizando Always Encrypted.
+- Identificar bases de datos con Transparent Data Encryption (TDE) habilitado.
+
+## Consulta de Columnas Encriptadas
+
+Este script recorre todas las bases de datos en el servidor y obtiene las columnas encriptadas utilizando Always Encrypted.
+
+```sql
+DECLARE @dbName NVARCHAR(128)
+DECLARE @sql NVARCHAR(MAX)
+DECLARE db_cursor CURSOR FOR
+SELECT name 
+FROM sys.databases
+WHERE state_desc = 'ONLINE' AND name NOT IN ('master', 'tempdb', 'model', 'msdb')
+OPEN db_cursor
+FETCH NEXT FROM db_cursor INTO @dbName
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @sql = '
+    USE [' + @dbName + '];
+    SELECT 
+        ''' + @dbName + ''' AS DatabaseName,
+        c.name AS ColumnName,
+        t.name AS TableName,
+        cek.name AS ColumnEncryptionKey
+    FROM 
+        sys.columns c
+    JOIN 
+        sys.tables t ON c.object_id = t.object_id
+    LEFT JOIN 
+        sys.column_encryption_keys cek ON c.column_encryption_key_id = cek.column_encryption_key_id
+    WHERE 
+        cek.name IS NOT NULL;'
+    EXEC sp_executesql @sql
+    FETCH NEXT FROM db_cursor INTO @dbName
+END
+CLOSE db_cursor
+DEALLOCATE db_cursor
+```
+
+## Consulta de Bases de Datos con TDE Habilitado
+
+Este query te permitirá identificar todas las bases de datos que tienen Transparent Data Encryption (TDE) habilitado en el servidor.
+
+```sql
+SELECT 
+    d.name AS DatabaseName,
+    d.is_encrypted AS IsEncrypted,
+    CASE 
+        WHEN dek.encryption_state = 0 THEN 'No Encrypted'
+        WHEN dek.encryption_state = 1 THEN 'Unencrypted'
+        WHEN dek.encryption_state = 2 THEN 'Encryption in Progress'
+        WHEN dek.encryption_state = 3 THEN 'Encrypted'
+        WHEN dek.encryption_state = 4 THEN 'Key Change in Progress'
+        WHEN dek.encryption_state = 5 THEN 'Decryption in Progress'
+        WHEN dek.encryption_state = 6 THEN 'Protection Change in Progress'
+        ELSE 'Unknown'
+    END AS EncryptionState,
+    dek.encryptor_type AS EncryptorType
+FROM 
+    sys.databases d
+LEFT JOIN 
+    sys.dm_database_encryption_keys dek ON d.database_id = dek.database_id
+WHERE d.is_encrypted = 1;
+```
+
+---
 
 
 ## Como saber Cuales DB tienen TDE en un Servidor<a name="49"></a>
