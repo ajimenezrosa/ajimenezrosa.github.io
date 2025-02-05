@@ -81,7 +81,15 @@ Manuales de</th>
     - 3.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)  
 - 3.2 [Evaluación de Índices en SQL Server](#3113)  
     <!-- - 3.1.13 [Evaluación de Índices en SQL Server](#3113) -->
+#### Documentación sobre Consultas de Índices en SQL Server
 
+##### Índice
+
+- [Introducción](#introducci%C3%B3n)
+- [Identificación de Índices Innecesarios](#identificaci%C3%B3n-de-%C3%ADndices-innecesarios)
+- [Detalles de los Índices en las Tablas](#detalles-de-los-%C3%ADndices-en-las-tablas)
+- [Comparación y Agrupación de Índices](#comparaci%C3%B3n-y-agrupaci%C3%B3n-de-%C3%ADndices)
+- [Conclusión](#conclusi%C3%B3n)
 ---
 
 #### **4. Recuperación y Backup**
@@ -3127,6 +3135,165 @@ GO
 ~~~
 
 #
+
+
+# Documentación sobre Consultas de Índices en SQL Server
+
+## Índice
+
+- [Introducción](#introducci%C3%B3n)
+- [Identificación de Índices Innecesarios](#identificaci%C3%B3n-de-%C3%ADndices-innecesarios)
+- [Detalles de los Índices en las Tablas](#detalles-de-los-%C3%ADndices-en-las-tablas)
+- [Comparación y Agrupación de Índices](#comparaci%C3%B3n-y-agrupaci%C3%B3n-de-%C3%ADndices)
+- [Conclusión](#conclusi%C3%B3n)
+
+---
+
+## Introducción
+
+Esta documentación describe varios scripts en SQL Server para el análisis de índices. Estos scripts ayudan a identificar índices innecesarios, obtener detalles de los índices en las tablas y comparar índices para mejorar la eficiencia del sistema.
+
+---
+
+## Identificación de Índices Innecesarios
+
+### Objetivo
+
+Este script ayuda a identificar índices que no están siendo utilizados (sin `seeks`, `scans` o `lookups`), pero que siguen recibiendo actualizaciones (`updates`). Esto puede ayudar a determinar si es necesario eliminarlos para mejorar el rendimiento de la base de datos.
+
+### Script
+
+```sql
+SELECT
+    OBJECT_NAME(I.[object_id]) AS [Table Name],
+    I.name AS [Index Name],
+    I.type_desc AS [Index Type],
+    S.user_seeks AS [Seeks],
+    S.user_scans AS [Scans],
+    S.user_lookups AS [Lookups],
+    S.user_updates AS [Updates],
+    P.rows AS [Total Rows],
+    'DROP INDEX ' + I.name + ' ON ' + OBJECT_NAME(I.[object_id]) AS [Drop Script]
+FROM
+    sys.indexes I
+LEFT JOIN
+    sys.dm_db_index_usage_stats S
+    ON I.[object_id] = S.[object_id] AND I.index_id = S.index_id
+JOIN
+    sys.partitions P ON I.[object_id] = P.[object_id] AND I.index_id = P.index_id
+WHERE
+    OBJECTPROPERTY(I.[object_id], 'IsUserTable') = 1
+    AND I.type_desc <> 'HEAP'
+    AND I.is_primary_key = 0
+    AND I.is_unique = 0
+    AND (S.user_seeks IS NULL OR S.user_seeks = 0)
+    AND (S.user_scans IS NULL OR S.user_scans = 0)
+ORDER BY
+    S.user_updates DESC, [Table Name], [Index Name];
+```
+
+### Uso
+- Identificar índices sin actividad de lectura.
+- Generar un script de eliminación (`DROP INDEX`).
+- Mejorar el rendimiento eliminando índices innecesarios.
+
+---
+
+## Detalles de los Índices en las Tablas
+
+### Objetivo
+
+Este script extrae información sobre los índices existentes en las tablas, mostrando los nombres de las columnas, el tipo de índice y si se trata de columnas incluidas.
+
+### Script
+
+```sql
+SELECT
+    t.name AS TableName,
+    i.name AS IndexName,
+    i.type_desc AS IndexType,
+    ic.key_ordinal AS KeyOrdinal,
+    c.name AS ColumnName,
+    ic.is_included_column AS IsIncludedColumn
+FROM
+    sys.tables t
+JOIN
+    sys.indexes i ON t.object_id = i.object_id
+JOIN
+    sys.index_columns ic ON i.index_id = ic.index_id AND t.object_id = ic.object_id
+JOIN
+    sys.columns c ON t.object_id = c.object_id AND c.column_id = ic.column_id
+WHERE
+    t.is_ms_shipped = 0
+ORDER BY
+    t.name, i.name, ic.key_ordinal;
+```
+
+### Uso
+- Obtener información detallada de los índices en una base de datos.
+- Identificar columnas clave e incluidas en los índices.
+- Optimizar la indexación según las necesidades de consulta.
+
+---
+
+## Comparación y Agrupación de Índices
+
+### Objetivo
+
+Este conjunto de consultas permite identificar índices redundantes o similares dentro de una tabla. Ayuda a comparar índices basados en las columnas que contienen y su tipo.
+
+### Script
+
+```sql
+WITH BaseNumbers AS (
+  SELECT 1 AS ColId
+  UNION ALL
+  SELECT ColId+1
+  FROM BaseNumbers
+)
+, IndexColumns AS (
+  SELECT Sch.name AS SchemaName,
+    objetos.name AS TableName,
+    indices.name AS IndexName,
+    indices.type_desc AS IndexType,
+    indices.index_id,
+    Idc.key_ordinal,
+    Col.name AS ColumnName
+  FROM sys.indexes AS indices
+  INNER JOIN sys.objects AS objetos
+    ON indices.object_id = objetos.object_id
+  INNER JOIN sys.schemas AS SCH
+    ON objetos.schema_id = SCH.schema_id
+  JOIN sys.index_columns AS Idc
+    ON indices.index_id = Idc.index_id
+      AND indices.object_id = Idc.object_id
+  INNER JOIN sys.columns AS Col
+    ON Col.column_id = Idc.column_id
+    AND Col.object_id = Idc.object_id
+  WHERE indices.index_id > 0
+    AND objetos.is_ms_shipped=0
+    AND objetos.type in ('U ')
+    AND indices.type IN (1,2,7)
+    AND Idc.is_included_column=0
+)
+SELECT * FROM IndexColumns;
+```
+
+### Uso
+- Comparar índices para identificar redundancias.
+- Analizar índices con columnas compartidas.
+- Detectar oportunidades para eliminar o consolidar índices.
+
+---
+
+## Conclusión
+
+
+
+
+
+
+--- 
 
 # Query de los tamanos de los backup de base de datos<a name="querybackup"><a/>
 ![](https://docs.oracle.com/es/solutions/back-up-oracle-databases-into-government-cloud/img/oci-db-cloud-backup-module-architecture.png)
