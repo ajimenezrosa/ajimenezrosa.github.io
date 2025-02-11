@@ -284,7 +284,7 @@ Manuales de</th>
 - 17.5 [Actualizar Valor del Parámetro Server Name](#17.5)
 - 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#17.6)
 - 17.7 [Licencia](#17.7)
-- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
+- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#17.8)
 --- 
 
 - 18.01 [Guía para Verificar la Salud de una Base de Datos en SQL Server](#18.01)
@@ -14834,7 +14834,7 @@ LEFT JOIN
     sys.dm_database_encryption_keys dek ON d.database_id = dek.database_id
 WHERE d.is_encrypted = 1;
 ```
-- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
+- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#17.8)
 ---
 
 
@@ -16919,7 +16919,7 @@ Si la base de datos no tiene TDE, el proceso es el mismo. La única diferencia e
 
 **Fecha:** 11 de febrero de 2025
 
-[Ir al título del documento](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
+[Ir al título del documento](#17.8)
 
 
 
