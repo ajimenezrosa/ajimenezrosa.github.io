@@ -284,7 +284,7 @@ Manuales de</th>
 - 17.5 [Actualizar Valor del Parámetro Server Name](#17.5)
 - 17.6 [Crear Bases de Datos Administrativas STOS_ADMIN y STOS_PTO](#17.6)
 - 17.7 [Licencia](#17.7)
-
+- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
 --- 
 
 - 18.01 [Guía para Verificar la Salud de una Base de Datos en SQL Server](#18.01)
@@ -14834,7 +14834,7 @@ LEFT JOIN
     sys.dm_database_encryption_keys dek ON d.database_id = dek.database_id
 WHERE d.is_encrypted = 1;
 ```
-
+- 17.8 [Ingreso de una Base de Datos a la Alta Disponibilidad con TDE](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
 ---
 
 
@@ -16847,6 +16847,84 @@ WHERE
 ## **Notas**
 - Asegúrate de contar con permisos adecuados para ejecutar la consulta en el entorno de SQL Server.
 - Este script es útil para monitorear el uso de procedimientos almacenados en tiempo real y diagnosticar posibles problemas de rendimiento.
+
+
+---
+
+# **Ingreso de una Base de Datos a la Alta Disponibilidad con TDE**
+
+## **Descripción**
+Este documento describe el proceso para agregar una base de datos a un grupo de disponibilidad en SQL Server (Always On Availability Groups) cuando la base de datos está protegida con Transparent Data Encryption (TDE). También se detalla cómo realizar este proceso en bases de datos que no tienen TDE habilitado.
+
+## **Código**
+
+### **Ejecución en el Nodo Primario**
+```sql
+-- Respaldo de la base de datos en el nodo primario
+BACKUP DATABASE Azul_IS_CallCenter
+TO DISK = N'U:\MSSQL\BACKUP\CH074718\Azul_IS_CallCenter.bak'
+WITH INIT,
+NAME = N'Azul_IS_CallCenter-Full Database Backup',
+SKIP, NOREWIND, NOUNLOAD, STATS = 1;
+GO
+
+-- Respaldo del log de transacciones
+BACKUP LOG Azul_IS_CallCenter
+TO DISK = 'U:\MSSQL\BACKUP\CH074718\Azul_IS_CallCenter.trn'
+WITH INIT;
+GO
+
+-- Agregar la base de datos al grupo de alta disponibilidad
+ALTER AVAILABILITY GROUP [ALWAYSONPAGOSR] ADD DATABASE [Azul_IS_TransactionServices];
+GO
+```
+
+### **Ejecución en el Nodo Secundario**
+```sql
+-- Restauración de la base de datos en el nodo secundario
+RESTORE DATABASE Azul_IS_TransactionServices
+FROM  DISK = N'E:\MSSQL\Backup\CH074718\Azul_IS_TransactionServices.BAK'
+WITH  FILE = 1,
+MOVE N'Azul_IS_TransactionServices' TO N'E:\MSSQL\DATA\Azul_IS_TransactionServices.mdf',
+MOVE N'Azul_IS_TransactionServices_log' TO N'L:\MSSQL\LOG\Azul_IS_TransactionServices_log.ldf',
+MOVE N'Azul_IS_TransactionServices_index' TO N'I:\MSSQL\INDEX\Azul_IS_TransactionServices_Index.ndf',
+NOUNLOAD,  STATS = 10, REPLACE,
+NORECOVERY;
+GO
+
+-- Restauración del log de transacciones
+RESTORE LOG Azul_IS_TransactionServices
+FROM Disk = 'E:\MSSQL\Backup\CH074718\Azul_IS_TransactionServices.trn'
+WITH NORECOVERY;
+GO
+
+-- Configurar la base de datos en el grupo de alta disponibilidad
+ALTER DATABASE Azul_IS_TransactionServices SET HADR AVAILABILITY GROUP = [ALWAYSONPAGOSR];
+GO
+```
+
+## **Explicación de los ALTER Statements**
+
+1. **ALTER AVAILABILITY GROUP [ALWAYSONPAGOSR] ADD DATABASE [Azul_IS_TransactionServices];**
+   - Este comando se ejecuta en el nodo primario y añade la base de datos `Azul_IS_TransactionServices` al grupo de disponibilidad Always On.
+
+2. **ALTER DATABASE Azul_IS_TransactionServices SET HADR AVAILABILITY GROUP = [ALWAYSONPAGOSR];**
+   - Este comando se ejecuta en el nodo secundario y asocia la base de datos `Azul_IS_TransactionServices` al grupo de disponibilidad, permitiendo la sincronización con el nodo primario.
+
+## **Proceso para Bases de Datos sin TDE**
+Si la base de datos no tiene TDE, el proceso es el mismo. La única diferencia es que no es necesario restaurar y aplicar la clave de cifrado antes de agregarla al grupo de disponibilidad. Para bases de datos con TDE, se debe restaurar la clave de cifrado en el servidor secundario antes de la restauración de la base de datos.
+
+## **Autor**
+**José Alejandro Jiménez Rosa**
+
+**Fecha:** 11 de febrero de 2025
+
+[Ir al título del documento](#ingreso-de-una-base-de-datos-a-la-alta-disponibilidad-con-tde)
+
+
+
+
+
 
 
 
