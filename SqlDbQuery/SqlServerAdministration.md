@@ -16851,7 +16851,7 @@ WHERE
 
 ---
 
-# **Ingreso de una Base de Datos a la Alta Disponibilidad con TDE**
+# **Ingreso de una Base de Datos a la Alta Disponibilidad con TDE**<a name="17.8"></a>
 
 ## **Descripción**
 Este documento describe el proceso para agregar una base de datos a un grupo de disponibilidad en SQL Server (Always On Availability Groups) cuando la base de datos está protegida con Transparent Data Encryption (TDE). También se detalla cómo realizar este proceso en bases de datos que no tienen TDE habilitado.
