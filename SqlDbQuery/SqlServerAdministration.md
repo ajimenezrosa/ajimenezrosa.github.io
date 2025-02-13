@@ -15274,45 +15274,70 @@ DROP TABLE #DatabasesAndTables;
 
 ## Documentación para la Restauración de Bases de Datos ABT<a name="601"></a>
 
-#### Introducción
-Este documento detalla el procedimiento a seguir para traer en línea las bases de datos asociadas con los servidores de oficina y sucursales (CNP y SUC) de la institución, conocidos como ABT, después de que el personal de seguridad asigne los permisos de control total (full control) para los discos correspondientes.
+**Procedimiento para traer en línea las bases de datos ABT en servidores de oficina y sucursales**
 
-#### Contexto
-En los servidores ABT, tanto en oficinas como en sucursales, se ha identificado la necesidad de traer en línea las bases de datos luego de que se realicen ciertos cambios de permisos a nivel de los discos donde estas residen. Este procedimiento es común cuando se presentan problemas de acceso a las bases de datos debido a cambios en la configuración de permisos.
-
-#### Procedimiento
-
-1. **Asignación de Permisos:**
-   - El personal de seguridad deberá asignar permisos de control total (full control) sobre los discos que contienen las bases de datos mencionadas. Este paso es crucial para garantizar que los servicios de SQL Server puedan acceder correctamente a los archivos de las bases de datos.
-
-2. **Ejecución del Script SQL:**
-   - Una vez asignados los permisos, el personal encargado de las bases de datos deberá ejecutar el siguiente script para traer en línea las bases de datos que se encontraban offline:
-   
-     ~~~sql
-     ALTER DATABASE [ABT41] SET ONLINE;
-     ALTER DATABASE [ABT41ROM] SET ONLINE;
-     ALTER DATABASE [ABT41SIG] SET ONLINE;
-     ~~~
-
-3. **Verificación:**
-   - Después de ejecutar el script, se debe verificar que las bases de datos estén en línea y operativas. Esto se puede hacer revisando el estado de las bases de datos desde el SQL Server Management Studio (SSMS) o utilizando la siguiente consulta:
-   
-     ~~~sql
-     SELECT name, state_desc 
-     FROM sys.databases 
-     WHERE name IN ('ABT41', 'ABT41ROM', 'ABT41SIG');
-     ~~~
-
-#### Consideraciones Finales
-- Este procedimiento debe ser realizado por personal autorizado y capacitado para manejar tanto los permisos de seguridad a nivel de discos como la administración de bases de datos en SQL Server.
-- Es importante documentar cualquier incidente relacionado con las bases de datos ABT para mejorar futuros procesos de resolución.
-
-#### Conclusión
-El procedimiento descrito en este documento permite restaurar el acceso a las bases de datos en los servidores ABT después de la asignación de permisos correspondientes. Esto asegura que el personal pueda resolver problemas similares en el futuro de manera eficiente y efectiva.
+**Fecha Creacion    :** 14 de octubre de 2024
+**Fecha Modificacion:** 14 de Febrero de 2025
 
 ---
 
-Este  procedimiento debe ser revisado y actualizado según sea necesario para reflejar cambios en la infraestructura o procedimientos relacionados con la administración de bases de datos en la institución.
+### **Introducción**
+Este documento detalla el procedimiento a seguir para traer en línea las bases de datos asociadas con los servidores de oficina y sucursales (CNP y SUC) de la institución, conocidos como ABT, después de que el personal de seguridad asigne los permisos de control total (*Full Control*) para los discos correspondientes.
+
+### **Contexto**
+En los servidores ABT, tanto en oficinas como en sucursales, se ha identificado la necesidad de traer en línea las bases de datos luego de que se realicen ciertos cambios de permisos a nivel de los discos donde estas residen. Este procedimiento es común cuando se presentan problemas de acceso a las bases de datos debido a cambios en la configuración de permisos.
+
+### **Procedimiento**
+
+#### **1. Asignación de Permisos**
+- El personal de seguridad deberá asignar permisos de control total (*Full Control*) sobre los discos que contienen las bases de datos mencionadas.
+- Los discos a los que se deben asignar los permisos son: **"B", "E", "T", "L", "U"**.
+- La cuenta a la que se le deben otorgar permisos es la cuenta con la cual se ejecuta el servicio de SQL Server. Esta cuenta debe tener acceso completo a los discos correspondientes para que el motor de bases de datos pueda operar correctamente.
+
+#### **2. Ejecución del Script SQL**
+Una vez asignados los permisos, el personal encargado de las bases de datos deberá ejecutar el siguiente script para traer en línea las bases de datos que se encontraban offline:
+
+```sql
+ALTER DATABASE [ABT41] SET ONLINE;
+ALTER DATABASE [ABT41ROM] SET ONLINE;
+ALTER DATABASE [ABT41SIG] SET ONLINE;
+```
+
+#### **3. Verificación**
+Después de ejecutar el script, se debe verificar que las bases de datos estén en línea y operativas. Esto se puede hacer revisando el estado de las bases de datos desde el SQL Server Management Studio (SSMS) o utilizando la siguiente consulta:
+
+```sql
+SELECT name, state_desc 
+FROM sys.databases 
+WHERE name IN ('ABT41', 'ABT41ROM', 'ABT41SIG');
+```
+
+### **Consideraciones Finales**
+- Este procedimiento debe ser realizado por personal autorizado y capacitado para manejar tanto los permisos de seguridad a nivel de discos como la administración de bases de datos en SQL Server.
+- Es importante documentar cualquier incidente relacionado con las bases de datos ABT para mejorar futuros procesos de resolución.
+
+---
+
+### **Notificación de Acciones Realizadas**
+
+Espero que este correo les encuentre bien. El motivo del mismo es informarles que, para la solución del problema con el servidor **CNP38400**, se procedió, de parte del equipo de infraestructura, a otorgar permisos *Full Control* a la cuenta **FSRV\_SSDS-CNP38400** en los discos **"B", "E", "T", "L", "U"**.
+
+Esta acción ha sido realizada para asegurar el acceso necesario de parte del SQL Server para realizar las operaciones requeridas para su correcto funcionamiento.
+
+Posteriormente, se procedió a colocar las bases de datos **ABT41, ABT41ROM y ABT41SIG** en modo *Online*.
+
+Quedo a su disposición para cualquier consulta adicional.
+
+---
+
+### **Conclusión**
+El procedimiento descrito en este documento permite restaurar el acceso a las bases de datos en los servidores ABT después de la asignación de permisos correspondientes. Esto asegura que el personal pueda resolver problemas similares en el futuro de manera eficiente y efectiva.
+
+Este procedimiento debe ser revisado y actualizado según sea necesario para reflejar cambios en la infraestructura o procedimientos relacionados con la administración de bases de datos en la institución.
+
+
+
+
 
 --- 
 # ELIMINAR NUMERO ENGANCHADO EN DAKOTA/CAFÉ GCS-SYSTEMS<a name="700"></a>
