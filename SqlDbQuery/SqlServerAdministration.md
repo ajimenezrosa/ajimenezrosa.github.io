@@ -48,6 +48,7 @@ Manuales de</th>
 - 1.4 [Conexiones activas del servidor de SQL Server](#4)  
 - 1.5 [DBCC CHECKDB](#5)  
 - 1.6 [Reducir tamaño de `Tempdb`](#6)  
+- 1.6.1 [Reducción de Archivos TempDB en SQL Server Actualizado](#6a)
 - 1.7 [Conexión de administración dedicada: cuándo y cómo usarla](#7)  
 
 ---
@@ -460,7 +461,6 @@ order by date desc
 
 
 # Tempdb: Reducir Tamaño <a name="6"></a>
-
 #### La base de datos “Tempdb” es una base de datos de sistema la cual se utiliza para almacenar diversos objetos temporales, entre los mas conocidos estan las tablas temporales creadas explicitamente (#temptable), tambien tablas de trabajo generadas por los planes de ejecución para almacenar resultados intermedios, cursores materializados estaticos, y registros versionados cuando usamos alguno de los niveles de aislamiento de tipo
 
 ## En este caso hay diversos metodos por los cuales reducirla:
@@ -501,6 +501,137 @@ DBCC FREESESSIONCACHE;
 GO
 ~~~
 # 
+
+----
+
+
+# Reducción de Archivos TempDB en SQL Server<a name="6a"></a>
+
+## Introducción
+
+Esta documentación proporciona una guía paso a paso para reducir los archivos de TempDB en SQL Server. Incluye comandos SQL y mejores prácticas para asegurar un rendimiento óptimo y evitar problemas de crecimiento inesperado.
+
+## Mejores Prácticas para Administrar TempDB
+
+### Configurar el Número de Archivos de Datos
+- Corresponde el número de archivos de datos de TempDB con el número de procesadores lógicos, hasta ocho archivos.
+- Si tienes más de ocho procesadores lógicos, empieza con ocho archivos y considera aumentar en múltiplos de cuatro si hay contención.
+
+### Tamaños Iguales para Archivos
+- Asegúrate de que los archivos de TempDB dentro del mismo grupo de archivos tengan tamaños iguales para maximizar la eficiencia de las operaciones en paralelo.
+
+### Tamaño Inicial y Crecimiento Automático
+- Configura el tamaño inicial y los incrementos de crecimiento automático de los archivos de datos y registro de TempDB en función del volumen de datos esperado y la carga de trabajo.
+- Evita incrementos pequeños frecuentes que puedan afectar el rendimiento.
+
+### Ubicación de los Archivos
+- Ubica los archivos de TempDB en un subsistema de E/S rápido para evitar cuellos de botella.
+- Almacena TempDB en una unidad de disco separada, lejos de las bases de datos de usuario y otras bases de datos del sistema.
+
+## Métodos para Reducir TempDB
+
+### Usando ALTER DATABASE
+```sql
+USE master;
+GO
+ALTER DATABASE tempdb
+MODIFY FILE (NAME = tempdev, SIZE = 500MB);
+ALTER DATABASE tempdb
+MODIFY FILE (NAME = templog, SIZE = 250MB);
+GO
+```
+
+### Usando DBCC SHRINKDATABASE
+```sql
+USE tempdb;
+GO
+DBCC SHRINKDATABASE (tempdb, 10); -- Reduce TempDB al 10% del tamaño actual
+GO
+```
+
+### Usando DBCC SHRINKFILE
+```sql
+USE tempdb;
+GO
+DBCC SHRINKFILE (tempdev, 500); -- Reduce el archivo de datos a 500MB
+DBCC SHRINKFILE (templog, 250); -- Reduce el archivo de registro a 250MB
+GO
+```
+
+### Usando SQL Server Management Studio (SSMS)
+1. Abre SSMS y conéctate a tu instancia de SQL Server.
+2. Expande la carpeta "Bases de datos del sistema" y selecciona "tempdb".
+3. Haz clic derecho en "tempdb" y selecciona **Tareas > Reducir > Archivos**.
+4. En la ventana que aparece, selecciona el archivo que deseas reducir (tempdev o templog).
+5. Configura el tamaño deseado y haz clic en **Aceptar**.
+
+## Pasos Adicionales para Reducir TempDB
+
+### Limpiar Cachés y Realizar Checkpoints
+```sql
+CHECKPOINT;
+GO
+DBCC DROPCLEANBUFFERS;
+GO
+DBCC FREEPROCCACHE;
+GO
+DBCC FREESYSTEMCACHE ('ALL');
+GO
+DBCC FREESESSIONCACHE;
+GO
+CHECKPOINT;
+GO
+```
+
+### Reiniciar SQL Server
+Si los métodos anteriores no funcionan, considera reiniciar SQL Server. TempDB se recrea cada vez que se reinicia el servidor, lo que puede ayudar a restablecer su tamaño.
+
+### Modo de Usuario Único
+```sql
+ALTER DATABASE tempdb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+DBCC SHRINKFILE (tempdev, 500); -- Ajusta el tamaño según tus necesidades
+DBCC SHRINKFILE (templog, 250); -- Ajusta el tamaño según tus necesidades
+GO
+ALTER DATABASE tempdb SET MULTI_USER;
+GO
+```
+
+## Supervisión y Mantenimiento
+
+### Supervisión del Crecimiento
+Utiliza contadores de Monitor de rendimiento y la herramienta SQL Profiler para supervisar el crecimiento de TempDB e identificar las consultas que consumen recursos.
+
+### Configuración de Crecimiento Automático
+Asegúrate de que los incrementos de crecimiento automático de los archivos de registro estén configurados adecuadamente para evitar crecimientos pequeños y frecuentes.
+
+## Identificación de Consultas que Utilizan TempDB
+
+Para identificar las consultas que están utilizando TempDB, puedes usar el siguiente query:
+```sql
+SELECT
+    s.session_id,
+    r.start_time,
+    r.status,
+    r.command,
+    r.cpu_time,
+    r.total_elapsed_time
+FROM sys.dm_exec_sessions s
+JOIN sys.dm_exec_requests r ON s.session_id = r.session_id
+WHERE s.is_user_process = 1;
+```
+
+Este query te ayudará a identificar las sesiones activas y las consultas que están consumiendo recursos en TempDB.
+
+## Conclusión
+Reducir el tamaño de TempDB en SQL Server es una tarea importante para el mantenimiento del rendimiento del servidor. Aplicar las mejores prácticas, monitorear el crecimiento y ajustar la configuración según la carga de trabajo ayudará a evitar problemas de almacenamiento y rendimiento.
+
+
+
+
+
+---
+
 
 
 
