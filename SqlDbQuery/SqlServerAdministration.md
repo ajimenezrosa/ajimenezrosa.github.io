@@ -1105,6 +1105,11 @@ GROUP BY NAME,LOGINAME;
 
 # Guía para Manejar una Base de Datos en Modo RECOVERING<a name="RECOVERING"></a>
 
+<div>
+<p style = 'text-align:center;'>
+<img src="https://staticfiles.acronis.com/images/blog-cover/c367f9f3e0dda608219aa2de53557b1c.png?format=jpg&name=small" alt="JuveYell" width="700px">
+</p>
+</div>
 ## 1. Verificar el Estado de la Base de Datos
 
 Primero, verifica el estado de la base de datos para confirmar que está en modo RECOVERING.
