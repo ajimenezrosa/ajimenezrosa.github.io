@@ -49,7 +49,11 @@ Manuales de</th>
 - 1.5 [DBCC CHECKDB](#5)  
 - 1.6 [Reducir tamaño de `Tempdb`](#6)  
 - 1.6.1 [Reducción de Archivos TempDB en SQL Server Actualizado](#6a)
+
+
+
 - 1.7 [Conexión de administración dedicada: cuándo y cómo usarla](#7)  
+- 1.8 [Guía para Manejar una Base de Datos en Modo RECOVERING](#RECOVERING)
 
 ---
 
@@ -294,6 +298,10 @@ Manuales de</th>
 
 - 19.00 [Documentation of SQL Scripts for Backup and Restore with TDE](#19.00)
 
+
+# 
+
+#### 
 
 #
 <!-- ConsultasEflowCitas -->
@@ -1093,7 +1101,100 @@ GROUP BY NAME,LOGINAME;
 #
 
 <!-- Iniciamos aqui con las Memorias y paginaciones en Sql server -->
+---
 
+# Guía para Manejar una Base de Datos en Modo RECOVERING<a name="RECOVERING"></a>
+
+## 1. Verificar el Estado de la Base de Datos
+
+Primero, verifica el estado de la base de datos para confirmar que está en modo RECOVERING.
+
+```sql
+SELECT name, state_desc
+FROM sys.databases
+WHERE name = 'INTERNET';
+```
+
+## 2. Revisar el Registro de Errores de SQL Server
+
+Revisa el registro de errores para identificar la causa del problema.
+
+```sql
+EXEC xp_readerrorlog 0, 1, N'DATABASE', N'INTERNET';
+```
+
+## 3. Intentar Completar la Recuperación
+
+Ejecuta el comando `RESTORE` con la opción `RECOVERY` para completar el proceso de recuperación.
+
+```sql
+RESTORE DATABASE INTERNET WITH RECOVERY;
+```
+
+## 4. Poner la Base de Datos en Modo de Usuario Único
+
+Si la base de datos está en uso, ponla en modo de usuario único para obtener acceso exclusivo.
+
+```sql
+ALTER DATABASE INTERNET SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+```
+
+## 5. Intentar Nuevamente la Restauración
+
+Intenta nuevamente la restauración después de poner la base de datos en modo de usuario único.
+
+```sql
+RESTORE DATABASE INTERNET WITH RECOVERY;
+```
+
+## 6. Volver a Poner la Base de Datos en Modo Multiusuario
+
+Después de la restauración, vuelve a poner la base de datos en modo multiusuario.
+
+```sql
+ALTER DATABASE INTERNET SET MULTI_USER;
+```
+
+## 7. Monitorear el Progreso de la Recuperación
+
+Para estimar el tiempo restante del proceso de recuperación, utiliza la vista de administración dinámica `sys.dm_exec_requests`.
+
+```sql
+USE master;
+GO
+
+SELECT
+    session_id,
+    command,
+    percent_complete,
+    start_time,
+    CONVERT(NUMERIC(10, 2), total_elapsed_time / 1000.0 / 60.0) AS 'Tiempo transcurrido (minutos)',
+    CONVERT(NUMERIC(10, 2), estimated_completion_time / 1000.0 / 60.0) AS 'Tiempo restante (minutos)',
+    CONVERT(VARCHAR(20), DATEADD(ms, estimated_completion_time, GETDATE()), 20) AS 'Hora estimada de finalización'
+FROM
+    sys.dm_exec_requests
+WHERE
+    command IN ('RESTORE DATABASE', 'RECOVERY');
+GO
+```
+
+## 8. Verificar Permisos
+
+Si encuentras problemas de permisos, asegúrate de tener los permisos necesarios.
+
+```sql
+GRANT ALTER ON DATABASE::INTERNET TO tu_usuario;
+```
+
+## 9. Consultar la Documentación Oficial
+
+Para más detalles y opciones avanzadas, consulta la [documentación oficial de Microsoft](https://learn.microsoft.com/en-us/sql/).
+
+
+
+
+
+---
 
 # Una vista dentro de la caché del búfer de SQL Server<a name="8"></a>
 ![](https://learn.microsoft.com/es-es/sql/database-engine/configure-windows/media/ssdbufferpoolextensionarchitecture.gif?view=sql-server-ver16)
