@@ -21,12 +21,10 @@
 
 # 📖 Guía de PostgreSQL en Docker
 
-Haz clic en el siguiente enlace para abrir la guía:
-
-[📘 PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
-
-
 ## Índice
+
+0. [PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
+
 1. [Introducción](#introducción)
 2. [Instalación y Configuración Inicial](#instalación-y-configuración-inicial)
 3. [Gestión de Usuarios y Roles](#gestión-de-usuarios-y-roles)
