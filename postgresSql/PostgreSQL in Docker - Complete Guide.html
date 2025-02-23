@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Completa: PostgreSQL en Docker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        pre {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 Guía Completa: PostgreSQL en Docker</h1>
+    <p><strong>Autor:</strong> José Alejandro Jiménez Rosa</p>
+    <p><strong>Fecha de Creación:</strong> 22 de febrero de 2025</p>
+
+    <h2>📌 Índice</h2>
+    <ul>
+        <li><a href="#instalar-docker">Instalar Docker</a></li>
+        <li><a href="#descargar-postgresql">Descargar la imagen de PostgreSQL</a></li>
+        <li><a href="#ejecutar-postgresql">Ejecutar PostgreSQL en Docker</a></li>
+        <li><a href="#verificar-contenedor">Verificar el contenedor en ejecución</a></li>
+        <li><a href="#conectar-postgresql">Conectarse a PostgreSQL</a></li>
+        <li><a href="#gestionar-contenedores">Gestionar contenedores de PostgreSQL</a></li>
+        <li><a href="#almacenamiento-persistente">Habilitar almacenamiento persistente</a></li>
+        <li><a href="#restablecer-password">Restablecer la contraseña de PostgreSQL</a></li>
+        <li><a href="#listar-contenedores">Listar los contenedores activos</a></li>
+        <li><a href="#conexion-gui">Conectar PostgreSQL a una interfaz gráfica</a></li>
+    </ul>
+
+    <h2 id="instalar-docker">📌 Instalar Docker</h2>
+    <pre><code>sudo dnf update -y
+sudo dnf install -y dnf-plugins-core
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl enable --now docker</code></pre>
+
+    <h2 id="descargar-postgresql">📌 Descargar la imagen de PostgreSQL</h2>
+    <pre><code>docker pull postgres:latest</code></pre>
+    <p>O para una versión específica:</p>
+    <pre><code>docker pull postgres:16</code></pre>
+
+    <h2 id="ejecutar-postgresql">📌 Ejecutar PostgreSQL en Docker</h2>
+    <pre><code>docker run --name postgres-container \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=adminpassword \
+  -e POSTGRES_DB=mydatabase \
+  -p 5432:5432 \
+  -d postgres</code></pre>
+
+    <h2 id="verificar-contenedor">📌 Verificar el contenedor en ejecución</h2>
+    <pre><code>docker ps</code></pre>
+
+    <h2 id="conectar-postgresql">📌 Conectarse a PostgreSQL</h2>
+    <pre><code>psql -h localhost -U admin -d mydatabase</code></pre>
+    <p>O dentro del contenedor:</p>
+    <pre><code>docker exec -it postgres-container psql -U admin -d mydatabase</code></pre>
+
+    <h2 id="gestionar-contenedores">📌 Gestionar contenedores de PostgreSQL</h2>
+    <pre><code>docker stop postgres-container</code></pre>
+    <pre><code>docker start postgres-container</code></pre>
+    <pre><code>docker rm -f postgres-container</code></pre>
+
+    <h2 id="almacenamiento-persistente">📌 Habilitar almacenamiento persistente</h2>
+    <pre><code>docker volume create pgdata</code></pre>
+    <pre><code>docker run --name postgres-container \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=adminpassword \
+  -e POSTGRES_DB=mydatabase \
+  -p 5432:5432 \
+  -v pgdata:/var/lib/postgresql/data \
+  -d postgres</code></pre>
+
+    <h2 id="restablecer-password">📌 Restablecer la contraseña de PostgreSQL</h2>
+    <pre><code>docker inspect postgres-container | grep POSTGRES</code></pre>
+    <pre><code>ALTER USER admin WITH PASSWORD 'newpassword';</code></pre>
+
+    <h2 id="listar-contenedores">📌 Listar los contenedores activos</h2>
+    <pre><code>docker ps</code></pre>
+    <pre><code>docker ps -a</code></pre>
+
+    <h2 id="conexion-gui">📌 Conectar PostgreSQL a una interfaz gráfica</h2>
+    <table>
+        <tr><th>Parámetro</th><th>Valor</th></tr>
+        <tr><td><strong>Host</strong></td><td>localhost</td></tr>
+        <tr><td><strong>Puerto</strong></td><td>5432</td></tr>
+        <tr><td><strong>Usuario</strong></td><td>admin</td></tr>
+        <tr><td><strong>Contraseña</strong></td><td>adminpassword</td></tr>
+        <tr><td><strong>Base de datos</strong></td><td>mydatabase</td></tr>
+    </table>
+
+    <h2>✅ PostgreSQL en Docker está listo!</h2>
+    <p><strong>Para revisar logs de errores:</strong></p>
+    <pre><code>docker logs postgres-container</code></pre>
+</div>
+
+</body>
+</html>
