@@ -23,7 +23,7 @@
 
 Haz clic en el siguiente enlace para abrir la guía:
 
-[📘 Abrir Guía](postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html)
+[📘 Abrir Guía](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
 
 
 ## Índice
