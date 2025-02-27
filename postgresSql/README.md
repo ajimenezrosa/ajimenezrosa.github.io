@@ -144,9 +144,9 @@
 
 # Instalacion y Administracion
 
-- [PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
+- [Guía Completa: PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
 
-- [replicacion](https://jimenezrosa.github.io/postgresSql/PostgresSQLReplicacion.html)
+- [Guía Paso a Paso: Configuración de Replicación de PostgreSQL en Contenedores Docker en Fedora 39](https://ajimenezrosa.github.io/postgresSql/PostgresSQLReplicacion.html)
 
 
 
