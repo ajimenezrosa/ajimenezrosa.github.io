@@ -23,8 +23,7 @@
 
 ## Índice
 
-0. [PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
-1. [replicacion](https://jimenezrosa.github.io/postgresSql/PostgresSQLReplicacion.html)
+
 
 1. [Introducción](#introducción)
 2. [Instalación y Configuración Inicial](#instalación-y-configuración-inicial)
@@ -138,10 +137,19 @@
 5. [Conclusión](#conclusión)
 
 ---
-
 ### Montar un Servidor Postgress en linux y configurar su acceso.
 
   - [Paso 1: Instalación de PostgreSQL](#601)
+
+
+# Instalacion y Administracion
+
+- [PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
+
+- [replicacion](https://jimenezrosa.github.io/postgresSql/PostgresSQLReplicacion.html)
+
+
+
 
 
 
