@@ -24,6 +24,7 @@
 ## Índice
 
 0. [PostgreSQL en Docker](https://ajimenezrosa.github.io/postgresSql/PostgreSQL%20in%20Docker%20-%20Complete%20Guide.html#verify-container)
+1. [replicacion](https://jimenezrosa.github.io/postgresSql/PostgresSQLReplicacion.html)
 
 1. [Introducción](#introducción)
 2. [Instalación y Configuración Inicial](#instalación-y-configuración-inicial)
