@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía Paso a Paso: Configuración de Replicación de PostgreSQL en Contenedores Docker en Fedora 39</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .note {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guía Paso a Paso: Configuración de Replicación de PostgreSQL en Contenedores Docker en Fedora 39</h1>
+    <p><strong>Autor:</strong> [Tu Nombre]</p>
+    <p><strong>Fecha de Creación:</strong> 23 de febrero de 2025</p>
+
+    <h2>Introducción</h2>
+    <p>Esta guía está diseñada para principiantes y proporciona instrucciones detalladas para configurar la replicación de PostgreSQL entre dos contenedores Docker en un sistema Fedora 39. La replicación asegura que los datos se copien automáticamente del servidor principal (maestro) al servidor secundario (réplica), mejorando la disponibilidad y redundancia de la base de datos.</p>
+
+    <h2>Requisitos Previos</h2>
+    <ul>
+        <li>Un sistema con Fedora 39 instalado.</li>
+        <li>Acceso con privilegios de superusuario.</li>
+        <li>Conexión a Internet para descargar los paquetes necesarios.</li>
+        <li>Conocimientos básicos de la línea de comandos.</li>
+    </ul>
+
+    <h2>1. Instalación de Docker</h2>
+    <p>Docker es una plataforma que permite crear y gestionar contenedores de aplicaciones de manera eficiente.</p>
+
+    <h3>1.1. Actualizar el Sistema</h3>
+    <p>Antes de instalar cualquier software, es recomendable actualizar los paquetes existentes. Abre una terminal y ejecuta:</p>
+    <pre><code>sudo dnf -y update</code></pre>
+
+    <h3>1.2. Instalar Paquetes Necesarios</h3>
+    <p>Instala el paquete <code>dnf-plugins-core</code>, que proporciona herramientas adicionales para gestionar repositorios:</p>
+    <pre><code>sudo dnf -y install dnf-plugins-core</code></pre>
+
+    <h3>1.3. Agregar el Repositorio de Docker</h3>
+    <p>Agrega el repositorio oficial de Docker para obtener la versión más reciente:</p>
+    <pre><code>sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo</code></pre>
+
+    <h3>1.4. Instalar Docker</h3>
+    <p>Instala Docker y los complementos necesarios:</p>
+    <pre><code>sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</code></pre>
+
+    <h3>1.5. Iniciar y Habilitar Docker</h3>
+    <p>Inicia el servicio de Docker y configúralo para que se ejecute automáticamente al iniciar el sistema:</p>
+    <pre><code>sudo systemctl start docker
+sudo systemctl enable docker</code></pre>
+
+    <h3>1.6. Verificar la Instalación</h3>
+    <p>Para confirmar que Docker se instaló correctamente, ejecuta:</p>
+    <pre><code>sudo docker run hello-world</code></pre>
+    <p>Este comando descarga y ejecuta una imagen de prueba. Si ves un mensaje de bienvenida, Docker está funcionando correctamente.</p>
+
+    <div class="note">
+        <strong>Nota:</strong> Si encuentras problemas durante la instalación, es posible que necesites ajustar la versión de <code>containerd</code>. Algunos usuarios han reportado éxito al degradar <code>containerd</code> a una versión específica. Puedes consultar más detalles en este <a href="https://www.reddit.com/r/Fedora/comments/17xlnv5/fedora_39_and_broken_docker/">hilo de Reddit</a>.
+    </div>
+
+    <h2>2. Instalación de Docker Compose</h2>
+    <p>Docker Compose es una herramienta que facilita la gestión de aplicaciones que constan de múltiples contenedores.</p>
+
+    <h3>2.1. Instalar Docker Compose</h3>
+    <p>En tu sistema Fedora 39, instala el complemento de Docker Compose ejecutando:</p>
+    <pre><code>sudo dnf install docker-compose-plugin</code></pre>
+
+    <h3>2.2. Verificar la Instalación</h3>
+    <p>Confirma que Docker Compose se instaló correctamente ejecutando:</p>
+    <pre><code>docker compose version</code></pre>
+    <p>Deberías ver la versión instalada de Docker Compose.</p>
+
+    <h2>3. Configuración de la Replicación de PostgreSQL</h2>
+    <p>A continuación, configuraremos la replicación entre dos contenedores de PostgreSQL: uno actuará como maestro y el otro como réplica.</p>
+
+    <h3>3.1. Crear un Directorio para el Proyecto</h3>
+    <p>Crea un directorio en tu sistema donde se almacenarán los archivos de configuración:</p>
+    <pre><code>mkdir ~/postgres-replication
+cd ~/postgres-replication</code></pre>
+
+    <h3>3.2. Crear el Archivo <code>docker-compose.yml</code></h3>
+    <p>Dentro del directorio recién creado, crea un archivo llamado <code>docker-compose.yml</code> con el siguiente contenido:</p>
+    <pre><code>version: '3.8'
+
+services:
+  postgres-master:
+    image: postgres:15
+    container_name: postgres-master
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: master_password
+    volumes:
+      - ./master-data:/var/lib/postgresql/data
+    networks:
+      - postgres-net
+    ports:
+      - "5432:5432"
+
+  postgres-replica:
+    image: postgres:15
+    container_name: postgres-replica
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: replica_password
+      POSTGRES_REPLICATION_MODE: standby
+      POSTGRES_REPLICATION_PRIMARY_HOST
+::contentReference[oaicite:0]{index=0}
+ 

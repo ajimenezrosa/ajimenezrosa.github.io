@@ -3909,7 +3909,42 @@ END CATCH
 #### en realidad solo nos muestra un listado de restauraciones con sus respectivas fecha.
 # 
 
+
+
+~~~Sql
+/*
+Joser Alejandro Jimenez Rosa 
+Modificado para que me meustre el tiempo que tardo la db en restaurarse
+Query que muestra las restauraciones de las bases de datos de un servidor
+sql server 
+fecha: 2016-07-22
+*/
+SELECT 
+    rs.destination_database_name, 
+    rs.restore_date, 
+    bs.backup_start_date, 
+    bs.backup_finish_date, 
+    bs.database_name AS source_database_name, 
+    bmf.physical_device_name AS backup_file_used_for_restore,
+    DATEDIFF(MINUTE, bs.backup_finish_date, rs.restore_date)/60 AS restore_duration_minutes
+FROM 
+    msdb..restorehistory rs
+INNER JOIN 
+    msdb..backupset bs ON rs.backup_set_id = bs.backup_set_id
+INNER JOIN 
+    msdb..backupmediafamily bmf ON bs.media_set_id = bmf.media_set_id 
+ORDER BY 
+    rs.restore_date DESC;
+~~~
+ 
 ~~~sql
+/*
+Joser Alejandro Jimenez Rosa 
+Query que muestra las restauraciones de las bases de datos de un servidor
+sql server 
+fecha: 2016-07-22
+*/
+
 SELECT rs.destination_database_name, 
     rs.restore_date, 
     bs.backup_start_date, 
@@ -3923,6 +3958,8 @@ SELECT rs.destination_database_name,
         ON bs.media_set_id = bmf.media_set_id 
         ORDER BY rs.restore_date DESC
 ~~~
+
+
 #  
 
 # Limpiar y Reducir el Log de Transacciones SQL Server. [Fuente SoporteSQL](https://soportesql.wordpress.com/2014/04/22/limpiar-y-reducir-el-log-de-transacciones-sql-server/)  <a name="limpiarlog"></a>
