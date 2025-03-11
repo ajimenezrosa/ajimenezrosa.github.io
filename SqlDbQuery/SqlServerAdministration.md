@@ -146,6 +146,7 @@ Manuales de</th>
 
  - 6.12 [Script de Microsoft para detectar problemas SDP](#45sdp)  
 
+ - 6.13 [Documentación del Tamaño de Bases de Datos en SQL Server](#6.13)
 # 
  - 602 [Consulta de Estadísticas de Ejecución de Queries en SQL Server con Detalles de Rendimiento y Uso de Recursos](#602)
  - 603 [Cómo Localizar y Revisar Archivos de Auditoría (.sqlaudit) en SQL Server](#603)
@@ -13575,7 +13576,69 @@ exec sp_Run_PerfStats
 ~~~
 # 
 
+
+
+# Documentación del Tamaño de Bases de Datos en SQL Server<a name="6.13"></a>
+
+## Descripción
+Este script SQL obtiene el tamaño de todas las bases de datos en una instancia de SQL Server, excluyendo las bases de datos del sistema. También muestra el estado actual de cada base de datos y calcula su tamaño total en megabytes (MB).
+
+## Consulta
+```sql
+SELECT  @@servername AS nombre_servidor,
+        d.name AS nombre_base_datos,
+        d.state_desc AS estado,
+        SUM(mf.size * 8 / 1024) AS tamano_mb -- Tamaño de la base de datos en MB
+FROM    sys.master_files mf
+JOIN    sys.databases d ON mf.database_id = d.database_id
+WHERE   d.database_id > 4 -- Excluye bases de datos del sistema
+GROUP BY d.name, d.state_desc
+ORDER BY d.name;
+```
+
+## Explicación
+- `@@servername`: Recupera el nombre de la instancia actual de SQL Server.
+- `d.name`: Muestra el nombre de cada base de datos.
+- `d.state_desc`: Indica el estado actual de cada base de datos (por ejemplo, ONLINE, OFFLINE, RESTORING).
+- `mf.size * 8 / 1024`: Convierte el tamaño de la base de datos de páginas (8 KB cada una) a MB.
+- `WHERE d.database_id > 4`: Filtra las bases de datos del sistema (master, tempdb, model y msdb) y muestra solo las bases de datos de usuario.
+- Los resultados se agrupan por nombre de base de datos y estado, y luego se ordenan alfabéticamente.
+
+## Uso
+Este script es útil para administradores de bases de datos (DBAs) que necesitan monitorear los tamaños y estados de todas las bases de datos de usuario en una instancia de SQL Server.
+
+## Ejemplo de Salida
+| nombre_servidor | nombre_base_datos | estado  | tamano_mb |
+|----------------|------------------|---------|-----------|
+| SQLServer01    | mydb1            | ONLINE  | 2048      |
+| SQLServer01    | mydb2            | ONLINE  | 512       |
+| SQLServer01    | reportdb         | ONLINE  | 10240     |
+
+## Notas
+- Si necesitas incluir bases de datos del sistema, elimina o modifica la condición `WHERE d.database_id > 4`.
+- Este script debe ejecutarse con los permisos adecuados para acceder a las vistas del sistema.
+
+## Licencia
+Este script se proporciona bajo la Licencia MIT. Siéntete libre de usarlo y modificarlo según tus necesidades.
+
+---
+**Autor:** José Alejandro Jiménez Rosa  
+**Última Actualización:** Marzo 2025
+
+
+
+
+
+
+
 # 
+
+
+
+
+
+
+
 
 
 # Scripts para Restaurar db/s en Diferentes tipos de Ambientes.<a name="46"></a>
