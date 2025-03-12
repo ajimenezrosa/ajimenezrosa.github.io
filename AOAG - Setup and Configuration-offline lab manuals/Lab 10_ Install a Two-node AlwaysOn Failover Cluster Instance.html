@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 10: Install a Two-node AlwaysOn Failover Cluster Instance</title>
+
+
+    <script src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/prettify.css">
+    <script src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/yaml.min.js.download"></script>
+    <script src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+        <div style="padding:10px 20px;">
+            <a class="editLink" href="https://labondemand.com/LabProfile/EditInstructions/155697?InstructionsSetId=248589">Edit</a>
+        </div>
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="install-a-two-node-alwayson-failover-cluster-instance">Install a two-node AlwaysOn Failover Cluster Instance</h1>
+<h2 id="introduction">Introduction</h2>
+<p>In this lab, you will learn how to install a two-node AlwaysOn SQL Server 2022 failover cluster instance (FCI) on a Windows Server 2022 Failover Cluster.</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Install SQL Server 2022 AlwaysOn failover cluster instance on a single node</li>
+<li>Add a node to an existing SQL Server 2022 AlwaysOn failover cluster instance</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>45 minutes</p>
+<h2 id="logon-information">Logon Information</h2>
+<blockquote class="alert">
+  <p><strong>Before Login make sure windows has Applied Computer Setting to all nodes.</strong></p>
+</blockquote>
+<p>Use the following credentials to login into virtual environment</p>
+<ol>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242379">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">Corpnet\Cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242376">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242377">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242378">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242375">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol>
+</div><div class="page" id="page1">
+<h1 id="exercise-1-install-sql-server-2022-failover-cluster-instance-on-a-single-cluster-node">Exercise 1: Install SQL Server 2022 Failover Cluster Instance on a Single Cluster Node</h1>
+<p>Before we begin with the first exercise in the lab, let's review the lab environment.</p>
+<ul>
+<li><p>In the lab, we have one Domain Controller, 3-node Windows Server 2022 cluster and one Windows 10 client computer.</p></li>
+<li><p>AlwaysOnN1 and AlwaysOnN2 nodes are in the primary Datacenter.</p></li>
+<li><p>AlwaysOnN3 is in the secondary datacenter.</p></li>
+<li><p>For this lab, both the datacenters are in the same subnet.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0232.png"></p></li>
+</ul>
+<hr>
+<h3 id="tasks-1-install-sql-server-2022-alwayson-clustered-instance-on-alwaysonn1">Tasks 1: Install SQL Server 2022 AlwaysOn Clustered Instance on AlwaysOnN1</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> [] Sign in to <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242376">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Click on the <strong>Start</strong> button and then click <strong>Server Manager</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0233.png"></p></li>
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Under the <strong>Tools</strong> menu item, click on <strong>Failover Cluster Manager</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0234.png"></p></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> The <strong>Failover Cluster Manager</strong> will open. Review the cluster.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0235.png"></p></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> Expand the cluster name <strong>AlwaysOnCluster.CORPNET.CONTOSO.COM</strong> and click <strong>Storage</strong> &gt; <strong>Disks</strong>. Review the shared disks that are available for the SQL Server FCI and ensure that the <strong>Owner Node</strong> is AlwaysOnN1. If not, move Available Storage group to AlwaysOnN1 by right clicking <strong>Disks</strong> and selecting <strong>Move Available Storage</strong> &gt; <strong>Select Node</strong> &gt; <strong>AlwaysOnN1</strong> &gt; <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0236.png"></p></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> In the lab environment, on the <strong>Resources</strong> tab, select the <strong>AlwaysOnN1</strong> machine. Click the drop-down box for <strong>DVD Drive</strong> and select the <strong>SQL Server 2022 installation media</strong> (ISO).</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/rdb9xbk2.png" alt="rdb9xbk2.png"></p></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> Open <strong>File Explorer</strong> in the AlwaysOnN1 machine and you should see the installation media as shown below.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/4hq34re1.png" alt="4hq34re1.png"></p></li>
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> Right click <strong>Setup</strong> and select <strong>Run as administrator</strong> to launch the setup program.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/9q1dopsw.png" alt="9q1dopsw.png"></p></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> This will open the <strong>User Account Control</strong> window. Click <strong>Yes</strong>.</p></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> On the <strong>SQL Server Installation Center</strong> page, click <strong>Installation</strong> and then click <strong>New SQL Server failover cluster installation</strong> as shown below.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/i4zducjz.png" alt="i4zducjz.png"></p></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> For this lab, we are going to the free <strong>Developer</strong> edition. </p>
+<blockquote class="knowledge">
+  <p>For production environment you <strong>cannot</strong> use developer edition and must enter the license product key.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>Click <strong>Next</strong> on the Product Key page.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0241.png"></p></li>
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Accept the <strong>license terms</strong> and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> Verify that there are no errors on the <strong>Global Rules</strong> page and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0242.png"></p></li>
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> On the <strong>Microsoft Updates</strong> page, do not click the checkbox to use Microsoft Update to check for updates. In this lab, we are not checking the box as the VMs are not connected to the internet. Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> Since the virtual machine is not connected to the internet, we will get the below error. This is expected in this lab. Click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0243.png" alt="image0243.png"></p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> Verify that there are no failures on the <strong>Install Failover Cluster Rules</strong> page and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0244.png" alt="image0244.png"></p></li>
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> On the <strong>Feature Selection</strong> page, select the following features and click <strong>Next</strong>.</p>
+<ul>
+<li><p>Database Engine Services</p>
+<blockquote class="knowledge">
+  <p>SQL Server Replication, Full-Text Semantic Extractions for Search and Data Quality Services are automatically selected when we select Database Engine Services.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li><p>Integration Services</p></li></ul>
+<blockquote class="note">
+  <p>For this lab, we are using the C:\ drive for the instance root directory and Shared Feature directory. For production environment, most customers use a non-OS drive like D:\</p>
+</blockquote>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/8702r16i.png" alt="8702r16i.png"> </p></li>
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> Verify there are no failures on the <strong>Features Rule</strong> page, and then click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0246.png" alt="image0246.png"></p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> On the <strong>Instance Configuration</strong> page, type the SQL Server Network name (for example, <span class="typeText" title="Type Text"><strong>SQLFCI</strong></span>).</p>
+<ul>
+<li><p>Select whether you want it to be the default instance (MSSQLSERVER) or a named instance.</p>
+<blockquote class="knowledge">
+  <p>There can be only one default instance on a cluster.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li><p>In this lab, we will install a named instance. Select <strong>Named Instance</strong> and type a name (for example, <span class="typeText" title="Type Text"><strong>INST1</strong></span>).</p>
+<blockquote class="note">
+  <p><strong>Instance ID</strong> is automatically completed with the same value of the instance name. You can change it if you want.</p>
+</blockquote></li>
+<li><p>Click <strong>Next</strong>.</p></li></ul>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/k78shsd7.png" alt="k78shsd7.png"></p></li>
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> On the <strong>Cluster Resource Group</strong> page, select the cluster resource group name for SQL Server. Either leave the default or type a name that you want. For this lab, we will use the default name, and Click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0248.png"></p></li>
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> On the <strong>Cluster Disk Selection</strong> page, select the shared disks that you want to use for your SQL FCI. The available disks are marked with green as shown below. In this lab, only the <strong>SQLRoot</strong> disk is available. Review the <strong>Message</strong> column to see why other disks are not available. Check SQLRoot and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0249.png"></p></li>
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> On the <strong>Cluster Network Configuration</strong> page, select <strong>IPv4</strong> check box and ensure that the DHCP check box is cleared. Type the unique SQL Server IP address (<span class="typeText" title="Type Text"><strong>10.1.1.202</strong></span>) and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0250.png"></p></li>
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> On the <strong>Server Configuration page</strong>, click the <strong>Service Accounts</strong> tab</p>
+<ul>
+<li><p>Use <strong><span class="typeText" title="Type Text">CORPNET\SQLAgentSvc</span></strong> for the SQL Server Agent service account.</p></li>
+<li><p>Use <strong><span class="typeText" title="Type Text">CORPNET\SQLSvc</span></strong> for the SQL Server Database Engine service account.</p>
+<blockquote class="note">
+  <p>The password for both accounts is <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span></p>
+</blockquote></li>
+<li><p>Check the <strong>Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service</strong> checkbox. This privilege enables instant file initialization by avoiding zeroing of data pages.</p></li>
+<li><p>If you want the keep the default Collation then Click <strong>Next</strong> otherwise go to next step</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0251.png"></p></li></ul></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> If you click the <strong>Collation</strong> tab, you can change the type of collation that you want to use. For this lab, leave the default and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0252.png"></p></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> In the Database Engine Configuration window,</p>
+<ul>
+<li><p>Select the authentication mode that you prefer (Windows or Mixed).</p></li>
+<li><p>To add the user CORPNET\cluadmin as a SQL Server administrator</p>
+<ul>
+<li>Click Add Current User or</li>
+<li>Click Add and add another domain account.</li></ul>
+<blockquote class="note">
+  <p>This step is necessary because SQL Server does not configure the Administrators group (that is built-in to Windows Server) as system administrators for SQL Server.</p>
+</blockquote></li></ul>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0253.png"></p></li>
+<li class="task-list-item" id="taskIndex25"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex25"><span></span></label> Click <strong>Data Directories</strong> tab. By default, setup uses just one disk for everything. Select the disks where you want to store the user-database data, log and backup files. For this lab, we will use the following:</p>
+<ul>
+<li><p>Data root directory:</p>
+<p><strong><span class="typeText" title="Type Text">F:\SQLSystem</span></strong></p></li>
+<li><p>System-database directory:</p>
+<p><strong>F:\SQLSystem\MSSQL16.INST1\MSSQL\Data</strong></p></li>
+<li><p>User-database directory:</p>
+<p><strong><span class="typeText" title="Type Text">F:\SQLData\Data</span></strong></p></li>
+<li><p>User-database-log directory:</p>
+<p><strong><span class="typeText" title="Type Text">F:\SQLLog\Log</span></strong></p></li>
+<li><p>Backup directory:</p>
+<p><strong><span class="typeText" title="Type Text">F:\SQLBackup\Backup</span></strong></p>
+<blockquote class="note">
+  <p>As per best practices, we have added a folder to the root of each mounted drive. We do not have to pre-create the folders as SQL setup will create them.</p>
+</blockquote>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0254.png" alt="image0254.png"></p></li></ul></li>
+<li class="task-list-item" id="taskIndex26"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex26"><span></span></label> Click the <strong>TempDB</strong> tab. Configure TempDB as per best practices. In this lab, we will assume that the cluster node has 4 processors and will select 4 TempDB data files. <strong>Remove</strong> the default data directory and <strong>Add</strong> F:\SQLTempDB\TempDB as the Data and Log directories.</p>
+<blockquote class="note">
+  <p>You will need to create the TempDB folder in F:\SQLTempDB by clicking the Make New Folder .</p>
+</blockquote>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/8qqtmaqi.png" alt="8qqtmaqi.png"></p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0255.png"></p></li>
+<li class="task-list-item" id="taskIndex27"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex27"><span></span></label> Click the <strong>MaxDOP</strong> tab. Review the configured settings for MAXDOP.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0256.png"></p></li>
+<li class="task-list-item" id="taskIndex28"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex28"><span></span></label> Click the <strong>Memory</strong> tab. Click the radial button to accept the recommended memory setting as per best practices. You will also need to click the check box at the bottom of the tab to accept the recommended setting. </p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0257.png"></p></li>
+<li class="task-list-item" id="taskIndex29"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex29"><span></span></label> Click the <strong>FILESTREAM</strong> tab. If you want to enable the <strong>FILESTREAM</strong> feature of SQL Server, select that option. For this lab, select the boxes as shown below and Click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0258.png"></p></li>
+<li class="task-list-item" id="taskIndex30"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex30"><span></span></label> Verify there are no failures in the <strong>Feature Configuration Rules</strong> page and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0259.png"></p></li>
+<li class="task-list-item" id="taskIndex31"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex31"><span></span></label> On the <strong>Ready to Install</strong> page, verify that the information is correct. Click <strong>Install</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/c0qii5ln.png" alt="c0qii5ln.png"></p>
+<blockquote class="note">
+  <p>On the <strong>Ready to Install</strong> page, notice that the path to the configuration file is specified. Setup writes out all the parameters in the configuration file for the actions that ran, except for sensitive information like passwords. If you want to stop the installation now, click <strong>Cancel</strong>. Later, when you are ready, you can run the installation from the Command Prompt and supply the Configuration.ini file by using the <strong>ConfigurationFile</strong> parameter.
+  <br><br>
+  The following is an example on how to run setup.exe by using the configuration file:
+  <br><br></p>
+<pre><code class="prettyprint prettyprinted" style=""><span class="pln">setup</span><span class="pun">.</span><span class="pln">exe </span><span class="pun">/</span><span class="typ">ConfigurationFile</span><span class="pun">=</span><span class="typ">MyConfigurationFile</span><span class="pun">.</span><span class="pln">ini</span></code></pre>
+</blockquote>
+<blockquote class="knowledge">
+  <p>For more information, review Microsoft document <a class="icon-link external-link" href="https://docs.microsoft.com/en-us/sql/database-engine/install-windows/install-sql-server-using-a-configuration-file" target="_blank">Install SQL Server using a configuration file</a></p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex32"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex32"><span></span></label> Wait for the installation to complete.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/xv69opi4.png" alt="xv69opi4.png"></p>
+<blockquote class="knowledge">
+  <p>By default, the SQL Server 2022 Setup logs are on the cluster node in <strong>%Program Files%\Microsoft SQL Server\160\Setup Bootstrap\Log\&lt;datetime&gt;</strong>.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex33"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex33"><span></span></label> Click the <strong>Summary</strong> log link and review it. Click <strong>Close</strong> on the <strong>Complete</strong> page.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/mapjzspo.png" alt="mapjzspo.png"></p></li>
+<li class="task-list-item" id="taskIndex34"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex34"><span></span></label> Open <strong>Failover Cluster Manager</strong> and review the SQL Server Cluster Group and Resources as shown below.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0263.png"></p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0264.png"></p></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page2">
+<h1 id="exercise-2-add-a-node-to-an-existing-sql-server-alwayson-failover-clustered-instance">Exercise 2: Add a Node to an Existing SQL Server AlwaysOn Failover Clustered Instance</h1>
+<p>In this exercise, you will learn how to add a Node to an Existing SQL Server AlwaysOn Failover Clustered Instance</p>
+<hr>
+<h3 id="tasks-1-add-a-node-to-an-existing-sql-server-failover">Tasks 1: Add a node to an existing SQL Server failover</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex35"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex35"><span></span></label> Sign in to virtual machine <strong><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="selectMachineLink icon-link special-action-link" data-data="242377">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using  <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p></li>
+<li class="task-list-item" id="taskIndex36"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex36"><span></span></label> In the lab environment, on the <strong>Resources</strong> tab, select the <strong>AlwaysOnN2</strong> virtual machine, and then in the <strong>DVD Drive</strong> drop-down list, select the <strong>SQL Server 2022 installation media</strong> (ISO).</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/e0ezhr9c.png" alt="e0ezhr9c.png"></p></li>
+<li class="task-list-item" id="taskIndex37"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex37"><span></span></label> Open <strong>File Explorer</strong> in the AlwaysOnN2 machine and you should see the installation media as shown below. Right click <strong>Setup</strong> and select <strong>Run as administrator</strong> to launch the setup program.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/tcybogyj.png" alt="tcybogyj.png"></p></li>
+<li class="task-list-item" id="taskIndex38"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex38"><span></span></label> This will open the <strong>User Account Control</strong> popup. Click <strong>Yes</strong>.</p></li>
+<li class="task-list-item" id="taskIndex39"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex39"><span></span></label> On the <strong>SQL Server Installation Center</strong> page, click <strong>Installation</strong> and then click <strong>Add node to a SQL Server failover cluster</strong> as shown below.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/elzphct8.png" alt="elzphct8.png"></p></li>
+<li class="task-list-item" id="taskIndex40"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex40"><span></span></label> For this lab, we are going to the free Developer edition. </p>
+<blockquote class="knowledge">
+  <p>For production environment you cannot use developer edition and must enter the license product key.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155697?instructionsSetId=248589#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex41"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex41"><span></span></label> Accept the <strong>license terms</strong> and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex42"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex42"><span></span></label> Verify that there are no errors on the <strong>Global Rules</strong> page and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex43"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex43"><span></span></label> On the <strong>Microsoft Update</strong> page, do not click the checkbox to use Microsoft Update to check for updates. In this lab, we are not checking the box as the VMs are not connected to the internet. Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex44"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex44"><span></span></label> Since the virtual machine is not connected to the internet, you will get the below error. This is expected in this lab. Click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0268.png" alt="image0268.png"></p></li>
+<li class="task-list-item" id="taskIndex45"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex45"><span></span></label> Verify that there are no failures on the <strong>Add Node Rules</strong> page and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex46"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex46"><span></span></label> Review the details on the <strong>Cluster Node Configuration</strong> page and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0269.png"></p></li>
+<li class="task-list-item" id="taskIndex47"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex47"><span></span></label> Review the details on the <strong>Cluster Network Configuration</strong> page and click <strong>Next</strong></p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0270.png"></p></li>
+<li class="task-list-item" id="taskIndex48"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex48"><span></span></label> On the <strong>Service Accounts</strong> page, type the password for the SQL Server Database Engine and SQL Server Agent service accounts, check <strong>Grant Perform Volume Maintenance Task privilege</strong> checkbox, and then click <strong>Next</strong>. </p>
+<blockquote class="note">
+  <p>The password for both these accounts is <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p>
+</blockquote>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0271.png" alt="image0271.png"></p></li>
+<li class="task-list-item" id="taskIndex49"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex49"><span></span></label> Verify that there are no failures on the <strong>Feature Rules</strong> page, and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex50"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex50"><span></span></label> Review the information on the Ready to Add Node page and click <strong>Install</strong>.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/eobtgky0.png" alt="eobtgky0.png"></p>
+<blockquote class="note">
+  <p>On the <strong>Ready to Install</strong> page, notice that the path to the configuration file is specified. Setup writes out all the parameters in the configuration file for the actions that ran, except for sensitive information like passwords. If you want to stop the installation now, click <strong>Cancel</strong>. Later, when you are ready, you can run the installation from the Command Prompt and supply the Configuration.ini file by using the <strong>ConfigurationFile</strong> parameter.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex51"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex51"><span></span></label> Wait till the setup completes.</p></li>
+<li class="task-list-item" id="taskIndex52"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex52"><span></span></label> Ensure all the features installed successfully.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/0yiyuudx.png" alt="0yiyuudx.png"></p></li>
+<li class="task-list-item" id="taskIndex53"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex53"><span></span></label> Click the link for the <strong>Summary</strong> log file and review it. Click <strong>Close</strong> on the <strong>Complete</strong> page.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/6xhm3l2n.png" alt="6xhm3l2n.png"></p></li>
+<li class="task-list-item" id="taskIndex54"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex54"><span></span></label> Now we have a two-node SQL Server Failover Cluster instance on a three-node Windows Server Failover Cluster.</p></li>
+<li class="task-list-item" id="taskIndex55"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex55"><span></span></label> <strong>If time permits</strong>, add <strong>AlwaysOnN3</strong> cluster node to the FCI. Either repeat the above steps on <strong>AlwaysOnN3</strong> cluster node to create a three-node SQL Server FCI or add the third node using command line setup following the steps below.</p></li>
+<li class="task-list-item" id="taskIndex56"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex56"><span></span></label> Select the SQL Server setup media from the DVD drop-down box of AlwaysOnN3. Open an <strong>Administrator: Command Prompt</strong>, change directory to D:&gt; and type the below command</p>
+<pre><div class="codeTitle">CommandPrompt</div><code class="CommandPrompt language-CommandPrompt prettyprint prettyprinted" style=""><span class="pln">setup</span><span class="pun">.</span><span class="pln">exe </span><span class="pun">/</span><span class="pln">q </span><span class="pun">/</span><span class="pln">ACTION</span><span class="pun">=</span><span class="typ">AddNode</span><span class="pln"> </span><span class="pun">/</span><span class="pln">INSTANCENAME</span><span class="pun">=</span><span class="str">"INST1"</span><span class="pln"> </span><span class="pun">/</span><span class="pln">SQLSVCACCOUNT</span><span class="pun">=</span><span class="str">"CORPNET\SQLSVC"</span><span class="pln"> </span><span class="pun">/</span><span class="pln">SQLSVCPASSWORD</span><span class="pun">=</span><span class="str">"Pa$$w0rd"</span><span class="pln"> </span><span class="pun">/</span><span class="pln">AGTSVCACCOUNT</span><span class="pun">=</span><span class="str">"CORPNET\SQLAgentSVC"</span><span class="pln"> </span><span class="pun">/</span><span class="pln">AGTSVCPASSWORD</span><span class="pun">=</span><span class="str">"Pa$$w0rd"</span><span class="pln"> </span><span class="pun">/</span><span class="typ">IAcceptSQLServerLicenseTerms</span><span class="pln"> </span><span class="pun">/</span><span class="pln">INDICATEPROGRESS </span></code></pre>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/image0275.png"></p>
+<blockquote class="note">
+  <p>You can also copy this command and use the Paste clipboard text functionality of the LOD environment to paste it in the VM.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex57"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex57"><span></span></label> After the setup completes, review the Summary file to ensure it succeeded.</p>
+<p>
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/kuybx0h4.png" alt="kuybx0h4.png">
+
+<img src="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance_files/dbenc659.png" alt="dbenc659.png"></p></li>
+</ol>
+<h3 id="congratulations-1">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Install a two-node AlwaysOn Failover Cluster Instance  
+
+## Introduction
+
+In this lab, you will learn how to install a two-node AlwaysOn SQL Server 2022 failover cluster instance (FCI) on a Windows Server 2022 Failover Cluster.
+
+## Objectives
+
+At the end of this lab, you will be able to:
+- Install SQL Server 2022 AlwaysOn failover cluster instance on a single node
+- Add a node to an existing SQL Server 2022 AlwaysOn failover cluster instance
+
+## Estimated Time
+
+45 minutes
+
+## Logon Information
+&gt;[!alert]**Before Login make sure windows has Applied Computer Setting to all nodes.**
+
+Use the following credentials to login into virtual environment
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++Corpnet\Cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnDC).Username+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+===
+
+# Exercise 1: Install SQL Server 2022 Failover Cluster Instance on a Single Cluster Node
+
+Before we begin with the first exercise in the lab, let&#39;s review the lab environment.
+
+- In the lab, we have one Domain Controller, 3-node Windows Server 2022 cluster and one Windows 10 client computer.
+- AlwaysOnN1 and AlwaysOnN2 nodes are in the primary Datacenter.
+- AlwaysOnN3 is in the secondary datacenter.
+- For this lab, both the datacenters are in the same subnet.
+
+    ![](Media/image0232.png)
+
+---
+
+### Tasks 1: Install SQL Server 2022 AlwaysOn Clustered Instance on AlwaysOnN1
+
+1. [] [] Sign in to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++CORPNET\cluadmin**+++ using +++**Pa$$w0rd**+++ as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. [] Click on the **Start** button and then click **Server Manager**.
+
+    ![](Media/image0233.png)
+
+1. [] Under the **Tools** menu item, click on **Failover Cluster Manager**.
+
+    ![](Media/image0234.png)
+
+1. [] The **Failover Cluster Manager** will open. Review the cluster.
+
+    ![](Media/image0235.png)
+
+1. [] Expand the cluster name **AlwaysOnCluster.CORPNET.CONTOSO.COM** and click **Storage** &amp;gt; **Disks**. Review the shared disks that are available for the SQL Server FCI and ensure that the **Owner Node** is AlwaysOnN1. If not, move Available Storage group to AlwaysOnN1 by right clicking **Disks** and selecting **Move Available Storage** &amp;gt; **Select Node** &amp;gt; **AlwaysOnN1** &amp;gt; **OK**.
+
+    ![](Media/image0236.png)
+
+1. [] In the lab environment, on the **Resources** tab, select the **AlwaysOnN1** machine. Click the drop-down box for **DVD Drive** and select the **SQL Server 2022 installation media** (ISO).
+
+    !IMAGE[rdb9xbk2.png](instructions248589/rdb9xbk2.png)
+
+1. [] Open **File Explorer** in the AlwaysOnN1 machine and you should see the installation media as shown below.
+
+    !IMAGE[4hq34re1.png](instructions248589/4hq34re1.png)
+
+1. [] Right click **Setup** and select **Run as administrator** to launch the setup program.
+
+   !IMAGE[9q1dopsw.png](instructions248589/9q1dopsw.png)
+
+1. [] This will open the **User Account Control** window. Click **Yes**.
+
+1. [] On the **SQL Server Installation Center** page, click **Installation** and then click **New SQL Server failover cluster installation** as shown below.
+
+    !IMAGE[i4zducjz.png](instructions248589/i4zducjz.png)
+
+1. [] For this lab, we are going to the free **Developer** edition. 
+    
+    &gt;[!knowledge]For production environment you **cannot** use developer edition and must enter the license product key.
+
+    Click **Next** on the Product Key page.
+
+    ![](Media/image0241.png)
+
+1. [] Accept the **license terms** and click **Next**.
+
+1. [] Verify that there are no errors on the **Global Rules** page and click **Next**.
+
+    ![](Media/image0242.png)
+
+1. [] On the **Microsoft Updates** page, do not click the checkbox to use Microsoft Update to check for updates. In this lab, we are not checking the box as the VMs are not connected to the internet. Click **Next**.
+
+1. [] Since the virtual machine is not connected to the internet, we will get the below error. This is expected in this lab. Click **Next**.
+
+    ![image0243.png](Media/image0243.png)
+
+1. [] Verify that there are no failures on the **Install Failover Cluster Rules** page and click **Next**.
+
+    ![image0244.png](Media/image0244.png)
+
+1. [] On the **Feature Selection** page, select the following features and click **Next**.
+
+    - Database Engine Services
+
+        &gt; [!KNOWLEDGE] SQL Server Replication, Full-Text Semantic Extractions for Search and Data Quality Services are automatically selected when we select Database Engine Services.
+
+    - Integration Services
+   
+    &gt;[!note] For this lab, we are using the C:\\ drive for the instance root directory and Shared Feature directory. For production environment, most customers use a non-OS drive like D:\
+
+   !IMAGE[8702r16i.png](instructions248589/8702r16i.png) 
+
+1. [] Verify there are no failures on the **Features Rule** page, and then click **Next**.
+
+    ![image0246.png](Media/image0246.png)
+
+1. [] On the **Instance Configuration** page, type the SQL Server Network name (for example, +++**SQLFCI**+++).
+
+    - Select whether you want it to be the default instance (MSSQLSERVER) or a named instance.
+
+        &gt; [!KNOWLEDGE] There can be only one default instance on a cluster.
+
+    - In this lab, we will install a named instance. Select **Named Instance** and type a name (for example, +++**INST1**+++).
+
+        &gt;[!note] **Instance ID** is automatically completed with the same value of the instance name. You can change it if you want.
+
+    - Click **Next**.
+
+    !IMAGE[k78shsd7.png](instructions248589/k78shsd7.png)
+
+1. [] On the **Cluster Resource Group** page, select the cluster resource group name for SQL Server. Either leave the default or type a name that you want. For this lab, we will use the default name, and Click **Next**.
+
+    ![](Media/image0248.png)
+
+1. [] On the **Cluster Disk Selection** page, select the shared disks that you want to use for your SQL FCI. The available disks are marked with green as shown below. In this lab, only the **SQLRoot** disk is available. Review the **Message** column to see why other disks are not available. Check SQLRoot and click **Next**.
+
+    ![](Media/image0249.png)
+
+1. [] On the **Cluster Network Configuration** page, select **IPv4** check box and ensure that the DHCP check box is cleared. Type the unique SQL Server IP address (+++**10.1.1.202**+++) and click **Next**.
+
+    ![](Media/image0250.png)
+
+1. [] On the **Server Configuration page**, click the **Service Accounts** tab
+
+    - Use **+++CORPNET\SQLAgentSvc**+++ for the SQL Server Agent service account.
+
+    - Use **+++CORPNET\SQLSvc**+++ for the SQL Server Database Engine service account.
+
+        &gt;[!note] The password for both accounts is +++**Pa$$w0rd**+++
+
+    - Check the **Grant Perform Volume Maintenance Task privilege to SQL Server Database Engine Service** checkbox. This privilege enables instant file initialization by avoiding zeroing of data pages.
+
+    - If you want the keep the default Collation then Click **Next** otherwise go to next step
+
+        ![](Media/image0251.png)
+
+1. [] If you click the **Collation** tab, you can change the type of collation that you want to use. For this lab, leave the default and click **Next**.
+
+    ![](Media/image0252.png)
+
+1. [] In the Database Engine Configuration window,
+
+    - Select the authentication mode that you prefer (Windows or Mixed).
+    - To add the user CORPNET\cluadmin as a SQL Server administrator
+
+        - Click Add Current User or
+        - Click Add and add another domain account.
+        
+        &gt;[!note] This step is necessary because SQL Server does not configure the Administrators group (that is built-in to Windows Server) as system administrators for SQL Server.
+
+    ![](Media/image0253.png)
+
+1. [] Click **Data Directories** tab. By default, setup uses just one disk for everything. Select the disks where you want to store the user-database data, log and backup files. For this lab, we will use the following:
+
+    - Data root directory:
+
+        **+++F:\SQLSystem+++**
+
+    - System-database directory:
+
+        **F:\SQLSystem\MSSQL16.INST1\MSSQL\Data**
+
+    - User-database directory:
+
+        **+++F:\SQLData\Data+++**
+
+    - User-database-log directory:
+
+        **+++F:\SQLLog\Log+++**
+
+    - Backup directory:
+
+        **+++F:\SQLBackup\Backup+++**
+
+        &gt;[!note] As per best practices, we have added a folder to the root of each mounted drive. We do not have to pre-create the folders as SQL setup will create them.
+
+        ![image0254.png](Media/image0254.png)
+
+1. [] Click the **TempDB** tab. Configure TempDB as per best practices. In this lab, we will assume that the cluster node has 4 processors and will select 4 TempDB data files. **Remove** the default data directory and **Add** F:\\SQLTempDB\\TempDB as the Data and Log directories.
+
+    &gt;[!note]You will need to create the TempDB folder in F:\SQLTempDB by clicking the Make New Folder .
+
+    !IMAGE[8qqtmaqi.png](instructions248589/8qqtmaqi.png)
+
+    ![](Media/image0255.png)
+
+1. [] Click the **MaxDOP** tab. Review the configured settings for MAXDOP.
+
+    ![](Media/image0256.png)
+
+1. [] Click the **Memory** tab. Click the radial button to accept the recommended memory setting as per best practices. You will also need to click the check box at the bottom of the tab to accept the recommended setting. 
+
+    ![](Media/image0257.png)
+
+1. [] Click the **FILESTREAM** tab. If you want to enable the **FILESTREAM** feature of SQL Server, select that option. For this lab, select the boxes as shown below and Click **Next**.
+
+    ![](Media/image0258.png)
+
+1. [] Verify there are no failures in the **Feature Configuration Rules** page and click **Next**.
+
+    ![](Media/image0259.png)
+
+1. [] On the **Ready to Install** page, verify that the information is correct. Click **Install**.
+
+    !IMAGE[c0qii5ln.png](instructions248589/c0qii5ln.png)
+
+    &gt; [!note] On the **Ready to Install** page, notice that the path to the configuration file is specified. Setup writes out all the parameters in the configuration file for the actions that ran, except for sensitive information like passwords. If you want to stop the installation now, click **Cancel**. Later, when you are ready, you can run the installation from the Command Prompt and supply the Configuration.ini file by using the **ConfigurationFile** parameter.
+    &lt;br/&gt;&lt;br/&gt;
+    The following is an example on how to run setup.exe by using the configuration file:
+    &lt;br/&gt;&lt;br/&gt;
+    &gt;```
+    &gt;setup.exe /ConfigurationFile=MyConfigurationFile.ini
+    &gt;```
+
+    &gt;[!knowledge] For more information, review Microsoft document [Install SQL Server using a configuration file](https://docs.microsoft.com/en-us/sql/database-engine/install-windows/install-sql-server-using-a-configuration-file)
+
+1. [] Wait for the installation to complete.
+
+    !IMAGE[xv69opi4.png](instructions248589/xv69opi4.png)
+   
+    &gt; [!KNOWLEDGE] By default, the SQL Server 2022 Setup logs are on the cluster node in **%Program Files%\Microsoft SQL Server\160\Setup Bootstrap\Log\&amp;lt;datetime&amp;gt;**.
+
+1. [] Click the **Summary** log link and review it. Click **Close** on the **Complete** page.
+
+   !IMAGE[mapjzspo.png](instructions248589/mapjzspo.png)
+
+1. [] Open **Failover Cluster Manager** and review the SQL Server Cluster Group and Resources as shown below.
+
+    ![](Media/image0263.png)
+
+    ![](Media/image0264.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 2: Add a Node to an Existing SQL Server AlwaysOn Failover Clustered Instance
+
+In this exercise, you will learn how to add a Node to an Existing SQL Server AlwaysOn Failover Clustered Instance
+
+---
+
+### Tasks 1: Add a node to an existing SQL Server failover
+
+1. [] Sign in to virtual machine **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++CORPNET\cluadmin+++** using  +++**Pa$$w0rd**+++ as the password.
+
+1. [] In the lab environment, on the **Resources** tab, select the **AlwaysOnN2** virtual machine, and then in the **DVD Drive** drop-down list, select the **SQL Server 2022 installation media** (ISO).
+
+   !IMAGE[e0ezhr9c.png](instructions248589/e0ezhr9c.png)
+
+1. [] Open **File Explorer** in the AlwaysOnN2 machine and you should see the installation media as shown below. Right click **Setup** and select **Run as administrator** to launch the setup program.
+
+    !IMAGE[tcybogyj.png](instructions248589/tcybogyj.png)
+1. [] This will open the **User Account Control** popup. Click **Yes**.
+
+1. [] On the **SQL Server Installation Center** page, click **Installation** and then click **Add node to a SQL Server failover cluster** as shown below.
+
+    !IMAGE[elzphct8.png](instructions248589/elzphct8.png)
+
+1. [] For this lab, we are going to the free Developer edition. 
+
+    &gt;[!knowledge] For production environment you cannot use developer edition and must enter the license product key.
+
+1. [] Accept the **license terms** and click **Next**.
+
+1. [] Verify that there are no errors on the **Global Rules** page and click **Next**.
+
+1. [] On the **Microsoft Update** page, do not click the checkbox to use Microsoft Update to check for updates. In this lab, we are not checking the box as the VMs are not connected to the internet. Click **Next**.
+
+1. [] Since the virtual machine is not connected to the internet, you will get the below error. This is expected in this lab. Click **Next**.
+
+    ![image0268.png](Media/image0268.png)
+
+1. [] Verify that there are no failures on the **Add Node Rules** page and click **Next**.
+
+1. [] Review the details on the **Cluster Node Configuration** page and click **Next**.
+
+    ![](Media/image0269.png)
+
+1. [] Review the details on the **Cluster Network Configuration** page and click **Next**
+
+    ![](Media/image0270.png)
+
+1. [] On the **Service Accounts** page, type the password for the SQL Server Database Engine and SQL Server Agent service accounts, check **Grant Perform Volume Maintenance Task privilege** checkbox, and then click **Next**. 
+
+    &gt;[!note] The password for both these accounts is +++**Pa$$w0rd**+++.
+
+    ![image0271.png](Media/image0271.png)
+
+1. [] Verify that there are no failures on the **Feature Rules** page, and click **Next**.
+
+1. [] Review the information on the Ready to Add Node page and click **Install**.
+
+    !IMAGE[eobtgky0.png](instructions248589/eobtgky0.png)
+
+    &gt; [!note] On the **Ready to Install** page, notice that the path to the configuration file is specified. Setup writes out all the parameters in the configuration file for the actions that ran, except for sensitive information like passwords. If you want to stop the installation now, click **Cancel**. Later, when you are ready, you can run the installation from the Command Prompt and supply the Configuration.ini file by using the **ConfigurationFile** parameter.
+
+1. [] Wait till the setup completes.
+
+1. [] Ensure all the features installed successfully.
+
+    !IMAGE[0yiyuudx.png](instructions248589/0yiyuudx.png)
+
+1. [] Click the link for the **Summary** log file and review it. Click **Close** on the **Complete** page.
+
+   !IMAGE[6xhm3l2n.png](instructions248589/6xhm3l2n.png)
+
+1. [] Now we have a two-node SQL Server Failover Cluster instance on a three-node Windows Server Failover Cluster.
+
+1. [] **If time permits**, add **AlwaysOnN3** cluster node to the FCI. Either repeat the above steps on **AlwaysOnN3** cluster node to create a three-node SQL Server FCI or add the third node using command line setup following the steps below.
+
+1. [] Select the SQL Server setup media from the DVD drop-down box of AlwaysOnN3. Open an **Administrator: Command Prompt**, change directory to D:\&gt; and type the below command
+
+    ```CommandPrompt
+    setup.exe /q /ACTION=AddNode /INSTANCENAME=&quot;INST1&quot; /SQLSVCACCOUNT=&quot;CORPNET\SQLSVC&quot; /SQLSVCPASSWORD=&quot;Pa$$w0rd&quot; /AGTSVCACCOUNT=&quot;CORPNET\SQLAgentSVC&quot; /AGTSVCPASSWORD=&quot;Pa$$w0rd&quot; /IAcceptSQLServerLicenseTerms /INDICATEPROGRESS 
+    ```
+
+    ![](Media/image0275.png)
+
+    &gt;[!note] You can also copy this command and use the Paste clipboard text functionality of the LOD environment to paste it in the VM.
+
+1. [] After the setup completes, review the Summary file to ensure it succeeded.
+
+    !IMAGE[kuybx0h4.png](instructions248589/kuybx0h4.png)
+    !IMAGE[dbenc659.png](instructions248589/dbenc659.png)
+
+   
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;155697&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242375&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242375&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242375&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242376&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242376&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242376&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242377&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242377&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242377&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242378&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242378&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242378&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242379&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242379&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242379&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.OpticalMedia(23652).LoadLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;loadMediaLink opticalMedia icon-link special-action-link&#39; data-data=&#39;23652&#39;&gt;SQL Server 2022 dev &lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Install a Two-node AlwaysOn Failover Cluster Instance&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="155697" data-contentroot="https://labondemand.blob.core.windows.net/content/lab155697/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>

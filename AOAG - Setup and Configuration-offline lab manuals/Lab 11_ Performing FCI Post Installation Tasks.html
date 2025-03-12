@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 11: Performing FCI Post Installation Tasks</title>
+
+
+    <script src="./Lab 11_ Performing FCI Post Installation Tasks_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 11_ Performing FCI Post Installation Tasks_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 11_ Performing FCI Post Installation Tasks_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 11_ Performing FCI Post Installation Tasks_files/prettify.css">
+    <script src="./Lab 11_ Performing FCI Post Installation Tasks_files/yaml.min.js.download"></script>
+    <script src="./Lab 11_ Performing FCI Post Installation Tasks_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 11_ Performing FCI Post Installation Tasks_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 11_ Performing FCI Post Installation Tasks_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+        <div style="padding:10px 20px;">
+            <a class="editLink" href="https://labondemand.com/LabProfile/EditInstructions/158231?InstructionsSetId=252268">Edit</a>
+        </div>
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="performing-fci-post-installation-tasks">Performing FCI Post Installation Tasks</h1>
+<h2 id="introduction">Introduction</h2>
+<p>In this lab, you will perform some common SQL Server failover cluster instance post installation tasks.</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Review SQL Server FCI Resources and Dependencies in Failover Cluster Manager</li>
+<li>Manually failover SQL Server FCI from one node to another</li>
+<li>Configure a Static TCP/IP Port for SQL FCI</li>
+<li>Enable a Firewall Exception for SQL Server FCI on the Cluster Nodes</li>
+<li>Configure Remote Access for a dedicated administrative connection</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>30 minutes</p>
+<h2 id="logon-information">Logon Information</h2>
+<blockquote class="alert">
+  <p><strong>Before Login make sure windows has Applied Computer Setting to all nodes.</strong></p>
+</blockquote>
+<p>Use the following credentials to login into virtual environment</p>
+<ol>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247072">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247070">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247071">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247068">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol>
+<blockquote class="note">
+  <p>Screenshots in the lab instructions may appear with a lesser SQL version number than is installed in the lab environment where functionality is not affected. </p>
+</blockquote>
+<h2 id="lab-environment">Lab Environment</h2>
+<p>Before we begin with the first exercise in the lab, let's review the lab environment.</p>
+<ul>
+<li>In the lab, we have one Domain Controller, 3-node Windows Server 2022 cluster and one Windows 10 client computer.</li>
+<li><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a> and <a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247070">AlwaysOnN2</a> nodes are in the primary Datacenter.</li>
+<li><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247071">AlwaysOnN3</a> is in the secondary datacenter.</li>
+<li>For this lab, both the datacenters are in the same subnet.</li>
+<li>SQL Server 2022 FCI (SQLFCI\INST1) is installed on AlwaysOnN1 and AlwaysOnN2</li>
+</ul>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0278.png"></p>
+</div><div class="page" id="page1">
+<h1 id="exercise-1-review-sql-server-fci-resources-and-dependencies">Exercise 1: Review SQL Server FCI Resources and Dependencies</h1>
+<p>In this exercise, you will review the SQL Server FCI resources, properties, policies and dependencies.</p>
+<hr>
+<h3 id="task-1-review-sql-server-cluster-group">Task 1: Review SQL Server Cluster Group</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> Perform this task on virtual machine <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Open <strong>Failover Cluster Manager</strong> and review the SQL Server Cluster Group and Resources as shown below.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0279.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0280.png"></p></li>
+</ol>
+</div><div class="page" id="page2">
+<h3 id="task-2-review-the-properties-of-all-the-resources">Task 2: Review the properties of all the resources</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Right-click a resource (for example, <strong>Name: SQLFCI</strong>) and click <strong>Properties</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0281.png"></p></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> The properties popup will appear as shown below.</p>
+<blockquote class="knowledge">
+  <p>For detailed information on properties, review Microsoft TechNet article <a class="icon-link external-link" href="https://technet.microsoft.com/library/113b5967-f7a4-4038-b583-a9c343dbffd7" target="_blank">Clustered Role and Resource Properties</a> )</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> Review the <strong>General</strong> properties.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0282.png"></p></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> Click the <strong>Dependencies</strong> tab and review the dependencies. </p>
+<blockquote class="knowledge">
+  <p>Network name resources are dependent on IP address resource/s.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0283.png"></p></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> Click the <strong>Policies</strong> tab and review default policies. </p>
+<blockquote class="note">
+  <p>This is the tab where you can specify how you want the resource to respond when it fails. By default, if a resource fails, it will try to restart <strong>(N - 1) times</strong> (where N is the number of cluster nodes) on the current node and if the restart is unsuccessful it will fail over <strong>ALL</strong> the resources in this Role (aka cluster group). Since this is a two node SQL FCI, the maximum restarts is (2 - 1) = 1.</p>
+</blockquote>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0284.png"></p></li>
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> Click the <strong>Advanced Policies</strong> Tab. Verify that both cluster nodes (AlwaysOnN1 and AlwaysOnN2) are <strong>Possible Owners</strong>. </p>
+<blockquote class="knowledge">
+  <p>The nodes that are listed as possible owners of a resource limit where the SQL Server FCI can run. If all the resources on an SQL Server FCI have the same possible owners, the server can run on any of the listed nodes. If one of the resources cannot list a node, the SQL Server FCI cannot run on that node, even if all the remaining resources list the node as a possible owner. If no possible-owner nodes are up, the group still fails over to a node that is not a possible owner, but it does not come online.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0285.png"></p>
+<blockquote class="note">
+  <p>There is another similar property called the <strong>Preferred Owner</strong>. A preferred owner is a node that you prefer a <strong>Role</strong> (aka cluster resource group) to run on. During a failover, the group is moved to the next node in the preferred owner list. To review the preferred owner list, right click the <strong>SQL Server(INST1) Role</strong> and select <strong>Properties</strong> as shown below.</p>
+  <p>
+  <img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0286.png"></p>
+  <p>
+  <img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0287.png"></p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> Click the <strong>Failover</strong> tab to review the default failover properties of the <strong>SQL Server (INST1)</strong> role.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0288.png"></p>
+<blockquote class="note">
+  <p>By default, the <strong>SQL Server (INST1)</strong> role will attempt to restart twice in 6 hours. If the role fails more than twice in 6 hours, it will be left in the failed state. Also, the default <strong>Failback</strong> policy is set to <strong>Prevent failback</strong>. To understand this, let's assume that the Preferred Node is AlwaysOnN1. Say AlwaysOnN1 has a problem and it shuts down. Windows Server failover cluster will automatically failover SQL Server to AlwaysOnN2 node. Now say AlwaysOnN1 restarts, if Prevent failback is <strong>not</strong> selected then SQL Server will automatically failover to AlwaysOnN1 as soon as it restarts. But it is possible that the issue that caused AlwaysOnN1 to fail in the beginning has not been addressed yet and hence AlwaysOnN1 can shut down again which will cause a failover to AlwaysOnN2. To prevent this scenario, by default <strong>Prevent failback</strong> is set. If you like failback to occur during certain hours, you can set it in this window.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> Review the properties of <strong>SQL Server (INST1)</strong> resource as shown below.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0289.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0290.png"></p></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> Ensure that the SQL Server resources are dependent on the mount points and network name. By default, setup automatically adds the mount points and base drive as dependencies for the SQL Service resource.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0291.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0292.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0293.png"></p>
+<blockquote class="knowledge">
+  <p>By default, SQL Server resource runs in a separate Resource Monitor.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0294.png"></p>
+<blockquote class="knowledge">
+  <p>SQL Server resource has an extra tab named <strong>Properties</strong> where all the default properties can be viewed and modified.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+</ol>
+</div><div class="page" id="page3">
+<h3 id="task-3-review-sql-server-resource-dependencies">Task 3: Review SQL Server resource dependencies</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Perform this task on virtual machine <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p></li>
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> In <strong>Failover Cluster Manager,</strong> right-click <strong>SQL Server (INST1)</strong> resource and select <strong>More Actions</strong> &gt; <strong>Show Dependency Report</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0295.png"></p></li>
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> Review the Dependency Report then close the browser window.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0296.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0297.png"></p></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page4">
+<h1 id="exercise-2-manually-failover-sql-server-fci-from-one-node-to-another">Exercise 2: Manually failover SQL Server FCI from one node to another</h1>
+<p>In this exercise, you will failover SQL Server FCI from one cluster node to another, and ensure that the SQL Server role and the resources in the role comes online on the other node.</p>
+<hr>
+<h3 id="task-1-manually-failover-sql-server-fci">Task 1: Manually failover SQL Server FCI</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> Perform this task on virtual machine <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> Open <strong>Failover Cluster Manager</strong>.</p></li>
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> Observe the node on which currently SQL Server is running. When the screenshot was taken, it is running on AlwaysOnN1. Right-click the <strong>SQL Server (INST1)</strong> role and select <strong>Move</strong> &gt; <strong>Select Node</strong>… as shown below.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0298.png"></p></li>
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> In the <strong>Move Clustered Role</strong> window, select the destination node for moving SQL Server (INST1) from AlwaysOnN1. Select <strong>AlwaysOnN2</strong> and click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0299.png"></p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> Observe that the role and the resources in the role fail over and come <strong>Online</strong> on the other node.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0300.png"></p></li>
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> Perform above steps to fail back the SQL Server (INST1) back to original owner node (AlwaysOnN1 in this case).</p></li>
+</ol>
+<h3 id="congratulations-1">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page5">
+<h1 id="exercise-3-configure-a-static-tcpip-port-for-sql-fci">Exercise 3: Configure a Static TCP/IP Port for SQL FCI</h1>
+<p>By default, SQL Server named instance listens on a dynamic TCP/IP port. In this exercise, you will configure a static TCP/IP port for SQL Server failover cluster instance.</p>
+<hr>
+<h3 id="task-1-find-the-node-that-owns-sql-fci">Task 1: Find the node that owns SQL FCI</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> Perform this task on virtual machines <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p></li>
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> Open <strong>Failover Cluster Manager</strong> and review the SQL Server Cluster Group as shown below.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0301.png"></p></li>
+</ol>
+</div><div class="page" id="page6">
+<h3 id="task-2-configure-a-static-tcpip-port">Task 2: Configure a Static TCP/IP Port</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> Log on to the <strong>Owner Node</strong> (<strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> as per the following screenshot) with logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span></p></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> Open SQL Server Configuration Manager</p></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> If the <strong>User Account Control</strong> popup appears, click <strong>Yes</strong>.</p></li>
+<li class="task-list-item" id="taskIndex25"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex25"><span></span></label> Expand <strong>SQL Server Network Configuration</strong>. Select <strong>Protocols for INST1</strong>. Right-click <strong>TCP/IP</strong> and select <strong>Properties</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/w36b97j0.png" alt="w36b97j0.png"></p></li>
+<li class="task-list-item" id="taskIndex26"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex26"><span></span></label> On the <strong>TCP/IP Properties</strong> page, click the <strong>IP Addresses</strong> Tab. Scroll to the <strong>IPAll</strong> section.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0303.png"></p></li>
+<li class="task-list-item" id="taskIndex27"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex27"><span></span></label> If there is a value in <strong>TCP Dynamic Ports</strong>, delete it. Select <strong>TCP Port</strong>, type a valid port number (for example, <strong>5100</strong>), and then click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0304.png"></p></li>
+<li class="task-list-item" id="taskIndex28"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex28"><span></span></label> Review the <strong>Warning</strong> and click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0305.png"></p></li>
+<li class="task-list-item" id="taskIndex29"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex29"><span></span></label> During a scheduled downtime, restart the SQL Server service so that the changes take effect. For the lab, restart the SQL Server service now.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/o8k5b1wq.png" alt="o8k5b1wq.png"></p>
+<blockquote class="note">
+  <p>Same action  you can do from Failover Cluster Manager by <strong>taking the Cluster Resource (SQL Server Service) Offline and then brining it online</strong>.</p>
+</blockquote></li>
+</ol>
+</div><div class="page" id="page7">
+<h3 id="task-3-verify-that-the-tcpip-port-changed">Task 3: Verify that the TCP/IP port changed</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex30"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex30"><span></span></label> Open the SQL Server Error Log. (F:\SQLSystem\MSSQL16.INST1\MSSQL\LOG\Errorlog) using Notepad.</p>
+<blockquote class="note">
+  <p>If you receive a message indicating you do not have permission, click Continue to grant yourself permission.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex31"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex31"><span></span></label> Verify that the new TCP/IP port name is listed, by searching for <strong>Server is listening on</strong>, and then close Notepad.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0307.png"></p></li>
+</ol>
+<h3 id="congratulations-2">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page8">
+<h1 id="exercise-4-enable-a-firewall-exception-for-sql-server-fci-on-the-cluster-nodes">Exercise 4: Enable a Firewall Exception for SQL Server FCI on the Cluster Nodes</h1>
+<p>Users are complaining that they cannot connect to the SQL Server AlwaysOn FCI from their client machines. They are getting the following error message when trying to connect using SQL Server Management Studio on their workstation.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0308.png"></p>
+<p>You are the DBA and need to ensure that the users can connect without getting any errors. You know that by default, the firewall in Windows Server is <strong>ON</strong>, so clients cannot connect to SQL Server. To access an instance of SQL Server through a firewall, you need to configure the firewall on the computer that is running SQL Server to allow access.</p>
+<hr>
+<h3 id="task-1-configure-the-firewall-on-all-the-cluster-nodes">Task 1: Configure the firewall on ALL the cluster nodes</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex32"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex32"><span></span></label> Perform this task on virtual machines <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247069">AlwaysOnN1</a></strong> and <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247070">AlwaysOnN2</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p></li>
+<li class="task-list-item" id="taskIndex33"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex33"><span></span></label> Open <strong>Windows Firewall with Advanced Security</strong> on the cluster node. </p>
+<blockquote class="hint">
+  <p>Click the Windows Search icon and type Windows Firewall</p>
+</blockquote>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0309.png"></p></li>
+<li class="task-list-item" id="taskIndex34"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex34"><span></span></label> Click <strong>Inbound Rules</strong> <strong>New Rule</strong> under <strong>Actions</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0310.png"></p></li>
+<li class="task-list-item" id="taskIndex35"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex35"><span></span></label> In the <strong>New Inbound Rule Wizard</strong>, on the <strong>Rule Type</strong> page, select <strong>Port</strong>, and then click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0311.png"></p></li>
+<li class="task-list-item" id="taskIndex36"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex36"><span></span></label> On the Protocols and Ports page, select TCP. Type the TCP port, that SQL Server listens on, in the Select specific local port section. </p>
+<blockquote class="hint">
+  <p>To find the TCP port that SQL Server listens on, open SQL Server Errorlog.</p>
+</blockquote>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0312.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0314.png"></p></li>
+<li class="task-list-item" id="taskIndex37"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex37"><span></span></label> On the Action page, review the options. For this exercise, <strong>use the default</strong> selection, and then click Next.</p></li>
+<li class="task-list-item" id="taskIndex38"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex38"><span></span></label> On the Profile page, review the options. For this exercise, <strong>use the default</strong> selection, and then click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex39"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex39"><span></span></label> On the <strong>Name</strong> page, type a descriptive name (for example, <strong><span class="typeText" title="Type Text">SQLFCI\INST1 TCP PORT</span></strong>) for the inbound rule, and then click <strong>Finish</strong>.</p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0313.png"></p></li>
+<li class="task-list-item" id="taskIndex40"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex40"><span></span></label> Repeat steps 2-8 to create the UDP inbound rules for SQL Browser Service</p>
+<blockquote class="knowledge">
+  <p>The SQL Server Browser service uses UDP broadcast on port 1434</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex41"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex41"><span></span></label> Ensure that you have completed the above steps 2 - 9 to create TCP and UDP inbound rules on both cluster nodes AlwaysOnN1 and AlwaysOnN2.</p></li>
+<li class="task-list-item" id="taskIndex42"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex42"><span></span></label> Log on to <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247072">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password. </p></li>
+<li class="task-list-item" id="taskIndex43"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex43"><span></span></label> Open <strong>SQL Server Management Studio</strong> and connect to the SQL Server failover cluster instance <strong>SQLFCI\INST1</strong></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0315.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/image0316.png"></p>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/5y66c3ef.png" alt="5y66c3ef.png"></p></li>
+</ol>
+<h3 id="congratulations-3">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page9">
+<h1 id="exercise-5-configure-remote-access-for-a-dedicated-administrative-connection">Exercise 5: Configure Remote Access for a dedicated administrative connection</h1>
+<p>SQL Server provides dedicated administrator connection (DAC) for administrators when standard connections to the server are not possible. On cluster configurations, the DAC will be off by default. If SQL Server is unresponsive and the DAC listener is not enabled, you might have to restart SQL Server to connect with the DAC. Therefore, we recommend that you enable the remote admin connections configuration option on clustered systems. For more information, refer to <a class="icon-link external-link" href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/diagnostic-connection-for-database-administrators" target="_blank">Diagnostic Connection for Database Administrators</a></p>
+<hr>
+<h3 id="task-1-configure-remote-admin-connection">Task 1: Configure Remote Admin Connection</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex44"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex44"><span></span></label> Perform this task on virtual machine <strong><a href="https://labondemand.com/LabProfile/Instructions/158231?instructionsSetId=252268#" class="selectMachineLink icon-link special-action-link" data-data="247072">AlwaysOnClient</a></strong> as logon user <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using the password <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span>.</p></li>
+<li class="task-list-item" id="taskIndex45"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex45"><span></span></label> Open <strong>SQL Server Management Studio</strong>, connect to the <strong>SQLFCI\INST1</strong> instance, and then open a <strong>Query</strong> window.</p></li>
+<li class="task-list-item" id="taskIndex46"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex46"><span></span></label> Execute the below command to check the current (default) value of 'remote admin connections' configuration</p>
+<pre><div class="codeTitle">TSQL</div><code class="TSQL language-TSQL prettyprint prettyprinted" style=""><span class="pln">EXEC sp_configure </span><span class="str">'remote admin connections'</span></code></pre>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/pdbkahtu.png" alt="pdbkahtu.png">  </p>
+<p>As expected, the default value is 0 (disabled).</p></li>
+<li class="task-list-item" id="taskIndex47"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex47"><span></span></label> Execute the below command to enable 'remote admin connections'</p>
+<blockquote class="hint">
+  <p>Open Notepad in the lab environment VM. Use the <strong><span class="typeText" title="Type Text">Type Text</span></strong> feature to enter the code into Notepad, copy the code, and then paste it into the Query Editor. This will bypass the autocomplete features in the Query Editor.</p>
+</blockquote>
+<pre><div class="codeTitle">TSQL</div><code class="TSQL language-TSQL prettyprint prettyprinted" style=""><span class="pln">EXEC sp_configure </span><span class="str">'remote admin connections'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pln">
+RECONFIGURE</span></code></pre>
+<p>
+<img src="./Lab 11_ Performing FCI Post Installation Tasks_files/5v59wnox.png" alt="5v59wnox.png"></p></li>
+</ol>
+<h3 id="congratulations-4">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Performing FCI Post Installation Tasks
+
+## Introduction
+
+In this lab, you will perform some common SQL Server failover cluster instance post installation tasks.
+
+## Objectives
+
+At the end of this lab, you will be able to:
+
+- Review SQL Server FCI Resources and Dependencies in Failover Cluster Manager
+- Manually failover SQL Server FCI from one node to another
+- Configure a Static TCP/IP Port for SQL FCI
+- Enable a Firewall Exception for SQL Server FCI on the Cluster Nodes
+- Configure Remote Access for a dedicated administrative connection
+
+## Estimated Time
+
+30 minutes
+
+## Logon Information
+&gt;[!alert]**Before Login make sure windows has Applied Computer Setting to all nodes.**
+
+Use the following credentials to login into virtual environment
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnClient).Username+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnDC).Username+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+&gt;[!note] Screenshots in the lab instructions may appear with a lesser SQL version number than is installed in the lab environment where functionality is not affected. 
+
+## Lab Environment
+
+Before we begin with the first exercise in the lab, let&#39;s review the lab environment.
+
+- In the lab, we have one Domain Controller, 3-node Windows Server 2022 cluster and one Windows 10 client computer.
+- @lab.VirtualMachine(AlwaysOnN1).SelectLink and @lab.VirtualMachine(AlwaysOnN2).SelectLink nodes are in the primary Datacenter.
+- @lab.VirtualMachine(AlwaysOnN3).SelectLink is in the secondary datacenter.
+- For this lab, both the datacenters are in the same subnet.
+- SQL Server 2022 FCI (SQLFCI\INST1) is installed on AlwaysOnN1 and AlwaysOnN2
+
+![](Media/image0278.png)
+
+===
+
+# Exercise 1: Review SQL Server FCI Resources and Dependencies
+
+In this exercise, you will review the SQL Server FCI resources, properties, policies and dependencies.
+
+---
+
+### Task 1: Review SQL Server Cluster Group
+
+1. [] Perform this task on virtual machine **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as logon user **+++CORPNET\cluadmin**+++ using the password +++**Pa$$w0rd**+++.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. [] Open **Failover Cluster Manager** and review the SQL Server Cluster Group and Resources as shown below.
+
+    ![](Media/image0279.png)
+
+    ![](Media/image0280.png)
+
+===
+
+### Task 2: Review the properties of all the resources
+
+1. [] Right-click a resource (for example, **Name: SQLFCI**) and click **Properties**.
+
+   ![](Media/image0281.png)
+
+1. [] The properties popup will appear as shown below.
+
+    &gt; [!KNOWLEDGE] For detailed information on properties, review Microsoft TechNet article [Clustered Role and Resource Properties](https://technet.microsoft.com/library/113b5967-f7a4-4038-b583-a9c343dbffd7) )
+
+1. [] Review the **General** properties.
+
+    ![](Media/image0282.png)
+
+1. [] Click the **Dependencies** tab and review the dependencies. 
+
+    &gt;[!knowledge] Network name resources are dependent on IP address resource/s.
+
+    ![](Media/image0283.png)
+
+1. [] Click the **Policies** tab and review default policies. 
+
+    &gt;[!note] This is the tab where you can specify how you want the resource to respond when it fails. By default, if a resource fails, it will try to restart **(N - 1) times** (where N is the number of cluster nodes) on the current node and if the restart is unsuccessful it will fail over **ALL** the resources in this Role (aka cluster group). Since this is a two node SQL FCI, the maximum restarts is (2 - 1) = 1.
+
+    ![](Media/image0284.png)
+
+1. [] Click the **Advanced Policies** Tab. Verify that both cluster nodes (AlwaysOnN1 and AlwaysOnN2) are **Possible Owners**. 
+
+    &gt;[!knowledge]The nodes that are listed as possible owners of a resource limit where the SQL Server FCI can run. If all the resources on an SQL Server FCI have the same possible owners, the server can run on any of the listed nodes. If one of the resources cannot list a node, the SQL Server FCI cannot run on that node, even if all the remaining resources list the node as a possible owner. If no possible-owner nodes are up, the group still fails over to a node that is not a possible owner, but it does not come online.
+
+    ![](Media/image0285.png)
+
+    &gt;[!note]There is another similar property called the **Preferred Owner**. A preferred owner is a node that you prefer a **Role** (aka cluster resource group) to run on. During a failover, the group is moved to the next node in the preferred owner list. To review the preferred owner list, right click the **SQL Server(INST1) Role** and select **Properties** as shown below.
+    &gt;
+    &gt;![](Media/image0286.png)
+    &gt;
+    &gt;![](Media/image0287.png)
+
+1. [] Click the **Failover** tab to review the default failover properties of the **SQL Server (INST1)** role.
+
+   ![](Media/image0288.png)
+
+    &gt;[!note]By default, the **SQL Server (INST1)** role will attempt to restart twice in 6 hours. If the role fails more than twice in 6 hours, it will be left in the failed state. Also, the default **Failback** policy is set to **Prevent failback**. To understand this, let&#39;s assume that the Preferred Node is AlwaysOnN1. Say AlwaysOnN1 has a problem and it shuts down. Windows Server failover cluster will automatically failover SQL Server to AlwaysOnN2 node. Now say AlwaysOnN1 restarts, if Prevent failback is **not** selected then SQL Server will automatically failover to AlwaysOnN1 as soon as it restarts. But it is possible that the issue that caused AlwaysOnN1 to fail in the beginning has not been addressed yet and hence AlwaysOnN1 can shut down again which will cause a failover to AlwaysOnN2. To prevent this scenario, by default **Prevent failback** is set. If you like failback to occur during certain hours, you can set it in this window.
+
+1. [] Review the properties of **SQL Server (INST1)** resource as shown below.
+
+    ![](Media/image0289.png)
+
+    ![](Media/image0290.png)
+
+1. [] Ensure that the SQL Server resources are dependent on the mount points and network name. By default, setup automatically adds the mount points and base drive as dependencies for the SQL Service resource.
+
+    ![](Media/image0291.png)
+
+    ![](Media/image0292.png)
+
+    ![](Media/image0293.png)
+
+    &gt; [!KNOWLEDGE] By default, SQL Server resource runs in a separate Resource Monitor.
+
+    ![](Media/image0294.png)
+
+    &gt; [!KNOWLEDGE] SQL Server resource has an extra tab named **Properties** where all the default properties can be viewed and modified.
+
+===
+
+### Task 3: Review SQL Server resource dependencies
+
+1. [] Perform this task on virtual machine **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as logon user **+++CORPNET\cluadmin**+++ using the password +++**Pa$$w0rd**+++.
+
+1. [] In **Failover Cluster Manager,** right-click **SQL Server (INST1)** resource and select **More Actions** &amp;gt; **Show Dependency Report**.
+
+    ![](Media/image0295.png)
+
+1. [] Review the Dependency Report then close the browser window.
+
+    ![](Media/image0296.png)
+
+    ![](Media/image0297.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 2: Manually failover SQL Server FCI from one node to another
+
+In this exercise, you will failover SQL Server FCI from one cluster node to another, and ensure that the SQL Server role and the resources in the role comes online on the other node.
+
+---
+
+### Task 1: Manually failover SQL Server FCI
+
+1. [] Perform this task on virtual machine **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as logon user **+++CORPNET\cluadmin**+++ using the password +++**Pa$$w0rd**+++.
+
+1. [] Open **Failover Cluster Manager**.
+
+1. [] Observe the node on which currently SQL Server is running. When the screenshot was taken, it is running on AlwaysOnN1. Right-click the **SQL Server (INST1)** role and select **Move** &amp;gt; **Select Node**... as shown below.
+
+    ![](Media/image0298.png)
+
+1. [] In the **Move Clustered Role** window, select the destination node for moving SQL Server (INST1) from AlwaysOnN1. Select **AlwaysOnN2** and click **OK**.
+
+    ![](Media/image0299.png)
+
+1. [] Observe that the role and the resources in the role fail over and come **Online** on the other node.
+
+    ![](Media/image0300.png)
+
+1. [] Perform above steps to fail back the SQL Server (INST1) back to original owner node (AlwaysOnN1 in this case).
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 3: Configure a Static TCP/IP Port for SQL FCI
+
+By default, SQL Server named instance listens on a dynamic TCP/IP port. In this exercise, you will configure a static TCP/IP port for SQL Server failover cluster instance.
+
+---
+
+### Task 1: Find the node that owns SQL FCI
+
+1. [] Perform this task on virtual machines **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as logon user **+++CORPNET\cluadmin+++** using the password +++**Pa$$w0rd**+++.
+
+1. [] Open **Failover Cluster Manager** and review the SQL Server Cluster Group as shown below.
+
+    ![](Media/image0301.png)
+
+===
+
+### Task 2: Configure a Static TCP/IP Port
+
+1. [] Log on to the **Owner Node** (**@lab.VirtualMachine(AlwaysOnN1).SelectLink** as per the following screenshot) with logon user **+++CORPNET\cluadmin**+++ using the password +++**Pa$$w0rd**+++
+
+1. [] Open SQL Server Configuration Manager
+
+1. [] If the **User Account Control** popup appears, click **Yes**.
+
+1. [] Expand **SQL Server Network Configuration**. Select **Protocols for INST1**. Right-click **TCP/IP** and select **Properties**.
+
+   !IMAGE[w36b97j0.png](instructions252268/w36b97j0.png)
+
+1. [] On the **TCP/IP Properties** page, click the **IP Addresses** Tab. Scroll to the **IPAll** section.
+
+    ![](Media/image0303.png)
+
+1. [] If there is a value in **TCP Dynamic Ports**, delete it. Select **TCP Port**, type a valid port number (for example, **5100**), and then click **OK**.
+
+    ![](Media/image0304.png)
+
+1. [] Review the **Warning** and click **OK**.
+
+    ![](Media/image0305.png)
+
+1. [] During a scheduled downtime, restart the SQL Server service so that the changes take effect. For the lab, restart the SQL Server service now.
+
+    !IMAGE[o8k5b1wq.png](instructions252268/o8k5b1wq.png)
+    &gt;[!note] Same action  you can do from Failover Cluster Manager by **taking the Cluster Resource (SQL Server Service) Offline and then brining it online**.
+===
+
+### Task 3: Verify that the TCP/IP port changed
+
+1. [] Open the SQL Server Error Log. (F:\SQLSystem\MSSQL16.INST1\MSSQL\LOG\Errorlog) using Notepad.
+
+    &gt;[!note]If you receive a message indicating you do not have permission, click Continue to grant yourself permission.
+
+1. [] Verify that the new TCP/IP port name is listed, by searching for **Server is listening on**, and then close Notepad.
+
+    ![](Media/image0307.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 4: Enable a Firewall Exception for SQL Server FCI on the Cluster Nodes
+
+Users are complaining that they cannot connect to the SQL Server AlwaysOn FCI from their client machines. They are getting the following error message when trying to connect using SQL Server Management Studio on their workstation.
+
+![](Media/image0308.png)
+
+You are the DBA and need to ensure that the users can connect without getting any errors. You know that by default, the firewall in Windows Server is **ON**, so clients cannot connect to SQL Server. To access an instance of SQL Server through a firewall, you need to configure the firewall on the computer that is running SQL Server to allow access.
+
+---
+
+### Task 1: Configure the firewall on ALL the cluster nodes
+
+1. [] Perform this task on virtual machines **@lab.VirtualMachine(AlwaysOnN1).SelectLink** and **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as logon user **+++CORPNET\cluadmin+++** using the password +++**Pa$$w0rd**+++.
+
+1. [] Open **Windows Firewall with Advanced Security** on the cluster node. 
+
+    &gt;[!tip]Click the Windows Search icon and type Windows Firewall
+
+    ![](Media/image0309.png)
+
+1. [] Click **Inbound Rules** **New Rule** under **Actions**.
+
+    ![](Media/image0310.png)
+
+1. [] In the **New Inbound Rule Wizard**, on the **Rule Type** page, select **Port**, and then click **Next**.
+
+    ![](Media/image0311.png)
+
+1. [] On the Protocols and Ports page, select TCP. Type the TCP port, that SQL Server listens on, in the Select specific local port section. 
+
+    &gt;[!Hint] To find the TCP port that SQL Server listens on, open SQL Server Errorlog.
+ 
+    ![](Media/image0312.png)
+
+    ![](Media/image0314.png)
+1. [] On the Action page, review the options. For this exercise, **use the default** selection, and then click Next.
+
+   
+1. [] On the Profile page, review the options. For this exercise, **use the default** selection, and then click **Next**.
+
+1. [] On the **Name** page, type a descriptive name (for example, **+++SQLFCI\INST1 TCP PORT**+++) for the inbound rule, and then click **Finish**.
+
+    
+    ![](Media/image0313.png)
+1. [] Repeat steps 2-8 to create the UDP inbound rules for SQL Browser Service
+
+    &gt; [!KNOWLEDGE] The SQL Server Browser service uses UDP broadcast on port 1434
+
+1. [] Ensure that you have completed the above steps 2 - 9 to create TCP and UDP inbound rules on both cluster nodes AlwaysOnN1 and AlwaysOnN2.
+
+1. [] Log on to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++CORPNET\cluadmin+++** using **+++Pa$$w0rd+++** as the password. 
+
+1. [] Open **SQL Server Management Studio** and connect to the SQL Server failover cluster instance **SQLFCI\\INST1**
+
+    ![](Media/image0315.png)
+
+    ![](Media/image0316.png)
+
+    !IMAGE[5y66c3ef.png](instructions252268/5y66c3ef.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 5: Configure Remote Access for a dedicated administrative connection
+
+SQL Server provides dedicated administrator connection (DAC) for administrators when standard connections to the server are not possible. On cluster configurations, the DAC will be off by default. If SQL Server is unresponsive and the DAC listener is not enabled, you might have to restart SQL Server to connect with the DAC. Therefore, we recommend that you enable the remote admin connections configuration option on clustered systems. For more information, refer to [Diagnostic Connection for Database Administrators](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/diagnostic-connection-for-database-administrators)
+
+---
+
+### Task 1: Configure Remote Admin Connection
+
+1. [] Perform this task on virtual machine **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as logon user **+++CORPNET\\cluadmin+++** using the password +++**Pa$$w0rd**+++.
+
+1. [] Open **SQL Server Management Studio**, connect to the **SQLFCI\INST1** instance, and then open a **Query** window.
+
+1. [] Execute the below command to check the current (default) value of &#39;remote admin connections&#39; configuration
+
+    ```TSQL
+    EXEC sp_configure &#39;remote admin connections&#39;
+    ```
+
+  !IMAGE[pdbkahtu.png](instructions252268/pdbkahtu.png)  
+
+    As expected, the default value is 0 (disabled).
+
+1. [] Execute the below command to enable &#39;remote admin connections&#39;
+
+    &gt;[!TIP] Open Notepad in the lab environment VM. Use the **+++Type Text+++** feature to enter the code into Notepad, copy the code, and then paste it into the Query Editor. This will bypass the autocomplete features in the Query Editor.
+    
+    ```TSQL
+    EXEC sp_configure &#39;remote admin connections&#39;, 1
+    RECONFIGURE
+    ```
+
+    !IMAGE[5v59wnox.png](instructions252268/5v59wnox.png)
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;158231&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;247068&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;247068&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;247068&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;247069&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;247069&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;247069&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;247070&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;247070&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;247070&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;247071&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;247071&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;247071&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;247072&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;247072&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;247072&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Performing FCI Post Installation Tasks&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="158231" data-contentroot="https://labondemand.blob.core.windows.net/content/lab158231/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>

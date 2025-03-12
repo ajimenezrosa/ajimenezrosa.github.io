@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 08: Perform Common Maintenance Tasks</title>
+
+
+    <script src="./Lab 08_ Perform Common Maintenance Tasks_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 08_ Perform Common Maintenance Tasks_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 08_ Perform Common Maintenance Tasks_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 08_ Perform Common Maintenance Tasks_files/prettify.css">
+    <script src="./Lab 08_ Perform Common Maintenance Tasks_files/yaml.min.js.download"></script>
+    <script src="./Lab 08_ Perform Common Maintenance Tasks_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 08_ Perform Common Maintenance Tasks_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 08_ Perform Common Maintenance Tasks_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+        <div style="padding:10px 20px;">
+            <a class="editLink" href="https://labondemand.com/LabProfile/EditInstructions/155705?InstructionsSetId=248597">Edit</a>
+        </div>
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="perform-common-management-tasks">Perform Common Management Tasks</h1>
+<h2 id="introduction">Introduction</h2>
+<p>During this lab, you will learn how to perform some common management tasks and items.</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Suspend and Resume synchronization</li>
+<li>Add/Remove a database and replica</li>
+<li>Manually failover an Availability Group</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>45 minutes</p>
+<h2 id="logon-information">Logon Information</h2>
+<blockquote class="alert">
+  <p><strong>Before Login make sure windows has Applied Computer Setting to all nodes.</strong></p>
+</blockquote>
+<p>Use the following credentials to login into virtual environment</p>
+<ol>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242450">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">Corpnet\Cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242445">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242446">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242448">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242443">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol>
+</div><div class="page" id="page1">
+<h1 id="exercise-1-suspend-and-resume-data-movement-then-change-synchronization">Exercise 1: Suspend and resume data movement then change synchronization</h1>
+<p>This exercise shows how to suspend and resume the data movement on a per database level and how to change the synchronization type for a replica.</p>
+<hr>
+<h3 id="tasks">Tasks</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242450">AlwaysOnClient</a></strong> virtual machine as <span class="typeText" title="Type Text"><strong>Corpnet\CluAdmin</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Open <strong>SQL Server Management Studio (SSMS)</strong></p>
+<ol>
+<li><p>Open SSMS by left clicking the icon on the taskbar.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0210.png"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Connect to the listener</p>
+<ol>
+<li><p>In the Connect to Server dialog box, type in <strong><span class="typeText" title="Type Text">AGCorpListen</span></strong> and then click <strong>Connect</strong>.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0211.png"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> Suspend data movement of the AdventureWorks database</p>
+<ol>
+<li><p>Expand the AlwaysOn High Availability Folder in SSMS</p></li>
+<li><p>Expand the Availability Groups Folder</p></li>
+<li><p>Expand the AGCorp availability group</p></li>
+<li><p>Expand the Availability Databases folder</p></li>
+<li><p>Right-Click on the AdventureWorks database and choose Suspend Data Movement</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0212.png"></p></li>
+<li><p>This will bring up a Suspend Data Movement dialog box, press OK</p></li>
+<li><p>Do you notice any changes in the icon for the database?  </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-4-7" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> View the status of synchronization for the AdventureWorks database</p>
+<ol>
+<li><p>Right-Click on the AGCorp availability group in SSMS and choose Show Dashboard</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0213.png"></p></li>
+<li><p>What does the dashboard show? How could we use this to diagnose an issue?</p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-5-2" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li><p>Open the 08_Synchronization_Status script from the AlwaysOnClient computer in folder c:\scripts and execute it. What DMVs are being used? Is there a reason why synchronization has stopped?</p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-5-3" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> Resume data movement</p>
+<ol>
+<li><p>Open a new query window while connected to AGCorpListen</p></li>
+<li><p>Make sure the database context is set to master and type in: </p>
+<pre><div class="codeTitle">TSQL</div><code class="TSQL language-TSQL prettyprint prettyprinted" style=""><span class="pln">ALTER DATABASE </span><span class="typ">AdventureWorks</span><span class="pln"> SET HADR RESUME</span></code></pre></li>
+<li><p><strong>Execute</strong> the T-SQL statement</p></li>
+<li><p>Right-Click the AGCorp availability group and choose Refresh</p></li>
+<li><p>Expand the Availability Databases Folder under the AGCorp availability group</p></li>
+<li><p>What does the icon look like now?    </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-6-6" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li><p>Go to the AlwaysOn dashboard that was opened in step 4. Press F5 to manually refresh the dashboard. What does the dashboard show, now?   </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-6-7" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li><p>Run the 08_Synchronization_Status script again, what do the results say?     </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-6-8" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li><p>Why were all the replicas affected when we suspended data movement?  </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-6-9" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> Change the synchronization of the replica</p>
+<ol>
+<li><p>Right-click on the <strong>AGCorp</strong> availability group and choose <strong>Properties</strong> to bring up the Availability Group Properties dialog box.</p></li>
+<li><p>In the bottom pane under Availability Replicas, choose a secondary replica and click on the dropdown under Availability Mode, change it to asynchronous commit.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0214.png"></p></li>
+<li><p>Click OK on the dialog. Does an error occur? If so, why?     </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-7-3" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li><p>Click <strong>OK</strong> to close the error dialog.</p></li>
+<li><p>Change the failover mode to <strong>Manual</strong>, click <strong>OK</strong>.</p></li>
+<li><p>If the Availability Group Dashboard is not already open, right-click on the AGCorp availability group and open the dashboard.</p></li>
+<li><p>Did the synchronization state change for the now asynchronous replica? Why did it change?    </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-1-7-6" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li></ol></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page2">
+<h1 id="exercise-2-add-and-remove-a-database-and-replica">Exercise 2: Add and remove a database and replica</h1>
+<p>This exercise shows how to add and remove a database from an availability group.</p>
+<hr>
+<h3 id="task-1-remove-the-adventureworks-database-from-the-availability-group-from-the-primary-node">Task 1: Remove the AdventureWorks database from the availability group from the primary node</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155705?instructionsSetId=248597#" class="selectMachineLink icon-link special-action-link" data-data="242450">AlwaysOnClient</a></strong> virtual machine as <span class="typeText" title="Type Text"><strong>Corpnet\CluAdmin</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> Open <strong>SQL Server Management Studio (SSMS)</strong></p>
+<ol>
+<li><p>Open SSMS by left clicking the icon on the taskbar.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0210.png"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> Connect to the listener</p>
+<ol>
+<li><p>In the Connect to Server dialog box, type in <strong><span class="typeText" title="Type Text">AGCorpListen</span></strong> and then click <strong>Connect</strong>.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0211.png"></p></li></ol></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> Expand the AlwaysOn High Availability folder in SSMS</p></li>
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Expand the Availability Groups folder</p></li>
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> Expand the AGCorp availability group</p></li>
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> Expand the databases folder</p></li>
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> Right-click on the AdventureWorks database and choose Remove Database from Availability Group…</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0215.png"></p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> The Remove Database from Availability Group dialog is now shown, press OK.</p></li>
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> Right-Click on the AGCorp availability group and choose show dashboard if it isn't already showing.</p></li>
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> Does the AdventureWorks database exist on any other replicas?    </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-2-2-8" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> Connect directly to a secondary replica using object explorer by clicking <strong>Connect</strong> in object explorer and choosing <strong>Database Engine</strong>…</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0216.png"></p></li>
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> Type in a secondary replica name and choose to connect.</p></li>
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> Expand the databases folder in SSMS. Does the AdventureWorks database exist on the secondary replica? If so, what state is it in?</p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-2-2-11" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+</ol>
+</div><div class="page" id="page3">
+<h3 id="task-2-add-the-adventureworks-database-into-the-availability-group">Task 2: Add the AdventureWorks database into the availability group</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> Connect to the listener, if not already connected.</p></li>
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> In object explorer expand <strong>AGCorpListen</strong>, then <strong>AlwaysOn High Availability</strong> folder down until you’ve expanded the <strong>Availability Databases</strong> folders if not already done.</p></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> Right-click on the Availability Databases folder for the AGCorp availability group and choose <strong>Add Database…</strong></p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0217.png"></p></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> This will bring up the Add Database to Availability Group wizard</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0218.png"></p></li>
+<li class="task-list-item" id="taskIndex25"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex25"><span></span></label> If you start at the introductory page, click <strong>next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex26"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex26"><span></span></label> In the "Select Databases" page, you'll notice the <strong>AdventureWorks</strong> database already meets the prerequisites. <strong>Check</strong> the box next to the name and click <strong>next</strong>.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0219.png"></p></li>
+<li class="task-list-item" id="taskIndex27"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex27"><span></span></label> In the Connect o Replicas page, in the lower right-hand corner, click <strong>Connect All…</strong>, then click <strong>Connect</strong> on the connection dialog. Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex28"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex28"><span></span></label> In the Select Data Synchronization page, choose the <strong>Join Only</strong> option and click <strong>Next</strong></p></li>
+<li class="task-list-item" id="taskIndex29"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex29"><span></span></label> You'll be presented with the validation page with all of the validation results as skipped. Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex30"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex30"><span></span></label> Finally, you'll arrive at the summary page. Click <strong>Finish</strong>.</p></li>
+<li class="task-list-item" id="taskIndex31"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex31"><span></span></label> When the wizard finishes, click <strong>Close</strong>.</p></li>
+<li class="task-list-item" id="taskIndex32"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex32"><span></span></label> Is the AdventureWorks database back in the availability group? What are some ways we can tell?   </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-2-3-12" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+</ol>
+</div><div class="page" id="page4">
+<h3 id="taks-3-remove-a-replica-from-an-availability-group">Taks 3: Remove a replica from an availability group</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex33"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex33"><span></span></label> If not already expanded, expand the <strong>Availability</strong> Replicas folder under the AGCorp availability group.</p></li>
+<li class="task-list-item" id="taskIndex34"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex34"><span></span></label> Right-click on a secondary replica and choose <strong>Remove from Availability Group</strong>. This will bring up the Remove Secondary Replica from Availability Group dialog.</p></li>
+<li class="task-list-item" id="taskIndex35"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex35"><span></span></label> Click <strong>OK</strong>.</p></li>
+<li class="task-list-item" id="taskIndex36"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex36"><span></span></label> Connect directly to the SQL instance of the recently removed replica.</p></li>
+<li class="task-list-item" id="taskIndex37"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex37"><span></span></label> Expand the Databases folder in SSMS for that replica. What state are the databases in?   </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-2-4-5" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+</ol>
+</div><div class="page" id="page5">
+<h3 id="task-4-add-a-replica-into-the-availability-group">Task 4: Add a replica into the availability group</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex38"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex38"><span></span></label> If not connected, connect to the primary replica by using the listener name in SSMS.</p></li>
+<li class="task-list-item" id="taskIndex39"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex39"><span></span></label> Expand the folder under AlwaysOn High Availability down to the <strong>Availability Replicas</strong> for the AGCorp availability group.</p></li>
+<li class="task-list-item" id="taskIndex40"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex40"><span></span></label> Right-click on the Availability Replicas folder and choose <strong>Add Replica…</strong> This will bring up the Add Replica wizard.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0220.png"></p></li>
+<li class="task-list-item" id="taskIndex41"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex41"><span></span></label> Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex42"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex42"><span></span></label> In the lower right-hand corner, click <strong>Connect All…</strong> and then connect with the default credentials. Click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex43"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex43"><span></span></label> Specify the replica previously removed by clicking <strong>Add Replica…</strong></p></li>
+<li class="task-list-item" id="taskIndex44"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex44"><span></span></label> Enter the name of the SQL instance from which you previously removed the replica, and click <strong>Connect</strong>.</p></li>
+<li class="task-list-item" id="taskIndex45"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex45"><span></span></label> The replica should now show in the Replicas list. Do <strong>NOT</strong> check the <strong>Automatic Failover</strong> checkbox and change <strong>Readable Secondary</strong> to <strong>YES</strong>. Click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/ptemo83x.png" alt="ptemo83x.png"></p></li>
+<li class="task-list-item" id="taskIndex46"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex46"><span></span></label> Choose the <strong>Join Only</strong> option and click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex47"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex47"><span></span></label> On the validation page, click <strong>Next</strong>.</p></li>
+<li class="task-list-item" id="taskIndex48"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex48"><span></span></label> On the Summary page, click <strong>Finish</strong>.</p></li>
+<li class="task-list-item" id="taskIndex49"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex49"><span></span></label> Why could we add the replica back in using Join Only?    </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-2-5-12" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+</ol>
+<h3 id="congratulations-1">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page6">
+<h1 id="exercise-3-manually-fail-over-an-availability-group">Exercise 3: Manually fail over an availability group</h1>
+<p>This exercise shows how to manually fail over an availability group using the wizard and T-SQL.</p>
+<hr>
+<h3 id="task-1-manually-failover-the-agcorp-availability-group-using-the-wizard">Task 1: Manually failover the AGCorp availability group using the wizard</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex50"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex50"><span></span></label> In object explorer, choose Connect then Database Engine…</p></li>
+<li class="task-list-item" id="taskIndex51"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex51"><span></span></label> Supply the listener name, if not already connected. This will connect us to the primary instance of the availability group.</p></li>
+<li class="task-list-item" id="taskIndex52"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex52"><span></span></label> Expand the folder under <strong>AlwaysOn High Availability</strong> until you reach the <strong>AGCorp availability group</strong>.</p></li>
+<li class="task-list-item" id="taskIndex53"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex53"><span></span></label> Right-Click on the <strong>AGCorp</strong> availability group and choose <strong>Failover…</strong> This will bring up the Fail Over Availability Group wizard.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0222.png"></p></li>
+<li class="task-list-item" id="taskIndex54"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex54"><span></span></label> Click <strong>Next</strong> on the introductory page.</p></li>
+<li class="task-list-item" id="taskIndex55"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex55"><span></span></label> When presented with the options of which replicas we'd like to become the primary, do you notice any differences between the two possible choices? </p>
+<p>Which one would be the optimal choice?    </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-3-1-6" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+<li class="task-list-item" id="taskIndex56"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex56"><span></span></label> Click on the Synchronous Commit replica, the one with the green checkbox next to it and press <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 08_ Perform Common Maintenance Tasks_files/image0223.png"></p></li>
+<li class="task-list-item" id="taskIndex57"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex57"><span></span></label> We need to connect to the replica that will become the primary instance. Click the Connect… button and use the defaulted credentials. Click <strong>Connect</strong>. Click <strong>Next</strong> on the wizard.</p></li>
+<li class="task-list-item" id="taskIndex58"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex58"><span></span></label> The summary page now shows us the action we are going to take, failing over from one replica to another. Click <strong>Finish</strong>.</p></li>
+<li class="task-list-item" id="taskIndex59"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex59"><span></span></label> Open a new query window, connecting to the listener AGCorpListen. Run the following T-SQL Query: </p>
+<pre><div class="codeTitle">TSQL</div><code class="TSQL language-TSQL prettyprint prettyprinted" style=""><span class="pln">SELECT </span><span class="pun">@</span><span class="lit">@ServerName</span></code></pre></li>
+<li class="task-list-item" id="taskIndex60"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex60"><span></span></label> What replica name comes back? Was this expected?     </p>
+<p><input type="text" class="variableTextBox" data-name="answer_8-3-1-11" maxlength="500" spellcheck="false" data-ms-editor="true"></p></li>
+</ol>
+<h3 id="congratulations-2">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Perform Common Management Tasks
+
+## Introduction
+
+During this lab, you will learn how to perform some common management tasks and items.
+
+## Objectives
+
+At the end of this lab, you will be able to:
+- Suspend and Resume synchronization
+- Add/Remove a database and replica
+- Manually failover an Availability Group
+
+## Estimated Time
+
+45 minutes
+
+## Logon Information
+&gt;[!alert]**Before Login make sure windows has Applied Computer Setting to all nodes.**
+
+Use the following credentials to login into virtual environment
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++Corpnet\Cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnDC).Username+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+===
+
+# Exercise 1: Suspend and resume data movement then change synchronization
+
+This exercise shows how to suspend and resume the data movement on a per database level and how to change the synchronization type for a replica.
+
+---
+
+### Tasks
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as +++**Corpnet\CluAdmin+++** using +++**Pa$$w0rd+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+    
+1. [] Open **SQL Server Management Studio (SSMS)**
+
+    1. Open SSMS by left clicking the icon on the taskbar.
+
+        ![](Media/image0210.png)
+
+1. [] Connect to the listener
+
+    1. In the Connect to Server dialog box, type in **+++AGCorpListen**+++ and then click **Connect**.
+
+        ![](Media/image0211.png)
+
+1. [] Suspend data movement of the AdventureWorks database
+
+    1. Expand the AlwaysOn High Availability Folder in SSMS
+
+    1. Expand the Availability Groups Folder
+
+    1. Expand the AGCorp availability group
+
+    1. Expand the Availability Databases folder
+
+    1. Right-Click on the AdventureWorks database and choose Suspend Data Movement
+
+        ![](Media/image0212.png)
+
+    1. This will bring up a Suspend Data Movement dialog box, press OK
+
+    1. Do you notice any changes in the icon for the database?  
+
+        @lab.TextBox(answer_8-1-4-7)
+
+1. [] View the status of synchronization for the AdventureWorks database
+
+    1. Right-Click on the AGCorp availability group in SSMS and choose Show Dashboard
+
+        ![](Media/image0213.png)
+
+    1. What does the dashboard show? How could we use this to diagnose an issue?
+
+        @lab.TextBox(answer_8-1-5-2)
+
+    1. Open the 08_Synchronization_Status script from the AlwaysOnClient computer in folder c:\scripts and execute it. What DMVs are being used? Is there a reason why synchronization has stopped?
+
+        @lab.TextBox(answer_8-1-5-3)
+
+1. [] Resume data movement
+
+    1. Open a new query window while connected to AGCorpListen
+
+    1. Make sure the database context is set to master and type in: 
+
+        ```TSQL
+        ALTER DATABASE AdventureWorks SET HADR RESUME
+        ```
+
+    1. **Execute** the T-SQL statement
+
+    1. Right-Click the AGCorp availability group and choose Refresh
+
+    1. Expand the Availability Databases Folder under the AGCorp availability group
+
+    1. What does the icon look like now?    
+
+        @lab.TextBox(answer_8-1-6-6)
+
+    1. Go to the AlwaysOn dashboard that was opened in step 4. Press F5 to manually refresh the dashboard. What does the dashboard show, now?   
+
+        @lab.TextBox(answer_8-1-6-7)
+        
+
+    1. Run the 08_Synchronization_Status script again, what do the results say?     
+
+        @lab.TextBox(answer_8-1-6-8)
+
+    1. Why were all the replicas affected when we suspended data movement?  
+
+        @lab.TextBox(answer_8-1-6-9)
+
+1. [] Change the synchronization of the replica
+
+    1. Right-click on the **AGCorp** availability group and choose **Properties** to bring up the Availability Group Properties dialog box.
+
+    1. In the bottom pane under Availability Replicas, choose a secondary replica and click on the dropdown under Availability Mode, change it to asynchronous commit.
+
+        ![](Media/image0214.png)
+
+    1. Click OK on the dialog. Does an error occur? If so, why?     
+
+        @lab.TextBox(answer_8-1-7-3)
+
+    1. Click **OK** to close the error dialog.
+
+    1. Change the failover mode to **Manual**, click **OK**.
+
+    1. If the Availability Group Dashboard is not already open, right-click on the AGCorp availability group and open the dashboard.
+
+    1. Did the synchronization state change for the now asynchronous replica? Why did it change?    
+
+        @lab.TextBox(answer_8-1-7-6)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 2: Add and remove a database and replica
+
+This exercise shows how to add and remove a database from an availability group.
+
+---
+
+### Task 1: Remove the AdventureWorks database from the availability group from the primary node
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as +++**Corpnet\CluAdmin+++** using +++**Pa$$w0rd+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+    
+1. [] Open **SQL Server Management Studio (SSMS)**
+
+    1. Open SSMS by left clicking the icon on the taskbar.
+
+        ![](Media/image0210.png)
+
+1. [] Connect to the listener
+
+    1. In the Connect to Server dialog box, type in **+++AGCorpListen**+++ and then click **Connect**.
+
+        ![](Media/image0211.png)
+
+1. [] Expand the AlwaysOn High Availability folder in SSMS
+
+1. [] Expand the Availability Groups folder
+
+1. [] Expand the AGCorp availability group
+
+1. [] Expand the databases folder
+
+1. [] Right-click on the AdventureWorks database and choose Remove Database from Availability Group...
+
+    ![](Media/image0215.png)
+
+1. [] The Remove Database from Availability Group dialog is now shown, press OK.
+
+1. [] Right-Click on the AGCorp availability group and choose show dashboard if it isn&#39;t already showing.
+
+1. [] Does the AdventureWorks database exist on any other replicas?    
+
+    @lab.TextBox(answer_8-2-2-8)
+
+1. [] Connect directly to a secondary replica using object explorer by clicking **Connect** in object explorer and choosing **Database Engine**...
+
+    ![](Media/image0216.png)
+
+1. [] Type in a secondary replica name and choose to connect.
+
+1. [] Expand the databases folder in SSMS. Does the AdventureWorks database exist on the secondary replica? If so, what state is it in?
+
+    @lab.TextBox(answer_8-2-2-11)
+
+===
+
+### Task 2: Add the AdventureWorks database into the availability group
+
+1. [] Connect to the listener, if not already connected.
+
+1. [] In object explorer expand **AGCorpListen**, then **AlwaysOn High Availability** folder down until you’ve expanded the **Availability Databases** folders if not already done.
+
+1. [] Right-click on the Availability Databases folder for the AGCorp availability group and choose **Add Database...**
+
+    ![](Media/image0217.png)
+
+1. [] This will bring up the Add Database to Availability Group wizard
+
+    ![](Media/image0218.png)
+
+1. [] If you start at the introductory page, click **next**.
+
+1. [] In the &quot;Select Databases&quot; page, you&#39;ll notice the **AdventureWorks** database already meets the prerequisites. **Check** the box next to the name and click **next**.
+
+    ![](Media/image0219.png)
+
+1. [] In the Connect o Replicas page, in the lower right-hand corner, click **Connect All...**, then click **Connect** on the connection dialog. Click **Next**.
+
+1. [] In the Select Data Synchronization page, choose the **Join Only** option and click **Next**
+
+1. [] You&#39;ll be presented with the validation page with all of the validation results as skipped. Click **Next**.
+
+1. [] Finally, you&#39;ll arrive at the summary page. Click **Finish**.
+
+1. [] When the wizard finishes, click **Close**.
+
+1. [] Is the AdventureWorks database back in the availability group? What are some ways we can tell?   
+
+    @lab.TextBox(answer_8-2-3-12)
+
+===
+
+### Taks 3: Remove a replica from an availability group
+
+1. [] If not already expanded, expand the **Availability** Replicas folder under the AGCorp availability group.
+
+1. [] Right-click on a secondary replica and choose **Remove from Availability Group**. This will bring up the Remove Secondary Replica from Availability Group dialog.
+
+1. [] Click **OK**.
+
+1. [] Connect directly to the SQL instance of the recently removed replica.
+
+1. [] Expand the Databases folder in SSMS for that replica. What state are the databases in?   
+
+    @lab.TextBox(answer_8-2-4-5)
+
+===
+
+### Task 4: Add a replica into the availability group
+
+1. [] If not connected, connect to the primary replica by using the listener name in SSMS.
+
+1. [] Expand the folder under AlwaysOn High Availability down to the **Availability Replicas** for the AGCorp availability group.
+
+1. [] Right-click on the Availability Replicas folder and choose **Add Replica...** This will bring up the Add Replica wizard.
+
+    ![](Media/image0220.png)
+
+1. [] Click **Next**.
+
+1. [] In the lower right-hand corner, click **Connect All...** and then connect with the default credentials. Click **Next**.
+
+1. [] Specify the replica previously removed by clicking **Add Replica...**
+
+1. [] Enter the name of the SQL instance from which you previously removed the replica, and click **Connect**.
+
+1. [] The replica should now show in the Replicas list. Do **NOT** check the **Automatic Failover** checkbox and change **Readable Secondary** to **YES**. Click **Next**.
+
+    !IMAGE[ptemo83x.png](instructions248597/ptemo83x.png)
+
+1. [] Choose the **Join Only** option and click **Next**.
+
+1. [] On the validation page, click **Next**.
+
+1. [] On the Summary page, click **Finish**.
+
+1. [] Why could we add the replica back in using Join Only?    
+
+    @lab.TextBox(answer_8-2-5-12)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 3: Manually fail over an availability group
+
+This exercise shows how to manually fail over an availability group using the wizard and T-SQL.
+
+---
+
+### Task 1: Manually failover the AGCorp availability group using the wizard
+
+1. [] In object explorer, choose Connect then Database Engine...
+
+1. [] Supply the listener name, if not already connected. This will connect us to the primary instance of the availability group.
+
+1. [] Expand the folder under **AlwaysOn High Availability** until you reach the **AGCorp availability group**.
+
+1. [] Right-Click on the **AGCorp** availability group and choose **Failover...** This will bring up the Fail Over Availability Group wizard.
+
+    ![](Media/image0222.png)
+
+1. [] Click **Next** on the introductory page.
+
+1. [] When presented with the options of which replicas we&#39;d like to become the primary, do you notice any differences between the two possible choices? 
+
+    Which one would be the optimal choice?    
+
+    @lab.TextBox(answer_8-3-1-6)
+
+1. [] Click on the Synchronous Commit replica, the one with the green checkbox next to it and press **Next**.
+
+    ![](Media/image0223.png)
+
+1. [] We need to connect to the replica that will become the primary instance. Click the Connect... button and use the defaulted credentials. Click **Connect**. Click **Next** on the wizard.
+
+1. [] The summary page now shows us the action we are going to take, failing over from one replica to another. Click **Finish**.
+
+1. [] Open a new query window, connecting to the listener AGCorpListen. Run the following T-SQL Query: 
+
+    ```TSQL
+    SELECT @@ServerName
+    ```
+
+1. [] What replica name comes back? Was this expected?     
+
+    @lab.TextBox(answer_8-3-1-11)
+
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;155705&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242443&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242443&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242443&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242445&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242445&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242445&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242446&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242446&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242446&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242448&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242448&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242448&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242450&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242450&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242450&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Perform Common Maintenance Tasks&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="155705" data-contentroot="https://labondemand.blob.core.windows.net/content/lab155705/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>
