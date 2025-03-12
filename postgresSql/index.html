@@ -132,112 +132,161 @@
     }
 
   </script>
+
+
+<style>
   
-  <style>
-    body {
-      background-color: #1e2227;
-      color: #c9d1d9;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    #page-container {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    #authentication-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      align-content: center;
-      padding-top: 200px;
-    }
-
-    #readme-container {
-      max-width: 800px;
-      margin: 0 auto;
-      box-shadow: 0px 0px 10px rgba(211, 204, 204, 0.2);
-      background-color: #1d1d1e;
-      border-radius: 10px;
-      padding: 20px;
-      display: none;
-    }
-
-    .copy-button {
-      background-color: #79c0ff;
-      color: #0d1117;
-      border: none;
-      cursor: pointer;
-      margin-top: 5px;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-
-    .copy-button:hover {
-      background-color: #58a6ff;
-    }
-
-    .code-container {
-      position: relative;
-      background-color: #555556;
-      /* background-color: #f0f0f0; */
-      padding: 10px;
-      border: 1px solid #ccc;
-      white-space: pre-wrap;
-
-    }
-    #submit-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    color: #ffffff;
-    cursor: pointer;
+  body {
+    background-color: #f8f9fa;
+    color: #212529;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    align-items: center;
+    min-height: 100vh;
   }
-
-
+  
+  /* Page container */
+  #page-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+  }
+  
+  .profile {
+    text-align: center;
+    margin-bottom: 30px;
+    max-width: 600px;
+  }
+  
+  .profile img {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile p {
+    font-size: 16px;
+    color: #495057;
+    margin-top: 10px;
+  }
+  
+  /* Authentication container */
+  #authentication-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 150px;
+  }
+  
+  /* Readme container */
+  #readme-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+  }
+  
+  /* Buttons */
+  .copy-button,
+  #submit-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .copy-button:hover,
   #submit-button:hover {
     background-color: #0056b3;
   }
-
-
-    #password-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  
+  /* Input fields */
+  #password-input {
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
     margin-bottom: 10px;
     width: 100%;
-    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #495057;
+    transition: border 0.3s ease;
   }
-
-
-  a:link {
-    color:#e3ebf3;
-}
-
-a:visited {
-  color: yellow;
-}
-
-
-table {
+  
+  #password-input:focus {
+    border: 1px solid #007bff;
+    outline: none;
+  }
+  
+  /* Code container */
+  .code-container {
+    position: relative;
+    background-color: #f1f3f5;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+  }
+  
+  /* Links */
+  a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: #0056b3;
+  }
+  
+  /* Tables */
+  table {
     width: 100%;
-    border: 1px solid #000;
- }
- th, td {
-    width: 25%;
-    text-align: left;
-    vertical-align: top;
-    border: 1px solid #000;
     border-collapse: collapse;
- }
-
-
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+  }
+  
+  th {
+    background-color: #e9ecef;
+    text-align: left;
+  }
+  
+  td {
+    background-color: #ffffff;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    #authentication-container {
+      padding-top: 8px;
+    }
+    
+    #readme-container {
+      padding: 16px;
+    }
+  }
+  
   </style>
+
 </body>
 </html>

@@ -28,6 +28,12 @@ body{
 
 }
 
+#page-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
 .menu{
 
     margin: 0;
