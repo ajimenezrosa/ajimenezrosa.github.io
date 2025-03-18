@@ -469,48 +469,6 @@ order by date desc
 #
 
 
-# Tempdb: Reducir Tamaño <a name="6"></a>
-#### La base de datos “Tempdb” es una base de datos de sistema la cual se utiliza para almacenar diversos objetos temporales, entre los mas conocidos estan las tablas temporales creadas explicitamente (#temptable), tambien tablas de trabajo generadas por los planes de ejecución para almacenar resultados intermedios, cursores materializados estaticos, y registros versionados cuando usamos alguno de los niveles de aislamiento de tipo
-
-## En este caso hay diversos metodos por los cuales reducirla:
-
-#### ***Método 1:*** El más confiable de todos, pero requiere reiniciar el servicio de SQL Server. Cuando se reinicia el servicio de SQL Server la tempdb se recrea desde cero y sus archivos vuelven al tamaño original en el que fueron configurados por última vez.
-
-#### ***Método 2:*** En el caso que no se tenga alguna ventana para el reinicio, entonces se puede utilizar este método el cual no requiere reiniciar el servicio de SQL Server, pero si algunos recursos del servidor para poder completarlo. Los pasos para este método son los siguientes:
-
-
- - Verificar cuanto espacio disponible hay en la base de datos tempdb.
-~~~sql
-use tempdb;
-exec sp_spaceused
-~~~
-![](https://dbamemories.files.wordpress.com/2017/01/sp_spaceused_tempdb.png)
-
- - Hacer “shrink” a la base de datos basado en ese espacio disponible. En este   caso estoy reduciendo el archivo a un 10% de su tamaño actual
-
-#### ***Método 3:*** Este método tampoco require reinicio del servicio de SQL Server y se utiliza cuando el anterior no produce el efecto deseado y es que hay ocaciones en las que no se puede reducir el tamaño de la tempdb debido a que aun contiene objetos activos tales como tablas de trabajo u otras estructuras temporales, entonces cuando tenemos este caso debemos hacer una serie de limpiezas en el motor antes de intentarlo. Es importante mencionar que esto deberia ser el ultimo recurso y pensarlo dos veces antes de ejecutarlo en producción ya que limpiara muchas cosas que el motor debera volver a calcular.
-
- - Realizar la limpieza de varios cache y un checkpoint
-
-
-
-
-~~~sql
-USE tempdb
-GO
-CHECKPOINT;
-GO
-DBCC DROPCLEANBUFFERS;
-GO
-DBCC FREEPROCCACHE;
-GO
-DBCC FREESYSTEMCACHE ('ALL');
-GO
-DBCC FREESESSIONCACHE;
-GO
-~~~
-# 
-
 ----
 
 
