@@ -47,7 +47,6 @@ Manuales de</th>
     - 1.3.8 [ALL MESSAGES – REGARDLESS OF STATUS](#3.8)  
 - 1.4 [Conexiones activas del servidor de SQL Server](#4)  
 - 1.5 [DBCC CHECKDB](#5)  
-- 1.6 [Reducir tamaño de `Tempdb`](#6)  
 - 1.6.1 [Reducción de Archivos TempDB en SQL Server Actualizado](#6a)
 
 
