@@ -10790,13 +10790,66 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 ## **Conclusion:**
 #### Siguiendo estos pasos, podrá habilitar conexiones a a los servidores de Internet BANKING en los agentes Foglight, mejorando la conectividad y asegurando una comunicación fluida con recursos en línea. Recuerde que estos cambios deben aplicarse con precaución y se recomienda mantener un registro de las modificaciones realizadas para futuras referencias. Ademas los mismos solo afectanran los servidores de INTERNET BANKING  en caso de los mismo no tener comunicacion.
 
+# 
+
+# Renovación del Certificado Autofirmado en el Servidor de Gestión de Foglight<a name="foglight2"></a>
+
+## Pasos para Renovar el Certificado Autofirmado
+
+### 1. Conectarse al Servidor de Gestión de Foglight
+Asegúrese de tener privilegios de administrador antes de continuar.
+
+### 2. Navegar al Directorio de Instalación de Foglight
+Reemplace `$FOGLIGHT_HOME` con la ruta de instalación actual de Foglight:
+```sh
+cd $FOGLIGHT_HOME  # Ejemplo: cd D:\Quest\Foglight
+```
+
+### 3. Eliminar el Alias del Certificado Expirado
+Ejecute el siguiente comando para eliminar el alias `tomcat` expirado:
+```sh
+jre\bin\keytool -keystore config\tomcat.keystore -storepass nitrogen -delete -alias tomcat
+```
+
+### 4. Generar un Nuevo Certificado Autofirmado
+Ejecute el siguiente comando para crear un nuevo alias `tomcat` con una nueva clave:
+```sh
+jre\bin\keytool -keystore config\tomcat.keystore -storepass nitrogen -genkeypair -alias tomcat -validity 3650 -keyalg RSA -keysize 2048 -dname "CN=quest.com, OU=FVE Support, O=Quest, L=Toronto, ST=Ontario, C=CA"
+```
+> Presione **Enter** dos veces para aceptar los valores predeterminados cuando se le solicite.
+
+### 5. Repetir el Proceso para Cada FMS
+Si tiene múltiples servidores de gestión de Foglight, repita los pasos anteriores para cada uno.
+
+### 6. Reiniciar el Servidor de Gestión de Foglight (FMS)
+Reinicie los servidores en el siguiente orden:
+```sh
+# Detener primero el servidor en espera
+stop standby
+
+# Detener el servidor principal
+stop primary
+
+# Iniciar primero el servidor principal
+start primary
+
+# Iniciar el servidor en espera
+start standby
+```
+
+### 7. Validar la Conexión
+Asegúrese de que **FglAM** (Foglight Agent Manager) pueda conectarse correctamente y que todos los agentes reanuden la monitorización.
+
+---
+Este proceso garantiza que su Servidor de Gestión de Foglight tenga un certificado autofirmado renovado, evitando problemas de autenticación relacionados con certificados expirados.
+
 
 
 
 # 
 
 <!-- 
-<--
+
 
 # Defragmentación, al rescate (ONLINE=ON)<a name="desfragmentacionalrescate2"></a>
 ![](https://greyphillips.com/Guides/assets/img/Database_Maintenance.png)
