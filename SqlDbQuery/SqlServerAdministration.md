@@ -297,9 +297,13 @@ Manuales de</th>
 
 
 - 19.00 [Documentation of SQL Scripts for Backup and Restore with TDE](#19.00)
-
-
 # 
+
+#  Documentacion relacionada con la herramienta Foglight
+  - [Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**](#foglight1)
+  - [Renovación  del Certificado Autofirmado en el Servidor de Gestión de Foglight](#foglight2)
+
+#
 
 #### 
 
@@ -10748,6 +10752,7 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
 #
 
 ## **Título: Configuración para Habilitar Conexiones a Servidores de Internet en Agentes Foglight**<a name="foglight1"></a>
+
 
 <img src="https://www.quest.com/images/patterns/ZigZag/6-column/foglight-evolve-monitor.jpg?format=jpg&name=large" alt="JuveR" width="800px">
 
