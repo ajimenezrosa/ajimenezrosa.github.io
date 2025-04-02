@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Comprehensive Data Modeling Guide</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f4f8; color: #333; margin: 0; padding: 0; }
+        header { background-color: #005c99; color: white; padding: 20px; text-align: center; }
+        nav ul { list-style: none; padding: 0; display: flex; justify-content: center; }
+        nav ul li { margin: 0 15px; }
+        nav ul li a { color: white; text-decoration: none; font-weight: bold; }
+        nav ul li a:hover { text-decoration: underline; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #005c99; }
+        pre { background-color: #e8f1ff; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        section { margin-bottom: 40px; }
+        footer { text-align: center; padding: 10px; background-color: #005c99; color: white; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>MongoDB Comprehensive Data Modeling Guide</h1>
+    <nav>
+        <ul>
+            <li><a href="#workloads">Model for Workloads</a></li>
+            <li><a href="#relationships">Design Relationships</a></li>
+            <li><a href="#validate">Validate Schemas</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="container">
+
+<section id="workloads">
+    <h2>📦 Model for Workloads</h2>
+    <h3>Relational to Document Model</h3>
+    <p>Transitioning from relational to document-oriented databases involves understanding how data can be embedded or referenced.</p>
+
+    <h3>Ejemplo de transición</h3>
+    <pre>
+// Relational
+User Table: user_id, name
+Order Table: order_id, user_id, product
+
+// Document Model
+{
+  user_id: 1,
+  name: "Alex",
+  orders: [{ order_id: 1001, product: "Book" }]
+}
+    </pre>
+
+    <h3>Identifying and Quantifying Entities</h3>
+    <p>Analyze your domain to clearly identify unique entities like users, orders, products, and quantify them in terms of document size and frequency.</p>
+
+    <h3>Identifying Reads and Writes</h3>
+    <p>Determine which data is frequently read or written to decide how to structure your documents efficiently.</p>
+
+    <h3>Quantifying Read and Write</h3>
+    <p>Measure your application's performance and frequency of operations to make informed modeling decisions.</p>
+</section>
+
+<section id="relationships">
+    <h2>🔗 Design Relationships</h2>
+    <h3>Identifying Relationships</h3>
+    <p>Understand clearly if relationships are 1:1, 1:N, or N:N.</p>
+
+    <h3>Embedding or Referencing</h3>
+    <p>Embed data for fast reads; reference data if independence or size is a concern.</p>
+
+    <h3>Modeling One-to-One</h3>
+    <pre>
+// Embedded (preferred)
+{
+  user: "Alex",
+  profile: { age: 30, gender: "male" }
+}
+    </pre>
+
+    <h3>Modeling One-to-Many</h3>
+    <pre>
+// Reference
+user: { user_id: 1, name: "Alex" }
+orders: { order_id: 10, user_id: 1, product: "Book" }
+    </pre>
+
+    <h3>Modeling Many-to-Many</h3>
+    <pre>
+// Relationship collection
+user_courses: { user_id: 1, course_id: 5 }
+    </pre>
+</section>
+
+<section id="validate">
+    <h2>✅ Validate Schemas</h2>
+    <h3>Schema Validation</h3>
+    <p>MongoDB allows schema validation using JSON Schema to ensure data integrity.</p>
+
+    <h3>Summary: Schema Validation</h3>
+    <p>Validation ensures that documents meet specified schema requirements.</p>
+
+    <h3>Ejemplos de Schema Validation</h3>
+    <pre>
+db.createCollection("users", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "email"],
+      properties: {
+        name: { bsonType: "string" },
+        email: { bsonType: "string", pattern: "@mongodb.com$" }
+      }
+    }
+  }
+});
+    </pre>
+</section>
+
+</div>
+<footer>
+    &copy; 2025 José Alejandro Jiménez Rosa - MongoDB Professional Guide
+</footer>
+</body>
+</html>
