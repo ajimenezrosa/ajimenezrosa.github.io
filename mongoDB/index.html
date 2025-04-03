@@ -36,7 +36,7 @@
     <h3>Relational to Document Model</h3>
     <p>Transitioning from relational to document-oriented databases involves understanding how data can be embedded or referenced.</p>
 
-    <h3>Ejemplo de transición</h3>
+    <h3>Example Transition</h3>
     <pre>
 // Relational
 User Table: user_id, name
@@ -96,24 +96,35 @@ user_courses: { user_id: 1, course_id: 5 }
     <h3>Schema Validation</h3>
     <p>MongoDB allows schema validation using JSON Schema to ensure data integrity.</p>
 
-    <h3>Summary: Schema Validation</h3>
-    <p>Validation ensures that documents meet specified schema requirements.</p>
-
-    <h3>Ejemplos de Schema Validation</h3>
+    <h3>Code Summary: Schema Validation</h3>
     <pre>
-db.createCollection("users", {
+db.createCollection("sales", {
   validator: {
-    $jsonSchema: {
-      bsonType: "object",
-      required: ["name", "email"],
-      properties: {
-        name: { bsonType: "string" },
-        email: { bsonType: "string", pattern: "@mongodb.com$" }
-      }
-    }
+    "$and": [
+      { "$expr": { "$lt": ["$items.discountedPrice", "$items.price"] } },
+      { "$jsonSchema": {"properties": {"items": {"bsonType": "array"}}}}
+    ]
   }
 });
     </pre>
+    <p>This ensures discountedPrice is always lower than price and validates items as an array.</p>
+
+    <h3>Finding Non-matching Documents</h3>
+    <pre>db.collection.find({ $nor: [validator] });</pre>
+
+    <h3>Real-World Example: Bookstore Reviews Validator</h3>
+    <pre>
+const bookstore_reviews_default = { /* schema definition here */ };
+const schema_validation = { $jsonSchema: bookstore_reviews_default };
+
+db.runCommand({
+  collMod: "reviews",
+  validator: schema_validation,
+  validationLevel: "strict",
+  validationAction: "error"
+});
+    </pre>
+    <p>This code enforces strict validation, ensuring documents match the schema exactly.</p>
 </section>
 
 </div>
