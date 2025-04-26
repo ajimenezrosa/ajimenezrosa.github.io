@@ -185,7 +185,7 @@ Invoke-Item "ServerInfo.html"
 #==========================================================================================================#
 #Creado por Alejandro Jimenez Rosa                                                                         #
 #Fecha inicio Agosto 18 2023                                                                               #
-#Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
+#Esto para resolver problemas de extraer todos los servidores de bases de datos que existen                #
 #con su respectivas bases de datos.                                                                        #
 #Esta tarea duraria mas o menos 20 dias dedicando 10 horas diarias si se realiza de forma manual.          #
 #==========================================================================================================#
@@ -262,7 +262,7 @@ $htmlResults = $htmlResults | Select-Object -Property ServerName, InstanceName, 
 $notFoundServers = Compare-Object $serverInstances $htmlResults.ServerName | Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
 
 $htmlContent = $htmlHeader
-$htmlContent += "<h2>Bases de datos Por Servidor del Banco Popular Dominicano</h2>"
+$htmlContent += "<h2>Bases de datos Por Servidor encontrados</h2>"
 $htmlContent += "<table>"
 $htmlContent += "<tr><th>Servidor</th><th>Instancia</th><th>Base de Datos</th></tr>"
 $htmlContent += $htmlResults | ForEach-Object {
@@ -1017,7 +1017,7 @@ if ($results.Count -gt 0) {
 
 <body>
 
-    <h1>Banco Popular Dominicano</h1>
+    <h1>Reporte de Bases de datos</h1>
 
     <h2>Extracción de jobs de múltiples servidores SQL Server vía PowerShell</h2>
 
@@ -1067,7 +1067,7 @@ if ($notFound.Count -gt 0) {
 
 <body>
 
-    <h1>Banco Popular Dominicano</h1>
+    <h1Reporte de Servidores Encontrados...</h1>
 
     <h2>Servidores No Encontrados</h2>
 

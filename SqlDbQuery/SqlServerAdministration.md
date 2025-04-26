@@ -4840,7 +4840,7 @@ ORDER BY table_name
 
 
 # Listado de todos los objetos de una base de datos<a name="14.3"></a>
-    Solicitado por Yolanca Suarez , Banco Popular Dominicano..2024-03-19
+    
 #### Para obtener los enlaces de servidor (linked servers) y otros objetos similares de una base de datos en SQL Server, puedes consultar el sistema de metadatos del servidor. Puedes utilizar consultas en SQL para acceder a esta información. Aquí tienes un ejemplo de cómo hacerlo:
 
 ~~~sql
@@ -10788,7 +10788,7 @@ ORDER BY [Table_used_Space GB] DESC, [rows] desc ;
    Reinicie el servicio Foglight en los agentes donde realizó la modificación. Esto permitirá que los cambios surtan efecto y se establezcan las conexiones correctamente.
 
 ## **Importante:**
-- Estos pasos deben seguirse con precaución y solo deben aplicarse si se enfrenta a problemas de conectividad con servidores de Internet Banking.
+- Estos pasos deben seguirse con precaución y solo deben aplicarse si se enfrenta a problemas de conectividad con servidores de .
 - Realice una copia de seguridad del archivo `java.security` antes de realizar cualquier modificación para evitar pérdida de datos o configuraciones incorrectas.
 - Asegúrese de comprender las implicaciones de seguridad al habilitar protocolos previamente deshabilitados.
 
@@ -11304,7 +11304,7 @@ ORDER BY name;
 #==========================================================================================================#
 #Creado por Alejandro Jimenez Rosa                                                                         #
 #Fecha inicio Agosto 18 2023                                                                               #
-#Esto para resolver problemas de extraer todos los servidores de bases de datos que existen en el banco    #
+#Esto para resolver problemas de extraer todos los servidores de bases de datos                            #
 #con su respectivas bases de datos.                                                                        #
 #Esta tarea duraria mas o menos 20 dias dedicando 10 horas diarias si se realiza de forma manual.          #
 #==========================================================================================================#
@@ -11381,7 +11381,7 @@ $htmlResults = $htmlResults | Select-Object -Property ServerName, InstanceName, 
 $notFoundServers = Compare-Object $serverInstances $htmlResults.ServerName | Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
 
 $htmlContent = $htmlHeader
-$htmlContent += "<h2>Bases de datos Por Servidor del Banco Popular Dominicano</h2>"
+$htmlContent += "<h2>Bases de datos Por Servidor del Bank Of America</h2>"
 $htmlContent += "<table>"
 $htmlContent += "<tr><th>Servidor</th><th>Instancia</th><th>Base de Datos</th></tr>"
 $htmlContent += $htmlResults | ForEach-Object {
@@ -14862,7 +14862,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [PYEENG]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [PYEENG]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -14883,7 +14883,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [PYEENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [PYEENG] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
@@ -14905,7 +14905,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [SII_Omega_TRX]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [SII_Omega_TRX]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -14926,7 +14926,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [SII_Omega_TRX] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [SII_Omega_TRX] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
@@ -14948,7 +14948,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [TSCENG]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [TSCENG]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -14969,7 +14969,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [TSCENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [TSCENG] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
@@ -14991,7 +14991,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [AUTMOD]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [AUTMOD]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -15012,7 +15012,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [AUTMOD] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [AUTMOD] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
@@ -15034,7 +15034,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [BPD_SecureContainer]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [BPD_SecureContainer]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -15054,7 +15054,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [BPD_SecureContainer] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [BPD_SecureContainer] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
@@ -15078,7 +15078,7 @@ WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [IBANKING] ADD DATABASE [PAYENG]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [PAYENG]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
@@ -15099,7 +15099,7 @@ WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [PAYENG] SET HADR AVAILABILITY GROUP = [IBANKING];
+ALTER DATABASE [PAYENG] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
