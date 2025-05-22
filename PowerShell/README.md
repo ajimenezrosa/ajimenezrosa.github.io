@@ -2320,164 +2320,334 @@ Install-Module -Name SqlServer -Scope CurrentUser -Force
 
 # Estado de Availability Groups y Servidores StandAlone - PowerShell<a name="estadoavailabilitytodb"></a>
 
-Este script en PowerShell permite consultar múltiples instancias de SQL Server listadas en un archivo, identificar si son instancias **StandAlone** o pertenecen a un **Availability Group (AG)**, y registrar esta información en una tabla central de auditoría para monitoreo y gestión.
+**Autor**: José Alejandro Jiménez Rosa  
+**Fecha**: Mayo 2025  
+**Uso**: Monitoreo y registro del estado de instancias SQL Server en AG (Availability Groups) o StandAlone.
 
-## 📌 Autor
+---
 
-**Alejandro Jiménez Rosa**
+## 📋 Descripción
 
-## 🧾 Requisitos
+Este script en PowerShell tiene como propósito consultar una lista de servidores SQL Server, identificar si pertenecen a un grupo de disponibilidad (Availability Group) o son instancias independientes (StandAlone), y registrar esta información en una tabla central en una base de datos SQL.
 
-- PowerShell 5.1+
-- Módulo `SqlServer` (para `Invoke-Sqlcmd`)
-- Permisos para conectarse a las instancias SQL Server remotas
-- Base de datos central `SqlMonitors` y tabla `EstadoAvailabilityGroup`
-- Archivo de texto plano con la lista de servidores (`servidores.txt`)
+---
 
-## 📂 Estructura del archivo `servidores.txt`
+## 🗃️ Estructura de la Tabla SQL
 
-Cada línea debe contener el nombre o instancia de SQL Server. Ejemplo:
-
-```
-SRV1\SQLDEV
-SRV2
-SRV3\INSTANCE2022
-```
-
-## 🗃️ Script de creación de tabla recomendada
+Antes de ejecutar el script, asegúrate de crear la tabla en la base de datos `SqlMonitors` del servidor central (`CO01VSQLADMIN`):
 
 ```sql
 CREATE TABLE EstadoAvailabilityGroup (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
+    Id INT IDENTITY(1,1) PRIMARY KEY,
     Servidor NVARCHAR(255),
-    TipoInstancia NVARCHAR(50),
-    EstadoAG NVARCHAR(50),
-    NombreAG NVARCHAR(255),
+    TipoInstancia NVARCHAR(50), -- StandAlone o AvailabilityGroup
+    EstadoAG NVARCHAR(50),       -- Nodo Primario, Nodo Secundario, etc.
+    NombreAG NVARCHAR(255),      -- Nombre del Availability Group
     FechaRegistro DATETIME DEFAULT GETDATE()
 );
 ```
 
-## 🚀 Uso
+---
 
-1. Asegúrate de tener el archivo `servidores.txt` en la ruta:  
-   `E:\Powershell\servidores.txt`
+## ⚙️ Configuración del Script
 
-2. Ajusta en el script los siguientes valores si es necesario:
-   - `$servidorCentral`: nombre del servidor central donde se guardará la información.
-   - `$baseCentral`: nombre de la base de datos.
-   - `$tablaCentral`: nombre de la tabla de destino.
+- **Ruta de archivo de servidores**: `U:\WinServerSqlColector\servers.txt`  
+  Este archivo debe contener una lista de instancias SQL Server, una por línea.
 
-3. Ejecuta el script con PowerShell con privilegios suficientes:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File E:\Powershell\EstadoAvailabilityGroup.ps1
-```
+- **Servidor Central**: `CO01VSQLADMIN`  
+- **Base de Datos Central**: `SqlMonitors`  
+- **Tabla de destino**: `EstadoAvailabilityGroup`
 
 ---
 
-## 🧠 ¿Qué hace el script?
+## 📌 Funcionalidad del Script
 
-- Si el servidor no forma parte de un AG, lo clasifica como `StandAlone`.
-- Si pertenece a un AG, registra el nombre del grupo y el rol (Primario/Secundario).
-- Los errores se capturan y notifican sin detener la ejecución.
+1. **Carga de servidores**:  
+   Lee la lista de servidores desde un archivo de texto.
+
+2. **Conexión y Consulta**:  
+   Se conecta a cada servidor e intenta identificar:
+   - Si pertenece a un Availability Group.
+   - Su rol en el AG (Primario, Secundario, etc.).
+   - Su estado de sincronización.
+   - O si es una instancia StandAlone.
+
+3. **Inserción en base central**:  
+   Se insertan los resultados en la tabla `EstadoAvailabilityGroup`.
+
+4. **Manejo de errores**:  
+   Se capturan errores de conexión o ejecución y se registran en consola.
 
 ---
 
-## 📜 Código completo del script
-
-```powershell
+~~~powershell
 # =====================================
+
 # CONFIGURACIÓN
+
 # =====================================
 
-$rutaArchivoServidores = "E:\Powershell\servidores.txt"
-$servidorCentral = "SPYHUNTER\MSSQLSERVER2022"
+ 
+
+$rutaArchivoServidores = "U:\WinServerSqlColector\servers.txt"
+
+$servidorCentral = "CO01VSQLADMIN"
+
 $baseCentral = "SqlMonitors"
+
 $tablaCentral = "EstadoAvailabilityGroup"
 
+ 
+
 # =====================================
+
 # FUNCIÓN PARA INSERTAR RESULTADO
+
 # =====================================
+
+ 
 
 function Insertar-EstadoAG {
+
     param (
+
         [string]$servidorOrigen,
+
         [string]$tipoInstancia,
+
         [string]$estadoAG,
+
         [string]$nombreAG
+
     )
 
+ 
+
     $conexion = New-Object System.Data.SqlClient.SqlConnection
+
     $conexion.ConnectionString = "Server=$servidorCentral;Database=$baseCentral;Integrated Security=True;"
+
     $conexion.Open()
 
+ 
+
     $cmd = $conexion.CreateCommand()
+
     $cmd.CommandText = @"
+
     INSERT INTO $tablaCentral (Servidor, TipoInstancia, EstadoAG, NombreAG)
+
     VALUES (@Servidor, @TipoInstancia, @EstadoAG, @NombreAG)
+
 "@
 
+ 
+
     $cmd.Parameters.Add("@Servidor", [System.Data.SqlDbType]::NVarChar, 255).Value = $servidorOrigen
+
     $cmd.Parameters.Add("@TipoInstancia", [System.Data.SqlDbType]::NVarChar, 50).Value = $tipoInstancia
+
     $cmd.Parameters.Add("@EstadoAG", [System.Data.SqlDbType]::NVarChar, 50).Value = $estadoAG
+
     $cmd.Parameters.Add("@NombreAG", [System.Data.SqlDbType]::NVarChar, 255).Value = $nombreAG
 
+ 
+
     $cmd.ExecuteNonQuery()
+
     $conexion.Close()
+
 }
 
+ 
+
 # =====================================
+
 # CARGAR SERVIDORES Y PROCESAR
+
 # =====================================
+
+ 
 
 if (-Not (Test-Path $rutaArchivoServidores)) {
+
     Write-Error "No se encontró el archivo de servidores: $rutaArchivoServidores"
+
     exit
+
 }
+
+ 
 
 $servidores = Get-Content -Path $rutaArchivoServidores | Where-Object { $_.Trim() -ne "" }
 
+ 
+
 foreach ($servidor in $servidores) {
+
     try {
+
         Write-Host "`nConsultando $servidor..." -ForegroundColor Cyan
 
+ 
+
         $queryAG = @"
-        SELECT 
-            ag.name AS NombreAG,
-            ars.role_desc AS Rol,
-            ars.replica_server_name AS Replica
-        FROM 
-            sys.dm_hadr_availability_replica_states ars
-        INNER JOIN 
-            sys.availability_replicas ar ON ars.replica_id = ar.replica_id
-        INNER JOIN 
-            sys.availability_groups ag ON ar.group_id = ag.group_id
+
+SELECT distinct
+
+    ISNULL(ags.name, 'Standalone') AS [AvailabilityGroupName],
+
+    CASE
+
+        WHEN adr.role_desc = 'PRIMARY' THEN 'Nodo Primario'
+
+        WHEN adr.role_desc = 'SECONDARY' THEN 'Nodo Secundario'
+
+        WHEN ags.name IS NULL THEN 'Standalone'
+
+        ELSE 'Desconocido'
+
+    END AS [Role],
+
+    ISNULL(arcs.replica_server_name, @@SERVERNAME) AS replica_server_name,
+
+    CASE
+
+        WHEN ags.name IS NULL THEN 'Sin AG'
+
+        WHEN ags_state.synchronization_health_desc IS NOT NULL THEN ags_state.synchronization_health_desc
+
+        ELSE 'Desconocido'
+
+    END AS EstadoAG
+
+FROM sys.servers AS s
+
+LEFT JOIN sys.availability_groups AS ags
+
+    ON 1 = 1
+
+LEFT JOIN sys.dm_hadr_availability_group_states AS ags_state
+
+    ON ags.group_id = ags_state.group_id
+
+LEFT JOIN sys.dm_hadr_availability_replica_states AS ar
+
+    ON ags.group_id = ar.group_id
+
+LEFT JOIN sys.dm_hadr_availability_replica_cluster_states AS arcs
+
+    ON ar.replica_id = arcs.replica_id
+
+LEFT JOIN sys.dm_hadr_availability_replica_states AS adr
+
+    ON ar.replica_id = adr.replica_id
+
+WHERE ISNULL(arcs.replica_server_name, @@SERVERNAME) = @@SERVERNAME
+
+ 
+
+ 
+
 "@
+
+ 
 
         $resultado = Invoke-Sqlcmd -ServerInstance $servidor -Query $queryAG -ErrorAction Stop
 
+ 
+
         if ($resultado.Count -eq 0) {
+
             # Si no hay resultado, se asume que es una instancia StandAlone
+
             Insertar-EstadoAG -servidorOrigen $servidor `
+
                               -tipoInstancia "StandAlone" `
+
                               -estadoAG "N/A" `
+
                               -nombreAG "N/A"
+
             Write-Host "$servidor es StandAlone." -ForegroundColor Yellow
+
         } else {
+
             foreach ($fila in $resultado) {
+
                 Insertar-EstadoAG -servidorOrigen $servidor `
+
                                   -tipoInstancia "AvailabilityGroup" `
-                                  -estadoAG $fila.Rol `
-                                  -nombreAG $fila.NombreAG
+
+                                  -estadoAG $fila.Role `
+
+                                  -nombreAG $fila.AvailabilityGroupName
+
                 Write-Host "$servidor pertenece al AG '$($fila.NombreAG)' como $($fila.Rol)." -ForegroundColor Green
+
             }
+
         }
 
+ 
+
     } catch {
+
         Write-Warning ("No se pudo procesar el servidor '" + $servidor + "'. Error: " + $_.Exception.Message)
+
     }
+
 }
-```
+~~~~
+
+
+
+
+
+
+
+
+## 🧠 Lógica SQL utilizada
+
+La consulta utilizada en cada servidor busca en las vistas del sistema relacionadas a HADR:
+
+- `sys.availability_groups`
+- `sys.dm_hadr_availability_group_states`
+- `sys.dm_hadr_availability_replica_states`
+- `sys.dm_hadr_availability_replica_cluster_states`
+
+---
+
+## ▶️ Ejecución
+
+Este script debe ejecutarse en un entorno que tenga acceso PowerShell y al módulo `SqlServer` con `Invoke-Sqlcmd`.  
+Se recomienda programar su ejecución de forma periódica mediante un Job o una tarea del programador de tareas.
+
+---
+
+## ✅ Resultado Esperado
+
+Una tabla poblada como la siguiente:
+
+| Servidor             | TipoInstancia     | EstadoAG        | NombreAG         | FechaRegistro        |
+|----------------------|-------------------|------------------|------------------|-----------------------|
+| SQLPROD01            | AvailabilityGroup | Nodo Primario   | AG_Producción    | 2025-05-22 12:00:00   |
+| SQLTEST01            | StandAlone        | N/A              | N/A              | 2025-05-22 12:00:00   |
+
+---
+
+## 🛠 Requisitos
+
+- PowerShell 5.1+
+- Módulo `SqlServer` (para usar `Invoke-Sqlcmd`)
+- Permisos de lectura en las vistas del sistema SQL
+- Acceso de escritura en la base de datos central
+
+---
+
+
+
+---
 
 
 
