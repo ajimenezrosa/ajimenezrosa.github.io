@@ -48,11 +48,11 @@ Manuales de</th>
 - 1.4 [Conexiones activas del servidor de SQL Server](#4)  
 - 1.5 [DBCC CHECKDB](#5)  
 - 1.6.1 [Reducción de Archivos TempDB en SQL Server Actualizado](#6a)
-
-
-
 - 1.7 [Conexión de administración dedicada: cuándo y cómo usarla](#7)  
 - 1.8 [Guía para Manejar una Base de Datos en Modo RECOVERING](#RECOVERING)
+# 
+##### users
+- 1.9 [Cerrar Conexiones de un Usuario en SQL Server](#1.9)
 
 ---
 
@@ -1174,6 +1174,60 @@ Para más detalles y opciones avanzadas, consulta la [documentación oficial de 
 
 
 ---
+#
+
+
+# Cerrar Conexiones de un Usuario en SQL Server<a name="1.9"></a>
+
+**Propiedad de:** JOSE ALEJANDRO JIMENEZ ROSA  
+**Fecha:** 19 de noviembre de 2024  
+**Autor:** Alejandro Jimenez Rosa  
+
+---
+
+## 📘 Descripción
+
+Este script T-SQL permite cerrar todas las conexiones activas de un usuario específico en SQL Server. Utiliza la vista de administración dinámica `sys.dm_exec_sessions` para identificar las sesiones activas y genera comandos `KILL` para cada una de ellas.
+
+---
+
+## 💻 Código SQL
+
+```sql
+DECLARE @username NVARCHAR(50) = 'nombre_del_usuario';
+DECLARE @sql NVARCHAR(MAX) = N'';
+
+SELECT @sql += N'KILL ' + CAST(session_id AS NVARCHAR(5)) + N';'
+FROM sys.dm_exec_sessions
+WHERE login_name = @username;
+
+EXEC sp_executesql @sql;
+```
+
+## 🛠️ Instrucciones
+### Definir el Usuario:
+#### Reemplaza 'nombre_del_usuario' con el nombre del usuario cuyas conexiones deseas cerrar.
+
+#### Generar Comandos KILL:
+#### La consulta selecciona todas las sesiones activas del usuario especificado y genera comandos KILL para cada sesión.
+
+####  Ejecutar el Script:
+#### Ejecuta el script en tu entorno de SQL Server Management Studio (SSMS) para cerrar todas las conexiones activas del usuario.
+
+## ⚠️ Notas
+#### Asegúrate de tener los permisos necesarios para ejecutar comandos KILL en el servidor SQL.
+
+#### Utiliza este script con precaución, ya que cerrará todas las conexiones activas del usuario especificado, lo que puede interrumpir procesos en curso.
+
+#### Este procedimiento es útil en tareas de mantenimiento, despliegues o solución de bloqueos causados por sesiones activas.
+
+## ✅ Uso Típico
+#### Este script es útil en escenarios donde necesitas liberar recursos rápidamente o realizar tareas administrativas que requieren que el usuario esté desconectado del servidor.
+
+
+
+
+# 
 
 # Una vista dentro de la caché del búfer de SQL Server<a name="8"></a>
 ![](https://learn.microsoft.com/es-es/sql/database-engine/configure-windows/media/ssdbufferpoolextensionarchitecture.gif?view=sql-server-ver16)
