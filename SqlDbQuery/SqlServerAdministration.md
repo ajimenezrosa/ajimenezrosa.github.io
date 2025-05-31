@@ -84,6 +84,7 @@ Manuales de</th>
     - 3.1.11 [Missing Index Script](#missinindex)  
     - 3.1.12 [Procedimiento `MeasureIndexImprovement`](#MeasureIndexImprovement)  
 - 3.2 [Evaluación de Índices en SQL Server](#3113)  
+- 3.3 [Consulta para identificar el Filegroup de los índices en SQL Server](#3.3)
     <!-- - 3.1.13 [Evaluación de Índices en SQL Server](#3113) -->
 #### Documentación sobre Consultas de Índices en SQL Server
 
@@ -3171,6 +3172,75 @@ ORDER BY
 
 # 
 
+
+
+# Consulta para identificar el Filegroup de los índices en SQL Server<a name="3.3"></a>
+
+**Propiedad de:** JOSE ALEJANDRO JIMENEZ ROSA  
+**Fecha:** mayo 27, 2025  
+
+---
+
+## 📊 Resumen
+
+Este documento describe una consulta en SQL Server que permite obtener información sobre el *filegroup* en el que están almacenados los índices dentro de una base de datos. Es útil para el análisis de rendimiento y la administración del almacenamiento.
+
+---
+
+## 🧠 Query SQL
+
+```sql
+SELECT 
+    i.name AS IndexName,
+    t.name AS TableName,
+    fg.name AS FileGroupName
+FROM sys.indexes i
+JOIN sys.tables t ON i.object_id = t.object_id
+JOIN sys.data_spaces fg ON i.data_space_id = fg.data_space_id
+WHERE i.type > 0 -- Filtra solo los índices (excluye heaps)
+ORDER BY fg.name, t.name, i.name;
+```
+
+---
+
+## 🔍 Explicación del Query
+
+El script se basa en las siguientes vistas del sistema:
+
+- `sys.indexes`: Contiene información sobre los índices.
+- `sys.tables`: Relaciona los índices con sus respectivas tablas.
+- `sys.data_spaces`: Permite identificar en qué filegroup están ubicados los índices.
+
+El filtro `i.type > 0` excluye *heaps* y se asegura de traer solo índices estructurados.
+
+---
+
+## 📌 Casos de Uso
+
+Este query es útil en escenarios como:
+
+- **Optimización de rendimiento:** Permite evaluar la distribución de índices en distintos filegroups.
+- **Administración del almacenamiento:** Identificar y modificar la ubicación de índices según necesidades de espacio y acceso.
+
+---
+
+## ✅ Recomendaciones
+
+- Es recomendable ejecutar este query en bases de datos grandes para evaluar si los índices están correctamente distribuidos.
+- Se puede extender agregando más columnas para obtener detalles adicionales, como el tipo de índice (`i.type_desc`).
+
+---
+
+## 📚 Referencias
+
+- [Documentación oficial de SQL Server](https://learn.microsoft.com/sql)
+- Temas relacionados: Administración de filegroups, rendimiento de índices, diseño de almacenamiento.
+
+---
+
+
+
+#
 
 # Evaluación de Índices en SQL Server<a name="3113"></a>
 
