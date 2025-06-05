@@ -14,7 +14,7 @@ Manuales de</th>
 <tbody><tr>
 
 <tr>
-  <td><img src="https://avatars2.githubusercontent.com/u/7384546?s=460&v=4?format=jpg&name=large" alt="JuveR" width="600px" ></td>
+  <td><img src="https://avatars2.githubusercontent.com/u/7384546?s=460&v=4?format=jpg&name=large" alt="JuveR" width="400" ></td>
   <td><img src="https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/SQL-Server-Standard-Tile-2022-01" alt="JuveR" width="600px" height="400px"></td>
 </tr>
 <!-- <tr>
