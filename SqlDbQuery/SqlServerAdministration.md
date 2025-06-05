@@ -214,7 +214,7 @@ Manuales de</th>
 
 ---
 
-#### **12. BPD: Administración de Jobs**
+#### **12: Administración de Jobs**
 - 12.1 [Listar jobs de SQL Server](#listajob28)  
 - 12.2 [Jobs con sus días de ejecución por steps](#listajob282)  
     - 12.2.1 [Jobs del sistema SQL Server, con nombre y base de datos](#28.2.1)  
@@ -13806,8 +13806,8 @@ Este script se proporciona bajo la Licencia MIT. Siéntete libre de usarlo y mod
 #### Propósito: Realiza una copia de seguridad completa de la base de datos master.
 #### Ubicación de respaldo: U:\MSSQL\BACKUP\master.bak
 #### Scripts_Restore_bd_Standalone
-#### Propósito: Restaura la base de datos bpd_convertidor desde un archivo de respaldo.
-#### Ubicación del respaldo: U:\MSSQL\BACKUP\bpd_convertidor.BAK
+#### Propósito: Restaura la base de datos convertidor desde un archivo de respaldo.
+#### Ubicación del respaldo: U:\MSSQL\BACKUP\convertidor.BAK
 #### Detalles de la restauración: Restaura los archivos de datos (mdf), log (ldf), e índices (ndf) en ubicaciones específicas.
 # 
 # STANDALONE_STOS_ADMIN_DB_creation
@@ -13882,13 +13882,13 @@ GO
 BACKUP DATABASE [master] TO  DISK = N'U:\MSSQL\BACKUP\master.bak' WITH NOFORMAT, INIT,  NAME = N'master-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 5
 GO
 
--- Restaurar base de datos 'bpd_convertidor':
-RESTORE DATABASE [bpd_convertidor] 
-FROM  DISK = N'U:\MSSQL\BACKUP\bpd_convertidor.BAK' 
+-- Restaurar base de datos 'onvertidor':
+RESTORE DATABASE [convertidor] 
+FROM  DISK = N'U:\MSSQL\BACKUP\convertidor.BAK' 
 WITH  FILE = 1,  
-MOVE N'bpd_convertidor' TO N'E:\MSSQL\Data\bpd_convertidor.mdf',  
-MOVE N'bpd_convertidor_Log' TO N'L:\MSSQL\Log\bpd_convertidor_log.ldf',  
-MOVE N'bpd_convertidor_Index' TO N'I:\MSSQL\Index\bpd_convertidor_index.ndf',  
+MOVE N'convertidor' TO N'E:\MSSQL\Data\convertidor.mdf',  
+MOVE N'convertidor_Log' TO N'L:\MSSQL\Log\convertidor_log.ldf',  
+MOVE N'convertidor_Index' TO N'I:\MSSQL\Index\convertidor_index.ndf',  
 NOUNLOAD,  STATS = 10
 GO
 
@@ -13969,7 +13969,7 @@ GO
 # 
 
 
- ## Como puedo saber que puerto utilizan mis consultas BPD<a name="puetos"></a>
+ ## Como puedo saber que puerto utilizan mis consultas<a name="puetos"></a>
 # 
 
  
@@ -15140,45 +15140,45 @@ ALTER DATABASE [AUTMOD] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
-#### 5. BPD_SecureContainer Database
+#### 5. SecureContainer Database
 
 ~~~sql
 -- Step 1: Full Database Backup
-BACKUP DATABASE [BPD_SecureContainer]
-TO DISK = N'U:\MSSQL\BACKUP\BPD_SecureContainer.bak'
+BACKUP DATABASE [SecureContainer]
+TO DISK = N'U:\MSSQL\BACKUP\SecureContainer.bak'
 WITH INIT,
-NAME = N'BPD_SecureContainer-Full Database Backup',
+NAME = N'SecureContainer-Full Database Backup',
 SKIP, NOREWIND, NOUNLOAD,  STATS = 1
 GO
 
 -- Step 2: Transaction Log Backup
-BACKUP LOG [BPD_SecureContainer]
-TO DISK = 'U:\MSSQL\BACKUP\BPD_SecureContainer.trn'
+BACKUP LOG [SecureContainer]
+TO DISK = 'U:\MSSQL\BACKUP\SecureContainer.trn'
 WITH INIT;
 GO
 
 -- Step 3: Add Database to Availability Group on Primary Replica
-ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [BPD_SecureContainer]
+ALTER AVAILABILITY GROUP [AVAILABILITYGROUP] ADD DATABASE [SecureContainer]
 GO
 
 -- Step 4: Restore Full Database Backup on Secondary Replica
-RESTORE DATABASE [BPD_SecureContainer]
-FROM  DISK = N'U:\MSSQL\BACKUP\BPD_SecureContainer.BAK'
+RESTORE DATABASE [SecureContainer]
+FROM  DISK = N'U:\MSSQL\BACKUP\SecureContainer.BAK'
 WITH  FILE = 1,
-MOVE N'BPD_SecureContainer' TO N'D:\MSSQL\DATA\BPD_SecureContainer.mdf',
-MOVE N'BPD_SecureContainer_log' TO N'L:\MSSQL\LOG\BPD_SecureContainer_log.ldf',
+MOVE N'SecureContainer' TO N'D:\MSSQL\DATA\SecureContainer.mdf',
+MOVE N'SecureContainer_log' TO N'L:\MSSQL\LOG\SecureContainer_log.ldf',
 NOUNLOAD,  STATS = 10, REPLACE,
 NORECOVERY;       
 GO
 
 -- Step 5: Restore Transaction Log Backup on Secondary Replica
-RESTORE LOG [BPD_SecureContainer]
-FROM Disk = 'U:\MSSQL\BACKUP\BPD_SecureContainer.trn'
+RESTORE LOG [SecureContainer]
+FROM Disk = 'U:\MSSQL\BACKUP\SecureContainer.trn'
 WITH NORECOVERY;
 GO
 
 -- Step 6: Set HADR Availability Group on Secondary Replica
-ALTER DATABASE [BPD_SecureContainer] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
+ALTER DATABASE [SecureContainer] SET HADR AVAILABILITY GROUP = [AVAILABILITYGROUP];
 GO
 ~~~
 
