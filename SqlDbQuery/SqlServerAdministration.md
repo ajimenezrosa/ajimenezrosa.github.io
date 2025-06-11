@@ -38,7 +38,7 @@ Manuales de</th>
 
 ---
 
-#### **1. Administración**
+<!-- #### **1. Administración**
 - 1.1 [Conectar una unidad de red a un servidor SQL Server](#1)  
 - 1.2 [Crecimiento automático de los ficheros de la base de datos](#2)  
     - 1.2.1 [Cómo mover TempDB a otra unidad y carpeta](#21)  
@@ -59,12 +59,12 @@ Manuales de</th>
 - 1.8 [Guía para Manejar una Base de Datos en Modo RECOVERING](#RECOVERING)
 # 
 ##### users
-- 1.9 [Cerrar Conexiones de un Usuario en SQL Server](#1.9)
+- 1.9 [Cerrar Conexiones de un Usuario en SQL Server](#1.9) -->
 
 ---
-
-#### **2. Memoria y Caché de SQL Server**
-- 2.1 [Una vista dentro de la caché del búfer de SQL Server](#8)  
+<!-- 
+#### **2. Memoria y Caché de SQL Server** -->
+<!-- - 2.1 [Una vista dentro de la caché del búfer de SQL Server](#8)  
     - 2.1.1 [Vista general del uso de la memoria en SQL Server](#8-1)  
     - 2.1.2 [Métrica del uso de la caché del búfer por la base de datos](#metricausocachequery)  
     - 2.1.3 [Totales de páginas y conteo de bytes](#totalespaginasconteo)  
@@ -72,11 +72,11 @@ Manuales de</th>
     - 2.1.5 [Número de páginas y tamaño de datos en MB](#numerodepaginas)  
     - 2.1.6 [DBCC DROPCLEANBUFFERS](#dbccdropcleanbuffers)  
     - 2.1.7 [Expectativa de vida de las páginas](#expectativadevidadelaspaginas)  
-    - 2.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)  
+    - 2.1.8 [¿Qué hay en la caché del búfer?](#quehayenlacachedelbufer)   -->
 
 ---
 
-#### **3. Mantenimiento de Índices**
+<!-- #### **3. Mantenimiento de Índices**
 - 3.1 [Información general de mantenimiento de índices en SQL Server](#inf_mant_indices)  
     - 3.1.1 [Localizar tablas sin `Clustered Index`](#tablasinclusterindex)  
     - 3.1.2 [Detección de índices no utilizados – Parte 1](#indicesnoutilizados)  
@@ -93,7 +93,7 @@ Manuales de</th>
 - 3.2 [Evaluación de Índices en SQL Server](#3113)  
 - 3.3 [Consulta para identificar el Filegroup de los índices en SQL Server](#3.3)
     <!-- - 3.1.13 [Evaluación de Índices en SQL Server](#3113) -->
-#### Documentación sobre Consultas de Índices en SQL Server
+<!-- #### Documentación sobre Consultas de Índices en SQL Server
 
 ##### Índice
 
@@ -102,19 +102,19 @@ Manuales de</th>
 - [Detalles de los Índices en las Tablas](#detalles-de-los-%C3%ADndices-en-las-tablas)
 - [Comparación y Agrupación de Índices](#comparaci%C3%B3n-y-agrupaci%C3%B3n-de-%C3%ADndices)
 - [Conclusión](#conclusi%C3%B3n)
----
+--- --> -->
 
 #### **4. Recuperación y Backup**
-- 4.1 [Cuánta data puedo perder](#dataperder)  
-- 4.2 [Query de los tamaños de los backups de base de datos](#querybackup)  
+<!-- - 4.1 [Cuánta data puedo perder](#dataperder)   -->
+<!-- - 4.2 [Query de los tamaños de los backups de base de datos](#querybackup)  
     - 4.2.1 [Envío por correo electrónico del tamaño de los backups](#querybackup2)  
-- 4.3 [Últimos backups realizados en un servidor de bases de datos](#ultimobackup)  
-- 4.4 [Query que muestra los últimos restores realizados en un servidor](#queryrestoresql)  
+- 4.3 [Últimos backups realizados en un servidor de bases de datos](#ultimobackup)   -->
+<!-- - 4.4 [Query que muestra los últimos restores realizados en un servidor](#queryrestoresql)  
 - 4.5 [Limpiar y reducir el log de transacciones SQL Server](#limpiarlog)  
 - 4.6 [Seguimiento en tiempo real de operaciones de backup y restore](#tiemporestore)  
-- 4.7 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)  
-- 4.8 [Fecha de última restauración de un backup](#ultimarestauracion)  
-- 4.9 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)  
+- 4.7 [Monitoreo de operaciones de backup y restore](#tiempobkrestore)   -->
+<!-- - 4.8 [Fecha de última restauración de un backup](#ultimarestauracion)   -->
+<!-- - 4.9 [Scripts para restaurar DB/s en diferentes tipos de ambientes](#46)   -->
 
 ---
 
@@ -1449,7 +1449,6 @@ total_number_of_used_pages AS DECIMAL) DESC;
 # 
 
 
-#### 
 #### Esta consulta combina nuestro conjunto previo de datos con una consulta en sys.dm_db_partition_stats para comparar lo que está actualmente en la caché del búfer versus el espacio total usado por cualquier tabla dada. Las muchas operaciones CAST al final ayudan a evitar el truncado y hacen al resultado final fácil de leer. Los resultados en mi servidor local son los siguientes:
 
 #### 
@@ -1493,7 +1492,6 @@ ORDER BY CAST((CAST(COUNT(*) AS DECIMAL) / CAST(SUM
 (allocation_units.used_pages) AS DECIMAL) * 100) AS DECIMAL(5,2)) DESC;
 ~~~
 # 
-#### 
 
 #### Dado que sys.allocation_units provee algo de información acerca del tamaño de nuestros índices, evitamos la necesidad de CTEs y conjuntos de datos adicionales de dm_db_partition_stats. Aquí está un pedazo de los resultados, mostrando el tamaño del índice (MB y páginas) y el espacio usado de la caché del búfer (MB y páginas):
 
@@ -5191,8 +5189,8 @@ where type_desc = 'USER_TABLE'
 order by PESO_TABLA desc
 ~~~
 # 
-<!-- 
 
+<!-- 
 # Defragmentación, al rescate<a name="desfragmentacionalrescate"></a>
 ![](https://greyphillips.com/Guides/assets/img/Database_Maintenance.png)
 
@@ -5887,7 +5885,7 @@ GO
 
 
 # 
-# 
+#  -->
 
 # Detectando actividad del servidor.<a name="dectectandoactenservidor"></a>
 <img src="https://i.pinimg.com/originals/56/99/84/569984584af7d9c9224bd4a1a8ab7039.jpg?format=jpg&name=large" alt="JuveR" width="800">
