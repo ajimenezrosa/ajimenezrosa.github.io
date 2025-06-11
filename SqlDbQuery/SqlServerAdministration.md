@@ -873,7 +873,9 @@ Búsqueda Rápida
 
 
 <!-- Final de Insertar Publicacion de Mover Tempdb -->
+\\
 
+<!-- HASTA AQUI ESTA COPIADO  ADMINISTRACION -->
 
 
 
