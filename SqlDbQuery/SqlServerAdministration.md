@@ -162,7 +162,7 @@ Manuales de</th>
 
 # 
 
-#### **7. Consultas Especiales**
+<!-- #### **7. Consultas Especiales**
 * 7.1 [Tablas que contienen un nombre de campo específico](#buscarnombrecampo)  
 * 7.2 [Listar todos los objetos de una base de datos](#14.3)  
 * 7.3 [Query de la última vez que se ejecutó un procedimiento](#ultejecproc1)  
@@ -184,8 +184,8 @@ Manuales de</th>
 - [Identificar Procedimientos Almacenados con Mayor Tiempo de Duración](#identificar-procedimientos-almacenados-con-mayor-tiempo-de-duracion)
 - [Buscar un Procedimiento Almacenado en Todas las Bases de Datos](#buscar-un-procedimiento-almacenado-en-todas-las-bases-de-datos)
 
----
-
+--- -->
+<!-- 
 #### **8. Sistemas Integrados: Genesis y Soluflex**
 
 - 8.1 [Sistema Genesis](#sistemaponchesgenesis)  
@@ -200,39 +200,39 @@ Manuales de</th>
     - 8.1.9 [Sincronización de empleados de Soluflex con el reloj](#procedurecargadatossoluflex)  
 - 8.2 [Sincronizar datos de la tabla TA_ponchesreloj con SQL Server](#ta_ponchesrelojjob)  
 
----
+--- -->
 
-#### **9. Notificaciones de SQL Mail**
+<!-- #### **9. Notificaciones de SQL Mail**
 - 9.1 [Reporte de variación de espacio en disco K:\](#reporteespacioendiscok)  
 - 9.2 [Notificar cambios en el padrón electoral](#notificarcambios2)  
 - 9.3 [Consulta para enviar por correo de e-Flow citas](#consultaseflowcitas)  
 - 9.4 [Remisión de encuesta de satisfacción de servicios de mensajería](#encuestamensajeria)  
-- 9.5 [Reporte de registros modificados en las tablas de afiliados del INABIMA](#repafiliadosinabima)  
+- 9.5 [Reporte de registros modificados en las tablas de afiliados del INABIMA](#repafiliadosinabima)   -->
 
  ---
 
-#### **10. Central Telefónica**
-- 10.1 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)  
+<!-- #### **10. Central Telefónica**
+- 10.1 [Cargar registros de llamadas de la central telefónica](#registrosdellamadas)   -->
 
----
+<!-- ---
 
 #### **11. Interacción con el Dominio de Windows**
 - 11.1 [Conectar a un dominio de Windows y leer información](#leerdominio)  
 
----
+--- -->
 
 #### **12: Administración de Jobs**
-- 12.1 [Listar jobs de SQL Server](#listajob28)  
+<!-- - 12.1 [Listar jobs de SQL Server](#listajob28)  
 - 12.2 [Jobs con sus días de ejecución por steps](#listajob282)  
     - 12.2.1 [Jobs del sistema SQL Server, con nombre y base de datos](#28.2.1)  
-    - 12.2.2 [Jobs del sistema SQL Server para control M](#28.2.2)  
-- 12.3 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)  
-- 12.4 [Configurar max worker threads](#autogrowmaxime)  
-- 12.5 [Query para saber el Max/memory de un servidor SQL](#querymamemory)  
-- 12.6 [Shrink DB](#shrinkfilebpd)  
-- 12.7 [Ver espacio libre en archivos MDF y LDF](#espaciodbLibres)  
-- 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)  
-- 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
+    - 12.2.2 [Jobs del sistema SQL Server para control M](#28.2.2)   -->
+<!-- - 12.3 [Jobs ejecutándose en un servidor SQL Server](#jobactivos2)   -->
+<!-- - 12.4 [Configurar max worker threads](#autogrowmaxime)   -->
+<!-- - 12.5 [Query para saber el Max/memory de un servidor SQL](#querymamemory)   -->
+<!-- - 12.6 [Shrink DB](#shrinkfilebpd)   -->
+<!-- - 12.7 [Ver espacio libre en archivos MDF y LDF](#espaciodbLibres)   -->
+<!-- - 12.8 [Espacio en discos que ocupan mis tablas](#espacidiscobpd)   -->
+<!-- - 12.9 [Migrar jobs de un servidor SQL Server a otro](#migrarjobs)  
 - 13 -- [Cambiar Owner de Múltiples Jobs en SQL Server](#13.00)
 - 14  [Solución de Problemas con Jobs en SQL Server que No Se Dejan Eliminar](#14.1)
 - 14.1 [___Consulta de subplanes asociados a un Job](#14.1)
@@ -241,23 +241,23 @@ Manuales de</th>
 - 14.4. [___Eliminación de registros en el log de mantenimiento](#14.4)
 - 14.5. [___Verificación de logs de mantenimiento](#14.5)
 - 14.6 [Query para Listar Jobs en Ejecución en SQL Server con Fecha de Inicio](#14.6)
-- 14.7 [Script para Listar los Jobs en Ejecución en SQL Server](#14.7)
+- 14.7 [Script para Listar los Jobs en Ejecución en SQL Server](#14.7) -->
 
 ---
 
 #### **13. AlwaysOn y Replicación**
-- 13.1 [Determinar si un nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)  
+<!-- - 13.1 [Determinar si un nodo es primario o secundario en un AlwaysOn](#queestestenodoAO)  
 - 13.2 [Verificar si un servidor SQL Server AlwaysOn hizo failover](#failover)  
     - 13.2.1 [Información detallada sobre failover de servidores](#failover2)  
 - 13.3 [Cambiar el "collation" de todas las bases de datos en un servidor SQL Server](#collectionchange)  
 - 13.4 [Verificar si SQL Server Replication está instalado en SQL Server 2019](#saberreplicationserver)  
 
-- 13.5 [ALTER DATABASE ... SET HADR RESUME](#135)
+- 13.5 [ALTER DATABASE ... SET HADR RESUME](#135) -->
 ---
 
 #### **14. Scripts de Monitoreo y Optimización**
-* 14.1 [Script de monitoreo y optimización del rendimiento de SQL Server](#500)  
-* 14.2 [Captura de logs en grupos de disponibilidad Always On](#501)  
+<!-- * 14.1 [Script de monitoreo y optimización del rendimiento de SQL Server](#500)  
+* 14.2 [Captura de logs en grupos de disponibilidad Always On](#501)   -->
 
 ---
 
@@ -10474,7 +10474,7 @@ ORDER BY
 
 
 
-# Establecimiento de la opción de configuración del servidor Máximo de subprocesos de trabajo <a name="autogrowmaxime"></a>
+<!-- # Establecimiento de la opción de configuración del servidor Máximo de subprocesos de trabajo <a name="autogrowmaxime"></a> -->
 ###### Artículo
 ###### 21/03/2023
 ###### 15 colaboradores
@@ -10798,7 +10798,7 @@ go
 ~~~
 
 
-# cuanto ocupan mis archivos de base de datos y cuanto espacio puedo reducir<a name="espaciodbLibres"></a> 
+<!-- # cuanto ocupan mis archivos de base de datos y cuanto espacio puedo reducir<a name="espaciodbLibres"></a>  -->
 
 ~~~sql
 select
@@ -10816,7 +10816,7 @@ where
 
 
 
-## Para obtener los datos en el mismo formato que te muestran en el sistema, y no perder el espacio utilizado por los índices, se puedes utilizar el siguiente script,<a name="espacidiscobpd"><a>
+<!-- ## Para obtener los datos en el mismo formato que te muestran en el sistema, y no perder el espacio utilizado por los índices, se puedes utilizar el siguiente script,<a name="espacidiscobpd"><a> -->
 
 
 ~~~sql
@@ -15363,7 +15363,7 @@ Esta consulta te mostrará el estado de TDE para cada base de datos en la instan
 
 # 
 
-## Jobs Que se estan Ejecutando en un Servidor SQL Server<a name="jobactivos2"></a>
+<!-- ## Jobs Que se estan Ejecutando en un Servidor SQL Server<a name="jobactivos2"></a> -->
 
 Aqui podaras ver un script SQL que se utiliza para listar los jobs actualmente en ejecución en SQL Server. La consulta utiliza el procedimiento almacenado `sp_help_job` de la base de datos `msdb` con el parámetro `@execution_status=1`, que filtra los jobs que están en estado de ejecución.
 
