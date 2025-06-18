@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cargar archivo README</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+  <script>
+    // Agregar la función para copiar el contenido al portapapeles
+    function copyCodeToClipboard(codeContainer) {
+      const textArea = document.createElement('textarea');
+      textArea.value = codeContainer.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  </script>
+</head>
+<body>
+  <!-- <div id="page-container">
+    <div id="authentication-container">
+      <input type="password" id="password-input" placeholder="Ingrese la contraseña">
+      <button id="submit-button">Ingresar</button>
+      <p id="error-message" style="color: red;"></p>
+    </div>
+    <div id="readme-container" style="display: none;"></div>
+  </div> -->
+
+
+  <div id="page-container">
+    <div id="authentication-container">
+      <h1>Guías de PowerShell para la administración de bases de datos y servidores de Windows</h1>
+      <h2>by Alejandro Jiménez</h2>
+      <div class="profile">
+        <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Jose Alejandro Jimenez Rosa" width="220">
+        <p><strong>Jose Alejandro Jimenez Rosa</strong><br>Database Administrator & Software Developer<br>Specialized in SQL High Availability</p>
+        <p>Database Administrator with experience in SQL Server. Currently working at Banco Popular Dominicano and teaching at Universidad Católica Santo Domingo, where he lectures on SQL Server Databases, Data Structures, and Mobile Application Development using JavaScript. He also has experience in React Native and works on documentation for GitHub related to database administration and software development.</p>
+    </div>
+      <input type="password" id="password-input" placeholder="Ingrese la contraseña">
+      <button id="submit-button">Ingresar</button>
+      <p id="error-message"></p>
+    </div>
+    <div id="readme-container"></div>
+  </div>
+
+
+
+  <script>
+    var attempts = 0;
+    var maxAttempts = 3;
+    var correctPassword ;
+
+    fetch('datos.json')
+  .then(response => response.json())
+  .then(data => {
+    // Accede a las frases en el objeto JSON
+    var frases = data.frases;
+
+    // Puedes asignar la variable correctPassword a una de las frases
+    correctPassword = frases[2];
+
+    // Ahora la variable correctPassword contiene la primera frase del archivo JSON
+    console.log(correctPassword);
+  })
+  .catch(error => {
+    console.error('Error al cargar el archivo JSON:', error);
+  });
+
+   console.log(correctPassword);
+
+
+
+
+    var authenticationContainer = document.getElementById("authentication-container");
+    var readmeContainer = document.getElementById("readme-container");
+    var passwordInput = document.getElementById("password-input");
+    var submitButton = document.getElementById("submit-button");
+    var errorMessage = document.getElementById("error-message");
+
+    submitButton.addEventListener("click", function() {
+      var enteredPassword = passwordInput.value;
+      if (enteredPassword === correctPassword) {
+        authenticationContainer.style.display = "none";
+        readmeContainer.style.display = "block";
+        cargarReadme();
+      } else {
+        attempts++;
+        errorMessage.textContent = "Contraseña incorrecta. Intento " + attempts + " de " + maxAttempts;
+        if (attempts >= maxAttempts) {
+          submitButton.disabled = true;
+          errorMessage.textContent = "Has excedido el número máximo de intentos.";
+        }
+      }
+    });
+
+    // Función para cargar el archivo README.md y convertirlo a HTML
+    function cargarReadme() {
+      var readmeURL = "/PowerShell/README.md"; // Reemplaza con la ruta correcta
+
+      // Realizar solicitud HTTP para obtener el contenido del archivo README.md
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            var readmeText = xhr.responseText;
+
+            // Utilizar la biblioteca Showdown para convertir el contenido Markdown a HTML
+            var converter = new showdown.Converter();
+            var html = converter.makeHtml(readmeText);
+
+            // Mostrar el contenido HTML en el contenedor
+            readmeContainer.innerHTML = html;
+
+            // Agregar botones de copiar con estilo...
+
+            var codeBlocks = document.querySelectorAll('pre code.language-sql');
+            codeBlocks.forEach(function(codeBlock) {
+              var copyButton = document.createElement('button');
+              copyButton.className = 'copy-button';
+              copyButton.textContent = 'Copiar';
+              copyButton.addEventListener('click', function() {
+                copyCodeToClipboard(codeBlock);
+              });
+
+              var codeContainer = codeBlock.parentNode;
+              codeContainer.classList.add('code-container');
+              codeContainer.appendChild(copyButton);
+            });
+
+          } else {
+            console.error("Error al cargar el archivo README.md: " + xhr.status);
+          }
+        }
+      };
+      xhr.open("GET", readmeURL, true);
+      xhr.send();
+    }
+
+  </script>
+  
+<style>
+
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Page container */
+#page-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.profile {
+  text-align: center;
+  margin-bottom: 30px;
+  max-width: 600px;
+}
+
+.profile img {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile p {
+  font-size: 16px;
+  color: #495057;
+  margin-top: 10px;
+}
+
+/* Authentication container */
+#authentication-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 150px;
+}
+
+/* Readme container */
+#readme-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+/* Buttons */
+.copy-button,
+#submit-button {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-button:hover,
+#submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Input fields */
+#password-input {
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  width: 100%;
+  background-color: #ffffff;
+  color: #495057;
+  transition: border 0.3s ease;
+}
+
+#password-input:focus {
+  border: 1px solid #007bff;
+  outline: none;
+}
+
+/* Code container */
+.code-container {
+  position: relative;
+  background-color: #f1f3f5;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+}
+
+/* Links */
+a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #0056b3;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #dee2e6;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #dee2e6;
+}
+
+th {
+  background-color: #e9ecef;
+  text-align: left;
+}
+
+td {
+  background-color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #authentication-container {
+    padding-top: 8px;
+  }
+  
+  #readme-container {
+    padding: 16px;
+  }
+}
+
+</style>
+
+
+</body>
+</html>
