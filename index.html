@@ -842,11 +842,47 @@ Contribution
     <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
   </svg></a> -->
 
-  <a href="Menu/index.html" target="_blank">
+  
+  
+  
+  <!-- Botón único para desencriptar -->
+  
+  <!-- Cargar CryptoJS -->
+  <a onclick="desencriptarYMostrar()" target="_blank">
     <i class="fa fa-book fa-4x" style="margin-right: 10px;"></i>
   </a>
   
-  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<script>
+  async function desencriptarYMostrar() {
+    const clave = prompt("Introduce la clave para desencriptar:");
+    if (!clave) return;
+
+    try {
+      const response = await fetch("Menu/index.html.enc.txt");
+      const encrypted = await response.text();
+
+      const decrypted = CryptoJS.AES.decrypt(encrypted, clave).toString(CryptoJS.enc.Utf8);
+
+      if (!decrypted) {
+        alert("Clave incorrecta o archivo dañado.");
+        return;
+      }
+
+      const nuevaVentana = window.open("", "_blank");
+      nuevaVentana.document.open();
+      nuevaVentana.document.write(decrypted);
+      nuevaVentana.document.close();
+    } catch (e) {
+      alert("Error al cargar o desencriptar el archivo.");
+      console.error(e);
+    }
+  }
+</script>
+
+
+
 
 
 </footer>
