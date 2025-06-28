@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML File Browser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+        .menu {
+            width: 250px;
+            background: #f3f6f8;
+            color: rgb(3, 3, 3);
+            padding: 20px;
+            overflow-y: auto;
+            position: fixed;
+            height: 100%;
+        }
+        .profile {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid rgb(0, 0, 0);
+        }
+        .profile h2 {
+            font-size: 16px;
+            margin: 10px 0 5px;
+        }
+        .profile p {
+            font-size: 12px;
+            color: #000000;
+            margin: 0;
+        }
+        .menu h1 {
+            font-size: 18px;
+            text-align: center;
+        }
+        .menu p {
+            font-size: 12px;
+            text-align: center;
+            color: #020202;
+        }
+        .menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        .menu li {
+            margin: 10px 0;
+        }
+        .menu a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            padding: 10px;
+            background: #345aad;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .menu a:hover {
+            background: #555;
+        }
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            flex: 1;
+            background: white;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <div class="profile">
+            <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Profile Picture">
+            <h2>José Alejandro Jiménez Rosa</h2>
+            <p>Database Administrator with experience in SQL Server. Currently working at Banco Popular Dominicano and teaching at Universidad Católica Santo Domingo, where he lectures on SQL Server Databases, Data Structures, and Mobile Application Development using JavaScript. He also has experience in React Native and works on documentation for GitHub related to database administration and software development.</p>
+        </div>
+        <h1>AOAG - Setup and Configuration-offline lab manuals</h1>
+        <p>Document created by José Alejandro Jiménez Rosa, based on a Microsoft course on High Availability Environments.</p>
+        <ul>
+            <li><a href="./Lab 01_ Installing a Failover Cluster.html" target="viewer">Lab 01 - Installing a Failover Cluster</a></li>
+            <li><a href="./Lab 02_ Configuring Cluster Quorum.html" target="viewer">Lab 02 - Configuring Cluster Quorum</a></li>
+            <li><a href="./Lab 03_ Verify SQL Server prerequisites.html" target="viewer">Lab 03 - Verify SQL Server Prerequisites</a></li>
+            <li><a href="./Lab 04_ Create an Availability Group.html" target="viewer">Lab 04 - Create an Availability Group</a></li>
+            <li><a href="./Lab 05_ Add database using automatic seeding.html" target="viewer">Lab 05 - Add Database Using Automatic Seeding</a></li>
+            <li><a href="./Lab 06_ Creating Distributed Availability Groups.html" target="viewer">Lab 06 - Creating Distributed Availability Groups</a></li>
+            <li><a href="./Lab 07_ Connecting to Availability Groups.html" target="viewer">Lab 07 - Connecting to Availability Groups</a></li>
+            <li><a href="./Lab 08_ Perform Common Maintenance Tasks.html" target="viewer">Lab 08 - Perform Common Maintenance Tasks</a></li>
+            <li><a href="./Lab 09_ Configuring Read-Only Routing.html" target="viewer">Lab 09 - Configuring Read-Only Routing</a></li>
+            <li><a href="./Lab 10_ Install a Two-node AlwaysOn Failover Cluster Instance.html" target="viewer">Lab 10 - Install a Two-Node AlwaysOn Failover Cluster Instance</a></li>
+            <li><a href="./Lab 11_ Performing FCI Post Installation Tasks.html" target="viewer">Lab 11 - Performing FCI Post Installation Tasks</a></li>
+            <li><a href="./Lab 12_ Performing Common FCI Maintenance Tasks.html" target="viewer">Lab 12 - Performing Common FCI Maintenance Tasks</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <iframe name="viewer"></iframe>
+    </div>
+</body>
+</html>
