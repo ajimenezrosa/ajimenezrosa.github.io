@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 02: Configuring Cluster Quorum</title>
+
+
+    <script src="./Lab 02_ Configuring Cluster Quorum_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 02_ Configuring Cluster Quorum_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 02_ Configuring Cluster Quorum_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 02_ Configuring Cluster Quorum_files/prettify.css">
+    <script src="./Lab 02_ Configuring Cluster Quorum_files/yaml.min.js.download"></script>
+    <script src="./Lab 02_ Configuring Cluster Quorum_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 02_ Configuring Cluster Quorum_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 02_ Configuring Cluster Quorum_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+        <!-- <div style="padding:10px 20px;">
+            <a class="editLink" href="https://labondemand.com/LabProfile/EditInstructions/155700?InstructionsSetId=248592">Edit</a>
+        </div> -->
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="configure-cluster-quorum">Configure Cluster Quorum</h1>
+<h2 id="introduction">Introduction</h2>
+<p>In this lab, you will learn how to configure cluster quorum</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Configure a node and file share majority quorum for a Windows Server 2022 Failover Cluster</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>20 minutes</p>
+<h2 id="logon-information">Logon Information</h2>
+<blockquote class="alert">
+  <p><strong>Before Login make sure windows has Applied Computer Setting to all nodes.</strong></p>
+</blockquote>
+<p>Use the following credentials to login into virtual environment</p>
+<ol>
+<!-- <li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242394">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">Corpnet\Cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242391">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242392">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242393">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242390">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol> -->
+</div><div class="page" id="page1">
+<h1 id="exercise-1-configure-cluster-quorum">Exercise 1: Configure Cluster Quorum</h1>
+<p>In this exercise, you will learn how to configure cluster quorum.</p>
+<hr>
+<h3 id="task-1-create-file-share-and-assign-permissions">Task 1: Create file share and assign permissions</h3>
+<p>In this task, we will create a file share named FS on the domain controller AlwaysOnDC. Then we will assign permission to the CNO on the file share <strong>\\AlwaysOnDC\FS</strong></p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> Sign in to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242390">AlwaysOnDC</a></strong> as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Open <strong>File Explorer</strong> and create a folder called <strong><span class="typeText" title="Type Text">FS</span></strong> on the c drive (C:\)</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0043.png"></p></li>
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Right click <strong>FS</strong> folder and select <strong>Properties</strong> -&gt; <strong>Security</strong> tab.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0044.png"></p></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> In the <strong>Security</strong> tab, click <strong>Edit</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0045.png"></p></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> In the <strong>Permissions for FS</strong> window, click <strong>Add</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0046.png"></p></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> In the <strong>Select Users, Computers, Service Accounts, or Groups</strong> window, click <strong>Object Type</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0047.png"></p></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> In the <strong>Object Types</strong> window, check <strong>Computers</strong> and click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0048.png"></p></li>
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> In the <strong>Select Users, Computers, Service Accounts or Groups</strong> window, type <strong><span class="typeText" title="Type Text">AlwaysOnCluster</span></strong> in the Enter the Object names to select box and click <strong>Check Names</strong>, then click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0049.png"></p></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> In the <strong>Permissions for FS</strong> window, check <strong>Full Control</strong> and click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0050.png"></p></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> Click the <strong>Sharing</strong> tab and click <strong>Share</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0051.png"></p></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> In the <strong>File Sharing</strong> window, ensure that the CNO <strong>AlwaysOnCluster$</strong> has <strong>Read/Write</strong> permissions.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0052.png"></p></li>
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Click <strong>Share</strong>, then click <strong>Done</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0053.png"></p></li>
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> Click <strong>Close</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0054.png"></p></li>
+</ol>
+</div><div class="page" id="page2">
+<h3 id="task-2-configure-cluster-quorum-using-failover-cluster-manager">Task 2: Configure Cluster Quorum using Failover Cluster Manager.</h3>
+<p>In this task, we will configure cluster quorum.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> Sign in to <strong><a href="https://labondemand.com/LabProfile/Instructions/155700?instructionsSetId=248592#" class="selectMachineLink icon-link special-action-link" data-data="242391">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p></li>
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> Open <strong>Failover Cluster Manager.</strong></p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0055.png"></p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> Right-click the <strong>AlwaysOnCluster</strong>, click on <strong>More Actions</strong>, and then select <strong>Configure Cluster Quorum Settings</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0056.png"></p></li>
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> Review the <strong>Before You Begin</strong> page on the <strong>Configure Cluster Quorum Wizard</strong>, and then click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0057.png"></p></li>
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> Choose the <strong>Select the quorum witness</strong> option and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0058.png"></p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> Choose the <strong>Configure a file share witness</strong> option and then click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0059.png"></p></li>
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> On the <strong>Configure File Share Witness</strong> page, type <strong><span class="typeText" title="Type Text">\\AlwaysOnDC\FS</span></strong> in the <strong>File Share Path</strong> box and then click <strong>Next</strong>.</p>
+<blockquote class="note">
+  <p>\\AlwaysOnDC\FS is the file share we configured in the previous task on the DC.</p>
+</blockquote>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0060.png"></p></li>
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> Review the information on the <strong>Confirmation</strong> page, and then click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0061.png"></p></li>
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> On the Summary page, click <strong>View Report</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0062.png"></p></li>
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> Review the information on the report, then close the browser window.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0063.png"></p></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> On the wizard <strong>Summary</strong> page, click <strong>Finish</strong>.</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0064.png"></p></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> In <strong>Failover Cluster Manager</strong>, review the <strong>Summary Page</strong> (middle pane).</p>
+<p>
+<img src="./Lab 02_ Configuring Cluster Quorum_files/image0065.png"></p>
+<blockquote class="note">
+  <p>To configure a quorum using PowerShell, you can use the <strong>Set-ClusterQuorum</strong> cmdlet.</p>
+  <p><strong>Example:</strong> Configure file share witness</p>
+<pre><code class="prettyprint prettyprinted" style=""><span class="typ">Set</span><span class="pun">-</span><span class="typ">ClusterQuorum</span><span class="pln"> </span><span class="pun">–</span><span class="typ">NodeAndFileShareMajority</span><span class="pln"> \\</span><span class="typ">AlwaysOnDC</span><span class="pln">\FS</span></code></pre>
+  <p>Review the report in "C:\Windows\Cluster\Reports" folder, to check for any warnings.</p>
+  <p>More details can be found <a class="icon-link external-link" href="https://technet.microsoft.com/en-us/library/ee461013.aspx" target="_blank">here</a></p>
+</blockquote></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Configure Cluster Quorum 
+
+## Introduction
+
+In this lab, you will learn how to configure cluster quorum
+
+## Objectives
+
+At the end of this lab, you will be able to:
+
+- Configure a node and file share majority quorum for a Windows Server 2022 Failover Cluster
+
+## Estimated Time
+
+20 minutes
+
+## Logon Information
+&gt;[!alert]**Before Login make sure windows has Applied Computer Setting to all nodes.**
+
+Use the following credentials to login into virtual environment
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++Corpnet\Cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnDC).Username+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+===
+
+# Exercise 1: Configure Cluster Quorum
+
+In this exercise, you will learn how to configure cluster quorum.
+
+---
+
+### Task 1: Create file share and assign permissions
+
+In this task, we will create a file share named FS on the domain controller AlwaysOnDC. Then we will assign permission to the CNO on the file share **\\\AlwaysOnDC\FS**
+
+1. [] Sign in to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as +++**@lab.VirtualMachine(AlwaysOnDC).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnDC).Password**+++ as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+    
+1. [] Open **File Explorer** and create a folder called **+++FS+++** on the c drive (C:\\)
+
+    ![](Media/image0043.png)
+
+1. [] Right click **FS** folder and select **Properties** -&amp;gt; **Security** tab.
+
+    ![](Media/image0044.png)
+
+1. [] In the **Security** tab, click **Edit**.
+
+    ![](Media/image0045.png)
+
+1. [] In the **Permissions for FS** window, click **Add**.
+
+    ![](Media/image0046.png)
+
+1. [] In the **Select Users, Computers, Service Accounts, or Groups** window, click **Object Type**.
+
+    ![](Media/image0047.png)
+
+1. [] In the **Object Types** window, check **Computers** and click **OK**.
+
+    ![](Media/image0048.png)
+
+1. [] In the **Select Users, Computers, Service Accounts or Groups** window, type **+++AlwaysOnCluster**+++ in the Enter the Object names to select box and click **Check Names**, then click **OK**.
+
+    ![](Media/image0049.png)
+
+1. [] In the **Permissions for FS** window, check **Full Control** and click **OK**.
+
+    ![](Media/image0050.png)
+
+1. [] Click the **Sharing** tab and click **Share**.
+
+    ![](Media/image0051.png)
+
+1. [] In the **File Sharing** window, ensure that the CNO **AlwaysOnCluster$** has **Read/Write** permissions.
+
+    ![](Media/image0052.png)
+
+1. [] Click **Share**, then click **Done**.
+
+    ![](Media/image0053.png)
+
+1. [] Click **Close**.
+
+    ![](Media/image0054.png)
+
+===
+
+### Task 2: Configure Cluster Quorum using Failover Cluster Manager.
+
+In this task, we will configure cluster quorum.
+
+1. [] Sign in to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+1. [] Open **Failover Cluster Manager.**
+
+    ![](Media/image0055.png)
+
+1. [] Right-click the **AlwaysOnCluster**, click on **More Actions**, and then select **Configure Cluster Quorum Settings**.
+
+    ![](Media/image0056.png)
+
+1. [] Review the **Before You Begin** page on the **Configure Cluster Quorum Wizard**, and then click **Next**.
+
+    ![](Media/image0057.png)
+
+1. [] Choose the **Select the quorum witness** option and click **Next**.
+
+    ![](Media/image0058.png)
+
+1. [] Choose the **Configure a file share witness** option and then click **Next**.
+
+    ![](Media/image0059.png)
+
+1. [] On the **Configure File Share Witness** page, type **+++\\\AlwaysOnDC\\FS**+++ in the **File Share Path** box and then click **Next**.
+
+    &gt; [!note] \\\\AlwaysOnDC\\FS is the file share we configured in the previous task on the DC.
+
+    ![](Media/image0060.png)
+
+1. [] Review the information on the **Confirmation** page, and then click **Next**.
+
+    ![](Media/image0061.png)
+
+1. [] On the Summary page, click **View Report**.
+
+    ![](Media/image0062.png)
+
+1. [] Review the information on the report, then close the browser window.
+
+    ![](Media/image0063.png)
+
+1. [] On the wizard **Summary** page, click **Finish**.
+
+    ![](Media/image0064.png)
+
+1. [] In **Failover Cluster Manager**, review the **Summary Page** (middle pane).
+
+    ![](Media/image0065.png)
+
+    &gt;[!note]To configure a quorum using PowerShell, you can use the **Set-ClusterQuorum** cmdlet.
+    &gt;
+    &gt;**Example:** Configure file share witness
+    &gt;
+    &gt;```
+    &gt;Set-ClusterQuorum –NodeAndFileShareMajority \\AlwaysOnDC\FS
+    &gt;```
+    &gt;
+    &gt;Review the report in &quot;C:\Windows\Cluster\Reports&quot; folder, to check for any warnings.
+    &gt;
+    &gt;More details can be found [here](https://technet.microsoft.com/en-us/library/ee461013.aspx)
+
+
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;155700&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242390&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242390&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242390&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242391&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242391&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242391&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242392&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242392&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242392&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242393&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242393&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242393&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242394&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242394&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242394&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Configuring Cluster Quorum&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="155700" data-contentroot="https://labondemand.blob.core.windows.net/content/lab155700/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>

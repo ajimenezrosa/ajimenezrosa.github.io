@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 01: Installing a Failover Cluster</title>
+
+
+    <script src="./Lab 01_ Installing a Failover Cluster_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 01_ Installing a Failover Cluster_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 01_ Installing a Failover Cluster_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 01_ Installing a Failover Cluster_files/prettify.css">
+    <script src="./Lab 01_ Installing a Failover Cluster_files/yaml.min.js.download"></script>
+    <script src="./Lab 01_ Installing a Failover Cluster_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 01_ Installing a Failover Cluster_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 01_ Installing a Failover Cluster_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="installing-a-failover-cluster">Installing a failover cluster</h1>
+<h2 id="introduction">Introduction</h2>
+<p>In this lab, you will learn how to install a failover cluster.</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Install failover clustering feature on the clustering nodes</li>
+<li>Validate cluster nodes for install</li>
+<li>Install a failover cluster</li>
+<li>Review the installed cluster</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>75 minutes </p>
+<h2 id="logon-information">Logon Information</h2>
+<blockquote class="alert">
+  <p><strong>Before Login make sure windows has Applied Computer Setting to all nodes.</strong></p>
+</blockquote>
+<p>Use the following credentials to login into virtual environment</p>
+<ol>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248400">AlwaysOnClient</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248398">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248399">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248397">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol>
+</div><div class="page" id="page1">
+<h1 id="exercise-1-install-failover-clustering-feature-on-the-3-cluster-nodes">Exercise 1: Install Failover Clustering Feature on the 3 cluster nodes.</h1>
+<p>Before you begin with the first exercise in the lab, let's review the lab environment.</p>
+<ul>
+<li><p>In the lab, you have one Domain Controller and 3 nodes + 1 client computer.</p></li>
+<li><p><strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong> and <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248398">AlwaysOnN2</a></strong> nodes are in the primary Datacenter.</p></li>
+<li><p><strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248399">AlwaysOnN3</a></strong> is in the secondary datacenter.</p></li>
+<li><p>For this lab, both the datacenters are in the same subnet.</p></li>
+<li><p>Each node has Windows Server 2022 O/S installed.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0001.png"></p></li>
+</ul>
+<hr>
+<h3 id="task-1-enable-failover-clustering-feature-using-server-manager-on-node-1-alwaysonn1">Task 1: Enable Failover Clustering Feature using Server Manager on Node 1 (AlwaysOnN1)</h3>
+<p>In this task, you will use Server Manager to install the Failover Clustering feature on cluster node1 AlwaysOnN1. </p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> Sign in to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong> as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Click on the <strong>Start</strong> button and then click <strong>Server Manager</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0002.png"></p></li>
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Under the <strong>Manage</strong> menu item, click on <strong>Add Roles and Features</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0003.png"></p></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> The <strong>Add Roles and Features Wizard</strong> will pop-up. Review the intro screen content and then click on <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0004.png"></p></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> Select <strong>Role-based or feature-bases installation</strong> and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0005.png"></p></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> AlwaysOnN1 server would should up under the server pool. Choose <strong>Select a server from the server pool</strong> option and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0006.png"></p></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> On the <strong>Select server roles</strong> screen, just click <strong>Next</strong> as you won't be making any selections here.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0007.png"></p></li>
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> In the <strong>Select features</strong> screen, select <strong>Failover Clustering</strong> and then click on <strong>Add Features</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0008.png"></p></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> Now, <strong>click</strong> Next.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0009.png"></p></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> In the <strong>Confirm installation selections</strong> screen, check the <strong>Restart the destination server automatically if required</strong> check box and then click <strong>Yes</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0010.png"></p></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> Click <strong>Install</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0011.png"></p></li>
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Click <strong>Close</strong> on the <strong>Installation progress</strong> screen after the installation is complete.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0012.png"></p></li>
+</ol>
+</div><div class="page" id="page2">
+<h3 id="task-2-enable-failover-clustering-feature-using-powershell-on-node-2-alwaysonn2-and-node-3-alwaysonn3">Task 2: Enable Failover Clustering Feature using PowerShell on Node 2 (AlwaysOnN2) and Node 3 (AlwaysOnN3).</h3>
+<p>In this task, you will use PowerShell to install the Failover Clustering feature on <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248398">AlwaysOnN2</a></strong> and <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248399">AlwaysOnN3</a></strong>.</p>
+<blockquote class="note">
+  <p>If you would like to use Server Manager to enable the Failover Clustering Feature on the remaining nodes, then repeat the steps performed in the previous task on the remaining 2 nodes.</p>
+</blockquote>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> Sign in to <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248398">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p></li>
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> Start an elevated <strong>Windows PowerShell</strong>:</p>
+<p>Click <strong>Start</strong> &gt; <strong>Windows PowerShell</strong> &gt;right-click <strong>Windows PowerShell</strong> &gt; <strong>More</strong> &gt; select <strong>Run as administrator</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0013.png"></p></li>
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> In Windows PowerShell, type the following command.</p>
+<pre><div class="codeTitle">PowerShell</div><code class="PowerShell language-PowerShell prettyprint prettyprinted" style=""><span class="typ">Install</span><span class="pun">-</span><span class="typ">WindowsFeature</span><span class="pln"> </span><span class="pun">“</span><span class="typ">Failover</span><span class="pun">-</span><span class="typ">Clustering</span><span class="pun">”</span><span class="pln"> </span><span class="pun">-</span><span class="typ">IncludeManagementTools</span></code></pre>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0014.png"></p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> Now connect to Node 3 <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248399">AlwaysOnN3</a></strong>, and repeat steps 2 and 3 on the server.</p></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page3">
+<h1 id="exercise-2-validate-cluster-nodes-and-review-report">Exercise 2: Validate cluster nodes and review report.</h1>
+<p>In this exercise, you will learn how to validate cluster nodes and review report.</p>
+<hr>
+<h3 id="task-1-validate-a-cluster-configuration">Task 1: Validate a Cluster Configuration</h3>
+<p>The cluster validation wizard performs an extensive series of tests to ensure that your system is correctly configured and prepared to function as a failover cluster. The cluster validation wizard results can be saved as a report.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> On <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong>, ensure that you are signed in as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p></li>
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> Click on the <strong>Start</strong> button, then click on <strong>Windows Administrative Tools</strong> &gt; <strong>Failover Cluster Manager</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0015.png"></p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> Click on <strong>Validate Configuration</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0016.png"></p></li>
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> In the <strong>Validate a Configuration Wizard</strong>, review the content on the <strong>Before You Begin</strong> Screen and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0017.png"></p></li>
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> In the <strong>Select Servers or a Cluster</strong> screen, enter the names of the servers that will be part of the cluster configuration. First enter <strong><span class="typeText" title="Type Text">AlwaysOnN1</span></strong>, and click <strong>Add</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0018.png"></p></li>
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> Repeat the <strong>Add</strong> step for <strong><span class="typeText" title="Type Text">AlwaysOnN2</span></strong> and <strong><span class="typeText" title="Type Text">AlwaysOnN3</span></strong> and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0019.png"></p></li>
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> On the Testing Options page, select <strong>Run only tests I select</strong> and then click Next.</p>
+<blockquote class="note">
+  <p>You may have to wait a couple of minutes for the radio buttons to become available.</p>
+</blockquote>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0020.png"></p>
+<blockquote class="knowledge">
+  <p>You should always run a validation test before creating your cluster or making configuration changes to your cluster.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> Review the test options and click <strong>Next</strong>. </p>
+<blockquote class="note">
+  <p>As we are not setting up Storage Spaces Direct, we will leave the option unselected (default).</p>
+</blockquote>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0021.png"></p>
+<blockquote class="knowledge">
+  <p><strong>Inventory tests -</strong> Provide an inventory of the hardware, software, and settings (such as network settings) on the servers, and information about the storage.<br>
+  <strong>Network tests -</strong> Validate that your networks are set up correctly for clustering.<br>
+  <strong>Storage tests -</strong> Validate that the storage on which the failover cluster depends is behaving correctly and supports the required functions of the cluster.<br>
+  <strong>Storage Spaces Direct</strong> - Validate if the hardware configuration supports Storage Spaces Direct.<br>
+  <strong>System Configuration tests</strong> - Validate that system software and configuration settings are compatible across servers.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> Review the confirmation screen and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0022.png"></p>
+<blockquote class="note">
+  <p>The tests might take a few minutes to complete.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex25"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex25"><span></span></label> Click the <strong>View Report</strong> button to review the details of the validation report.</p>
+<blockquote class="knowledge">
+  <p>All reports that are generated inside Failover Cluster Manager are stored in %systemroot%\cluster\Reports and can be referred to at any time.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0023.png"></p></li>
+<li class="task-list-item" id="taskIndex26"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex26"><span></span></label> Review the report results, and then close the browser window.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0024.png"></p></li>
+<li class="task-list-item" id="taskIndex27"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex27"><span></span></label> Click on <strong>Finish</strong> in the Validation Wizard.</p>
+<blockquote class="knowledge">
+  <p>It is also possible to initiate the create cluster wizard from this screen by checking the "Create the cluster now using the validated nodes" box.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0025.png"></p>
+<blockquote class="note">
+  <p>To run the validation tests using PowerShell, you can use the <strong>Test-Cluster</strong> cmdlet. </p>
+  <p><strong>Example</strong>: Validate specified nodes</p>
+<pre><code class="prettyprint prettyprinted" style=""><span class="typ">Test</span><span class="pun">-</span><span class="typ">Cluster</span><span class="pln"> </span><span class="pun">-</span><span class="typ">Node</span><span class="pln"> </span><span class="str">"AlwaysOnN1"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"AlwaysOnN2"</span><span class="pun">,</span><span class="str">"AlwaysOnN3"</span></code></pre>
+  <p><strong>Example</strong>: Validate specified nodes for storage tests</p>
+<pre><code class="prettyprint prettyprinted" style=""><span class="typ">Test</span><span class="pun">-</span><span class="typ">Cluster</span><span class="pln"> </span><span class="pun">-</span><span class="typ">Node</span><span class="pln"> </span><span class="str">"AlwaysOnN1"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"AlwaysOnN2"</span><span class="pun">,</span><span class="str">"AlwaysOnN3"</span><span class="pln"> </span><span class="pun">-</span><span class="typ">Include</span><span class="pln"> </span><span class="str">"Storage"</span></code></pre>
+  <p>More details can be found <a class="icon-link external-link" href="https://technet.microsoft.com/itpro/powershell/windows/failoverclusters/test-cluster" target="_blank">here</a></p>
+</blockquote></li>
+</ol>
+<h3 id="congratulations-1">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page4">
+<h1 id="exercise-3-creating-a-3-node-failover-cluster">Exercise 3: Creating a 3-node failover cluster</h1>
+<p>In this exercise, you will learn how to create a 3-node failover cluster</p>
+<h3 id="task-1-create-a-failover-cluster">Task 1: Create a Failover Cluster</h3>
+<p>In this task, you will use the cluster management tools to create a new cluster. The cluster management tools will be run on one node in the cluster but will configure both nodes correctly.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex28"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex28"><span></span></label> On <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong>, ensure that you are signed in as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p></li>
+<li class="task-list-item" id="taskIndex29"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex29"><span></span></label> In the <strong>Failover Cluster Manager</strong>, click on <strong>Create Cluster</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0026.png"></p></li>
+<li class="task-list-item" id="taskIndex30"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex30"><span></span></label> In the <strong>Before You Begin</strong> screen, review the information and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0027.png"></p></li>
+<li class="task-list-item" id="taskIndex31"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex31"><span></span></label> In the Select Servers or a Cluster screen, enter the names of the servers that will be part of the cluster configuration. First enter <strong><span class="typeText" title="Type Text">AlwaysOnN1</span></strong>, and click <strong>Add</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0028.png"></p></li>
+<li class="task-list-item" id="taskIndex32"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex32"><span></span></label> Repeat the Add step for <strong><span class="typeText" title="Type Text">AlwaysOnN2</span></strong> and <strong><span class="typeText" title="Type Text">AlwaysOnN3</span></strong> and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0029.png"></p></li>
+<li class="task-list-item" id="taskIndex33"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex33"><span></span></label> In the <strong>Access Point for Administering the Cluster</strong> screen, type in a name for this cluster <strong><span class="typeText" title="Type Text">AlwaysOnCluster</span></strong>. This cluster name is also the name that can be used to connect to the cluster to manage it. Type <strong><span class="typeText" title="Type Text">10.1.1.201</span></strong> IP address for the 10.1.1.0/24 network and then Click <strong>Next</strong>.</p>
+<blockquote class="knowledge">
+  <p>During cluster creation, this cluster name is registered as the cluster computer object (also known as the cluster name object or CNO) in AD DS. If you specify a NetBIOS name for the cluster, the CNO is created in the same location where the computer objects for the cluster nodes reside. This can be either the default Computers container or an OU.<br><br>
+  To specify a different location for the CNO, you can enter the distinguished name of an OU in the Cluster Name box. For example: CN=ClusterName, OU=Clusters, DC=Contoso, DC=com.<br><br>
+  If a domain administrator has prestaged the CNO in a different OU than where the cluster nodes reside, specify the distinguished name that the domain administrator provides.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0030.png"></p>
+<blockquote class="knowledge">
+  <p>If the server does not have a network adapter that is configured to use DHCP, you must configure one or more static IP addresses for the failover cluster.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex34"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex34"><span></span></label> Confirm the selections and uncheck the <strong>Add all eligible storage to the cluster</strong> and click <strong>Next</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0031.png"></p>
+<blockquote class="knowledge">
+  <p>Failing to uncheck the <strong>Add all eligible storage to the cluster</strong> option will add all the storage (including local SQL drives) to the cluster. We do not want to cluster the local drives and hence it is important that you uncheck <strong>Add all eligible storage to the cluster</strong>. If you choose not to add all eligible storage to the cluster, you can add specific disks after the cluster is created.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="moreKnowledgeLink" style="display: none;">more...</a></div></li>
+<li class="task-list-item" id="taskIndex35"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex35"><span></span></label> Click <strong>View Report</strong> to review the warnings, close the browser window, and click <strong>Finish</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0032.png"></p>
+<blockquote class="note">
+  <p>Review the warning. This is expected, as we do not have any shared storage in this environment. We will be configuring a file share quorum witness in a lab exercise later.</p>
+</blockquote>
+<blockquote class="note">
+  <p>To create a cluster using PowerShell, you can use the <strong>New-Cluster</strong> cmdlet.</p>
+  <p><strong>Example:</strong> Create new cluster</p>
+<pre><code class="prettyprint prettyprinted" style=""><span class="typ">New</span><span class="pun">-</span><span class="typ">Cluster</span><span class="pln"> </span><span class="pun">-</span><span class="typ">Name</span><span class="pln"> </span><span class="pun">“</span><span class="typ">AlwaysOnCluster</span><span class="pun">”</span><span class="pln"> </span><span class="pun">-</span><span class="typ">Node</span><span class="pln"> </span><span class="typ">AlwaysOnN1</span><span class="pun">,</span><span class="pln"> </span><span class="typ">AlwaysOnN2</span><span class="pun">,</span><span class="typ">AlwaysOnN3</span><span class="pln"> </span><span class="pun">-</span><span class="typ">NoStorage</span></code></pre>
+  <p>The above command will create a Windows Server 2022 Failover Cluster with no shared disks. The NoStorage parameter is used as we don't want any storage to be automatically added to the cluster.</p>
+  <p>More details can be found <a class="icon-link external-link" href="https://technet.microsoft.com/en-us/library/ee460973.aspx" target="_blank">here</a></p>
+</blockquote></li>
+</ol>
+<h3 id="congratulations-2">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page5">
+<h1 id="exercise-4-review-the-3-node-failover-cluster-using-gui-and-powershell">Exercise 4: Review the 3-node failover cluster using GUI and PowerShell</h1>
+<p>In this exercise, you will learn how to review the 3-node failover cluster using GUI and PowerShell</p>
+<hr>
+<h3 id="task-1-review-the-3-node-failover-cluster-using-gui">Task 1: Review the 3-node failover cluster using GUI</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex36"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex36"><span></span></label> On <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong>, ensure that you are signed in as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p></li>
+<li class="task-list-item" id="taskIndex37"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex37"><span></span></label> Open <strong>Failover Cluster Manager</strong> and review information about the cluster. The highlighted show you the <strong>Cluster Name, Current Host Server name, Witness information, Networks, Subnets and the Cluster IP Address</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0033.png"></p></li>
+<li class="task-list-item" id="taskIndex38"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex38"><span></span></label> Click of <strong>Roles</strong>, no roles will show up as no applications have been configured yet on the cluster.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0034.png"></p></li>
+<li class="task-list-item" id="taskIndex39"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex39"><span></span></label> Click on <strong>Nodes</strong> to see the nodes participating in the cluster.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0035.png"></p></li>
+<li class="task-list-item" id="taskIndex40"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex40"><span></span></label> Click on <strong>Storage,</strong> no disks will show up as we haven't added any disks to the cluster yet.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0036.png"></p></li>
+<li class="task-list-item" id="taskIndex41"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex41"><span></span></label> Click on <strong>Networks</strong> to see the networks configured for the cluster.</p>
+<!--NOTE--></li>
+</ol>
+<blockquote>
+  <p><strong>Note:</strong> One of the Network card should  be used for <strong>Cluster Only</strong> and other one for <strong>Cluster and Client</strong> communication, order doesn't matter</p>
+</blockquote>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0037.png"></p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex42"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex42"><span></span></label> To failover the windows cluster, right click the windows cluster name (<strong>AlwaysOnCluster</strong>) -&gt; select <strong>More Actions</strong> -&gt; Move <strong>Core Cluster Resources</strong> -&gt; <strong>Best Possible Node</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0038.png"></p></li>
+<li class="task-list-item" id="taskIndex43"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex43"><span></span></label> The current server would now show as <strong>AlwaysOnN2</strong> or <strong>AlwaysOnN3</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0039.png"></p></li>
+</ol>
+</div><div class="page" id="page6">
+<h1 id="task-2-review-the-3-node-failover-cluster-using-powershell">Task 2: Review the 3-node failover cluster using PowerShell.</h1>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex44"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex44"><span></span></label> On <strong><a href="https://labondemand.com/LabProfile/Instructions/159819?instructionsSetId=254154#" class="selectMachineLink icon-link special-action-link" data-data="248401">AlwaysOnN1</a></strong>, ensure that you are signed in as <span class="typeText" title="Type Text"><strong>Administrator</strong></span> using <span class="typeText" title="Type Text"><strong>Pa$$w0rd</strong></span> as the password.</p></li>
+<li class="task-list-item" id="taskIndex45"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex45"><span></span></label> Click on the <strong>Start</strong> button, then click on <strong>Windows PowerShell</strong> &gt; <strong>Windows PowerShell</strong> &gt; <strong>More</strong> &gt; <strong>Run as administrator</strong>.</p>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0040.png"></p></li>
+<li class="task-list-item" id="taskIndex46"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex46"><span></span></label> To get a list of all cluster cmdlets, type the following:</p>
+<pre><div class="codeTitle">Powershell</div><code class="Powershell language-Powershell prettyprint prettyprinted" style=""><span class="typ">Get</span><span class="pun">-</span><span class="pln">command </span><span class="pun">-</span><span class="kwd">module</span><span class="pln"> </span><span class="typ">FailoverClusters</span></code></pre>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0041.png"></p></li>
+<li class="task-list-item" id="taskIndex47"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex47"><span></span></label> Below are some more useful cluster cmdlets:</p>
+<p>Gets cluster node list</p>
+<pre><div class="codeTitle">PowerShell</div><code class="PowerShell language-PowerShell prettyprint prettyprinted" style=""><span class="typ">Get</span><span class="pun">-</span><span class="pln">clusternode </span></code></pre>
+<p>Gets cluster resource list   </p>
+<pre><div class="codeTitle">PowerShell</div><code class="PowerShell language-PowerShell prettyprint prettyprinted" style=""><span class="typ">Get</span><span class="pun">-</span><span class="pln">clusterresource </span></code></pre>
+<p>Creates a log file for all nodes, or a specific a node, in a failover cluster. They are stored in the %windir%\Cluster\Reports directory on each node of the cluster.    </p>
+<pre><div class="codeTitle">PowerShell</div><code class="PowerShell language-PowerShell prettyprint prettyprinted" style=""><span class="typ">Get</span><span class="pun">-</span><span class="pln">clusterlog </span></code></pre>
+<p>
+<img src="./Lab 01_ Installing a Failover Cluster_files/image0042.png"></p></li>
+</ol>
+<h3 id="congratulations-3">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Installing a failover cluster
+
+## Introduction
+
+In this lab, you will learn how to install a failover cluster.
+
+## Objectives
+
+At the end of this lab, you will be able to:
+- Install failover clustering feature on the clustering nodes
+- Validate cluster nodes for install
+- Install a failover cluster
+- Review the installed cluster
+
+## Estimated Time
+
+75 minutes 
+
+## Logon Information
+&gt;[!alert]**Before Login make sure windows has Applied Computer Setting to all nodes.**
+
+Use the following credentials to login into virtual environment
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnClient).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnClient).Username+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnDC).Username+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+===
+
+# Exercise 1: Install Failover Clustering Feature on the 3 cluster nodes.
+
+Before you begin with the first exercise in the lab, let&#39;s review the lab environment.
+- In the lab, you have one Domain Controller and 3 nodes + 1 client computer.
+- **@lab.VirtualMachine(AlwaysOnN1).SelectLink** and **@lab.VirtualMachine(AlwaysOnN2).SelectLink** nodes are in the primary Datacenter.
+- **@lab.VirtualMachine(AlwaysOnN3).SelectLink** is in the secondary datacenter.
+- For this lab, both the datacenters are in the same subnet.
+- Each node has Windows Server 2022 O/S installed.
+
+    ![](Media/image0001.png)
+
+---
+
+### Task 1: Enable Failover Clustering Feature using Server Manager on Node 1 (AlwaysOnN1)
+
+In this task, you will use Server Manager to install the Failover Clustering feature on cluster node1 AlwaysOnN1. 
+
+1. [] Sign in to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as +++**@lab.VirtualMachine(AlwaysOnN1).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnN1).Password**+++ as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+    
+1. [] Click on the **Start** button and then click **Server Manager**.
+
+    ![](Media/image0002.png)
+
+1. [] Under the **Manage** menu item, click on **Add Roles and Features**.
+
+    ![](Media/image0003.png)
+
+1. [] The **Add Roles and Features Wizard** will pop-up. Review the intro screen content and then click on **Next**.
+
+    ![](Media/image0004.png)
+
+1. [] Select **Role-based or feature-bases installation** and click **Next**.
+
+    ![](Media/image0005.png)
+
+1. [] AlwaysOnN1 server would should up under the server pool. Choose **Select a server from the server pool** option and click **Next**.
+
+    ![](Media/image0006.png)
+
+1. [] On the **Select server roles** screen, just click **Next** as you won&#39;t be making any selections here.
+
+    ![](Media/image0007.png)
+
+1. [] In the **Select features** screen, select **Failover Clustering** and then click on **Add Features**.
+
+    ![](Media/image0008.png)
+
+1. [] Now, **click** Next.
+
+    ![](Media/image0009.png)
+
+1. [] In the **Confirm installation selections** screen, check the **Restart the destination server automatically if required** check box and then click **Yes**.
+
+    ![](Media/image0010.png)
+
+1. [] Click **Install**.
+
+    ![](Media/image0011.png)
+
+1. [] Click **Close** on the **Installation progress** screen after the installation is complete.
+
+    ![](Media/image0012.png)
+
+===
+
+### Task 2: Enable Failover Clustering Feature using PowerShell on Node 2 (AlwaysOnN2) and Node 3 (AlwaysOnN3).
+
+In this task, you will use PowerShell to install the Failover Clustering feature on **@lab.VirtualMachine(AlwaysOnN2).SelectLink** and **@lab.VirtualMachine(AlwaysOnN3).SelectLink**.
+
+&gt; [!note] If you would like to use Server Manager to enable the Failover Clustering Feature on the remaining nodes, then repeat the steps performed in the previous task on the remaining 2 nodes.
+
+1. [] Sign in to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+1. [] Start an elevated **Windows PowerShell**:
+
+    Click **Start** &amp;gt; **Windows PowerShell** &amp;gt;right-click **Windows PowerShell** &amp;gt; **More** &amp;gt; select **Run as administrator**.
+
+    ![](Media/image0013.png)
+
+1. [] In Windows PowerShell, type the following command.
+
+    ```PowerShell
+    Install-WindowsFeature “Failover-Clustering” -IncludeManagementTools
+    ```
+
+    ![](Media/image0014.png)
+
+1. [] Now connect to Node 3 **@lab.VirtualMachine(AlwaysOnN3).SelectLink**, and repeat steps 2 and 3 on the server.
+
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 2: Validate cluster nodes and review report.
+
+In this exercise, you will learn how to validate cluster nodes and review report.
+
+---
+
+### Task 1: Validate a Cluster Configuration
+
+The cluster validation wizard performs an extensive series of tests to ensure that your system is correctly configured and prepared to function as a failover cluster. The cluster validation wizard results can be saved as a report.
+
+1. [] On **@lab.VirtualMachine(AlwaysOnN1).SelectLink**, ensure that you are signed in as +++**@lab.VirtualMachine(AlwaysOnN1).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnN1).Password**+++ as the password.
+
+1. [] Click on the **Start** button, then click on **Windows Administrative Tools** &amp;gt; **Failover Cluster Manager**.
+
+    ![](Media/image0015.png)
+
+1. [] Click on **Validate Configuration**.
+
+    ![](Media/image0016.png)
+
+1. [] In the **Validate a Configuration Wizard**, review the content on the **Before You Begin** Screen and click **Next**.
+
+    ![](Media/image0017.png)
+
+1. [] In the **Select Servers or a Cluster** screen, enter the names of the servers that will be part of the cluster configuration. First enter **+++AlwaysOnN1**+++, and click **Add**.
+
+    ![](Media/image0018.png)
+
+1. [] Repeat the **Add** step for **+++AlwaysOnN2**+++ and **+++AlwaysOnN3**+++ and click **Next**.
+
+    ![](Media/image0019.png)
+
+1. [] On the Testing Options page, select **Run only tests I select** and then click Next.
+
+    &gt;[!note]You may have to wait a couple of minutes for the radio buttons to become available.
+
+    ![](Media/image0020.png)
+
+    &gt; [!KNOWLEDGE] You should always run a validation test before creating your cluster or making configuration changes to your cluster.
+
+1. [] Review the test options and click **Next**. 
+    &gt;[!note] As we are not setting up Storage Spaces Direct, we will leave the option unselected (default).
+
+    ![](Media/image0021.png)
+
+    &gt;[!knowledge] **Inventory tests -** Provide an inventory of the hardware, software, and settings (such as network settings) on the servers, and information about the storage.      
+    &gt;**Network tests -** Validate that your networks are set up correctly for clustering.       
+    &gt;**Storage tests -** Validate that the storage on which the failover cluster depends is behaving correctly and supports the required functions of the cluster.      
+    &gt;**Storage Spaces Direct** - Validate if the hardware configuration supports Storage Spaces Direct.     
+    &gt;**System Configuration tests** - Validate that system software and configuration settings are compatible across servers.
+
+1. [] Review the confirmation screen and click **Next**.
+
+    ![](Media/image0022.png)
+
+    &gt; [!note] The tests might take a few minutes to complete.
+
+1. [] Click the **View Report** button to review the details of the validation report.
+
+    &gt; [!KNOWLEDGE] All reports that are generated inside Failover Cluster Manager are stored in %systemroot%\cluster\Reports and can be referred to at any time.
+
+    ![](Media/image0023.png)
+
+1. [] Review the report results, and then close the browser window.
+
+    ![](Media/image0024.png)
+
+1. [] Click on **Finish** in the Validation Wizard.
+
+    &gt; [!KNOWLEDGE] It is also possible to initiate the create cluster wizard from this screen by checking the &quot;Create the cluster now using the validated nodes&quot; box.
+
+    ![](Media/image0025.png)
+
+    &gt;[!note] To run the validation tests using PowerShell, you can use the **Test-Cluster** cmdlet. 
+    &gt;
+    &gt;**Example**: Validate specified nodes
+    &gt;
+    &gt;```
+    &gt;Test-Cluster -Node &quot;AlwaysOnN1&quot;, &quot;AlwaysOnN2&quot;,&quot;AlwaysOnN3&quot;
+    &gt;```
+    &gt;
+    &gt;**Example**: Validate specified nodes for storage tests
+    &gt;
+    &gt;```
+    &gt;Test-Cluster -Node &quot;AlwaysOnN1&quot;, &quot;AlwaysOnN2&quot;,&quot;AlwaysOnN3&quot; -Include &quot;Storage&quot;
+    &gt;```
+    &gt;More details can be found [here](https://technet.microsoft.com/itpro/powershell/windows/failoverclusters/test-cluster)
+    
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 3: Creating a 3-node failover cluster
+
+In this exercise, you will learn how to create a 3-node failover cluster
+
+### Task 1: Create a Failover Cluster
+
+In this task, you will use the cluster management tools to create a new cluster. The cluster management tools will be run on one node in the cluster but will configure both nodes correctly.
+
+1. [] On **@lab.VirtualMachine(AlwaysOnN1).SelectLink**, ensure that you are signed in as +++**@lab.VirtualMachine(AlwaysOnN1).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnN1).Password**+++ as the password.
+
+1. [] In the **Failover Cluster Manager**, click on **Create Cluster**.
+
+    ![](Media/image0026.png)
+
+1. [] In the **Before You Begin** screen, review the information and click **Next**.
+
+    ![](Media/image0027.png)
+
+1. [] In the Select Servers or a Cluster screen, enter the names of the servers that will be part of the cluster configuration. First enter **+++AlwaysOnN1**+++, and click **Add**.
+
+    ![](Media/image0028.png)
+
+1. [] Repeat the Add step for **+++AlwaysOnN2**+++ and **+++AlwaysOnN3**+++ and click **Next**.
+
+    ![](Media/image0029.png)
+
+1. [] In the **Access Point for Administering the Cluster** screen, type in a name for this cluster **+++AlwaysOnCluster**+++. This cluster name is also the name that can be used to connect to the cluster to manage it. Type **+++10.1.1.201**+++ IP address for the 10.1.1.0/24 network and then Click **Next**.
+
+    &gt; [!KNOWLEDGE] During cluster creation, this cluster name is registered as the cluster computer object (also known as the cluster name object or CNO) in AD DS. If you specify a NetBIOS name for the cluster, the CNO is created in the same location where the computer objects for the cluster nodes reside. This can be either the default Computers container or an OU.&lt;br/&gt;&lt;br/&gt;
+    &gt; To specify a different location for the CNO, you can enter the distinguished name of an OU in the Cluster Name box. For example: CN=ClusterName, OU=Clusters, DC=Contoso, DC=com.&lt;br/&gt;&lt;br/&gt;
+    &gt; If a domain administrator has prestaged the CNO in a different OU than where the cluster nodes reside, specify the distinguished name that the domain administrator provides.
+
+    ![](Media/image0030.png)
+
+    &gt; [!KNOWLEDGE] If the server does not have a network adapter that is configured to use DHCP, you must configure one or more static IP addresses for the failover cluster.
+
+1. [] Confirm the selections and uncheck the **Add all eligible storage to the cluster** and click **Next**.
+
+    ![](Media/image0031.png)
+
+    &gt; [!KNOWLEDGE] Failing to uncheck the **Add all eligible storage to the cluster** option will add all the storage (including local SQL drives) to the cluster. We do not want to cluster the local drives and hence it is important that you uncheck **Add all eligible storage to the cluster**. If you choose not to add all eligible storage to the cluster, you can add specific disks after the cluster is created.
+
+1. [] Click **View Report** to review the warnings, close the browser window, and click **Finish**.
+
+    ![](Media/image0032.png)
+
+    &gt;[!note] Review the warning. This is expected, as we do not have any shared storage in this environment. We will be configuring a file share quorum witness in a lab exercise later.
+    
+    &gt;[!note]To create a cluster using PowerShell, you can use the **New-Cluster** cmdlet.
+    &gt;
+    &gt;**Example:** Create new cluster
+    &gt;
+    &gt;```
+    &gt;New-Cluster -Name “AlwaysOnCluster” -Node AlwaysOnN1, AlwaysOnN2,AlwaysOnN3 -NoStorage
+    &gt;```
+    &gt;The above command will create a Windows Server 2022 Failover Cluster with no shared disks. The NoStorage parameter is used as we don&#39;t want any storage to be automatically added to the cluster.
+    &gt;
+    &gt;More details can be found [here](https://technet.microsoft.com/en-us/library/ee460973.aspx)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 4: Review the 3-node failover cluster using GUI and PowerShell
+
+In this exercise, you will learn how to review the 3-node failover cluster using GUI and PowerShell
+
+---
+
+### Task 1: Review the 3-node failover cluster using GUI
+
+1. [] On **@lab.VirtualMachine(AlwaysOnN1).SelectLink**, ensure that you are signed in as +++**@lab.VirtualMachine(AlwaysOnN1).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnN1).Password**+++ as the password.
+
+1. [] Open **Failover Cluster Manager** and review information about the cluster. The highlighted show you the **Cluster Name, Current Host Server name, Witness information, Networks, Subnets and the Cluster IP Address**.
+
+    ![](Media/image0033.png)
+
+1. [] Click of **Roles**, no roles will show up as no applications have been configured yet on the cluster.
+
+    ![](Media/image0034.png)
+
+1. [] Click on **Nodes** to see the nodes participating in the cluster.
+
+    ![](Media/image0035.png)
+
+1. [] Click on **Storage,** no disks will show up as we haven&#39;t added any disks to the cluster yet.
+
+    ![](Media/image0036.png)
+
+1. [] Click on **Networks** to see the networks configured for the cluster.
+&gt;[!note] **Note:** One of the Network card should  be used for **Cluster Only** and other one for **Cluster and Client** communication, order doesn&#39;t matter
+
+![](Media/image0037.png)
+
+1. [] To failover the windows cluster, right click the windows cluster name (**AlwaysOnCluster**) -&amp;gt; select **More Actions** -&amp;gt; Move **Core Cluster Resources** -&amp;gt; **Best Possible Node**.
+
+    ![](Media/image0038.png)
+
+1. [] The current server would now show as **AlwaysOnN2** or **AlwaysOnN3**.
+
+    ![](Media/image0039.png)
+
+===
+
+# Task 2: Review the 3-node failover cluster using PowerShell.
+
+1. [] On **@lab.VirtualMachine(AlwaysOnN1).SelectLink**, ensure that you are signed in as +++**@lab.VirtualMachine(AlwaysOnN1).Username**+++ using +++**@lab.VirtualMachine(AlwaysOnN1).Password**+++ as the password.
+
+1. [] Click on the **Start** button, then click on **Windows PowerShell** &amp;gt; **Windows PowerShell** &amp;gt; **More** &amp;gt; **Run as administrator**.
+
+    ![](Media/image0040.png)
+
+1. [] To get a list of all cluster cmdlets, type the following:
+
+    ```Powershell
+    Get-command -module FailoverClusters
+    ```
+
+    ![](Media/image0041.png)
+
+1. [] Below are some more useful cluster cmdlets:
+
+    Gets cluster node list
+
+    ```PowerShell
+    Get-clusternode 
+    ```
+    Gets cluster resource list   
+
+    ```PowerShell
+    Get-clusterresource 
+    ```
+
+    Creates a log file for all nodes, or a specific a node, in a failover cluster. They are stored in the %windir%\Cluster\Reports directory on each node of the cluster.    
+
+    ```PowerShell
+    Get-clusterlog 
+    ```
+
+    ![](Media/image0042.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;159819&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;248397&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;248397&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;248397&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;248398&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;248398&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;248398&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;248399&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;248399&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;248399&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;248400&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;248400&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;248400&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;248401&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;248401&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;248401&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Installing a Failover Cluster&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="159819" data-contentroot="https://labondemand.blob.core.windows.net/content/lab159819/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>

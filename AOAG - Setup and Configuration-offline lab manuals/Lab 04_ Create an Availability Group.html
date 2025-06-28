@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593 -->
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style data-merge-styles="true"></style>
+    <style data-merge-styles="true"></style><style data-merge-styles="true"></style><meta name="viewport" content="width=device-width">
+    <title>Lab 04: Create an Availability Group</title>
+
+
+    <script src="./Lab 04_ Create an Availability Group_files/jquery.min.js.download" type="text/javascript"></script>
+    <script src="./Lab 04_ Create an Availability Group_files/Localize" type="text/javascript"></script>
+    <script src="./Lab 04_ Create an Availability Group_files/showdown.min.js.download"></script>
+    <link rel="stylesheet" type="text/css" href="./Lab 04_ Create an Availability Group_files/prettify.css">
+    <script src="./Lab 04_ Create an Availability Group_files/yaml.min.js.download"></script>
+    <script src="./Lab 04_ Create an Availability Group_files/LocalizeTo" type="text/javascript"></script>
+    <link href="./Lab 04_ Create an Availability Group_files/CloudClient.css" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+        body, html {
+            font-family: Segoe UI,Tahoma,Verdana,Arial,sans-serif;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            background-color: #efefef;
+            color: #000;
+            height: 100%;
+        }
+
+        body {
+            overflow: auto;
+        }
+
+        #outputWrapper {
+            background-color: #efefef;
+            min-height: 100%;
+        }
+
+        .instructionsPreview {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .instructionsPreview .page {
+            position: relative;
+            display: block !important;
+            padding: 15px 20px;
+            background-color: #fff;
+            page-break-after: always;
+            min-height: 650px;
+        }
+
+        .instructionsPreview .page:not(:first-child) {
+            margin-top: 20px;
+        }
+
+        @font-face {
+            font-family: "lod";
+            src: url("/fonts/lod.woff?v=18") format("woff"), url("/fonts/lod.ttf?v=18") format("truetype"), url("/fonts/lod.svg?v=18") format("svg");
+        }
+
+        .editLink:before {
+            content: "\E70F";
+            font-family: "lod";
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body, html {
+                height: auto;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            div {
+                page-break-inside: avoid;
+            }
+
+            #outputWrapper {
+                background-color: transparent;
+            }
+
+            .instructionsPreview {
+                padding: 0;
+            }
+
+                .instructionsPreview .page:not(:first-child) {
+                    margin-top: 0px;
+                }
+        }
+
+        @page {
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+            margin-top: 1.5cm;
+            margin-bottom: 1.5cm;
+        }
+    </style>
+    <link id="themeStylesheet" href="./Lab 04_ Create an Availability Group_files/Blue.css" rel="stylesheet">
+
+</head>
+<body>
+        <!-- <div style="padding:10px 20px;">
+            <a class="editLink" href="https://labondemand.com/LabProfile/EditInstructions/155701?InstructionsSetId=248593">Edit</a>
+        </div> -->
+
+    <div id="outputWrapper">
+        <div id="instructions" class="instructionsPreview instructions"><div class="page" id="page0"><h1 id="create-an-availability-group">Create an Availability Group</h1>
+<h2 id="introduction">Introduction</h2>
+<p>During this lab, you will learn how to create an availability group using the <strong>JOIN ONLY</strong> option. After creating an availability group, you will create an availability group listener which your applications will use to connect.</p>
+<h2 id="objectives">Objectives</h2>
+<p>At the end of this lab, you will be able to:</p>
+<ul>
+<li>Pre-seed databases instances that will be secondary replicas</li>
+<li>Create an availability group using the <strong>Join only</strong> option</li>
+<li>Grant the requisite permissions in active directory to create a listener</li>
+<li>Create an availability group listener</li>
+<li>Know how to use the dashboard to view the state of an availability group</li>
+</ul>
+<h2 id="estimated-time">Estimated Time</h2>
+<p>40 minutes</p>
+<h2 id="logon-information">Logon Information</h2>
+<p>Use the following credentials to login into virtual environment</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex0"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex0"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242399">AlwaysOnClient</a></strong> virtual machine as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242396">AlwaysOnN1</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242397">AlwaysOnN2</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242398">AlwaysOnN3</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Connect to <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242395">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">CORPNET\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li><p>Change the screen resolution if required.</p>
+<blockquote class="hint">
+  <p>You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing <strong>Screen resolution</strong> and clicking <strong>OK</strong> when finished.</p>
+</blockquote></li>
+</ol>
+<blockquote class="note">
+  <p>Screenshots in the lab instructions may appear with a lesser SQL version number than is installed in the lab environment where functionality is not affected. </p>
+</blockquote>
+</div><div class="page" id="page1">
+<h1 id="exercise-1-pre-seed-databases-instances-that-will-be-secondary-replicas">Exercise 1: Pre-seed databases instances that will be secondary replicas</h1>
+<p>In this exercise, you will learn how to pre-seed databases instances that will be secondary replicas</p>
+<hr>
+<h3 id="task-1-connect-to-the-sql-server-instances-that-will-participate-in-the-availability-group">Task 1: Connect to the SQL Server instances that will participate in the availability group</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex1"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex1"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242399">AlwaysOnClient</a></strong> virtual machine as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p>
+<blockquote class="hint">
+  <p>Click the <strong><span class="typeText" title="Type Text">Type Text</span></strong> icon to enter the associated text into the virtual machine.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex2"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex2"><span></span></label> Open <strong>SQL Server Management studio (SSMS)</strong> from the taskbar</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0090.png"></p></li>
+<li class="task-list-item" id="taskIndex3"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex3"><span></span></label> Connect to all three nodes: <strong>AlwaysOnN1</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0091.png"></p></li>
+<li class="task-list-item" id="taskIndex4"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex4"><span></span></label> Connect to the other two nodes, <strong>AlwaysOnN2</strong> and <strong>AlwaysOnN3</strong>. Click on the <strong>Connect</strong> button in the Object Explorer, and select <strong>Database Engine</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0092.png"></p></li>
+<li class="task-list-item" id="taskIndex5"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex5"><span></span></label> Enter <span class="typeText" title="Type Text"><strong>AlwaysOnN2</strong></span> and press <strong>CONNECT</strong>. Repeat step 4 and enter <span class="typeText" title="Type Text"><strong>AlwaysOnN3</strong></span>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0093.png"></p></li>
+<li class="task-list-item" id="taskIndex6"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex6"><span></span></label> You should see all three nodes in the <strong>Object Explorer</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/p3zxh8b1.jpg" alt="p3zxh8b1.jpg"></p></li>
+</ol>
+</div><div class="page" id="page2">
+<h3 id="task-2-backup-primary-databases-for-‘join-only’-initial-synchronization">Task 2: Backup primary databases for ‘Join only’ initial synchronization</h3>
+<p>To be able to select 'Join only' option in the availability group creation, the databases should exist on the secondary replicas in a <strong>restoring</strong> mode. For that purpose, manual backup and restore of the participating database will be required.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex7"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex7"><span></span></label> Connect to the <strong>AlwaysOnN1</strong> instance from <strong>SQL Management Studio.</strong></p></li>
+<li class="task-list-item" id="taskIndex8"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex8"><span></span></label> Right click <strong>AdventureWorks</strong> database and select <strong>Tasks</strong> &gt; <strong>Back Up…</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/hivroavw.png" alt="hivroavw.png"></p></li>
+<li class="task-list-item" id="taskIndex9"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex9"><span></span></label> On the <strong>Back Up Database - AdventureWorks</strong> page, select the <strong>Backup type</strong> as <strong>FULL</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0096.png"></p></li>
+<li class="task-list-item" id="taskIndex10"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex10"><span></span></label> Under the <strong>Select a page</strong> section, click on the <strong>Media Options</strong> page.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0097.png"></p></li>
+<li class="task-list-item" id="taskIndex11"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex11"><span></span></label> Under the <strong>Overwrite media</strong> option on the right, select <strong>Overwrite all existing backup sets</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0098.png"></p></li>
+<li class="task-list-item" id="taskIndex12"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex12"><span></span></label> Click on the <strong>OK</strong> button in the bottom right corner of the window to start the backup. Proceed to step 7 of this task.</p></li>
+<li class="task-list-item" id="taskIndex13"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex13"><span></span></label> The progress section should reach 100% and a pop-up dialog showing successful completion should show. Press the <strong>OK</strong> button to close the backup window.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0099.png"></p></li>
+<li class="task-list-item" id="taskIndex14"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex14"><span></span></label> Repeat step 2 (only) for the <strong>AdventureWorks database</strong> again, so that a <strong>Transaction log</strong> backup can be performed.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/o8agvfic.png" alt="o8agvfic.png"></p></li>
+<li class="task-list-item" id="taskIndex15"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex15"><span></span></label> On the <strong>Back Up Database - AdventureWorks</strong> page, select the <strong>Backup type</strong> as <strong>Transaction Log</strong> and then press <strong>OK</strong> to proceed. </p>
+<blockquote class="note">
+  <p>The transaction log backup will be appended to the previous file.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0101.png"></p></li>
+<li class="task-list-item" id="taskIndex16"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex16"><span></span></label> Repeat steps 2 through 7 in this task for the <strong>AdventureWorksDW</strong> database in order to create a <strong>FULL</strong> and a <strong>Transaction Log</strong> backup. When you do the <strong>FULL</strong> backup, make sure the options have <strong>Overwrite</strong>, and when you do the Transaction Log backup, use the defaults so that the log backup is appended.  </p></li>
+</ol>
+</div><div class="page" id="page3">
+<h3 id="task-3-restore-database-backups-on-the-secondary-replica">Task 3: Restore database backups on the secondary replica</h3>
+<p>To be able to select <strong>Join only</strong> option in the availability group creation, the databases should exist on the secondary replicas in a <strong>restoring</strong> mode. For that reason, we will now restore the two databases whose backups were taken in Task 2 of this lab, <strong>AdventureWorks</strong> and <strong>AdventureWorksDW</strong>.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex17"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex17"><span></span></label> Connect to the <strong>AlwaysOnN2</strong> instance from SQL Management Studio and navigate to the <strong>Databases</strong> node. Right click and select <strong>Restore Database</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/zc797ezo.png" alt="zc797ezo.png"> </p></li>
+<li class="task-list-item" id="taskIndex18"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex18"><span></span></label> Select <strong>Device</strong> in the main section of the General page and click the ellipsis on the right.</p>
+<!--NOTE--></li>
+</ol>
+<blockquote>
+  <p><strong>In case Network path throws error</strong> then either wait to path get resolve or <strong>copy backup files to local machine</strong> then try restoring the databases.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0103.png"></p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex19"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex19"><span></span></label> On the <strong>Select backup devices</strong> window, click the <strong>Add</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0104.png"></p></li>
+<li class="task-list-item" id="taskIndex20"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex20"><span></span></label> On the <strong>Locate Backup File</strong> window, delete the text in the <strong>Backup File Location</strong> text box, and then type the following text and press the refresh button:</p>
+<p><strong><span class="typeText" title="Type Text">\\AlwaysOnN1\Backup\</span></strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0105.png"></p></li>
+<li class="task-list-item" id="taskIndex21"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex21"><span></span></label> Then select the <strong>AdventureWorks.Bak</strong> file in the right pane which will file in the <strong>File name:</strong> text box. Press the <strong>OK</strong> button to continue.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0106.png"></p></li>
+<li class="task-list-item" id="taskIndex22"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex22"><span></span></label> Now back on the <strong>Select backup devices</strong> dialog window, there should be a UNC path and filename present for the AdventureWorks backup file. Press the <strong>OK</strong> button to select that file and continue.</p>
+<p><strong>\\AlwaysOnN1\Backup\AdventureWorks.bak</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0107.png"></p></li>
+<li class="task-list-item" id="taskIndex23"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex23"><span></span></label> The <strong>Restore Database - AdventureWorks</strong> screen will now show two backups checked for Restore - the <strong>FULL</strong> and <strong>Transaction Log</strong> backups taken earlier. After confirming both backups are selected with checkmarks, on the <strong>Select a page</strong> section in the upper left, click the <strong>Options</strong> page.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0108.png"></p></li>
+<li class="task-list-item" id="taskIndex24"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex24"><span></span></label> Click the drop down for the <strong>Recovery State</strong> options, and select <strong>RESTORE WITH NORECOVERY</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0109.png"></p></li>
+<li class="task-list-item" id="taskIndex25"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex25"><span></span></label> Finally, click the <strong>OK</strong> button at the bottom of the screen to begin the restore of the <strong>AdventureWorks</strong> database.</p></li>
+<li class="task-list-item" id="taskIndex26"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex26"><span></span></label> Verify the restore completes successfully and press the <strong>OK</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0110.png"></p></li>
+<li class="task-list-item" id="taskIndex27"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex27"><span></span></label> You should now see the <strong>AdventureWorks</strong> database underneath the <strong>AlwaysOnN2</strong> instance in the Object Explorer of SSMS, and it should have a state of <strong>(Restoring…)</strong> next to it. The restore of this database on this instance is complete.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/r1bzgg1c.png" alt="r1bzgg1c.png"></p></li>
+<li class="task-list-item" id="taskIndex28"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex28"><span></span></label> Repeat steps 1 through 11 again on <strong>AlwaysOnN2</strong> for the <strong>AdventureWorksDW</strong> database.</p>
+<p>Repeat steps 1 through 12 again to restore both databases on <strong>AlwaysOnN3</strong>.</p>
+<blockquote class="note">
+  <p>Although not shown during the restore activities, the file paths for the restore operation used the same drive / folder structure as the primary.  The paths are not normally automatically created, but for the purposes of this exercise they had been pre-created.  In your own environments, though it is possible to restore the databases to different drives and/or paths, it is not recommended.  The best practice is use the exact same drive/path locations on all nodes so that if there is an addition of a new data file for example, the path will exist on all nodes.   If the path does not exist or cannot be created, steps such as automatic seeding will fail.  should not be configured to listen on the same port.</p>
+</blockquote></li>
+</ol>
+<h3 id="congratulations">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page4">
+<h1 id="exercise-2-create-an-availability-group-using-join-only">Exercise 2: Create an availability group using "Join Only"</h1>
+<p>In this exercise, you will learn how to create an availability group using "Join Only"</p>
+<hr>
+<h3 id="task-1-create-availability-group-using-alwaysonn1-as-primary">Task 1: Create availability group using AlwaysOnN1 as primary</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex29"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex29"><span></span></label> In SSMS Object explorer, click on <strong>AlwaysOnN1</strong></p></li>
+<li class="task-list-item" id="taskIndex30"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex30"><span></span></label> Expand the node if it is not already. Click the <strong>+</strong> next to <strong>AlwaysOn High Availability</strong>, then right click on <strong>Availability Groups</strong> and select <strong>New Availability Group Wizard</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/5qzenaun.png" alt="5qzenaun.png"></p></li>
+<li class="task-list-item" id="taskIndex31"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex31"><span></span></label> Click <strong>Next</strong> in the New Availability Group wizard <strong>Introduction</strong> screen.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0113.png"></p></li>
+<li class="task-list-item" id="taskIndex32"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex32"><span></span></label> On the <strong>Specify Availability Group Options</strong> screen of the wizard, enter <strong><span class="typeText" title="Type Text">AOCorp</span></strong> for the availability group name, and check the option to enable <strong>Database Level Health Detection</strong>. After those two steps, press the <strong>NEXT</strong> button to proceed to the next screen.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0114.png" alt="image0114.png"></p></li>
+<li class="task-list-item" id="taskIndex33"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex33"><span></span></label> On the <strong>Select Databases</strong> screen, both AdventureWorks and AdventureWorksDW should show as <strong>Meets Prerequisites</strong>. Select both databases and click <strong>NEXT</strong> to continue to the next screen.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0115.png"></p></li>
+<li class="task-list-item" id="taskIndex34"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex34"><span></span></label> On the <strong>Specify Replicas</strong> screen of the wizard, we will now add the two additional instances, <strong>AlwaysOnN2</strong> and <strong>AlwaysOnN3</strong>, to be secondary replicas in the availability group. Click the <strong>Add Replica</strong> button</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0116.png" alt="image0116.png"></p></li>
+<li class="task-list-item" id="taskIndex35"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex35"><span></span></label> On the <strong>Connect to Server</strong> dialog window that pops up, type <strong><span class="typeText" title="Type Text">AlwaysOnN2</span></strong> for the <strong>Server name:</strong> field and click the <strong>Connect</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0117.png"></p></li>
+<li class="task-list-item" id="taskIndex36"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex36"><span></span></label> Repeat step 7 for the remaining node, <strong><span class="typeText" title="Type Text">AlwaysOnN3</span></strong>. After adding the remaining node, the <strong>Specify Replicas</strong> page should look like the following:</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0118.png"></p></li>
+<li class="task-list-item" id="taskIndex37"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex37"><span></span></label> At this point, in your own environment you will make several decisions depending upon your needs. For this lab, we will configure each replica for:</p>
+<ul>
+<li>Automatic Failover</li>
+<li>Availability Mode - Synchronous commit</li>
+<li>Readable Secondary</li></ul>
+<blockquote class="knowledge">
+  <p>In your own environment, your decisions may differ depending upon your environment and requirements.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="moreKnowledgeLink" style="display: none;">more...</a></div>
+<p>At this point in the exercise, make the options of the replica page look like this by selecting the checkboxes and changing the drop-down boxes to select <strong>YES</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0119.png" alt="image0119.png"></p></li>
+<li class="task-list-item" id="taskIndex38"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex38"><span></span></label> Before clicking the NEXT button, click on the other tabs to review some of additional options present. For this lab exercise, do not change any other options. Neither should you specify a <strong>Listener</strong>. It will be created later in this lab. After you have finished reviewing the other options present, click the <strong>NEXT</strong> button to proceed.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0120.png"></p>
+<blockquote class="note">
+  <p>The <strong>Endpoints</strong> tab shows the <strong>Endpoint URL</strong> which is what each replica will use to establish the replica to replica communications between nodes.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0121.png"></p>
+<blockquote class="note">
+  <p>The <strong>Backup</strong> tab allows you to choose different backup behaviors between the various replicas in the availability group.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0122.png"></p>
+<blockquote class="note">
+  <p>The <strong>Listener</strong> tab allows you to specify the virtual name through which applications will connect to the databases in the availability group. For this option, you need a virtual name and at least 1 IP address. For this lab, we will not create the listener just yet.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0123.png"></p>
+<blockquote class="note">
+  <p>The <strong>Read-Only Routing</strong> tab allows you to configure the read-only routing list. For this, lab, we will not configure the read-only routing list.</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0124.png" alt="image0124.png"></p>
+<p>At this point, click <strong>NEXT</strong> to continue to the next step.</p></li>
+<li class="task-list-item" id="taskIndex39"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex39"><span></span></label> On the <strong>Select Initial Data Synchronization</strong> page of the wizard you will choose which method for seeding the secondary replica databases. The options are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">Option</th>
+<th style="text-align:left;">What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">Automatic Seeding</td>
+<td style="text-align:left;">SQL Server will automatically seed the secondary replicas, but it will stream the backup/restore process rather than creating a backup file on a share.</td>
+</tr>
+<tr>
+<td style="text-align:left;">Full database and log backup</td>
+<td style="text-align:left;">SQL Server will automatically seed the secondary replicas, but it will need a UNC path where it can store the backup files and then restore them.</td>
+</tr>
+<tr>
+<td style="text-align:left;">Join Only</td>
+<td style="text-align:left;">You have already seeded the databases by taking full and log backups and restoring them to the secondary replicas using "NORECOVERY" mode. This option is best for very large databases.</td>
+</tr>
+<tr>
+<td style="text-align:left;">Skip Initial data synchronization</td>
+<td style="text-align:left;">You will be required to seed the databases yourself at a later date, and to "join" the secondary copies to the availability group to begin synchronizing data.</td>
+</tr>
+</tbody>
+</table>
+<p>For this lab, choose <strong>Join Only</strong> since we have already taken backups and restored them, and then click <strong>NEXT</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0125.png" alt="image0125.png"></p></li>
+<li class="task-list-item" id="taskIndex40"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex40"><span></span></label> Review the <strong>Validation</strong> page of the wizard. If everything passes, the NEXT button will be highlighted and ready to click. Ignore the “warning” about the listener configuration but click on the warning link to learn more. Proceed by clicking <strong>NEXT</strong> when you are ready.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0126.png"></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0127.png" alt="image0127.png"></p>
+<blockquote class="note">
+  <p>Review the final summary, which describes what SQL Server will do when it executes. You also have the option to <strong>SCRIPT</strong> everything SQL Server will do during the creation process. This is useful if you want to create multiple availability groups, or to track and save your activities.</p>
+</blockquote>
+<p>After reviewing, press the <strong>FINISH</strong> button to begin creating the availability group.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0128.png"></p>
+<blockquote class="note">
+  <p>It has been reported that the script generated may not always include creation of logins on the various nodes that need to be granted permissions to the endpoints.  In contrast, the UI Wizard will make sure all requisite logins for endpoint permissions are created.  If you use the scripting option, please make sure the necessary logins are created on the respective nodes.</p>
+</blockquote></li>
+<li class="task-list-item" id="taskIndex41"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex41"><span></span></label> When SQL Server begins creating the availability group, click the <strong>more details</strong> button to see the details as it creates the availability group.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0129.png"></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0130.png"></p>
+<p>When the screen changes to <strong>The wizard completed successfully</strong>, review the summary details of creating the availability group and click <strong>Close</strong> when ready.</p></li>
+</ol>
+<h3 id="congratulations-1">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page5">
+<h1 id="exercise-3-grant-the-requisite-permissions-in-active-directory-to-create-a-listener">Exercise 3: Grant the requisite permissions in active directory to create a listener</h1>
+<p>In this exercise, you will learn how to grant the requisite permissions in active directory to create a listener.</p>
+<hr>
+<h3 id="task-1-grant-requisite-ad-permissions-to-cno-account-alwaysoncluster">Task 1: Grant Requisite AD Permissions to CNO account (AlwaysOnCluster$)</h3>
+<p>For the OS Cluster to create the virtual name for the listener, the CNO (Cluster Name Object) in Active Directory must have certain privileges. In this task, we will grant the permissions <strong>Read all properties</strong> and <strong>Create Computer objects</strong> to the CNO via the <strong>AlwaysOnOU</strong> container.</p>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex42"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex42"><span></span></label> Perform this task on the domain controller <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242395">AlwaysOnDC</a></strong> as <strong><span class="typeText" title="Type Text">Corpnet\Administrator</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p></li>
+<li class="task-list-item" id="taskIndex43"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex43"><span></span></label> Open the Active Directory Users and Computers Snap-in (dsa.msc).</p>
+<ul>
+<li><p>Open <strong>Server Manager</strong>. In the <strong>Server Manager</strong> Menu bar, choose <strong>Tools</strong> and then select the <strong>Active Directory Users and Computers</strong> menu item.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0131.png"></p></li></ul>
+<p>OR</p>
+<ul>
+<li><p>Right-click the "Windows button", and select Run. Then on the dialog window type <strong><span class="typeText" title="Type Text">dsa.msc</span></strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0132.png"></p></li></ul></li>
+<li class="task-list-item" id="taskIndex44"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex44"><span></span></label> Locate the <strong>AlwaysOnOU</strong> container.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0133.png"></p></li>
+<li class="task-list-item" id="taskIndex45"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex45"><span></span></label> Click View and ensure that <strong>Advanced Features</strong> is checked as shown below.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0134.png"></p>
+<p>Right-click the <strong>AlwaysOnOU</strong> container and choose <strong>Properties</strong> &gt; <strong>Security</strong> Tab.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0135.png"></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0136.png"></p></li>
+<li class="task-list-item" id="taskIndex46"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex46"><span></span></label> In the <strong>AlwaysOnOU Properties</strong> dialog, click the <strong>Advanced</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0137.png"></p></li>
+<li class="task-list-item" id="taskIndex47"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex47"><span></span></label> In the <strong>Advanced Security Settings for AlwaysOnOU</strong> dialog, click <strong>Add</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0138.png"></p></li>
+<li class="task-list-item" id="taskIndex48"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex48"><span></span></label> In the <strong>Permission Entry for AlwaysOnOU</strong>, click <strong>Select a principal</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0139.png"></p></li>
+<li class="task-list-item" id="taskIndex49"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex49"><span></span></label> Click the <strong>Object Types</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0140.png"></p></li>
+<li class="task-list-item" id="taskIndex50"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex50"><span></span></label> Click the checkbox next to <strong>Computers</strong> to select it, and then click the <strong>OK</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0141.png"></p></li>
+<li class="task-list-item" id="taskIndex51"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex51"><span></span></label> Enter the cluster name object (CNO), <strong><span class="typeText" title="Type Text">AlwaysOnCluster</span></strong>. Then click the <strong>Check Names</strong> button to validate. If successful, the <strong>AlwaysOnCluster</strong> entry in the text box will be underlined. Press the <strong>OK</strong> button to continue.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0142.png"></p></li>
+<li class="task-list-item" id="taskIndex52"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex52"><span></span></label> On the <strong>Permission Entry for AlwaysOnOU</strong> dialog, make sure that the principal says <strong>AlwaysOnCluster</strong>. Then make sure the <strong>Read all properties</strong> checkbox is checked. Then scroll down using scroll bar at right until you see <strong>Create Computer objects</strong>. Click the checkbox next to <strong>Create Computer objects</strong> and then finally click the <strong>OK</strong> button.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0143.png"></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0144.png"></p></li>
+<li class="task-list-item" id="taskIndex53"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex53"><span></span></label> The <strong>Advanced Security Settings for AlwaysOnOU</strong> dialog window should now show an entry for <strong>AlwaysOnCluster</strong> whose access is <strong>Special</strong>. Click <strong>Apply</strong> and the <strong>OK</strong> and then <strong>OK</strong> again to finish.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0145.png"></p>
+<blockquote class="note">
+  <p>You may now close the program and log off from the domain controller.</p>
+</blockquote></li>
+</ol>
+<h3 id="congratulations-2">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page6">
+<h1 id="exercise-4-create-an-availability-group-listener">Exercise 4: Create an availability group listener</h1>
+<p>In this exercise, you will learn how to create an availability group listener</p>
+<hr>
+<h3 id="task-1--create-an-availability-group-listener">Task 1 : Create an availability group listener</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex54"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex54"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242399">AlwaysOnClient</a></strong> virtual machine as <span class="typeText" title="Type Text"><strong>CORPNET\cluadmin</strong></span> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p></li>
+<li class="task-list-item" id="taskIndex55"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex55"><span></span></label> Open SQL Server Management studio (SSMS)</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0090.png"></p></li>
+<li class="task-list-item" id="taskIndex56"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex56"><span></span></label> Connect to all three nodes: <strong>AlwaysOnN1, AlwaysOnN2, AlwaysOnN3</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0091.png"></p></li>
+<li class="task-list-item" id="taskIndex57"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex57"><span></span></label> On <strong>AlwaysOnN1</strong>, navigate to the <strong>AlwaysOn High Availability</strong> folder in the Object explorer and expand it.  Then expand the <strong>Availability Groups</strong> folder to see the availability group we created, <strong>AOCorp</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/ak5frccv.png" alt="ak5frccv.png"></p></li>
+<li class="task-list-item" id="taskIndex58"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex58"><span></span></label> On whichever node (instance) shows the AOCorp availability group as <strong>Primary</strong>, expand the availability group to see its folders underneath. </p>
+<blockquote>
+  <p>[!note} This will most likely be AlwaysOnN1</p>
+</blockquote>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/n54y0mc5.png" alt="n54y0mc5.png"></p></li>
+<li class="task-list-item" id="taskIndex59"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex59"><span></span></label> Right click the <strong>Availability Group Listeners</strong> and select <strong>Add Listener</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/pgmkmgbj.png" alt="pgmkmgbj.png"></p></li>
+<li class="task-list-item" id="taskIndex60"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex60"><span></span></label> On the <strong>New Availability Group Listener</strong> dialog window, type in the following:</p>
+<p><strong>Listener DNS Name</strong>: <strong><span class="typeText" title="Type Text">AOCorpList</span></strong></p>
+<p><strong>Port</strong>: <strong><span class="typeText" title="Type Text">1433</span></strong></p>
+<p>Then click the drop down for <strong>Network Mode</strong> and select <strong>Static IP</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0149.png"></p>
+<blockquote class="knowledge collapsed">
+  <p>Selecting an Availability Group Listener Port <br></p>
+  <p>When configuring an availability group listener, you must designate a port. You can configure the default port to 1433 to allow for simplicity of the client connection strings. If using 1433, you do not need to designate a port number in a connection string. In addition, since each availability group listener will have a separate virtual network name, each availability group listener configured on a single WSFC can be configured to reference the same default port of 1433. </p>
+  <p>You can also designate a non-standard listener port; however, this means that you will also need to explicitly specify a target port in your connection string whenever connecting to the availability group listener. You will also need to open permission on the firewall for the non-standard port. </p>
+  <p>If you use the default port of 1433 for availability group listener VNNs, you will still need to ensure that no other services on the cluster node are using this port; otherwise, this would cause a port conflict. </p>
+  <p>If one of the instances of SQL Server is already listening on TCP port 1433 via the instance listener and there are no other services (including additional instances of SQL Server) on the computer listening on port 1433, this will not cause a port conflict with the availability group listener. This is because the availability group listener can share the same TCP port inside the same service process.  However, multiple instances of SQL Server (side-by-side) should not be configured to listen on the same port.</p>
+</blockquote><div class="moreKnowledge"><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="moreKnowledgeLink">more...</a></div></li>
+<li class="task-list-item" id="taskIndex61"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex61"><span></span></label> Now at the bottom right of the dialog window click the <strong>Add</strong> button to add an IP address</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0150.png" alt="image0150.png"></p></li>
+<li class="task-list-item" id="taskIndex62"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex62"><span></span></label> In the <strong>Add IP Address</strong> dialog, select the <strong>10.1.1.0/24</strong> subnet and type <strong><span class="typeText" title="Type Text">10.1.1.205</span></strong> as shown below. Click OK.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0151.png"></p></li>
+<li class="task-list-item" id="taskIndex63"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex63"><span></span></label> In the <strong>New Availability Group Listener</strong> dialog, click <strong>OK</strong>.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0152.png" alt="image0152.png"></p></li>
+<li class="task-list-item" id="taskIndex64"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex64"><span></span></label> Upon successful completion, you should now see a listener in the Object Explorer.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/fp87sahy.png" alt="fp87sahy.png"></p></li>
+</ol>
+<h3 id="congratulations-3">Congratulations!</h3>
+<p>You have successfully completed this exercise. Click <strong>Next</strong> to advance to the next exercise.</p>
+</div><div class="page" id="page7">
+<h1 id="exercise-5-review-the-availability-group-dashboard">Exercise 5: Review the availability group dashboard</h1>
+<p>In this exercise, you will learn how to review the availability group dashboard</p>
+<hr>
+<h3 id="task-1-review-the-availability-group-dashboard">Task 1: Review the availability group dashboard</h3>
+<ol class="taskList">
+<li class="task-list-item" id="taskIndex65"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex65"><span></span></label> Login to the <strong><a href="https://labondemand.com/LabProfile/Instructions/155701?instructionsSetId=248593#" class="selectMachineLink icon-link special-action-link" data-data="242399">AlwaysOnClient</a></strong> virtual machine as <strong><span class="typeText" title="Type Text">CORPNET\cluadmin</span></strong> using <strong><span class="typeText" title="Type Text">Pa$$w0rd</span></strong> as the password.</p></li>
+<li class="task-list-item" id="taskIndex66"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex66"><span></span></label> Open SQL Server Management studio (SSMS)</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0090.png"></p></li>
+<li class="task-list-item" id="taskIndex67"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex67"><span></span></label> Connect to all three nodes: <strong>AlwaysOnN1, AlwaysOnN2, AlwaysOnN3</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/image0091.png"></p></li>
+<li class="task-list-item" id="taskIndex68"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex68"><span></span></label> Navigate to the <strong>AlwaysOn High Availability</strong> folder in the Object explorer and expand it. Then expand the <strong>Availability Groups</strong> folder to see the availability group, <strong>AOCorp</strong> we created.</p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/wqgyzs7u.png" alt="wqgyzs7u.png"></p></li>
+<li class="task-list-item" id="taskIndex69"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex69"><span></span></label> On whichever node shows as <strong>Primary</strong>, right click the AOCorp availability group and select <strong>SHOW DASHBOARD</strong></p>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/sd6oeolu.png" alt="sd6oeolu.png"></p></li>
+<li class="task-list-item" id="taskIndex70"><p><label class="checkbox"><input type="checkbox" aria-labelledby="taskIndex70"><span></span></label> Click on the various links to see status and different information about the availability group. Some of the things you can do on the dashboard are:</p>
+<ul>
+<li>View AlwaysOn Health Events</li>
+<li>View Cluster Quorum Configuration</li>
+<li>Add/Remove various columns for the different databases</li></ul>
+<p>
+<img src="./Lab 04_ Create an Availability Group_files/k0it6t7y.png" alt="k0it6t7y.png"></p></li>
+</ol>
+<h3 id="congratulations-4">Congratulations!</h3>
+<p>You have successfully completed this exercise. You can move to the next lab.</p></div></div>
+    </div>
+    <input type="hidden" id="rawContent" value="# Create an Availability Group
+
+## Introduction
+
+During this lab, you will learn how to create an availability group using the **JOIN ONLY** option. After creating an availability group, you will create an availability group listener which your applications will use to connect.
+
+## Objectives
+
+At the end of this lab, you will be able to:
+- Pre-seed databases instances that will be secondary replicas
+- Create an availability group using the **Join only** option
+- Grant the requisite permissions in active directory to create a listener
+- Create an availability group listener
+- Know how to use the dashboard to view the state of an availability group
+
+## Estimated Time
+
+40 minutes
+
+## Logon Information
+
+Use the following credentials to login into virtual environment
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as **+++CORPNET\cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN1).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN1).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN1).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN2).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN2).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN2).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnN3).SelectLink** as **+++@lab.VirtualMachine(AlwaysOnN3).Username+++** using **+++@lab.VirtualMachine(AlwaysOnN3).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Connect to **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++CORPNET\Administrator+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. Change the screen resolution if required.
+
+    &gt;[!TIP] You may want to adjust the screen resolution to your own preference. Do this by right-clicking on the desktop and choosing **Screen resolution** and clicking **OK** when finished.
+
+
+&gt;[!Note] Screenshots in the lab instructions may appear with a lesser SQL version number than is installed in the lab environment where functionality is not affected. 
+
+
+===
+
+# Exercise 1: Pre-seed databases instances that will be secondary replicas
+
+In this exercise, you will learn how to pre-seed databases instances that will be secondary replicas
+
+---
+
+### Task 1: Connect to the SQL Server instances that will participate in the availability group
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as **+++CORPNET\cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+    &gt;[!TIP] Click the **+++Type Text+++** icon to enter the associated text into the virtual machine.
+
+1. [] Open **SQL Server Management studio (SSMS)** from the taskbar
+
+    ![](Media/image0090.png)
+
+1. [] Connect to all three nodes: **AlwaysOnN1**
+
+    ![](Media/image0091.png)
+
+1. [] Connect to the other two nodes, **AlwaysOnN2** and **AlwaysOnN3**. Click on the **Connect** button in the Object Explorer, and select **Database Engine**.
+
+    ![](Media/image0092.png)
+
+1. [] Enter +++**AlwaysOnN2**+++ and press **CONNECT**. Repeat step 4 and enter +++**AlwaysOnN3**+++.
+
+    ![](Media/image0093.png)
+
+1. [] You should see all three nodes in the **Object Explorer**.
+
+    !IMAGE[p3zxh8b1.jpg](instructions248593/p3zxh8b1.jpg)
+
+===
+
+### Task 2: Backup primary databases for ‘Join only’ initial synchronization
+
+To be able to select &#39;Join only&#39; option in the availability group creation, the databases should exist on the secondary replicas in a **restoring** mode. For that purpose, manual backup and restore of the participating database will be required.
+
+1. [] Connect to the **AlwaysOnN1** instance from **SQL Management Studio.**
+
+1. [] Right click **AdventureWorks** database and select **Tasks** &amp;gt; **Back Up...**.
+
+    !IMAGE[hivroavw.png](instructions248593/hivroavw.png)
+
+1. [] On the **Back Up Database - AdventureWorks** page, select the **Backup type** as **FULL**.
+
+    ![](Media/image0096.png)
+
+1. [] Under the **Select a page** section, click on the **Media Options** page.
+
+    ![](Media/image0097.png)
+
+1. [] Under the **Overwrite media** option on the right, select **Overwrite all existing backup sets**
+
+    ![](Media/image0098.png)
+
+1. [] Click on the **OK** button in the bottom right corner of the window to start the backup. Proceed to step 7 of this task.
+
+1. [] The progress section should reach 100% and a pop-up dialog showing successful completion should show. Press the **OK** button to close the backup window.
+
+    ![](Media/image0099.png)
+
+1. [] Repeat step 2 (only) for the **AdventureWorks database** again, so that a **Transaction log** backup can be performed.
+
+    !IMAGE[o8agvfic.png](instructions248593/o8agvfic.png)
+
+1. [] On the **Back Up Database - AdventureWorks** page, select the **Backup type** as **Transaction Log** and then press **OK** to proceed. 
+
+    &gt;[!note]The transaction log backup will be appended to the previous file.
+
+    ![](Media/image0101.png)
+
+1. [] Repeat steps 2 through 7 in this task for the **AdventureWorksDW** database in order to create a **FULL** and a **Transaction Log** backup. When you do the **FULL** backup, make sure the options have **Overwrite**, and when you do the Transaction Log backup, use the defaults so that the log backup is appended.  
+    
+===
+
+### Task 3: Restore database backups on the secondary replica
+
+To be able to select **Join only** option in the availability group creation, the databases should exist on the secondary replicas in a **restoring** mode. For that reason, we will now restore the two databases whose backups were taken in Task 2 of this lab, **AdventureWorks** and **AdventureWorksDW**.
+
+1. [] Connect to the **AlwaysOnN2** instance from SQL Management Studio and navigate to the **Databases** node. Right click and select **Restore Database**.
+
+   !IMAGE[zc797ezo.png](instructions248593/zc797ezo.png) 
+
+1. [] Select **Device** in the main section of the General page and click the ellipsis on the right.
+&gt;[!note]**In case Network path throws error** then either wait to path get resolve or **copy backup files to local machine** then try restoring the databases.
+   
+ ![](Media/image0103.png)
+
+1. [] On the **Select backup devices** window, click the **Add** button.
+
+    ![](Media/image0104.png)
+
+1. [] On the **Locate Backup File** window, delete the text in the **Backup File Location** text box, and then type the following text and press the refresh button:
+
+    **+++\\\AlwaysOnN1\Backup\\**+++
+
+    ![](Media/image0105.png)
+
+1. [] Then select the **AdventureWorks.Bak** file in the right pane which will file in the **File name:** text box. Press the **OK** button to continue.
+
+    ![](Media/image0106.png)
+
+1. [] Now back on the **Select backup devices** dialog window, there should be a UNC path and filename present for the AdventureWorks backup file. Press the **OK** button to select that file and continue.
+
+    **\\\AlwaysOnN1\Backup\AdventureWorks.bak**
+
+    ![](Media/image0107.png)
+
+1. [] The **Restore Database - AdventureWorks** screen will now show two backups checked for Restore - the **FULL** and **Transaction Log** backups taken earlier. After confirming both backups are selected with checkmarks, on the **Select a page** section in the upper left, click the **Options** page.
+
+    ![](Media/image0108.png)
+
+1. [] Click the drop down for the **Recovery State** options, and select **RESTORE WITH NORECOVERY**.
+
+    ![](Media/image0109.png)
+
+1. [] Finally, click the **OK** button at the bottom of the screen to begin the restore of the **AdventureWorks** database.
+
+1. [] Verify the restore completes successfully and press the **OK** button.
+
+    ![](Media/image0110.png)
+
+1. [] You should now see the **AdventureWorks** database underneath the **AlwaysOnN2** instance in the Object Explorer of SSMS, and it should have a state of **(Restoring...)** next to it. The restore of this database on this instance is complete.
+
+   !IMAGE[r1bzgg1c.png](instructions248593/r1bzgg1c.png)
+
+1. [] Repeat steps 1 through 11 again on **AlwaysOnN2** for the **AdventureWorksDW** database.
+
+    Repeat steps 1 through 12 again to restore both databases on **AlwaysOnN3**.
+
+    &gt;[!note] Although not shown during the restore activities, the file paths for the restore operation used the same drive / folder structure as the primary.  The paths are not normally automatically created, but for the purposes of this exercise they had been pre-created.  In your own environments, though it is possible to restore the databases to different drives and/or paths, it is not recommended.  The best practice is use the exact same drive/path locations on all nodes so that if there is an addition of a new data file for example, the path will exist on all nodes.   If the path does not exist or cannot be created, steps such as automatic seeding will fail.  should not be configured to listen on the same port.
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 2: Create an availability group using &quot;Join Only&quot;
+
+In this exercise, you will learn how to create an availability group using &quot;Join Only&quot;
+
+---
+
+### Task 1: Create availability group using AlwaysOnN1 as primary
+
+1. [] In SSMS Object explorer, click on **AlwaysOnN1**
+
+1. [] Expand the node if it is not already. Click the **+** next to **AlwaysOn High Availability**, then right click on **Availability Groups** and select **New Availability Group Wizard**.
+
+    !IMAGE[5qzenaun.png](instructions248593/5qzenaun.png)
+
+1. [] Click **Next** in the New Availability Group wizard **Introduction** screen.
+
+    ![](Media/image0113.png)
+
+1. [] On the **Specify Availability Group Options** screen of the wizard, enter **+++AOCorp**+++ for the availability group name, and check the option to enable **Database Level Health Detection**. After those two steps, press the **NEXT** button to proceed to the next screen.
+
+    ![image0114.png](Media/image0114.png)
+
+1. [] On the **Select Databases** screen, both AdventureWorks and AdventureWorksDW should show as **Meets Prerequisites**. Select both databases and click **NEXT** to continue to the next screen.
+
+    ![](Media/image0115.png)
+
+1. [] On the **Specify Replicas** screen of the wizard, we will now add the two additional instances, **AlwaysOnN2** and **AlwaysOnN3**, to be secondary replicas in the availability group. Click the **Add Replica** button
+
+    ![image0116.png](Media/image0116.png)
+
+1. [] On the **Connect to Server** dialog window that pops up, type **+++AlwaysOnN2**+++ for the **Server name:** field and click the **Connect** button.
+
+    ![](Media/image0117.png)
+
+1. [] Repeat step 7 for the remaining node, **+++AlwaysOnN3**+++. After adding the remaining node, the **Specify Replicas** page should look like the following:
+
+    ![](Media/image0118.png)
+
+1. [] At this point, in your own environment you will make several decisions depending upon your needs. For this lab, we will configure each replica for:
+
+    - Automatic Failover
+    - Availability Mode - Synchronous commit
+    - Readable Secondary
+
+    &gt;[!knowledge]In your own environment, your decisions may differ depending upon your environment and requirements.
+
+    At this point in the exercise, make the options of the replica page look like this by selecting the checkboxes and changing the drop-down boxes to select **YES**.
+
+    ![image0119.png](Media/image0119.png)
+
+1. [] Before clicking the NEXT button, click on the other tabs to review some of additional options present. For this lab exercise, do not change any other options. Neither should you specify a **Listener**. It will be created later in this lab. After you have finished reviewing the other options present, click the **NEXT** button to proceed.
+
+    ![](Media/image0120.png)
+
+    &gt;[!note] The **Endpoints** tab shows the **Endpoint URL** which is what each replica will use to establish the replica to replica communications between nodes.
+
+    ![](Media/image0121.png)
+
+    &gt;[!note] The **Backup** tab allows you to choose different backup behaviors between the various replicas in the availability group.
+
+    ![](Media/image0122.png)
+
+    &gt;[!note] The **Listener** tab allows you to specify the virtual name through which applications will connect to the databases in the availability group. For this option, you need a virtual name and at least 1 IP address. For this lab, we will not create the listener just yet.
+
+    ![](Media/image0123.png)
+
+    &gt;[!note] The **Read-Only Routing** tab allows you to configure the read-only routing list. For this, lab, we will not configure the read-only routing list.
+
+    ![image0124.png](Media/image0124.png)
+
+    At this point, click **NEXT** to continue to the next step.
+
+1. [] On the **Select Initial Data Synchronization** page of the wizard you will choose which method for seeding the secondary replica databases. The options are:
+
+    | Option | What it means|
+    |:--|:--|
+    | Automatic Seeding                 | SQL Server will automatically seed the secondary replicas, but it will stream the backup/restore process rather than creating a backup file on a share.                                  |
+    | Full database and log backup      | SQL Server will automatically seed the secondary replicas, but it will need a UNC path where it can store the backup files and then restore them.                                        |
+    | Join Only                         | You have already seeded the databases by taking full and log backups and restoring them to the secondary replicas using &quot;NORECOVERY&quot; mode. This option is best for very large databases. |
+    | Skip Initial data synchronization | You will be required to seed the databases yourself at a later date, and to &quot;join&quot; the secondary copies to the availability group to begin synchronizing data.                           |
+
+    For this lab, choose **Join Only** since we have already taken backups and restored them, and then click **NEXT**.
+
+    ![image0125.png](Media/image0125.png)
+
+1. [] Review the **Validation** page of the wizard. If everything passes, the NEXT button will be highlighted and ready to click. Ignore the “warning” about the listener configuration but click on the warning link to learn more. Proceed by clicking **NEXT** when you are ready.
+
+    ![](Media/image0126.png)
+
+    ![image0127.png](Media/image0127.png)
+
+    &gt;[!note] Review the final summary, which describes what SQL Server will do when it executes. You also have the option to **SCRIPT** everything SQL Server will do during the creation process. This is useful if you want to create multiple availability groups, or to track and save your activities.
+
+    After reviewing, press the **FINISH** button to begin creating the availability group.
+
+    ![](Media/image0128.png)
+
+    &gt;[!note] It has been reported that the script generated may not always include creation of logins on the various nodes that need to be granted permissions to the endpoints.  In contrast, the UI Wizard will make sure all requisite logins for endpoint permissions are created.  If you use the scripting option, please make sure the necessary logins are created on the respective nodes.
+
+1. [] When SQL Server begins creating the availability group, click the **more details** button to see the details as it creates the availability group.
+
+    ![](Media/image0129.png)
+
+    ![](Media/image0130.png)
+
+    When the screen changes to **The wizard completed successfully**, review the summary details of creating the availability group and click **Close** when ready.
+
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 3: Grant the requisite permissions in active directory to create a listener
+
+In this exercise, you will learn how to grant the requisite permissions in active directory to create a listener.
+
+---
+
+### Task 1: Grant Requisite AD Permissions to CNO account (AlwaysOnCluster$)
+
+For the OS Cluster to create the virtual name for the listener, the CNO (Cluster Name Object) in Active Directory must have certain privileges. In this task, we will grant the permissions **Read all properties** and **Create Computer objects** to the CNO via the **AlwaysOnOU** container.
+
+1. [] Perform this task on the domain controller **@lab.VirtualMachine(AlwaysOnDC).SelectLink** as **+++Corpnet\Administrator+++** using **+++@lab.VirtualMachine(AlwaysOnDC).Password+++** as the password.
+
+
+1. [] Open the Active Directory Users and Computers Snap-in (dsa.msc).
+
+    - Open **Server Manager**. In the **Server Manager** Menu bar, choose **Tools** and then select the **Active Directory Users and Computers** menu item.
+
+        ![](Media/image0131.png)
+
+    OR
+    - Right-click the &quot;Windows button&quot;, and select Run. Then on the dialog window type **+++dsa.msc**+++
+
+        ![](Media/image0132.png)
+
+1. [] Locate the **AlwaysOnOU** container.
+
+    ![](Media/image0133.png)
+
+1. [] Click View and ensure that **Advanced Features** is checked as shown below.
+
+    ![](Media/image0134.png)
+    
+    Right-click the **AlwaysOnOU** container and choose **Properties** &amp;gt; **Security** Tab.
+
+    ![](Media/image0135.png)
+
+    ![](Media/image0136.png)
+
+1. [] In the **AlwaysOnOU Properties** dialog, click the **Advanced** button.
+
+    ![](Media/image0137.png)
+
+1. [] In the **Advanced Security Settings for AlwaysOnOU** dialog, click **Add**.
+
+    ![](Media/image0138.png)
+
+1. [] In the **Permission Entry for AlwaysOnOU**, click **Select a principal**.
+
+    ![](Media/image0139.png)
+
+1. [] Click the **Object Types**
+
+    ![](Media/image0140.png)
+
+1. [] Click the checkbox next to **Computers** to select it, and then click the **OK** button.
+
+    ![](Media/image0141.png)
+
+1. [] Enter the cluster name object (CNO), **+++AlwaysOnCluster**+++. Then click the **Check Names** button to validate. If successful, the **AlwaysOnCluster** entry in the text box will be underlined. Press the **OK** button to continue.
+
+    ![](Media/image0142.png)
+
+1. [] On the **Permission Entry for AlwaysOnOU** dialog, make sure that the principal says **AlwaysOnCluster**. Then make sure the **Read all properties** checkbox is checked. Then scroll down using scroll bar at right until you see **Create Computer objects**. Click the checkbox next to **Create Computer objects** and then finally click the **OK** button.
+
+    ![](Media/image0143.png)
+
+    ![](Media/image0144.png)
+
+1. [] The **Advanced Security Settings for AlwaysOnOU** dialog window should now show an entry for **AlwaysOnCluster** whose access is **Special**. Click **Apply** and the **OK** and then **OK** again to finish.
+
+    ![](Media/image0145.png)
+
+    &gt;[!note] You may now close the program and log off from the domain controller.
+
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 4: Create an availability group listener
+
+In this exercise, you will learn how to create an availability group listener
+
+---
+
+### Task 1 : Create an availability group listener
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as +++**CORPNET\cluadmin**+++ using **+++@lab.VirtualMachine(AlwaysOnClient).Password+++** as the password.
+
+1. [] Open SQL Server Management studio (SSMS)
+
+    ![](Media/image0090.png)
+
+1. [] Connect to all three nodes: **AlwaysOnN1, AlwaysOnN2, AlwaysOnN3**
+
+    ![](Media/image0091.png)
+
+1. [] On **AlwaysOnN1**, navigate to the **AlwaysOn High Availability** folder in the Object explorer and expand it.  Then expand the **Availability Groups** folder to see the availability group we created, **AOCorp**.
+
+    !IMAGE[ak5frccv.png](instructions248593/ak5frccv.png)
+
+1. [] On whichever node (instance) shows the AOCorp availability group as **Primary**, expand the availability group to see its folders underneath. 
+    
+    &gt;[!note} This will most likely be AlwaysOnN1
+
+    !IMAGE[n54y0mc5.png](instructions248593/n54y0mc5.png)
+
+1. [] Right click the **Availability Group Listeners** and select **Add Listener**.
+
+    !IMAGE[pgmkmgbj.png](instructions248593/pgmkmgbj.png)
+
+1. [] On the **New Availability Group Listener** dialog window, type in the following:
+
+    **Listener DNS Name**: **+++AOCorpList**+++
+
+    **Port**: **+++1433**+++
+
+    Then click the drop down for **Network Mode** and select **Static IP**.
+
+    ![](Media/image0149.png)
+
+    &gt;[!knowledge] Selecting an Availability Group Listener Port &lt;br/&gt;
+    &gt;
+    &gt;When configuring an availability group listener, you must designate a port. You can configure the default port to 1433 to allow for simplicity of the client connection strings. If using 1433, you do not need to designate a port number in a connection string. In addition, since each availability group listener will have a separate virtual network name, each availability group listener configured on a single WSFC can be configured to reference the same default port of 1433. 
+    &gt;
+    &gt;You can also designate a non-standard listener port; however, this means that you will also need to explicitly specify a target port in your connection string whenever connecting to the availability group listener. You will also need to open permission on the firewall for the non-standard port. 
+    &gt;
+    &gt;If you use the default port of 1433 for availability group listener VNNs, you will still need to ensure that no other services on the cluster node are using this port; otherwise, this would cause a port conflict. 
+    &gt;
+    &gt;If one of the instances of SQL Server is already listening on TCP port 1433 via the instance listener and there are no other services (including additional instances of SQL Server) on the computer listening on port 1433, this will not cause a port conflict with the availability group listener. This is because the availability group listener can share the same TCP port inside the same service process.  However, multiple instances of SQL Server (side-by-side) should not be configured to listen on the same port.
+
+
+1. [] Now at the bottom right of the dialog window click the **Add** button to add an IP address
+
+    ![image0150.png](Media/image0150.png)
+
+1. [] In the **Add IP Address** dialog, select the **10.1.1.0/24** subnet and type **+++10.1.1.205**+++ as shown below. Click OK.
+
+    ![](Media/image0151.png)
+
+1. [] In the **New Availability Group Listener** dialog, click **OK**.
+
+    ![image0152.png](Media/image0152.png)
+
+1. [] Upon successful completion, you should now see a listener in the Object Explorer.
+
+    !IMAGE[fp87sahy.png](instructions248593/fp87sahy.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. Click **Next** to advance to the next exercise.
+
+===
+
+# Exercise 5: Review the availability group dashboard
+
+In this exercise, you will learn how to review the availability group dashboard
+
+---
+
+### Task 1: Review the availability group dashboard
+
+1. [] Login to the **@lab.VirtualMachine(AlwaysOnClient).SelectLink** virtual machine as **+++CORPNET\cluadmin+++** using **+++@lab.VirtualMachine(AlwaysOnClient).password+++** as the password.
+
+1. [] Open SQL Server Management studio (SSMS)
+
+    ![](Media/image0090.png)
+
+1. [] Connect to all three nodes: **AlwaysOnN1, AlwaysOnN2, AlwaysOnN3**
+
+    ![](Media/image0091.png)
+
+1. [] Navigate to the **AlwaysOn High Availability** folder in the Object explorer and expand it. Then expand the **Availability Groups** folder to see the availability group, **AOCorp** we created.
+
+    !IMAGE[wqgyzs7u.png](instructions248593/wqgyzs7u.png)
+
+1. [] On whichever node shows as **Primary**, right click the AOCorp availability group and select **SHOW DASHBOARD**
+
+    !IMAGE[sd6oeolu.png](instructions248593/sd6oeolu.png)
+
+1. [] Click on the various links to see status and different information about the availability group. Some of the things you can do on the dashboard are:
+
+    - View AlwaysOn Health Events
+    - View Cluster Quorum Configuration
+    - Add/Remove various columns for the different databases
+
+    !IMAGE[k0it6t7y.png](instructions248593/k0it6t7y.png)
+
+### Congratulations!
+
+You have successfully completed this exercise. You can move to the next lab.
+">
+    <input type="hidden" id="activities" value="[]">
+    <input type="hidden" id="activityGroups" value="[]">
+    <input type="hidden" id="replacementTokens" value="[{&quot;Token&quot;:&quot;@lab.LabProfile.Id&quot;,&quot;Replacement&quot;:&quot;155701&quot;},{&quot;Token&quot;:&quot;@lab.CtrlAltDelete&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;ctrlAltDeleteLink icon-link special-action-link&#39;&gt;Ctrl+Alt+Delete&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242395&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242395&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnDC).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242395&#39;&gt;AlwaysOnDC&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242396&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242396&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN1).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242396&#39;&gt;AlwaysOnN1&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242397&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242397&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN2).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242397&#39;&gt;AlwaysOnN2&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242398&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Username&quot;,&quot;Replacement&quot;:&quot;CORPNET\\Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242398&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnN3).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242398&#39;&gt;AlwaysOnN3&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).SelectLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;selectMachineLink icon-link special-action-link&#39; data-data=&#39;242399&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Username&quot;,&quot;Replacement&quot;:&quot;Administrator&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Password&quot;,&quot;Replacement&quot;:&quot;Pa$$$$w0rd&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).Console&quot;,&quot;Replacement&quot;:&quot;&lt;div class=&#39;virtual-machine-console&#39; data-id=&#39;242399&#39; data-height=&#39;768&#39; data-width=&#39;1024&#39;&gt;&lt;/div&gt;&quot;},{&quot;Token&quot;:&quot;@lab.VirtualMachine(AlwaysOnClient).NewWindowLink&quot;,&quot;Replacement&quot;:&quot;&lt;a href=&#39;#&#39; class=&#39;open-in-new-window-link icon-link special-action-link machine-new-window-link&#39; data-data=&#39;242399&#39;&gt;AlwaysOnClient&lt;/a&gt;&quot;},{&quot;Token&quot;:&quot;@lab.Title&quot;,&quot;Replacement&quot;:&quot;&lt;h1 class=\&quot;lab-title primary-color\&quot;&gt;Create an Availability Group&lt;/h1&gt;&quot;},{&quot;Token&quot;:&quot;@lab.LanguageName&quot;,&quot;Replacement&quot;:&quot;English&quot;},{&quot;Token&quot;:&quot;@lab.LanguageCode&quot;,&quot;Replacement&quot;:&quot;en&quot;},{&quot;Token&quot;:&quot;@lab.LanguageRegionCode&quot;,&quot;Replacement&quot;:&quot;en-US&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.Id&quot;,&quot;Replacement&quot;:&quot;{LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.GlobalId&quot;,&quot;Replacement&quot;:&quot;{lod_LAB_INSTANCE_ID}&quot;},{&quot;Token&quot;:&quot;@lab.LabInstance.StartDate&quot;,&quot;Replacement&quot;:&quot;20240324&quot;},{&quot;Token&quot;:&quot;@lab.User.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.FirstName&quot;,&quot;Replacement&quot;:&quot;{USER_FIRSTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.LastName&quot;,&quot;Replacement&quot;:&quot;{USER_LASTNAME}&quot;},{&quot;Token&quot;:&quot;@lab.User.Email&quot;,&quot;Replacement&quot;:&quot;{EMAIL}&quot;},{&quot;Token&quot;:&quot;@lab.User.ExternalId&quot;,&quot;Replacement&quot;:&quot;{USER_EXTERNALID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Id&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_ID}&quot;},{&quot;Token&quot;:&quot;@lab.User.Organization.Name&quot;,&quot;Replacement&quot;:&quot;{USER_ORGANIZATION_NAME}&quot;},{&quot;Token&quot;:&quot;@lab.Tag&quot;,&quot;Replacement&quot;:&quot;{TAG}&quot;}]">
+    <input type="hidden" id="replacements">
+    <input type="hidden" id="variables">
+
+    <textarea id="copyInput" value="" style="position: absolute; left:-10000px; top:-10000px; " spellcheck="false" data-ms-editor="true"></textarea>
+
+    <div id="Model" data-id="155701" data-contentroot="https://labondemand.blob.core.windows.net/content/lab155701/" data-scrolltop="" data-themescript="">
+
+
+
+</div></body><editor-card style="position:absolute;top:0px;left:0px;z-index:auto;display: block !important"><div dir="ltr" style="all: initial;"><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"><div style="all: initial;"><template shadowrootmode="open"></template></div></div><div style="color: initial; font: initial; font-palette: initial; font-synthesis: initial; forced-color-adjust: initial; position: absolute; text-orientation: initial; text-rendering: initial; -webkit-font-smoothing: initial; -webkit-locale: initial; -webkit-text-orientation: initial; -webkit-writing-mode: initial; writing-mode: initial; zoom: initial; accent-color: initial; place-content: initial; place-items: initial; place-self: initial; alignment-baseline: initial; animation-composition: initial; animation: initial; app-region: initial; appearance: initial; aspect-ratio: initial; backdrop-filter: initial; backface-visibility: initial; background: initial; background-blend-mode: initial; baseline-shift: initial; baseline-source: initial; block-size: initial; border-block: initial; border: initial; border-radius: initial; border-collapse: initial; border-end-end-radius: initial; border-end-start-radius: initial; border-inline: initial; border-start-end-radius: initial; border-start-start-radius: initial; inset: initial; box-shadow: initial; box-sizing: initial; break-after: initial; break-before: initial; break-inside: initial; buffered-rendering: initial; caption-side: initial; caret-color: initial; clear: initial; clip: initial; clip-path: initial; clip-rule: initial; color-interpolation: initial; color-interpolation-filters: initial; color-rendering: initial; color-scheme: initial; columns: initial; column-fill: initial; gap: initial; column-rule: initial; column-span: initial; contain: initial; contain-intrinsic-block-size: initial; contain-intrinsic-size: initial; contain-intrinsic-inline-size: initial; container: initial; content: initial; content-visibility: initial; counter-increment: initial; counter-reset: initial; counter-set: initial; cursor: initial; cx: initial; cy: initial; d: initial; display: initial; dominant-baseline: initial; empty-cells: initial; fill: initial; fill-opacity: initial; fill-rule: initial; filter: initial; flex: initial; flex-flow: initial; float: initial; flood-color: initial; flood-opacity: initial; grid: initial; grid-area: initial; height: initial; hyphenate-character: initial; hyphenate-limit-chars: initial; hyphens: initial; image-orientation: initial; image-rendering: initial; initial-letter: initial; inline-size: initial; inset-block: initial; inset-inline: initial; isolation: initial; letter-spacing: initial; lighting-color: initial; line-break: initial; list-style: initial; margin-block: initial; margin: initial; margin-inline: initial; marker: initial; mask: initial; mask-type: initial; math-depth: initial; math-shift: initial; math-style: initial; max-block-size: initial; max-height: initial; max-inline-size: initial; max-width: initial; min-block-size: initial; min-height: initial; min-inline-size: initial; min-width: initial; mix-blend-mode: initial; object-fit: initial; object-position: initial; object-view-box: initial; offset: initial; opacity: initial; order: initial; orphans: initial; outline: initial; outline-offset: initial; overflow-anchor: initial; overflow-clip-margin: initial; overflow-wrap: initial; overflow: initial; overlay: initial; overscroll-behavior-block: initial; overscroll-behavior-inline: initial; overscroll-behavior: initial; padding-block: initial; padding: initial; padding-inline: initial; page: initial; page-orientation: initial; paint-order: initial; perspective: initial; perspective-origin: initial; pointer-events: initial; quotes: initial; r: initial; resize: initial; rotate: initial; ruby-position: initial; rx: initial; ry: initial; scale: initial; scroll-behavior: initial; scroll-margin-block: initial; scroll-margin: initial; scroll-margin-inline: initial; scroll-padding-block: initial; scroll-padding: initial; scroll-padding-inline: initial; scroll-snap-align: initial; scroll-snap-stop: initial; scroll-snap-type: initial; scroll-timeline: initial; scrollbar-color: initial; scrollbar-gutter: initial; scrollbar-width: initial; shape-image-threshold: initial; shape-margin: initial; shape-outside: initial; shape-rendering: initial; size: initial; speak: initial; stop-color: initial; stop-opacity: initial; stroke: initial; stroke-dasharray: initial; stroke-dashoffset: initial; stroke-linecap: initial; stroke-linejoin: initial; stroke-miterlimit: initial; stroke-opacity: initial; stroke-width: initial; tab-size: initial; table-layout: initial; text-align: initial; text-align-last: initial; text-anchor: initial; text-combine-upright: initial; text-decoration: initial; text-decoration-skip-ink: initial; text-emphasis: initial; text-emphasis-position: initial; text-indent: initial; text-overflow: initial; text-shadow: initial; text-size-adjust: initial; text-transform: initial; text-underline-offset: initial; text-underline-position: initial; white-space: initial; timeline-scope: initial; touch-action: initial; transform: initial; transform-box: initial; transform-origin: initial; transform-style: initial; transition: initial; translate: initial; user-select: initial; vector-effect: initial; vertical-align: initial; view-timeline: initial; view-transition-name: initial; visibility: initial; border-spacing: initial; -webkit-box-align: initial; -webkit-box-decoration-break: initial; -webkit-box-direction: initial; -webkit-box-flex: initial; -webkit-box-ordinal-group: initial; -webkit-box-orient: initial; -webkit-box-pack: initial; -webkit-box-reflect: initial; -webkit-line-break: initial; -webkit-line-clamp: initial; -webkit-mask-box-image: initial; -webkit-print-color-adjust: initial; -webkit-rtl-ordering: initial; -webkit-ruby-position: initial; -webkit-tap-highlight-color: initial; -webkit-text-combine: initial; -webkit-text-decorations-in-effect: initial; -webkit-text-fill-color: initial; -webkit-text-security: initial; -webkit-text-stroke: initial; -webkit-user-drag: initial; widows: initial; width: initial; will-change: initial; word-break: initial; word-spacing: initial; x: initial; y: initial; z-index: 2147483647;"><link rel="stylesheet" href="chrome-extension://hokifickgkhplphjiodbggjmoafhignh/fonts/fabric-icons.css"></div></div></editor-card></html>
