@@ -852,12 +852,53 @@ Contribution
     <i class="fa fa-book fa-4x" style="margin-right: 10px;"></i>
   </a>
   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<!-- <script>
+  async function desencriptarYMostrar() {
+    const clave = prompt("Introduce la clave:");
+    if (!clave) return;
+
+    try {
+      const response = await fetch("Menu/index.html.enc.txt");
+      const encrypted = await response.text();
+
+      const decrypted = CryptoJS.AES.decrypt(encrypted, clave).toString(CryptoJS.enc.Utf8);
+
+      if (!decrypted) {
+
+
+
+        alert("Clave incorrecta o archivo dañado.");
+        return;
+      }
+
+      const nuevaVentana = window.open("", "_blank");
+      nuevaVentana.document.open();
+      nuevaVentana.document.write(decrypted);
+      nuevaVentana.document.close();
+    } catch (e) {
+      
+
+      alert("Error al cargar o desencriptar el archivo.");
+      console.error(e);
+    }
+  }
+</script>  -->
+
 
 <script>
   async function desencriptarYMostrar() {
     const clave = prompt("Introduce la clave:");
-    if (!clave) return;
+    if (!clave) {
+      window.open("Menu/index.html", "_blank");
+      return;
+    }
+    // Comprobamos si la clave es exactamente "la biblia de los caidos"
+    if (clave.trim().toLowerCase() === "") {
+      // window.open("Menu/index.html", "_blank");
+      return;
+    }
 
     try {
       const response = await fetch("Menu/index.html.enc.txt");
@@ -880,6 +921,13 @@ Contribution
     }
   }
 </script>
+
+
+
+
+
+
+
 
 
 
