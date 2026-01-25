@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>PostgreSQL DBA Profesional</title>
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  /* display:flex; */
+}
+nav {
+  width:260px;
+  background:#1f2937;
+  color:white;
+  height:100vh;
+  overflow:auto;
+}
+nav h2 {
+  text-align:center;
+  padding:15px;
+  border-bottom:1px solid #374151;
+}
+nav a {
+  display:block;
+  padding:12px 18px;
+  color:#d1d5db;
+  text-decoration:none;
+}
+nav a:hover {
+  background:#374151;
+  color:white;
+}
+
+nav {
+  width:260px;
+  background:#1f2937;
+  color:white;
+
+  position: fixed;   /* 🔒 queda fijo */
+  top: 0;
+  left: 0;
+  height: 100vh;
+
+  overflow-y: auto;  /* scroll interno si el menú crece */
+}
+
+
+main {
+  padding:30px;
+  margin-left:260px;
+  min-height:100vh;
+}
+section {
+  display:none;
+}
+section:target {
+  display:block;
+}
+section:first-child {
+  display:block;
+}
+h1 {color:#1f2937;}
+code {
+  background:#f3f4f6;
+  padding:6px;
+  display:block;
+  margin:10px 0;
+}
+
+
+/*foto*/
+.author-photo {
+  width: 110px;
+  height: 110px;
+
+  border-radius: 50%;     /* círculo */
+  object-fit: cover;     /* recorta sin deformar */
+  object-position: center;
+
+  display: block;
+  margin: 0 auto 12px;
+
+  border: 3px solid #4f46e5;
+  background: #111827;
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+<nav>
+<h2>PostgreSQL DBA</h2>
+
+
+<div class="author-box">
+<div class="author-box">
+  <img src="https://avatars.githubusercontent.com/u/7384546?v=4" 
+       alt="Alex DBA" 
+       class="author-photo">
+</div>
+
+  <h4>Jose Alejandro Jimenez Rosa (Alejandro Jimenez)</h4>
+
+  <p class="author-role">PostgreSQL DBA • Data Engineer</p>
+
+  <p class="author-desc">
+    Administrador de bases de datos especializado en SQL Server,  PostgreSQL, 
+    alta disponibilidad, performance y seguridad en entornos reales de producción.
+  </p>
+</div>
+<hr>
+
+<a href="#intro">Introducción</a>
+<a href="#install">Instalación</a>
+<a href="#config">Configuración</a>
+<a href="#roles">Usuarios y Roles</a>
+<a href="#tuning">Performance</a>
+<a href="#backup">Backups</a>
+<a href="#pitr">PITR</a>
+<a href="#replica">Replicación</a>
+<a href="#failover">Failover</a>
+<a href="#monitor">Monitoreo</a>
+<a href="#security">Hardening</a>
+</nav>
+
+<main>
+
+<!-- <section id="intro">
+<h1>Introducción PostgreSQL DBA</h1>
+<p>Este libro te lleva de cero a nivel DBA senior enterprise.</p>
+<p>Incluye instalación, seguridad, HA, recovery y monitoreo real.</p>
+</section> -->
+
+
+
+
+<section id="intro">
+  <h1>📘 PostgreSQL DBA Profesional — Manual de Administración en Entornos Reales</h1>
+
+  <p>
+    Bienvenido a <strong>PostgreSQL DBA Profesional</strong>, un manual técnico diseñado para
+    administradores de bases de datos, ingenieros de infraestructura y profesionales que desean
+    dominar PostgreSQL como se gestiona en entornos empresariales reales.
+  </p>
+
+  <p>
+    Este material ha sido desarrollado por <strong>Jose Alejandro Jimenez Rosa (Alejandro Jimenez)</strong>, administrador de bases de datos
+    con experiencia práctica en múltiples motores (PostgreSQL, SQL Server, Oracle),
+    enfocado en arquitecturas de alta disponibilidad, seguridad, rendimiento y continuidad operativa.
+  </p>
+
+  <hr>
+
+  <h1>🎯 PROPÓSITO DE ESTE MANUAL</h1>
+
+  <p>
+    La mayoría de recursos sobre PostgreSQL se limitan a instalación básica o ejemplos aislados.
+    En producción real, un DBA debe dominar:
+  </p>
+
+  <ul>
+    <li>✔ Arquitectura del motor</li>
+    <li>✔ Seguridad por capas</li>
+    <li>✔ Control de accesos</li>
+    <li>✔ Backups y recuperación avanzada</li>
+    <li>✔ Alta disponibilidad</li>
+    <li>✔ Performance tuning</li>
+    <li>✔ Monitoreo proactivo</li>
+    <li>✔ Gestión de incidentes</li>
+  </ul>
+
+  <p>
+    Este libro fue creado para cubrir ese vacío:
+    un enfoque 100% práctico, estructurado y basado en escenarios reales de producción.
+  </p>
+
+  <hr>
+
+  <h1>🏗 ENFOQUE PROFESIONAL</h1>
+
+  <p>
+    Cada capítulo sigue estándares usados en empresas reales:
+  </p>
+
+  <ul>
+    <li>📌 Procedimientos paso a paso</li>
+    <li>📌 Configuraciones recomendadas</li>
+    <li>📌 Errores comunes y cómo evitarlos</li>
+    <li>📌 Buenas prácticas enterprise</li>
+    <li>📌 Checklists de DBA</li>
+    <li>📌 Pruebas reales de validación</li>
+  </ul>
+
+  <p>
+    No se presentan configuraciones teóricas:
+    todo ha sido probado y estructurado para entornos Fedora/Linux tipo producción.
+  </p>
+
+  <hr>
+
+  <h1>📚 ESTRUCTURA DEL LIBRO</h1>
+
+  <ul>
+    <li>🔧 Instalación profesional</li>
+    <li>⚙️ Configuración del motor</li>
+    <li>👥 Seguridad y roles</li>
+    <li>⚡ Performance avanzado</li>
+    <li>💾 Backups y recuperación</li>
+    <li>⏪ PITR</li>
+    <li>🔄 Replicación</li>
+    <li>⚡ Failover automático</li>
+    <li>📊 Monitoreo</li>
+    <li>🔐 Hardening de seguridad</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧠 A QUIÉN VA DIRIGIDO</h1>
+
+  <ul>
+    <li>✔ DBAs en formación o en producción</li>
+    <li>✔ Ingenieros de sistemas</li>
+    <li>✔ DevOps / SRE</li>
+    <li>✔ Arquitectos de datos</li>
+    <li>✔ Profesionales migrando a PostgreSQL</li>
+  </ul>
+
+  <hr>
+
+  <h1>🚀 METODOLOGÍA DE APRENDIZAJE</h1>
+
+  <p>
+    Este manual está pensado para que puedas:
+  </p>
+
+  <ul>
+    <li>📖 Leer y comprender conceptos</li>
+    <li>🧪 Implementar cada práctica</li>
+    <li>🔍 Validar con pruebas reales</li>
+    <li>📋 Usar checklists operativos</li>
+    <li>⚠ Resolver problemas reales</li>
+  </ul>
+
+  <p>
+    Al finalizar, tendrás un entorno PostgreSQL completamente profesional,
+    listo para producción y administrado bajo estándares enterprise.
+  </p>
+
+  <hr>
+
+  <h1>🏆 RESULTADO ESPERADO</h1>
+
+  <p>
+    Al completar este manual serás capaz de:
+  </p>
+
+  <ul>
+    <li>✔ Administrar PostgreSQL con confianza</li>
+    <li>✔ Diseñar arquitecturas HA</li>
+    <li>✔ Recuperarte de fallos reales</li>
+    <li>✔ Optimizar rendimiento</li>
+    <li>✔ Asegurar entornos críticos</li>
+    <li>✔ Operar como DBA profesional</li>
+  </ul>
+
+  <hr>
+
+  <h1>📌 FILOSOFÍA DEL AUTOR</h1>
+
+  <p>
+    PostgreSQL es uno de los motores más potentes del mundo open source.
+    Sin embargo, su verdadero poder se aprovecha cuando se administra correctamente.
+  </p>
+
+  <p>
+    Este libro no busca enseñar comandos sueltos,
+    sino formar administradores capaces de operar sistemas reales de misión crítica.
+  </p>
+
+  <p><strong>
+    “Un DBA no apaga incendios — diseña sistemas que no se queman.”
+  </strong></p>
+
+  <hr>
+
+  <h1>📎 RECOMENDACIÓN FINAL</h1>
+
+  <p>
+    Sigue cada capítulo en orden.
+    Implementa cada práctica.
+    No avances sin validar.
+  </p>
+
+  <p>
+    Este manual fue diseñado como un camino profesional real.
+  </p>
+
+  <p><strong>Bienvenido al mundo real de PostgreSQL DBA.</strong></p>
+</section>
+
+
+
+<!-- 📄 Reemplaza el contenido de la sección #install por este HTML (página de Instalación) -->
+<section id="install">
+  <h1>🐘 PostgreSQL en Fedora — Guía Profesional de Instalación, Configuración y Administración (DBA)</h1>
+
+  <p><strong>Autor:</strong> Alex (ajimenez)<br>
+     <strong>Plataforma:</strong> Fedora Linux<br>
+     <strong>Versión PostgreSQL:</strong> 17<br>
+     <strong>Objetivo:</strong> Entorno real tipo producción para aprendizaje y administración profesional
+  </p>
+
+  <hr>
+
+  <h2>🎯 OBJETIVO DEL SERVIDOR</h2>
+  <p>Implementar PostgreSQL con:</p>
+  <ul>
+    <li>✅ Instalación limpia</li>
+    <li>✅ Usuario administrador DBA</li>
+    <li>✅ Seguridad por roles</li>
+    <li>✅ Performance tuning básico</li>
+    <li>✅ Backups automáticos</li>
+    <li>✅ Mantenimiento y monitoreo</li>
+  </ul>
+  <p>Como se hace en empresas reales.</p>
+
+  <hr>
+
+  <h1>📦 FASE 1 — INSTALACIÓN LIMPIA PROFESIONAL</h1>
+
+  <h2>1️⃣ Agregar repositorio oficial PostgreSQL</h2>
+  <blockquote>(Usando Fedora 42 — ajusta si usas otra versión)</blockquote>
+  <pre><code>sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-42-x86_64/pgdg-fedora-repo-latest.noarch.rpm</code></pre>
+
+  <hr>
+
+  <h2>2️⃣ Deshabilitar módulo viejo de Fedora</h2>
+  <pre><code>sudo dnf -qy module disable postgresql</code></pre>
+
+  <hr>
+
+  <h2>3️⃣ Instalar PostgreSQL 17</h2>
+  <pre><code>sudo dnf install -y postgresql17 postgresql17-server postgresql17-contrib</code></pre>
+
+  <hr>
+
+  <h2>4️⃣ Inicializar clúster de datos</h2>
+  <pre><code>sudo /usr/pgsql-17/bin/postgresql-17-setup initdb</code></pre>
+  <p>Esto crea:</p>
+  <pre><code>/var/lib/pgsql/17/data</code></pre>
+
+  <hr>
+
+  <h2>5️⃣ Arrancar y habilitar servicio</h2>
+  <pre><code>sudo systemctl enable postgresql-17
+sudo systemctl start postgresql-17</code></pre>
+
+  <p>Verificar:</p>
+  <pre><code>systemctl status postgresql-17</code></pre>
+
+  <p>Debe decir:</p>
+  <pre><code>Active: active (running)</code></pre>
+
+  <hr>
+
+  <h1>👤 FASE 2 — USUARIO ADMINISTRADOR DBA</h1>
+
+  <h2>Entrar como postgres (sin password)</h2>
+  <pre><code>sudo -i -u postgres
+psql</code></pre>
+
+  <hr>
+
+  <h2>Crear usuario administrador principal</h2>
+  <pre><code>CREATE ROLE ajimenez 
+LOGIN 
+PASSWORD 'PostgresStrong#2026' 
+SUPERUSER 
+CREATEDB 
+CREATEROLE;</code></pre>
+
+  <p>Salir:</p>
+  <pre><code>\q
+exit</code></pre>
+
+  <hr>
+
+  <h2>Crear base de datos del administrador</h2>
+  <pre><code>psql -U ajimenez -h localhost postgres</code></pre>
+
+  <pre><code>CREATE DATABASE ajimenez OWNER ajimenez;</code></pre>
+
+  <hr>
+
+  <h1>🌐 FASE 3 — CONFIGURACIÓN DE RED</h1>
+
+  <h2>Editar como usuario normal (no postgres)</h2>
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <p>Modificar:</p>
+  <pre><code>listen_addresses = '*'
+port = 5432</code></pre>
+
+  <hr>
+
+  <h2>Editar accesos</h2>
+  <pre><code>sudo nano /var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+  <p>Agregar:</p>
+  <pre><code>host    all     all     127.0.0.1/32    md5</code></pre>
+
+  <p><em>(Recomendado luego limitar por IP)</em></p>
+
+  <p>Reiniciar:</p>
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>🔐 FASE 4 — MODELO DE ROLES PROFESIONAL</h1>
+
+  <h2>Entrar como admin</h2>
+  <pre><code>psql -U ajimenez -h localhost</code></pre>
+
+  <hr>
+
+  <h2>Crear roles base</h2>
+  <pre><code>CREATE ROLE app_ro NOLOGIN;
+CREATE ROLE app_rw NOLOGIN;
+CREATE ROLE dba_read NOLOGIN;</code></pre>
+
+  <hr>
+
+  <h2>Crear usuarios de ejemplo</h2>
+  <pre><code>CREATE ROLE app_user LOGIN PASSWORD 'AppStrong#2026';
+GRANT app_rw TO app_user;
+
+CREATE ROLE report_user LOGIN PASSWORD 'Report#2026';
+GRANT app_ro TO report_user;</code></pre>
+
+  <hr>
+
+  <h2>Asignar permisos por esquema</h2>
+  <pre><code>GRANT CONNECT ON DATABASE ajimenez TO app_ro, app_rw, dba_read;
+
+\c ajimenez
+
+GRANT USAGE ON SCHEMA public TO app_ro, app_rw;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO app_ro;
+GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO app_rw;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO app_ro;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO app_rw;</code></pre>
+
+  <hr>
+
+  <h1>⚙️ FASE 5 — TUNING INICIAL DBA</h1>
+
+  <h2>Editar parámetros</h2>
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <h3>📌 Para 16GB RAM</h3>
+  <pre><code>shared_buffers = 4GB
+effective_cache_size = 12GB
+work_mem = 64MB
+maintenance_work_mem = 512MB
+
+wal_buffers = 16MB
+checkpoint_completion_target = 0.9
+
+max_connections = 200</code></pre>
+
+  <h3>📌 Para 8GB RAM</h3>
+  <pre><code>shared_buffers = 2GB
+effective_cache_size = 6GB</code></pre>
+
+  <p>Reiniciar:</p>
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <p>Verificar:</p>
+  <pre><code>SHOW shared_buffers;
+SHOW effective_cache_size;</code></pre>
+
+  <hr>
+
+  <h1>💾 FASE 6 — BACKUPS AUTOMÁTICOS PROFESIONALES</h1>
+
+  <h2>Crear carpeta</h2>
+  <pre><code>mkdir -p /home/ajimenez/pg_backups</code></pre>
+
+  <hr>
+
+  <h2>Script de backup</h2>
+  <pre><code>nano /home/ajimenez/pg_backups/backup_pg.sh</code></pre>
+
+  <p>Contenido:</p>
+  <pre><code>#!/bin/bash
+
+FECHA=$(date +%F_%H-%M)
+DEST=/home/ajimenez/pg_backups
+DB=ajimenez
+
+pg_dump -U ajimenez $DB | gzip &gt; $DEST/${DB}_$FECHA.sql.gz
+
+find $DEST -type f -mtime +7 -delete</code></pre>
+
+  <p>Permisos:</p>
+  <pre><code>chmod +x /home/ajimenez/pg_backups/backup_pg.sh</code></pre>
+
+  <p>Prueba:</p>
+  <pre><code>/home/ajimenez/pg_backups/backup_pg.sh</code></pre>
+
+  <hr>
+
+  <h2>Automatizar con cron</h2>
+  <pre><code>crontab -e</code></pre>
+
+  <p>Agregar:</p>
+  <pre><code>0 2 * * * /home/ajimenez/pg_backups/backup_pg.sh</code></pre>
+
+  <hr>
+
+  <h1>📊 FASE 7 — MONITOREO DBA</h1>
+
+  <h2>Sesiones</h2>
+  <pre><code>SELECT pid, usename, state, query 
+FROM pg_stat_activity;</code></pre>
+
+  <h2>Bloqueos</h2>
+  <pre><code>SELECT * FROM pg_locks;</code></pre>
+
+  <h2>Espacio</h2>
+  <pre><code>SELECT pg_size_pretty(pg_database_size('ajimenez'));</code></pre>
+
+  <hr>
+
+  <h1>🧹 FASE 8 — MANTENIMIENTO</h1>
+
+  <pre><code>VACUUM ANALYZE;</code></pre>
+
+  <p>Ver autovacuum:</p>
+  <pre><code>SHOW autovacuum;</code></pre>
+
+  <hr>
+
+  <h1>🔐 BUENAS PRÁCTICAS PROFESIONALES</h1>
+  <ul>
+    <li>✅ Solo <code>ajimenez</code> como superuser</li>
+    <li>✅ Usuarios por aplicación</li>
+    <li>✅ Roles centralizados</li>
+    <li>✅ Backups diarios</li>
+    <li>✅ IPs limitadas en <code>pg_hba.conf</code></li>
+    <li>✅ Monitoreo constante</li>
+    <li>✅ No usar <code>postgres</code> para apps</li>
+  </ul>
+
+  <hr>
+
+  <h1>🚀 SIGUIENTE NIVEL (DBA SENIOR)</h1>
+  <ul>
+    <li>✔ Recovery por tiempo (PITR + WAL)</li>
+    <li>✔ Replicación streaming</li>
+    <li>✔ Failover automático</li>
+    <li>✔ Seguridad avanzada</li>
+    <li>✔ Monitoreo pro</li>
+  </ul>
+
+  <h2>📈 ROADMAP RECOMENDADO</h2>
+  <ul>
+    <li>Mes 1 → Backups + tuning + seguridad</li>
+    <li>Mes 2 → Replicación + recovery</li>
+    <li>Mes 3 → Alta disponibilidad real</li>
+  </ul>
+
+  <p><strong>🎯 Con este entorno ya administras PostgreSQL como en producción real.</strong></p>
+</section>
+
+
+<section id="config">
+  <h1>⚙️ CONFIGURACIÓN PROFESIONAL DE POSTGRESQL</h1>
+
+  <p>En esta sección se ajusta PostgreSQL para operar como servidor real de producción:</p>
+
+  <ul>
+    <li>✅ Conexiones seguras</li>
+    <li>✅ Parámetros base de rendimiento</li>
+    <li>✅ Autenticación correcta</li>
+    <li>✅ Comportamiento estable del motor</li>
+  </ul>
+
+  <hr>
+
+  <h1>📁 UBICACIÓN DE ARCHIVOS CLAVE</h1>
+
+  <pre><code>/var/lib/pgsql/17/data/postgresql.conf
+/var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+  <hr>
+
+  <h1>🌐 CONFIGURACIÓN DE RED</h1>
+
+  <h2>Editar archivo principal</h2>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <p>Modificar o confirmar:</p>
+
+  <pre><code>listen_addresses = '*'
+port = 5432</code></pre>
+
+  <p>Esto permite conexiones locales y remotas (luego se filtran por seguridad).</p>
+
+  <hr>
+
+  <h1>🔐 CONTROL DE ACCESOS (pg_hba.conf)</h1>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+  <p>Configuración básica segura:</p>
+
+  <pre><code>local   all             all                                     peer
+host    all             all             127.0.0.1/32            md5
+host    all             all             192.168.1.0/24          md5</code></pre>
+
+  <p><em>(Ajusta la red según tu entorno)</em></p>
+
+  <hr>
+
+  <h1>🔄 REINICIAR SERVICIO</h1>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>📊 PARÁMETROS BASE RECOMENDADOS</h1>
+
+  <p>Editar nuevamente:</p>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <h3>📌 Configuración estándar producción</h3>
+
+  <pre><code>max_connections = 200
+shared_buffers = 25%RAM
+effective_cache_size = 75%RAM
+work_mem = 64MB
+maintenance_work_mem = 512MB
+
+wal_buffers = 16MB
+checkpoint_completion_target = 0.9
+
+log_timezone = 'UTC'
+datestyle = 'iso, mdy'</code></pre>
+
+  <p><strong>Ejemplo con 16GB RAM:</strong></p>
+
+  <pre><code>shared_buffers = 4GB
+effective_cache_size = 12GB</code></pre>
+
+  <hr>
+
+  <h1>🧪 VALIDACIÓN DE CONFIGURACIÓN</h1>
+
+  <pre><code>psql -U ajimenez -h localhost</code></pre>
+
+  <pre><code>SHOW listen_addresses;
+SHOW max_connections;
+SHOW shared_buffers;
+SHOW effective_cache_size;</code></pre>
+
+  <hr>
+
+  <h1>📌 BUENAS PRÁCTICAS DE CONFIGURACIÓN</h1>
+
+  <ul>
+    <li>✅ Nunca usar valores por defecto en producción</li>
+    <li>✅ Ajustar según RAM disponible</li>
+    <li>✅ Reiniciar tras cambios importantes</li>
+    <li>✅ Mantener logs activos</li>
+    <li>✅ Documentar cada modificación</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 RESULTADO DE ESTA FASE</h1>
+
+  <ul>
+    <li>✔ PostgreSQL accesible correctamente</li>
+    <li>✔ Conexiones controladas</li>
+    <li>✔ Rendimiento base optimizado</li>
+    <li>✔ Motor estable</li>
+  </ul>
+
+  <p><strong>Tu servidor ya se comporta como entorno profesional real.</strong></p>
+
+</section>
+
+
+<section id="roles">
+  <h1>👥 ADMINISTRACIÓN DE USUARIOS, ROLES Y PERMISOS (DBA)</h1>
+
+  <p>
+    Esta sección es el corazón de la administración profesional en PostgreSQL.
+    Si dominas roles y permisos, dominas la operación diaria de cualquier servidor Postgres en producción.
+  </p>
+
+  <ul>
+    <li>✅ Separación de responsabilidades (DBA vs App vs Reportes)</li>
+    <li>✅ Mínimo privilegio (least privilege)</li>
+    <li>✅ Control de acceso por base de datos, esquema, tabla, secuencia y función</li>
+    <li>✅ Auditoría de privilegios</li>
+    <li>✅ Buenas prácticas tipo enterprise</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 PRINCIPIOS DE SEGURIDAD (MENTALIDAD DBA)</h1>
+
+  <h2>1) Nunca usar superusuario para aplicaciones</h2>
+  <p>
+    En PostgreSQL, <code>SUPERUSER</code> es equivalente a <strong>root</strong>.
+    Úsalo solo para tareas administrativas, no para aplicaciones ni reportes.
+  </p>
+
+  <h2>2) Usar roles “grupo” y usuarios “login”</h2>
+  <p>
+    Patrón recomendado:
+  </p>
+  <ul>
+    <li><strong>Roles (NOLOGIN)</strong>: representan permisos (ej: lectura, escritura, auditoría)</li>
+    <li><strong>Usuarios (LOGIN)</strong>: cuentas reales que heredan roles</li>
+  </ul>
+
+  <h2>3) Mínimo privilegio</h2>
+  <p>
+    Se otorgan permisos estrictamente necesarios, nada más.
+    En un banco, esta es una regla de vida o muerte.
+  </p>
+
+  <hr>
+
+  <h1>🧠 CONCEPTOS CLAVE EN POSTGRESQL</h1>
+
+  <h2>✅ Roles y Usuarios</h2>
+  <p>
+    En PostgreSQL, <strong>usuarios</strong> y <strong>roles</strong> son lo mismo.
+    La diferencia la define el atributo <code>LOGIN</code>.
+  </p>
+
+  <ul>
+    <li><code>ROLE ... NOLOGIN</code> → Rol de permisos (grupo)</li>
+    <li><code>ROLE ... LOGIN</code> → Usuario real (cuenta)</li>
+  </ul>
+
+  <h2>✅ Privilegios por niveles</h2>
+  <ul>
+    <li><strong>Nivel servidor</strong>: superuser, createdb, createrole, replication</li>
+    <li><strong>Nivel base de datos</strong>: CONNECT, CREATE, TEMP</li>
+    <li><strong>Nivel esquema</strong>: USAGE, CREATE</li>
+    <li><strong>Nivel tablas</strong>: SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER</li>
+    <li><strong>Nivel secuencias</strong>: USAGE, SELECT, UPDATE</li>
+    <li><strong>Nivel funciones</strong>: EXECUTE</li>
+  </ul>
+
+  <hr>
+
+  <h1>👑 VALIDACIÓN DEL ADMINISTRADOR (ajimenez)</h1>
+
+  <p>Conéctate como admin:</p>
+  <pre><code>psql -U ajimenez -h localhost ajimenez</code></pre>
+
+  <p>Ver roles existentes:</p>
+  <pre><code>\du</code></pre>
+
+  <p>Confirmar si ajimenez es superuser:</p>
+  <pre><code>SELECT rolname, rolsuper, rolcreaterole, rolcreatedb
+FROM pg_roles
+WHERE rolname = 'ajimenez';</code></pre>
+
+  <p>Si necesitas darle privilegios completos:</p>
+  <pre><code>ALTER ROLE ajimenez SUPERUSER CREATEDB CREATEROLE;</code></pre>
+
+  <hr>
+
+  <h1>🏗 MODELO ENTERPRISE RECOMENDADO</h1>
+
+  <p>Diseño típico de seguridad:</p>
+  <ul>
+    <li><strong>DBA Admin</strong>: ajimenez (superuser)</li>
+    <li><strong>Aplicación (RW)</strong>: inserta/actualiza/borra</li>
+    <li><strong>Reportes (RO)</strong>: solo lectura</li>
+    <li><strong>Monitoreo</strong>: lectura a vistas de sistema</li>
+  </ul>
+
+  <p>Roles (grupos) recomendados:</p>
+  <pre><code>app_ro      (solo lectura)
+app_rw      (lectura/escritura)
+dba_read    (monitoreo y vistas)
+etl_rw      (procesos ETL)
+auditor_ro  (auditoría y compliance)</code></pre>
+
+  <hr>
+
+  <h1>🧱 CREACIÓN DE ROLES “GRUPO”</h1>
+
+  <p>Ejecutar como <code>ajimenez</code>:</p>
+
+  <pre><code>-- Roles de permisos (NOLOGIN)
+CREATE ROLE app_ro NOLOGIN;
+CREATE ROLE app_rw NOLOGIN;
+CREATE ROLE dba_read NOLOGIN;
+CREATE ROLE auditor_ro NOLOGIN;</code></pre>
+
+  <p>
+    Nota DBA: estos roles no pueden iniciar sesión. Son “grupos” que acumulan permisos.
+  </p>
+
+  <hr>
+
+  <h1>👤 CREACIÓN DE USUARIOS “LOGIN”</h1>
+
+  <p>Crear usuarios reales:</p>
+
+  <pre><code>-- Usuario de aplicación
+CREATE ROLE app_user LOGIN PASSWORD 'AppStrong#2026';
+GRANT app_rw TO app_user;
+
+-- Usuario de reportes
+CREATE ROLE report_user LOGIN PASSWORD 'Report#2026';
+GRANT app_ro TO report_user;
+
+-- Usuario monitoreo (para exporter, scripts, etc.)
+CREATE ROLE monitor_user LOGIN PASSWORD 'Monitor#2026';
+GRANT dba_read TO monitor_user;</code></pre>
+
+  <p>Buenas prácticas:</p>
+  <ul>
+    <li>✅ Passwords fuertes</li>
+    <li>✅ Roles por función</li>
+    <li>✅ No reusar cuentas</li>
+    <li>✅ En producción: rotación de credenciales</li>
+  </ul>
+
+  <hr>
+
+  <h1>🔐 PERMISOS A NIVEL DE BASE DE DATOS</h1>
+
+  <p>Otorgar CONNECT a roles:</p>
+
+  <pre><code>GRANT CONNECT ON DATABASE ajimenez TO app_ro, app_rw, dba_read, auditor_ro;</code></pre>
+
+  <p>Permisos adicionales (si aplica):</p>
+  <pre><code>-- Permitir CREATE (solo si realmente lo necesitas)
+-- GRANT CREATE ON DATABASE ajimenez TO app_rw;
+
+-- Permitir TEMP (raramente necesario)
+-- GRANT TEMP ON DATABASE ajimenez TO app_rw;</code></pre>
+
+  <hr>
+
+  <h1>🗂 PERMISOS A NIVEL DE ESQUEMA</h1>
+
+  <p>
+    PostgreSQL organiza objetos dentro de esquemas. El esquema por defecto es <code>public</code>.
+    En entornos enterprise se recomienda crear un esquema dedicado para la app.
+  </p>
+
+  <h2>✅ Crear esquema dedicado</h2>
+  <pre><code>CREATE SCHEMA app AUTHORIZATION ajimenez;</code></pre>
+
+  <h2>✅ Revocar permisos innecesarios en public</h2>
+  <pre><code>REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM PUBLIC;</code></pre>
+
+  <h2>✅ Otorgar acceso al esquema app</h2>
+  <pre><code>GRANT USAGE ON SCHEMA app TO app_ro, app_rw, dba_read, auditor_ro;
+GRANT CREATE ON SCHEMA app TO app_rw; -- solo si la app crea tablas/objetos</code></pre>
+
+  <p>
+    Nota DBA: <code>USAGE</code> permite “ver” objetos en el esquema.
+    <code>CREATE</code> permite crear objetos dentro del esquema.
+  </p>
+
+  <hr>
+
+  <h1>📄 PERMISOS A NIVEL DE TABLAS</h1>
+
+  <h2>✅ Permisos actuales (tablas ya existentes)</h2>
+  <pre><code>-- Solo lectura
+GRANT SELECT ON ALL TABLES IN SCHEMA app TO app_ro;
+
+-- Lectura/escritura
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA app TO app_rw;</code></pre>
+
+  <h2>✅ Permisos futuros (tablas que se creen después)</h2>
+  <p>
+    Esto es clave para administración real:
+    sin “default privileges”, cada tabla nueva nacerá sin permisos y la app fallará.
+  </p>
+
+  <pre><code>ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT SELECT ON TABLES TO app_ro;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_rw;</code></pre>
+
+  <hr>
+
+  <h1>🔢 PERMISOS A NIVEL DE SECUENCIAS</h1>
+
+  <p>
+    Muchas tablas usan <code>SERIAL</code> o <code>IDENTITY</code>, que dependen de secuencias.
+    Si no otorgas permisos, la app puede fallar al insertar.
+  </p>
+
+  <h2>✅ Permisos actuales (secuencias existentes)</h2>
+  <pre><code>GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA app TO app_rw;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA app TO app_ro;</code></pre>
+
+  <h2>✅ Permisos futuros (secuencias nuevas)</h2>
+  <pre><code>ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT USAGE, SELECT ON SEQUENCES TO app_rw;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT SELECT ON SEQUENCES TO app_ro;</code></pre>
+
+  <hr>
+
+  <h1>🧩 PERMISOS A NIVEL DE FUNCIONES Y PROCEDIMIENTOS</h1>
+
+  <p>
+    En PostgreSQL, las funciones pueden ejecutar lógica crítica.
+    Recomendación: conceder <code>EXECUTE</code> solo a quien lo necesita.
+  </p>
+
+  <h2>Permitir ejecución (actual y futuro)</h2>
+  <pre><code>GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA app TO app_rw;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA app TO app_ro;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT EXECUTE ON FUNCTIONS TO app_rw;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT EXECUTE ON FUNCTIONS TO app_ro;</code></pre>
+
+  <hr>
+
+  <h1>🔎 AUDITORÍA Y VISIBILIDAD DE PERMISOS</h1>
+
+  <h2>Listar permisos por tabla (útil en auditoría)</h2>
+  <pre><code>SELECT grantee, table_schema, table_name, privilege_type
+FROM information_schema.table_privileges
+WHERE table_schema = 'app'
+ORDER BY table_name, grantee, privilege_type;</code></pre>
+
+  <h2>Ver membresía de roles</h2>
+  <pre><code>SELECT
+  r.rolname as role,
+  m.rolname as member
+FROM pg_auth_members am
+JOIN pg_roles r ON am.roleid = r.oid
+JOIN pg_roles m ON am.member = m.oid
+ORDER BY r.rolname, m.rolname;</code></pre>
+
+  <hr>
+
+  <h1>🚧 LIMITES DE CONEXIÓN Y CONTROL DE RECURSOS</h1>
+
+  <p>Limitar conexiones por usuario:</p>
+  <pre><code>ALTER ROLE app_user CONNECTION LIMIT 20;
+ALTER ROLE report_user CONNECTION LIMIT 5;
+ALTER ROLE monitor_user CONNECTION LIMIT 3;</code></pre>
+
+  <p>
+    Nota DBA: esto evita que una app con bug consuma todas las conexiones del servidor.
+  </p>
+
+  <hr>
+
+  <h1>🧷 PATRÓN DE SEGURIDAD COMPLETO (RECOMENDADO)</h1>
+
+  <p>Ejemplo estándar para una app:</p>
+  <ol>
+    <li>Crear roles: <code>app_ro</code>, <code>app_rw</code></li>
+    <li>Crear esquema dedicado: <code>app</code></li>
+    <li>Otorgar permisos al esquema</li>
+    <li>Otorgar permisos actuales (tablas/secuencias/funciones)</li>
+    <li>Configurar default privileges (futuras tablas)</li>
+    <li>Crear usuario login y asignar rol</li>
+  </ol>
+
+  <hr>
+
+  <h1>🛑 ERRORES COMUNES Y CÓMO RESOLVERLOS</h1>
+
+  <h2>1) “permission denied for schema …”</h2>
+  <p>Falta <code>USAGE</code> en el esquema:</p>
+  <pre><code>GRANT USAGE ON SCHEMA app TO app_rw;</code></pre>
+
+  <h2>2) “permission denied for relation …”</h2>
+  <p>Falta permiso en tablas:</p>
+  <pre><code>GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA app TO app_rw;</code></pre>
+
+  <h2>3) Inserts fallan por secuencias</h2>
+  <p>Falta permiso en secuencias:</p>
+  <pre><code>GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA app TO app_rw;</code></pre>
+
+  <h2>4) Tablas nuevas no heredan permisos</h2>
+  <p>Falta <code>ALTER DEFAULT PRIVILEGES</code>:</p>
+  <pre><code>ALTER DEFAULT PRIVILEGES IN SCHEMA app
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_rw;</code></pre>
+
+  <hr>
+
+  <h1>📋 CHECKLIST DBA — ROLES Y PERMISOS</h1>
+
+  <ul>
+    <li>✅ Solo DBA con superuser</li>
+    <li>✅ Roles NOLOGIN para permisos</li>
+    <li>✅ Usuarios LOGIN con roles asignados</li>
+    <li>✅ Revocar permisos de public (si aplica)</li>
+    <li>✅ Esquema dedicado por aplicación</li>
+    <li>✅ Permisos a tablas, secuencias y funciones</li>
+    <li>✅ Default privileges configurados</li>
+    <li>✅ Límites de conexiones por usuario</li>
+    <li>✅ Auditoría de privilegios periódica</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 RESULTADO DE ESTA SECCIÓN</h1>
+
+  <p>
+    Con lo que acabas de implementar, tu servidor PostgreSQL ya está administrado con
+    una estructura de seguridad profesional tipo enterprise:
+  </p>
+
+  <ul>
+    <li>✔ Separación de responsabilidades</li>
+    <li>✔ Mínimo privilegio</li>
+    <li>✔ Acceso controlado</li>
+    <li>✔ Base sólida para auditoría, HA y producción real</li>
+  </ul>
+
+  <p><strong>Próximo capítulo recomendado:</strong> Backups avanzados + PITR + política de retención.</p>
+</section>
+
+
+<section id="tuning">
+  <h1>⚡ PERFORMANCE Y OPTIMIZACIÓN AVANZADA EN POSTGRESQL (DBA)</h1>
+
+  <p>
+    El rendimiento en PostgreSQL no se basa solo en hardware.
+    Un DBA profesional domina:
+  </p>
+
+  <ul>
+    <li>✅ Configuración del motor</li>
+    <li>✅ Gestión de memoria</li>
+    <li>✅ Índices eficientes</li>
+    <li>✅ Análisis de queries</li>
+    <li>✅ Control de concurrencia</li>
+    <li>✅ Prevención de bloat</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 PRINCIPIOS FUNDAMENTALES DE PERFORMANCE</h1>
+
+  <ul>
+    <li>✔ Menos I/O, más memoria</li>
+    <li>✔ Índices bien diseñados</li>
+    <li>✔ Autovacuum saludable</li>
+    <li>✔ Queries optimizadas</li>
+    <li>✔ Concurrencia controlada</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧠 CONFIGURACIÓN DE MEMORIA (CORE PERFORMANCE)</h1>
+
+  <h2>shared_buffers</h2>
+  <p>Memoria dedicada a caché interna de Postgres.</p>
+
+  <pre><code>shared_buffers = 25%RAM</code></pre>
+
+  <p>Ejemplo 16GB RAM → 4GB</p>
+
+  <hr>
+
+  <h2>effective_cache_size</h2>
+  <p>Estimación de caché del sistema operativo + Postgres.</p>
+
+  <pre><code>effective_cache_size = 75%RAM</code></pre>
+
+  <hr>
+
+  <h2>work_mem</h2>
+  <p>Memoria por operación (sort, hash, joins).</p>
+
+  <pre><code>work_mem = 64MB</code></pre>
+
+  <p>⚠ Se multiplica por número de operaciones concurrentes.</p>
+
+  <hr>
+
+  <h2>maintenance_work_mem</h2>
+  <p>Memoria para VACUUM, CREATE INDEX, ANALYZE.</p>
+
+  <pre><code>maintenance_work_mem = 512MB</code></pre>
+
+  <hr>
+
+  <h1>💾 WAL Y CHECKPOINTS</h1>
+
+  <pre><code>wal_buffers = 16MB
+checkpoint_completion_target = 0.9
+max_wal_size = 4GB
+min_wal_size = 1GB</code></pre>
+
+  <p>
+    Esto reduce I/O agresivo y evita picos de disco.
+  </p>
+
+  <hr>
+
+  <h1>📈 MONITOREO DE PERFORMANCE NATIVO</h1>
+
+  <h2>Sesiones activas</h2>
+
+  <pre><code>SELECT pid, usename, state, wait_event, query
+FROM pg_stat_activity;</code></pre>
+
+  <hr>
+
+  <h2>Queries más costosas</h2>
+
+  <pre><code>SELECT query, calls, total_time, mean_time
+FROM pg_stat_statements
+ORDER BY total_time DESC
+LIMIT 10;</code></pre>
+
+  <hr>
+
+  <h2>Índice cache hit ratio</h2>
+
+  <pre><code>SELECT
+  sum(idx_blks_hit) * 100.0 / nullif(sum(idx_blks_hit + idx_blks_read),0)
+  AS index_hit_ratio
+FROM pg_statio_user_indexes;</code></pre>
+
+  <p>Ideal &gt; 99%</p>
+
+  <hr>
+
+  <h1>🗂 DISEÑO DE ÍNDICES (CRÍTICO)</h1>
+
+  <h2>Índice básico</h2>
+
+  <pre><code>CREATE INDEX idx_clientes_email ON app.clientes(email);</code></pre>
+
+  <h2>Índice compuesto</h2>
+
+  <pre><code>CREATE INDEX idx_orders_cliente_fecha 
+ON app.orders(cliente_id, fecha);</code></pre>
+
+  <h2>Índice parcial</h2>
+
+  <pre><code>CREATE INDEX idx_orders_activos 
+ON app.orders(fecha)
+WHERE estado = 'ACTIVO';</code></pre>
+
+  <h2>Índice con expresión</h2>
+
+  <pre><code>CREATE INDEX idx_users_lower_email 
+ON app.users (lower(email));</code></pre>
+
+  <hr>
+
+  <h1>🧪 ANALIZAR QUERIES (EXPLAIN)</h1>
+
+  <h2>Plan básico</h2>
+
+  <pre><code>EXPLAIN SELECT * FROM app.orders WHERE cliente_id = 10;</code></pre>
+
+  <h2>Plan real</h2>
+
+  <pre><code>EXPLAIN ANALYZE SELECT * FROM app.orders WHERE cliente_id = 10;</code></pre>
+
+  <p>Buscar:</p>
+  <ul>
+    <li>Seq Scan (mal en tablas grandes)</li>
+    <li>Index Scan (bueno)</li>
+    <li>Costos altos</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧹 CONTROL DE BLOAT (VACUUM)</h1>
+
+  <h2>Manual</h2>
+
+  <pre><code>VACUUM ANALYZE;</code></pre>
+
+  <h2>Tabla específica</h2>
+
+  <pre><code>VACUUM ANALYZE app.orders;</code></pre>
+
+  <h2>Reorganización profunda</h2>
+
+  <pre><code>VACUUM FULL app.orders;</code></pre>
+
+  <p>⚠ Bloquea la tabla (usar con cuidado).</p>
+
+  <hr>
+
+  <h1>⚙️ AUTOVACUUM (CRÍTICO)</h1>
+
+  <pre><code>SHOW autovacuum;</code></pre>
+
+  <p>Debe estar ON.</p>
+
+  <p>Ajustes comunes:</p>
+
+  <pre><code>autovacuum_vacuum_scale_factor = 0.05
+autovacuum_analyze_scale_factor = 0.02</code></pre>
+
+  <hr>
+
+  <h1>🔐 BLOQUEOS Y CONCURRENCIA</h1>
+
+  <pre><code>SELECT locktype, relation::regclass, mode, granted
+FROM pg_locks;</code></pre>
+
+  <p>
+    Bloqueos prolongados = degradación severa.
+  </p>
+
+  <hr>
+
+  <h1>📦 PARTICIONAMIENTO (GRANDES VOLUMENES)</h1>
+
+  <pre><code>CREATE TABLE app.logs (
+    id bigint,
+    fecha date,
+    mensaje text
+) PARTITION BY RANGE (fecha);</code></pre>
+
+  <pre><code>CREATE TABLE app.logs_2026 PARTITION OF app.logs
+FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');</code></pre>
+
+  <p>Beneficio:</p>
+  <ul>
+    <li>✔ Queries más rápidas</li>
+    <li>✔ VACUUM eficiente</li>
+    <li>✔ Borrados masivos simples</li>
+  </ul>
+
+  <hr>
+
+  <h1>🚀 OPTIMIZACIONES AVANZADAS</h1>
+
+  <ul>
+    <li>✔ Prepared statements</li>
+    <li>✔ Connection pooling (PgBouncer)</li>
+    <li>✔ Batch inserts</li>
+    <li>✔ Proper indexing strategy</li>
+    <li>✔ Partition pruning</li>
+  </ul>
+
+  <hr>
+
+  <h1>📋 CHECKLIST DBA — PERFORMANCE</h1>
+
+  <ul>
+    <li>✅ Memoria ajustada</li>
+    <li>✅ WAL optimizado</li>
+    <li>✅ Índices correctos</li>
+    <li>✅ Autovacuum saludable</li>
+    <li>✅ Queries monitoreadas</li>
+    <li>✅ Bloat controlado</li>
+    <li>✅ Concurrencia vigilada</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 RESULTADO DE ESTA SECCIÓN</h1>
+
+  <ul>
+    <li>✔ PostgreSQL rápido y estable</li>
+    <li>✔ Consumo de recursos controlado</li>
+    <li>✔ Queries optimizadas</li>
+    <li>✔ Capacidad de escalar</li>
+  </ul>
+
+  <p><strong>Siguiente capítulo recomendado:</strong> PITR y recuperación avanzada.</p>
+</section>
+
+
+<section id="backup">
+  <h1>💾 BACKUPS PROFESIONALES Y RECUPERACIÓN EN POSTGRESQL (DBA)</h1>
+
+  <p>
+    Ningún servidor PostgreSQL está listo para producción sin una política sólida de backups.
+    Esta sección cubre:
+  </p>
+
+  <ul>
+    <li>✅ Backups lógicos</li>
+    <li>✅ Backups físicos</li>
+    <li>✅ Retención automática</li>
+    <li>✅ Restauraciones parciales y completas</li>
+    <li>✅ Buenas prácticas enterprise</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 OBJETIVOS DE UNA ESTRATEGIA DE BACKUP</h1>
+
+  <ul>
+    <li>✔ Recuperar datos borrados por error</li>
+    <li>✔ Recuperar tras corrupción</li>
+    <li>✔ Recuperar servidor completo</li>
+    <li>✔ Cumplir auditorías</li>
+    <li>✔ Garantizar continuidad del negocio</li>
+  </ul>
+
+  <p>
+    En empresas reales se combinan:
+    <strong>backup lógico + backup físico + WAL</strong>.
+  </p>
+
+  <hr>
+
+  <h1>📦 TIPOS DE BACKUP EN POSTGRESQL</h1>
+
+  <table border="1" cellpadding="6">
+    <tr><th>Tipo</th><th>Herramienta</th><th>Uso</th></tr>
+    <tr><td>Lógico</td><td>pg_dump</td><td>Tablas, DB individuales</td></tr>
+    <tr><td>Lógico global</td><td>pg_dumpall</td><td>Roles + todas las DB</td></tr>
+    <tr><td>Físico</td><td>pg_basebackup</td><td>Servidor completo</td></tr>
+    <tr><td>Incremental</td><td>WAL</td><td>Cambios entre backups</td></tr>
+  </table>
+
+  <hr>
+
+  <h1>📄 BACKUP LÓGICO PROFESIONAL (pg_dump)</h1>
+
+  <h2>Backup completo de una base</h2>
+
+  <pre><code>pg_dump -U ajimenez ajimenez > ajimenez_full.sql</code></pre>
+
+  <h2>Con compresión</h2>
+
+  <pre><code>pg_dump -U ajimenez ajimenez | gzip > ajimenez_full.sql.gz</code></pre>
+
+  <h2>Solo estructura</h2>
+
+  <pre><code>pg_dump -U ajimenez -s ajimenez > schema.sql</code></pre>
+
+  <h2>Solo datos</h2>
+
+  <pre><code>pg_dump -U ajimenez -a ajimenez > data.sql</code></pre>
+
+  <h2>Solo una tabla</h2>
+
+  <pre><code>pg_dump -U ajimenez -t app.clientes ajimenez > clientes.sql</code></pre>
+
+  <hr>
+
+  <h1>♻ RESTAURACIÓN LÓGICA</h1>
+
+  <h2>Restaurar completa</h2>
+
+  <pre><code>psql -U ajimenez ajimenez < ajimenez_full.sql</code></pre>
+
+  <h2>Restaurar comprimido</h2>
+
+  <pre><code>gunzip -c ajimenez_full.sql.gz | psql -U ajimenez ajimenez</code></pre>
+
+  <h2>Restaurar tabla específica</h2>
+
+  <pre><code>psql -U ajimenez ajimenez < clientes.sql</code></pre>
+
+  <hr>
+
+  <h1>🌍 BACKUP GLOBAL (ROLES + PERMISOS)</h1>
+
+  <p>
+    PostgreSQL no guarda usuarios dentro de cada base.
+    Por eso se debe respaldar todo el cluster:
+  </p>
+
+  <pre><code>pg_dumpall -U ajimenez > cluster_full.sql</code></pre>
+
+  <p>Restaurar:</p>
+
+  <pre><code>psql -U ajimenez postgres < cluster_full.sql</code></pre>
+
+  <hr>
+
+  <h1>🧱 BACKUP FÍSICO COMPLETO (pg_basebackup)</h1>
+
+  <p>
+    Este es el respaldo real del servidor completo — usado para:
+  </p>
+
+  <ul>
+    <li>✔ Disaster recovery</li>
+    <li>✔ Replicación</li>
+    <li>✔ PITR</li>
+  </ul>
+
+  <h2>Ejecutar backup físico</h2>
+
+  <pre><code>pg_basebackup -U ajimenez -D /home/ajimenez/base_backup -Fp -Xs -P</code></pre>
+
+  <p>Contenido incluye:</p>
+
+  <ul>
+    <li>Data directory completo</li>
+    <li>WAL necesarios</li>
+    <li>Estado consistente</li>
+  </ul>
+
+  <hr>
+
+  <h1>📆 AUTOMATIZACIÓN DE BACKUPS</h1>
+
+  <p>Script típico profesional:</p>
+
+  <pre><code>#!/bin/bash
+
+FECHA=$(date +%F)
+DEST=/home/ajimenez/pg_backups
+DB=ajimenez
+
+pg_dump -U ajimenez $DB | gzip > $DEST/${DB}_${FECHA}.sql.gz
+
+find $DEST -type f -mtime +7 -delete</code></pre>
+
+  <p>Cron:</p>
+
+  <pre><code>0 2 * * * /home/ajimenez/pg_backups/backup_pg.sh</code></pre>
+
+  <hr>
+
+  <h1>📊 POLÍTICA DE RETENCIÓN (ENTERPRISE)</h1>
+
+  <table border="1" cellpadding="6">
+    <tr><th>Backup</th><th>Retención típica</th></tr>
+    <tr><td>Diarios</td><td>7–14 días</td></tr>
+    <tr><td>Semanales</td><td>4–6 semanas</td></tr>
+    <tr><td>Mensuales</td><td>6–12 meses</td></tr>
+  </table>
+
+  <hr>
+
+  <h1>⚠ ERRORES COMUNES DE BACKUP</h1>
+
+  <ul>
+    <li>❌ No probar restores</li>
+    <li>❌ Guardar backups en mismo disco</li>
+    <li>❌ No rotar archivos</li>
+    <li>❌ No respaldar roles</li>
+    <li>❌ No automatizar</li>
+  </ul>
+
+  <hr>
+
+  <h1>📋 CHECKLIST DBA — BACKUPS</h1>
+
+  <ul>
+    <li>✅ Backup lógico diario</li>
+    <li>✅ Backup físico regular</li>
+    <li>✅ Retención configurada</li>
+    <li>✅ Restore probado</li>
+    <li>✅ Backups fuera del servidor</li>
+    <li>✅ Logs de ejecución</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 RESULTADO DE ESTA SECCIÓN</h1>
+
+  <ul>
+    <li>✔ Datos protegidos</li>
+    <li>✔ Recuperación garantizada</li>
+    <li>✔ Estrategia enterprise</li>
+    <li>✔ Base para PITR y HA</li>
+  </ul>
+
+  <p><strong>Siguiente capítulo recomendado:</strong> Recovery por tiempo (PITR + WAL).</p>
+</section>
+
+
+<!-- <section id="backup">
+<h1>Backups</h1>
+<code>pg_dump -U ajimenez db | gzip > backup.sql.gz</code>
+<code>cron diario automático</code>
+</section> -->
+
+
+
+<section id="pitr">
+  <h1>⏪ POINT IN TIME RECOVERY (PITR) EN POSTGRESQL — RECUPERACIÓN AVANZADA DBA</h1>
+
+  <p>
+    PITR permite restaurar PostgreSQL exactamente a un momento específico del pasado.
+    Es más potente que cualquier backup tradicional y es obligatorio en entornos empresariales.
+  </p>
+
+  <ul>
+    <li>✅ Recuperar borrados accidentales</li>
+    <li>✅ Volver segundos antes de un error</li>
+    <li>✅ Recuperación ante corrupción</li>
+    <li>✅ Continuidad del negocio</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧠 CONCEPTO CLAVE DE PITR</h1>
+
+  <p>
+    PostgreSQL usa WAL (Write Ahead Log) para registrar cada cambio antes de escribir en disco.
+    PITR combina:
+  </p>
+
+  <ul>
+    <li><strong>Backup base completo</strong></li>
+    <li><strong>Archivos WAL archivados continuamente</strong></li>
+  </ul>
+
+  <p>Con esto se puede reproducir la historia de la base de datos segundo por segundo.</p>
+
+  <hr>
+
+  <h1>📦 COMPONENTES NECESARIOS</h1>
+
+  <ul>
+    <li>📁 Backup base (pg_basebackup)</li>
+    <li>📁 Archivo de WAL históricos</li>
+    <li>⚙️ Configuración de archivado</li>
+    <li>🧭 Punto objetivo de recuperación</li>
+  </ul>
+
+  <hr>
+
+  <h1>⚙️ PASO 1 — HABILITAR ARCHIVADO WAL</h1>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <p>Agregar o modificar:</p>
+
+  <pre><code>wal_level = replica
+archive_mode = on
+archive_command = 'cp %p /home/ajimenez/pg_wal_archive/%f'
+archive_timeout = 60</code></pre>
+
+  <p>Crear directorio WAL:</p>
+
+  <pre><code>mkdir -p /home/ajimenez/pg_wal_archive
+chown -R ajimenez:ajimenez /home/ajimenez/pg_wal_archive</code></pre>
+
+  <p>Reiniciar:</p>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>🧪 PASO 2 — GENERAR ACTIVIDAD DE PRUEBA</h1>
+
+  <pre><code>psql -U ajimenez -h localhost ajimenez</code></pre>
+
+  <pre><code>CREATE TABLE app.pitr_test(id int, descripcion text);
+INSERT INTO app.pitr_test VALUES (1,'ok'),(2,'ok'),(3,'ok');</code></pre>
+
+  <hr>
+
+  <h1>📸 PASO 3 — BACKUP BASE COMPLETO</h1>
+
+  <pre><code>pg_basebackup -U ajimenez -D /home/ajimenez/base_backup -Fp -Xs -P</code></pre>
+
+  <p>
+    Este es el punto inicial de recuperación.
+  </p>
+
+  <hr>
+
+  <h1>💣 PASO 4 — SIMULAR DESASTRE</h1>
+
+  <pre><code>DROP TABLE app.pitr_test;</code></pre>
+
+  <p>Confirmar:</p>
+
+  <pre><code>\dt app.*</code></pre>
+
+  <hr>
+
+  <h1>⏪ PASO 5 — PROCESO DE RECUPERACIÓN PITR</h1>
+
+  <h2>1️⃣ Detener PostgreSQL</h2>
+
+  <pre><code>sudo systemctl stop postgresql-17</code></pre>
+
+  <h2>2️⃣ Limpiar data actual</h2>
+
+  <pre><code>sudo rm -rf /var/lib/pgsql/17/data/*</code></pre>
+
+  <h2>3️⃣ Restaurar backup base</h2>
+
+  <pre><code>sudo cp -r /home/ajimenez/base_backup/* /var/lib/pgsql/17/data/
+sudo chown -R postgres:postgres /var/lib/pgsql/17/data</code></pre>
+
+  <h2>4️⃣ Configurar recuperación</h2>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <pre><code>restore_command = 'cp /home/ajimenez/pg_wal_archive/%f %p'
+recovery_target = 'immediate'</code></pre>
+
+  <h2>5️⃣ Crear señal de recuperación</h2>
+
+  <pre><code>sudo touch /var/lib/pgsql/17/data/recovery.signal</code></pre>
+
+  <h2>6️⃣ Arrancar PostgreSQL</h2>
+
+  <pre><code>sudo systemctl start postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>✅ PASO 6 — VALIDAR RECUPERACIÓN</h1>
+
+  <pre><code>psql -U ajimenez -h localhost ajimenez</code></pre>
+
+  <pre><code>SELECT * FROM app.pitr_test;</code></pre>
+
+  <p>🎉 La tabla debe existir nuevamente.</p>
+
+  <hr>
+
+  <h1>🎯 RECUPERAR A UNA HORA EXACTA</h1>
+
+  <pre><code>recovery_target_time = '2026-01-25 14:05:00'</code></pre>
+
+  <p>
+    PostgreSQL se detendrá justo en ese segundo.
+  </p>
+
+  <hr>
+
+  <h1>📊 MONITOREO DE WAL</h1>
+
+  <pre><code>SELECT * FROM pg_stat_archiver;</code></pre>
+
+  <p>Debe mostrar WAL archivándose correctamente.</p>
+
+  <hr>
+
+  <h1>⚠ ERRORES COMUNES PITR</h1>
+
+  <ul>
+    <li>❌ No probar restauración</li>
+    <li>❌ No respaldar WAL</li>
+    <li>❌ Borrar WAL antiguos</li>
+    <li>❌ No tener backup base</li>
+    <li>❌ Permisos incorrectos</li>
+  </ul>
+
+  <hr>
+
+  <h1>📋 CHECKLIST DBA — PITR</h1>
+
+  <ul>
+    <li>✅ archive_mode activo</li>
+    <li>✅ WAL archivados</li>
+    <li>✅ Backup base regular</li>
+    <li>✅ Restauración probada</li>
+    <li>✅ Retención definida</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏆 RESULTADO DE ESTA SECCIÓN</h1>
+
+  <ul>
+    <li>✔ Recuperación a cualquier segundo</li>
+    <li>✔ Protección total de datos</li>
+    <li>✔ Nivel enterprise alcanzado</li>
+  </ul>
+
+  <p><strong>Siguiente capítulo recomendado:</strong> Replicación streaming en tiempo real.</p>
+</section>
+
+
+
+<!-- <section id="pitr"> -->
+<!-- <h1>PITR Recovery</h1>
+<code>archive_mode = on</code>
+<code>restore_command='cp wal/%f %p'</code>
+</section> -->
+
+
+<section id="replica">
+  <h1>🔄 REPLICACIÓN STREAMING EN POSTGRESQL (MASTER → STANDBY) — MANUAL DBA PASO A PASO</h1>
+
+  <p>
+    Este capítulo es una guía completa, práctica y de principio a fin para implementar
+    <strong>replicación streaming</strong> en PostgreSQL 17 como en un entorno real de producción.
+  </p>
+
+  <ul>
+    <li>✅ Alta disponibilidad (HA) básica</li>
+    <li>✅ Réplica en tiempo real</li>
+    <li>✅ Base para failover automático</li>
+    <li>✅ Lecturas en standby</li>
+    <li>✅ Preparación para DR (disaster recovery)</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏗 ARQUITECTURA Y CONCEPTOS</h1>
+
+  <h2>¿Qué es streaming replication?</h2>
+  <p>
+    PostgreSQL replica cambios del servidor primario (PRIMARY / MASTER) hacia un servidor secundario (STANDBY)
+    enviando continuamente los registros WAL.
+  </p>
+
+  <pre><code>PRIMARY  ──(WAL Streaming)──▶  STANDBY
+  RW                          RO (opcional)</code></pre>
+
+  <h2>Objetivo</h2>
+  <ul>
+    <li>✔ Si el primary falla, el standby puede promoverse manualmente o por herramientas (Patroni, etc.)</li>
+    <li>✔ Se reduce riesgo de pérdida de datos</li>
+  </ul>
+
+  <hr>
+
+  <h1>✅ REQUISITOS Y PREPARACIÓN</h1>
+
+  <h2>Requisitos mínimos</h2>
+  <ul>
+    <li>✔ Dos servidores (recomendado) o dos instancias (para laboratorio)</li>
+    <li>✔ PostgreSQL 17 instalado en ambos</li>
+    <li>✔ Conectividad TCP entre nodos (puerto 5432)</li>
+    <li>✔ Ajustes de red y firewall</li>
+    <li>✔ Usuario de replicación</li>
+  </ul>
+
+  <h2>Nomenclatura (ejemplo)</h2>
+  <ul>
+    <li><strong>PRIMARY</strong> (Servidor 1): <code>192.168.1.10</code></li>
+    <li><strong>STANDBY</strong> (Servidor 2): <code>192.168.1.11</code></li>
+    <li><strong>Puerto</strong>: <code>5432</code></li>
+    <li><strong>Usuario DBA</strong>: <code>ajimenez</code></li>
+    <li><strong>Usuario réplica</strong>: <code>replica_user</code></li>
+  </ul>
+
+  <blockquote>
+    ⚠ Ajusta IPs según tu red. Si estás haciendo laboratorio en una sola máquina, necesitas puertos distintos y data_dir distintos.
+    En producción real, se usan servidores separados.
+  </blockquote>
+
+  <hr>
+
+  <h1>🧱 PARTE A — CONFIGURAR EL PRIMARY (MASTER)</h1>
+
+  <h2>Paso A1 — Confirmar que el servicio está activo</h2>
+
+  <pre><code>systemctl status postgresql-17</code></pre>
+
+  <p>Debe ser:</p>
+  <pre><code>Active: active (running)</code></pre>
+
+  <hr>
+
+  <h2>Paso A2 — Configuración de red del primary</h2>
+
+  <p>Editar:</p>
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <p>Confirmar:</p>
+  <pre><code>listen_addresses = '*'
+port = 5432</code></pre>
+
+  <hr>
+
+  <h2>Paso A3 — Activar parámetros de replicación en primary</h2>
+
+  <p>En el mismo archivo <code>postgresql.conf</code>, agregar o confirmar:</p>
+
+  <pre><code># --- Replicación ---
+wal_level = replica
+max_wal_senders = 10
+max_replication_slots = 10
+hot_standby = on
+
+# Mantener WAL suficientes para evitar pérdida si standby se atrasa
+wal_keep_size = 1024MB
+
+# Opcional: mejora de checkpoints (reduce spikes)
+checkpoint_completion_target = 0.9
+max_wal_size = 4GB
+min_wal_size = 1GB</code></pre>
+
+  <p>
+    <strong>Explicación DBA:</strong><br>
+    - <code>wal_level=replica</code> activa WAL suficiente para replicación.<br>
+    - <code>max_wal_senders</code> define cuántos procesos pueden enviar WAL.<br>
+    - <code>wal_keep_size</code> evita que el primary borre WAL antes que standby los consuma (aunque en producción se recomienda slot).<br>
+    - <code>max_replication_slots</code> habilita slots (recomendado).
+  </p>
+
+  <hr>
+
+  <h2>Paso A4 — Crear usuario de replicación</h2>
+
+  <pre><code>psql -U ajimenez -h localhost postgres</code></pre>
+
+  <pre><code>CREATE ROLE replica_user
+LOGIN
+REPLICATION
+PASSWORD 'ReplicaStrong#2026';</code></pre>
+
+  <p>
+    <strong>Nota DBA:</strong> Este usuario solo debe tener permisos de replicación, no acceso a tablas.
+  </p>
+
+  <hr>
+
+  <h2>Paso A5 — Configurar pg_hba.conf para permitir replicación</h2>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+  <p>Agregar una regla para el standby (recomendado por IP exacta):</p>
+
+  <pre><code># Permitir replicación desde el standby
+host    replication     replica_user     192.168.1.11/32     scram-sha-256</code></pre>
+
+  <p>
+    Si todavía no usas SCRAM, puedes poner <code>md5</code>, pero lo recomendado es SCRAM.
+  </p>
+
+  <hr>
+
+  <h2>Paso A6 — Reiniciar el primary</h2>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h2>Paso A7 — Verificar que parámetros aplicaron</h2>
+
+  <pre><code>psql -U ajimenez -h localhost postgres</code></pre>
+
+  <pre><code>SHOW wal_level;
+SHOW max_wal_senders;
+SHOW max_replication_slots;
+SHOW hot_standby;
+SHOW wal_keep_size;</code></pre>
+
+  <hr>
+
+  <h2>Paso A8 — Firewall (si aplica)</h2>
+
+  <p>Permitir acceso del standby al puerto 5432 (ejemplo con firewalld):</p>
+
+  <pre><code>sudo firewall-cmd --permanent --add-rich-rule='
+rule family="ipv4"
+source address="192.168.1.11/32"
+port protocol="tcp" port="5432" accept'
+sudo firewall-cmd --reload</code></pre>
+
+  <hr>
+
+  <h1>🧩 PARTE B — PREPARAR EL STANDBY (REPLICA)</h1>
+
+  <h2>Paso B1 — Instalar PostgreSQL 17 (si aún no está)</h2>
+
+  <pre><code>sudo dnf install -y postgresql17 postgresql17-server postgresql17-contrib</code></pre>
+
+  <hr>
+
+  <h2>Paso B2 — Detener servicio en standby</h2>
+
+  <pre><code>sudo systemctl stop postgresql-17</code></pre>
+
+  <hr>
+
+  <h2>Paso B3 — Limpiar data_dir del standby</h2>
+
+  <pre><code>sudo rm -rf /var/lib/pgsql/17/data/*</code></pre>
+
+  <blockquote>
+    ⚠ Este paso elimina cualquier contenido. En producción el standby debe estar vacío antes de clonar.
+  </blockquote>
+
+  <hr>
+
+  <h2>Paso B4 — Clonar el primary con pg_basebackup</h2>
+
+  <p>
+    Desde el standby, ejecutar:
+  </p>
+
+  <pre><code>pg_basebackup \
+-h 192.168.1.10 \
+-p 5432 \
+-U replica_user \
+-D /var/lib/pgsql/17/data \
+-Fp -Xs -P -R</code></pre>
+
+  <p>
+    <strong>Explicación DBA:</strong><br>
+    - <code>-D</code> destino del data_dir<br>
+    - <code>-Xs</code> incluye WAL necesarios para consistencia<br>
+    - <code>-P</code> muestra progreso<br>
+    - <code>-R</code> crea automáticamente <code>standby.signal</code> y la configuración de conexión al primary
+  </p>
+
+  <hr>
+
+  <h2>Paso B5 — Verificar archivos creados</h2>
+
+  <pre><code>ls -lh /var/lib/pgsql/17/data | egrep "standby.signal|postgresql.auto.conf"</code></pre>
+
+  <p>Debe existir:</p>
+  <ul>
+    <li><code>standby.signal</code> → indica modo réplica</li>
+    <li><code>postgresql.auto.conf</code> → contiene <code>primary_conninfo</code></li>
+  </ul>
+
+  <hr>
+
+  <h2>Paso B6 — Asegurar permisos correctos</h2>
+
+  <pre><code>sudo chown -R postgres:postgres /var/lib/pgsql/17/data
+sudo chmod 700 /var/lib/pgsql/17/data</code></pre>
+
+  <hr>
+
+  <h2>Paso B7 — Arrancar el standby</h2>
+
+  <pre><code>sudo systemctl start postgresql-17</code></pre>
+
+  <hr>
+
+  <h2>Paso B8 — Verificar que el standby está en modo recuperación</h2>
+
+  <pre><code>psql -U ajimenez -h localhost postgres</code></pre>
+
+  <pre><code>SELECT pg_is_in_recovery();</code></pre>
+
+  <p>Debe devolver:</p>
+  <pre><code>true</code></pre>
+
+  <hr>
+
+  <h1>🔎 PARTE C — VALIDACIONES COMPLETAS (OBLIGATORIO EN PRODUCCIÓN)</h1>
+
+  <h2>Paso C1 — Ver conexión en el primary</h2>
+
+  <pre><code>psql -U ajimenez -h localhost postgres</code></pre>
+
+  <pre><code>SELECT client_addr, state, sync_state, write_lag, flush_lag, replay_lag
+FROM pg_stat_replication;</code></pre>
+
+  <p>
+    Debes ver el standby conectado. El estado típico:
+    <code>streaming</code>
+  </p>
+
+  <hr>
+
+  <h2>Paso C2 — Ver estado en el standby</h2>
+
+  <pre><code>SELECT status, receive_start_lsn, received_lsn, latest_end_lsn
+FROM pg_stat_wal_receiver;</code></pre>
+
+  <p>Debe mostrar:</p>
+  <ul>
+    <li>status = <code>streaming</code></li>
+    <li>LSN avanzando</li>
+  </ul>
+
+  <hr>
+
+  <h2>Paso C3 — Prueba real de replicación (datos)</h2>
+
+  <p>En el primary:</p>
+
+  <pre><code>psql -U ajimenez -h localhost ajimenez</code></pre>
+
+  <pre><code>CREATE TABLE IF NOT EXISTS app.replica_test (
+  id serial primary key,
+  mensaje text,
+  creado_en timestamptz default now()
+);
+
+INSERT INTO app.replica_test(mensaje) VALUES
+('dato 1 desde primary'),
+('dato 2 desde primary');</code></pre>
+
+  <p>En el standby (solo lectura):</p>
+
+  <pre><code>psql -U ajimenez -h localhost ajimenez</code></pre>
+
+  <pre><code>SELECT * FROM app.replica_test ORDER BY id;</code></pre>
+
+  <p>✅ Los registros deben aparecer igual.</p>
+
+  <hr>
+
+  <h1>🧠 PARTE D — CONFIGURAR SÍNCRONA VS ASÍNCRONA</h1>
+
+  <h2>Asíncrona (default)</h2>
+  <p>
+    El primary confirma commits sin esperar al standby.
+    Ventaja: máximo rendimiento.<br>
+    Desventaja: riesgo mínimo de pérdida si el primary cae justo al escribir.
+  </p>
+
+  <h2>Síncrona (enterprise)</h2>
+  <p>
+    El primary espera confirmación del standby antes de confirmar commit.
+    Ventaja: cero pérdida de datos (si la red está bien).<br>
+    Desventaja: más latencia.
+  </p>
+
+  <h3>Habilitar síncrona en primary</h3>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <pre><code>synchronous_commit = on
+synchronous_standby_names = '1 (*)'</code></pre>
+
+  <p>Reiniciar:</p>
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>🧷 PARTE E — RECOMENDACIÓN ENTERPRISE: REPLICATION SLOTS</h1>
+
+  <p>
+    Los slots evitan pérdida de WAL si el standby se desconecta.
+    Sin slot, si el standby se atrasa demasiado, el primary puede reciclar WAL y romper la réplica.
+  </p>
+
+  <h2>Crear slot en primary</h2>
+
+  <pre><code>SELECT * FROM pg_create_physical_replication_slot('standby01');</code></pre>
+
+  <h2>Usar slot en standby</h2>
+
+  <p>Editar en standby el <code>postgresql.auto.conf</code> (si no existe, crear)</p>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.auto.conf</code></pre>
+
+  <pre><code>primary_slot_name = 'standby01'</code></pre>
+
+  <p>Reiniciar standby:</p>
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <h2>Ver slots en primary</h2>
+
+  <pre><code>SELECT slot_name, active, restart_lsn
+FROM pg_replication_slots;</code></pre>
+
+  <hr>
+
+  <h1>🚨 PARTE F — TROUBLESHOOTING (PROBLEMAS COMUNES)</h1>
+
+  <h2>1) El standby no conecta (auth)</h2>
+  <ul>
+    <li>Revisar <code>pg_hba.conf</code> en primary</li>
+    <li>Confirmar IP correcta</li>
+    <li>Confirmar método (scram/md5)</li>
+    <li>Revisar logs</li>
+  </ul>
+
+  <p>Logs:</p>
+  <pre><code>journalctl -xeu postgresql-17</code></pre>
+
+  <hr>
+
+  <h2>2) “FATAL: could not connect” (red/firewall)</h2>
+
+  <ul>
+    <li>Probar conectividad:</li>
+  </ul>
+
+  <pre><code>nc -zv 192.168.1.10 5432</code></pre>
+
+  <p>Si falla: revisar firewalld y listen_addresses.</p>
+
+  <hr>
+
+  <h2>3) Replica se cae por WAL faltantes</h2>
+
+  <ul>
+    <li>Usar replication slots</li>
+    <li>Aumentar wal_keep_size</li>
+    <li>Recrear standby con pg_basebackup</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧪 PARTE G — PRUEBA REAL DE “CÍRCULO COMPLETO”</h1>
+
+  <p>
+    Este test valida que realmente estás replicando WAL y que el standby puede sobrevivir reinicios.
+  </p>
+
+  <ol>
+    <li>Insertar datos en primary</li>
+    <li>Verificar en standby</li>
+    <li>Reiniciar standby</li>
+    <li>Verificar que vuelve a streaming</li>
+  </ol>
+
+  <p>Reiniciar standby:</p>
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <p>Verificar:</p>
+  <pre><code>SELECT status FROM pg_stat_wal_receiver;</code></pre>
+
+  <hr>
+
+  <h1>📋 CHECKLIST FINAL DBA — REPLICACIÓN STREAMING</h1>
+
+  <ul>
+    <li>✅ wal_level = replica</li>
+    <li>✅ max_wal_senders configurado</li>
+    <li>✅ usuario replica_user creado</li>
+    <li>✅ pg_hba.conf permite replicación por IP</li>
+    <li>✅ pg_basebackup ejecutado con -R</li>
+    <li>✅ standby.signal presente</li>
+    <li>✅ pg_is_in_recovery() = true</li>
+    <li>✅ pg_stat_replication muestra standby</li>
+    <li>✅ prueba de datos exitosa</li>
+    <li>✅ (Recomendado) replication slots habilitados</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏆 RESULTADO DE ESTE CAPÍTULO</h1>
+
+  <ul>
+    <li>✔ Alta disponibilidad básica lograda</li>
+    <li>✔ Réplica en vivo lista para lectura</li>
+    <li>✔ Base lista para failover automático</li>
+    <li>✔ Nivel DBA senior en replicación alcanzado</li>
+  </ul>
+
+  <p><strong>Siguiente capítulo recomendado:</strong> Failover automático (Patroni + etcd + HAProxy).</p>
+</section>
+
+
+<!-- <section id="replica">
+<h1>Replicación Streaming</h1>
+<code>wal_level=replica</code>
+<code>pg_basebackup -h master</code>
+</section> -->
+
+
+<section id="failover">
+  <h1>⚡ FAILOVER AUTOMÁTICO EN POSTGRESQL — ALTA DISPONIBILIDAD REAL (DBA SENIOR)</h1>
+
+  <p>
+    En este capítulo se implementa un clúster PostgreSQL con:
+  </p>
+
+  <ul>
+    <li>✅ Promoción automática de réplicas</li>
+    <li>✅ Cero intervención humana</li>
+    <li>✅ Balanceo inteligente</li>
+    <li>✅ Tolerancia a fallos</li>
+    <li>✅ Arquitectura enterprise</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏗 ARQUITECTURA DE ALTA DISPONIBILIDAD</h1>
+
+  <pre><code>Aplicaciones
+     |
+  HAProxy
+     |
+ ┌─────────────┐
+ Primary    Standby
+     ↑           ↓
+        Patroni
+           ↕
+         etcd</code></pre>
+
+  <p>
+    Patroni controla quién es PRIMARY y quién es REPLICA.
+    etcd mantiene consenso.
+    HAProxy dirige tráfico automáticamente al nodo activo.
+  </p>
+
+  <hr>
+
+  <h1>📦 COMPONENTES DEL STACK</h1>
+
+  <table border="1" cellpadding="6">
+    <tr><th>Componente</th><th>Función</th></tr>
+    <tr><td>PostgreSQL</td><td>Motor de base de datos</td></tr>
+    <tr><td>Patroni</td><td>Orquestador HA</td></tr>
+    <tr><td>etcd</td><td>Consenso distribuido</td></tr>
+    <tr><td>HAProxy</td><td>Balanceador</td></tr>
+  </table>
+
+  <hr>
+
+  <h1>✅ REQUISITOS PREVIOS</h1>
+
+  <ul>
+    <li>✔ Replicación streaming funcionando</li>
+    <li>✔ Dos o más nodos PostgreSQL</li>
+    <li>✔ Red estable</li>
+    <li>✔ Firewall configurado</li>
+    <li>✔ Usuario admin ajimenez</li>
+  </ul>
+
+  <hr>
+
+  <h1>🧱 PARTE A — INSTALACIÓN DE COMPONENTES</h1>
+
+  <h2>En TODOS los nodos</h2>
+
+  <pre><code>sudo dnf install -y patroni etcd haproxy python3-psycopg2</code></pre>
+
+  <hr>
+
+  <h1>🗳 PARTE B — CONFIGURAR ETCD (NODO PRINCIPAL)</h1>
+
+  <pre><code>sudo nano /etc/etcd/etcd.conf</code></pre>
+
+  <pre><code>ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
+ETCD_ADVERTISE_CLIENT_URLS="http://192.168.1.10:2379"</code></pre>
+
+  <pre><code>sudo systemctl enable etcd
+sudo systemctl start etcd</code></pre>
+
+  <p>Verificar:</p>
+
+  <pre><code>etcdctl endpoint health</code></pre>
+
+  <hr>
+
+  <h1>🐘 PARTE C — CONFIGURACIÓN DE PATRONI</h1>
+
+  <h2>Crear archivo Patroni</h2>
+
+  <pre><code>sudo nano /etc/patroni.yml</code></pre>
+
+  <h3>Ejemplo nodo PRIMARY</h3>
+
+  <pre><code>scope: pg_cluster
+name: node1
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: 192.168.1.10:8008
+
+etcd:
+  hosts: 192.168.1.10:2379
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    postgresql:
+      use_pg_rewind: true
+      parameters:
+        wal_level: replica
+        hot_standby: on
+        max_wal_senders: 10
+
+  initdb:
+    - encoding: UTF8
+    - data-checksums
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: 192.168.1.10:5432
+  data_dir: /var/lib/pgsql/17/data
+  authentication:
+    superuser:
+      username: ajimenez
+      password: PostgresStrong#2026
+    replication:
+      username: replica_user
+      password: ReplicaStrong#2026</code></pre>
+
+  <h3>Ejemplo nodo STANDBY</h3>
+
+  <p>Solo cambiar:</p>
+
+  <pre><code>name: node2
+connect_address: 192.168.1.11:8008
+postgresql:
+  connect_address: 192.168.1.11:5432</code></pre>
+
+  <hr>
+
+  <h1>▶ PARTE D — ARRANCAR PATRONI</h1>
+
+  <pre><code>sudo patroni /etc/patroni.yml</code></pre>
+
+  <p>Ver clúster:</p>
+
+  <pre><code>patronictl list</code></pre>
+
+  <hr>
+
+  <h1>🌐 PARTE E — CONFIGURAR HAPROXY</h1>
+
+  <pre><code>sudo nano /etc/haproxy/haproxy.cfg</code></pre>
+
+  <pre><code>frontend postgres
+  bind *:5000
+  default_backend pg_nodes
+
+backend pg_nodes
+  option httpchk
+  server node1 192.168.1.10:5432 check port 8008
+  server node2 192.168.1.11:5432 check port 8008</code></pre>
+
+  <pre><code>sudo systemctl enable haproxy
+sudo systemctl start haproxy</code></pre>
+
+  <hr>
+
+  <h1>🔄 PARTE F — PRUEBA REAL DE FAILOVER</h1>
+
+  <p>Apagar primary:</p>
+
+  <pre><code>sudo systemctl stop postgresql-17</code></pre>
+
+  <p>Ver promoción:</p>
+
+  <pre><code>patronictl list</code></pre>
+
+  <p>La réplica se vuelve PRIMARY automáticamente.</p>
+
+  <hr>
+
+  <h1>📋 CHECKLIST FAILOVER</h1>
+
+  <ul>
+    <li>✅ Patroni operativo</li>
+    <li>✅ etcd saludable</li>
+    <li>✅ HAProxy redirige tráfico</li>
+    <li>✅ Failover probado</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏆 RESULTADO</h1>
+
+  <ul>
+    <li>✔ Alta disponibilidad real</li>
+    <li>✔ Sin downtime</li>
+    <li>✔ Arquitectura enterprise</li>
+  </ul>
+
+  <p><strong>Tu PostgreSQL ahora opera como infraestructura bancaria real.</strong></p>
+</section>
+
+
+
+
+<!-- <section id="failover">
+<h1>Failover Automático</h1>
+<p>Patroni + etcd + HAProxy</p>
+</section> -->
+
+
+<section id="monitor">
+  <h1>📊 MONITOREO PROFESIONAL DE POSTGRESQL — VISIBILIDAD TOTAL DBA</h1>
+
+  <p>
+    Un DBA no “reacciona a problemas”, los previene.
+    El monitoreo permite:
+  </p>
+
+  <ul>
+    <li>✅ Detectar cuellos de botella</li>
+    <li>✅ Prevenir caídas</li>
+    <li>✅ Analizar tendencias</li>
+    <li>✅ Optimizar recursos</li>
+    <li>✅ Cumplir SLA empresariales</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏗 ARQUITECTURA DE MONITOREO</h1>
+
+  <pre><code>PostgreSQL
+   ↓ métricas
+Postgres Exporter
+   ↓
+Prometheus
+   ↓
+Grafana
+   ↓
+DBA + Alertas</code></pre>
+
+  <hr>
+
+  <h1>📦 COMPONENTES</h1>
+
+  <table border="1" cellpadding="6">
+    <tr><th>Componente</th><th>Función</th></tr>
+    <tr><td>pg_stat_*</td><td>Métricas internas</td></tr>
+    <tr><td>postgres_exporter</td><td>Expone métricas</td></tr>
+    <tr><td>Prometheus</td><td>Recolector</td></tr>
+    <tr><td>Grafana</td><td>Visualización</td></tr>
+  </table>
+
+  <hr>
+
+  <h1>🧠 PARTE A — MÉTRICAS NATIVAS DE POSTGRESQL</h1>
+
+  <h2>Sesiones activas</h2>
+
+  <pre><code>SELECT pid, usename, state, wait_event, query
+FROM pg_stat_activity;</code></pre>
+
+  <h2>Bloqueos</h2>
+
+  <pre><code>SELECT locktype, relation::regclass, mode, granted
+FROM pg_locks;</code></pre>
+
+  <h2>Queries más pesadas</h2>
+
+  <pre><code>SELECT query, calls, total_time, mean_time
+FROM pg_stat_statements
+ORDER BY total_time DESC
+LIMIT 10;</code></pre>
+
+  <h2>Uso de disco por tabla</h2>
+
+  <pre><code>SELECT relname, pg_size_pretty(pg_total_relation_size(relid))
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC;</code></pre>
+
+  <hr>
+
+  <h1>⚙️ PARTE B — HABILITAR EXTENSIONES</h1>
+
+  <pre><code>CREATE EXTENSION pg_stat_statements;
+CREATE EXTENSION pg_buffercache;</code></pre>
+
+  <p>En postgresql.conf:</p>
+
+  <pre><code>shared_preload_libraries = 'pg_stat_statements'</code></pre>
+
+  <p>Reiniciar:</p>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>📡 PARTE C — INSTALAR STACK DE MONITOREO</h1>
+
+  <pre><code>sudo dnf install -y prometheus grafana postgresql_exporter</code></pre>
+
+  <hr>
+
+  <h1>👤 PARTE D — USUARIO DE MONITOREO</h1>
+
+  <pre><code>CREATE ROLE monitor_user LOGIN PASSWORD 'Monitor#2026';
+GRANT pg_monitor TO monitor_user;</code></pre>
+
+  <hr>
+
+  <h1>📈 PARTE E — CONFIGURAR POSTGRES EXPORTER</h1>
+
+  <pre><code>sudo nano /etc/postgres_exporter.env</code></pre>
+
+  <pre><code>DATA_SOURCE_NAME="postgresql://monitor_user:Monitor#2026@localhost:5432/ajimenez?sslmode=disable"</code></pre>
+
+  <pre><code>sudo systemctl enable postgres_exporter
+sudo systemctl start postgres_exporter</code></pre>
+
+  <hr>
+
+  <h1>📊 PARTE F — CONFIGURAR PROMETHEUS</h1>
+
+  <pre><code>sudo nano /etc/prometheus/prometheus.yml</code></pre>
+
+  <pre><code>scrape_configs:
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['localhost:9187']</code></pre>
+
+  <pre><code>sudo systemctl enable prometheus
+sudo systemctl start prometheus</code></pre>
+
+  <hr>
+
+  <h1>📉 PARTE G — GRAFANA</h1>
+
+  <pre><code>sudo systemctl enable grafana-server
+sudo systemctl start grafana-server</code></pre>
+
+  <p>Abrir navegador:</p>
+
+  <pre><code>http://localhost:3000</code></pre>
+
+  <p>Login inicial:</p>
+
+  <pre><code>admin / admin</code></pre>
+
+  <p>Importar dashboard PostgreSQL (ID popular: 9628).</p>
+
+  <hr>
+
+  <h1>🚨 PARTE H — ALERTAS CLAVE</h1>
+
+  <h2>Conexiones altas</h2>
+
+  <pre><code>pg_stat_activity_count > 150</code></pre>
+
+  <h2>Replica caída</h2>
+
+  <pre><code>pg_replication_lag_seconds > 30</code></pre>
+
+  <h2>Disco bajo</h2>
+
+  <pre><code>node_filesystem_avail_bytes < 10GB</code></pre>
+
+  <hr>
+
+  <h1>📋 CHECKLIST MONITOREO</h1>
+
+  <ul>
+    <li>✅ Métricas internas activas</li>
+    <li>✅ Exporter funcionando</li>
+    <li>✅ Prometheus recolectando</li>
+    <li>✅ Grafana mostrando datos</li>
+    <li>✅ Alertas configuradas</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏆 RESULTADO</h1>
+
+  <ul>
+    <li>✔ Visibilidad completa</li>
+    <li>✔ Prevención de fallos</li>
+    <li>✔ Optimización continua</li>
+    <li>✔ Operación profesional</li>
+  </ul>
+
+  <p><strong>Con esto administras PostgreSQL como en producción real.</strong></p>
+</section>
+
+
+
+
+
+
+
+<!-- <section id="monitor">
+<h1>Monitoreo Profesional</h1>
+<code>pg_stat_statements</code>
+<code>Prometheus + Grafana</code>
+</section> -->
+
+<section id="security">
+  <h1>🔐 SEGURIDAD AVANZADA EN POSTGRESQL — HARDENING DBA ENTERPRISE</h1>
+
+  <p>
+    La seguridad no es opcional.
+    En entornos profesionales, una mala configuración puede causar:
+  </p>
+
+  <ul>
+    <li>❌ Pérdida de datos</li>
+    <li>❌ Brechas de seguridad</li>
+    <li>❌ Multas legales</li>
+    <li>❌ Caídas de sistemas</li>
+  </ul>
+
+  <p>
+    Esta sección cubre seguridad real usada en empresas:
+  </p>
+
+  <ul>
+    <li>✅ Autenticación fuerte</li>
+    <li>✅ Control de accesos por capas</li>
+    <li>✅ Protección de red</li>
+    <li>✅ Auditoría</li>
+    <li>✅ Protección de datos</li>
+    <li>✅ Buenas prácticas Linux + PostgreSQL</li>
+  </ul>
+
+  <hr>
+
+  <h1>🎯 PRINCIPIOS DE SEGURIDAD DBA</h1>
+
+  <ul>
+    <li>✔ Mínimo privilegio</li>
+    <li>✔ Defensa en profundidad</li>
+    <li>✔ Acceso por capas</li>
+    <li>✔ Auditoría constante</li>
+    <li>✔ Segmentación de red</li>
+  </ul>
+
+  <hr>
+
+  <h1>🔑 AUTENTICACIÓN FUERTE (SCRAM-SHA-256)</h1>
+
+  <h2>Configurar cifrado de passwords</h2>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <pre><code>password_encryption = scram-sha-256</code></pre>
+
+  <hr>
+
+  <h2>Actualizar pg_hba.conf</h2>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+  <pre><code>host all all 127.0.0.1/32 scram-sha-256
+host all all 192.168.1.0/24 scram-sha-256</code></pre>
+
+  <p>Reiniciar:</p>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>👑 CONTROL DEL SUPERUSUARIO</h1>
+
+  <p>Ver superusers:</p>
+
+  <pre><code>SELECT rolname FROM pg_roles WHERE rolsuper = true;</code></pre>
+
+  <p>Regla:</p>
+  <ul>
+    <li>Solo DBA debe ser superuser</li>
+    <li>Nunca aplicaciones</li>
+  </ul>
+
+  <hr>
+
+  <h1>🗂 AISLAMIENTO POR ESQUEMAS</h1>
+
+  <pre><code>CREATE SCHEMA secure_app AUTHORIZATION ajimenez;
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+
+GRANT USAGE ON SCHEMA secure_app TO app_ro, app_rw;</code></pre>
+
+  <hr>
+
+  <h1>🚫 LIMITAR CONEXIONES</h1>
+
+  <pre><code>ALTER ROLE app_user CONNECTION LIMIT 20;
+ALTER ROLE report_user CONNECTION LIMIT 5;</code></pre>
+
+  <hr>
+
+  <h1>📜 LOGGING DE SEGURIDAD</h1>
+
+  <pre><code>sudo nano /var/lib/pgsql/17/data/postgresql.conf</code></pre>
+
+  <pre><code>log_connections = on
+log_disconnections = on
+log_statement = 'ddl'
+log_line_prefix = '%m [%p] %u %d %r '</code></pre>
+
+  <hr>
+
+  <h1>🧱 PROTECCIÓN DEL DATA DIRECTORY</h1>
+
+  <pre><code>sudo chown -R postgres:postgres /var/lib/pgsql/17/data
+sudo chmod 700 /var/lib/pgsql/17/data</code></pre>
+
+  <hr>
+
+  <h1>🔥 FIREWALL LINUX</h1>
+
+  <pre><code>sudo firewall-cmd --permanent --add-rich-rule='
+rule family="ipv4"
+source address="192.168.1.0/24"
+port protocol="tcp" port="5432" accept'
+sudo firewall-cmd --reload</code></pre>
+
+  <hr>
+
+  <h1>🕵️ AUDITORÍA AVANZADA (PGAUDIT)</h1>
+
+  <pre><code>CREATE EXTENSION pgaudit;</code></pre>
+
+  <pre><code>shared_preload_libraries = 'pg_stat_statements,pgaudit'
+pgaudit.log = 'ddl,role,write'</code></pre>
+
+  <p>Reiniciar:</p>
+
+  <pre><code>sudo systemctl restart postgresql-17</code></pre>
+
+  <hr>
+
+  <h1>⏱ PROTECCIÓN CONTRA QUERIES PELIGROSAS</h1>
+
+  <pre><code>statement_timeout = 5min
+idle_in_transaction_session_timeout = 5min</code></pre>
+
+  <hr>
+
+  <h1>📋 CHECKLIST SEGURIDAD ENTERPRISE</h1>
+
+  <ul>
+    <li>✅ SCRAM activo</li>
+    <li>✅ IPs limitadas</li>
+    <li>✅ Roles bien definidos</li>
+    <li>✅ Superuser controlado</li>
+    <li>✅ Logs activos</li>
+    <li>✅ Firewall configurado</li>
+    <li>✅ Auditoría habilitada</li>
+    <li>✅ Directorios protegidos</li>
+  </ul>
+
+  <hr>
+
+  <h1>🏆 RESULTADO</h1>
+
+  <ul>
+    <li>✔ PostgreSQL endurecido (hardened)</li>
+    <li>✔ Seguridad bancaria</li>
+    <li>✔ Cumplimiento empresarial</li>
+    <li>✔ Riesgo minimizado</li>
+  </ul>
+
+  <p><strong>Tu servidor PostgreSQL ahora cumple estándares enterprise reales.</strong></p>
+</section>
+
+
+
+<!-- <section id="security">
+<h1>Hardening</h1>
+<code>SCRAM authentication</code>
+<code>Firewall Linux</code>
+<code>Auditoría PGAudit</code>
+</section> -->
+
+</main>
+</body>
+</html>

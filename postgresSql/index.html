@@ -2,193 +2,234 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SQL Server - Resolución de Problemas</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Acceso protegido</title>
+
+  <!-- Font Awesome (opcional, para el ícono del libro) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
   <style>
-    body {
+    body{
+      margin:0;
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      display: flex;
-      height: 100vh;
+      background:#0f172a;
+      color:#e5e7eb;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
     }
-    .menu {
-      width: 250px;
-      background: #f3f6f8;
-      color: #000;
-      padding: 20px;
-      overflow-y: auto;
-      position: fixed;
-      height: 100%;
+    .card{
+      width:min(520px, 92vw);
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:14px;
+      box-shadow:0 20px 50px rgba(0,0,0,.45);
+      padding:22px;
     }
-    .profile {
-      margin-bottom: 20px;
-      text-align: center;
+    .row{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
     }
-    .profile img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 3px solid #000;
+    .book{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:84px;
+      height:84px;
+      border-radius:14px;
+      background:#1f2937;
+      border:1px solid #374151;
+      text-decoration:none;
+      color:#e5e7eb;
+      cursor:pointer;
+      transition:.2s;
     }
-    .profile h2 {
-      font-size: 16px;
-      margin: 10px 0 5px;
+    .book:hover{ transform: translateY(-2px); }
+    .title{
+      font-size:18px;
+      margin:0;
+      color:#f9fafb;
     }
-    .profile p {
-      font-size: 12px;
-      margin: 0;
+    .muted{ color:#9ca3af; margin:6px 0 0; font-size:13px; }
+    .form{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    .menu h1, .menu p {
-      font-size: 14px;
-      text-align: center;
+    input{
+      flex:1;
+      min-width:220px;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #374151;
+      background:#0b1220;
+      color:#e5e7eb;
+      outline:none;
     }
-    .menu input[type="password"] {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    input:focus{ border-color:#6366f1; }
+    button{
+      padding:10px 14px;
+      border-radius:10px;
+      border:0;
+      background:#4f46e5;
+      color:white;
+      cursor:pointer;
+      transition:.2s;
     }
-    .menu ul {
-      list-style: none;
-      padding: 0;
-    }
-    .menu li {
-      margin: 10px 0;
-    }
-    .menu a {
-      text-decoration: none;
-      color: white;
-      display: block;
-      padding: 10px;
-      background: #345aad;
-      border-radius: 5px;
-      transition: 0.3s;
-      font-size: 13px;
-    }
-    .menu a:hover {
-      background: #555;
-    }
-    .content {
-      margin-left: 270px;
-      padding: 20px;
-      flex: 1;
-      background: white;
-      height: 100vh;
-      overflow-y: auto;
-    }
-    #markdown-viewer {
-      max-width: 900px;
-      margin: auto;
-    }
-    pre {
-      background-color: #f0f0f0;
-      padding: 1em;
-      border-radius: 6px;
-      overflow-x: auto;
-      position: relative;
-    }
-    pre code {
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-      color: #222;
-    }
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background-color: #ccc;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      padding: 4px 8px;
-      cursor: pointer;
-      z-index: 1;
-    }
-    .copy-btn:hover {
-      background-color: #bbb;
+    button:hover{ opacity:.92; }
+    .msg{
+      margin-top:10px;
+      font-size:13px;
+      color:#9ca3af;
+      min-height:18px;
     }
   </style>
 </head>
+
 <body>
-  <div class="menu">
-    <div class="profile">
-      <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Foto de perfil" />
-      <h2>José Alejandro Jiménez Rosa</h2>
-      <p>📘 Guía de Administración de PostgreSQL.</p>
+  <div class="card">
+    <div class="row">
+      <!-- ✅ Ícono clickeable para abrir (también llama a desencriptar) -->
+      <a class="book" href="" target="_blank" title="Ver archivo cifrado (opcional)">
+        <i class="fa fa-book fa-3x"></i>
+      </a>
+
+      <div>
+        <p class="title">Manual PostgreSQL (cifrado)</p>
+        <p class="muted">
+          Introduce la clave para desencriptar y abrir el contenido en una nueva pestaña.
+        </p>
+      </div>
     </div>
-    <h1>Resolución de Problemas</h1>
-    <p>Introduce la clave de desencriptación</p>
-    <input type="password" id="claveInput" placeholder="Escribe la clave aquí..." />
 
-    <ul>
-      <li><a href="#" onclick="loadEncryptedMarkdown('Introducción')">Introducción</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('Backup')">Backup</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('ParticionadodeTablas')">Particionado de Tablas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('GestióndeRolesyPermisos')">Gestión de Roles y Permisos</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('mantenimientosprogramados')">Plan Maestro de Mantenimiento para PostgreSQL</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('DBLinkTransaccionesyBackup')">DBLink, Transacciones y Backup</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('ReplicaciónPostgreSQL')">Replicación PostgreSQL</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('SeleccionarRegistros')">📑 Consultas SQL Prácticas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('InstalaciónyAdministracióndelServidor')">🖥️ Instalación y Administración del Servidor</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('RecursosyGuíasExternas')">📚 Recursos y Guías Externas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('TCPSV')">📚 TCPSV</a></li>
-      
-    </ul>
-  </div>
+    <div class="form">
+      <input type="password" id="clave" placeholder="Clave de desencriptación" />
+      <button onclick="desencriptarArchivo()">Abrir archivo</button>
+    </div>
 
-  <div class="content">
-    <div id="markdown-viewer">Selecciona una opción del menú para ver la documentación.</div>
+    <div class="msg" id="msg"></div>
   </div>
 
   <script>
-    async function loadEncryptedMarkdown(name) {
-      const password = document.getElementById("claveInput").value.trim();
-      if (!password) {
-        alert("Por favor, escribe la clave de desencriptación.");
+    // RUTA DEL ARCHIVO ENCRIPTADO (ajústala a tu estructura real)
+    const ENCRYPTED_FILE_URL = "postgresSql/postgres_dba_book.enc.txt";
+
+    // Permite Enter para abrir
+    document.getElementById("clave").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") desencriptarArchivo();
+    });
+
+    async function desencriptarArchivo() {
+      const msg = document.getElementById("msg");
+      msg.textContent = "⏳ Desencriptando...";
+
+      const clave = document.getElementById("clave").value || "";
+      if (!clave.trim()) {
+        msg.textContent = "❌ Debes introducir una clave.";
         return;
       }
 
-      const file = name + ".enc.txt";
       try {
-        const res = await fetch(file);
-        if (!res.ok) throw new Error("Archivo no encontrado.");
-        const encrypted = await res.text();
+        const response = await fetch(ENCRYPTED_FILE_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("No se pudo leer el archivo cifrado.");
+        const encryptedData = await response.text();
 
-        const bytes = CryptoJS.AES.decrypt(encrypted, password);
-        const markdown = bytes.toString(CryptoJS.enc.Utf8);
-        if (!markdown) throw new Error("Clave incorrecta o contenido vacío.");
+        // ✅ Desencriptado XOR (ejemplo simple, como tu referencia)
+        const decrypted = simpleXorDecrypt(encryptedData, clave);
 
-        const html = marked.parse(markdown);
-        document.getElementById("markdown-viewer").innerHTML = html;
-        addCopyButtons();
-        document.getElementById("markdown-viewer").scrollIntoView({ behavior: "smooth" });
-      } catch (error) {
-        document.getElementById("markdown-viewer").innerHTML =
-          `<p style="color:red;">❌ ${error.message}</p>`;
+        // Validación básica: asegurar que parece HTML (reduce falsos positivos)
+        if (!looksLikeHTML(decrypted)) {
+          msg.textContent = "❌ Clave incorrecta (o archivo no es HTML).";
+          return;
+        }
+
+        // Abrir en una pestaña nueva
+        const nuevaVentana = window.open("", "_blank");
+        if (!nuevaVentana) {
+          msg.textContent = "⚠️ El navegador bloqueó la ventana emergente. Permite popups para este sitio.";
+          return;
+        }
+
+        nuevaVentana.document.open();
+        nuevaVentana.document.write(decrypted);
+        nuevaVentana.document.close();
+
+        msg.textContent = "✅ Archivo abierto en una nueva pestaña.";
+      } catch (err) {
+        msg.textContent = "❌ Error: " + err.message;
       }
     }
 
-    function addCopyButtons() {
-      const pres = document.querySelectorAll('#markdown-viewer pre');
-      pres.forEach((pre) => {
-        if (pre.querySelector('.copy-btn')) return;
-        const button = document.createElement('button');
-        button.className = 'copy-btn';
-        button.innerText = 'Copiar';
-        button.onclick = () => {
-          const code = pre.querySelector('code').innerText;
-          navigator.clipboard.writeText(code).then(() => {
-            button.innerText = '¡Copiado!';
-            setTimeout(() => button.innerText = 'Copiar', 2000);
-          });
-        };
-        pre.appendChild(button);
-      });
+    function simpleXorDecrypt(data, key) {
+      let result = "";
+      for (let i = 0; i < data.length; i++) {
+        result += String.fromCharCode(
+          data.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+        );
+      }
+      return result;
+    }
+
+    function looksLikeHTML(text) {
+      const t = (text || "").trim().toLowerCase();
+      return t.startsWith("<!doctype html") || t.startsWith("<html") || t.includes("<body");
     }
   </script>
+
+
+
+  <!-- Cargar CryptoJS -->
+  <a onclick="desencriptarYMostrar()" target="_blank">
+    <i class="fa fa-book fa-4x" style="margin-right: 10px;"></i>
+  </a>
+  
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script>
+  async function desencriptarYMostrar() {
+    const clave = prompt("Introduce la clave:");
+    if (!clave) {
+      window.open("Menu/index.html", "_blank");
+      return;
+    }
+    // Comprobamos si la clave es exactamente "la biblia de los caidos"
+    if (clave.trim().toLowerCase() === "") {
+      // window.open("Menu/index.html", "_blank");
+      return;
+    }
+
+    try {
+      const response = await fetch("postgresSql/postgres_dba_book.enc.txt");
+      const encrypted = await response.text();
+
+      const decrypted = CryptoJS.AES.decrypt(encrypted, clave).toString(CryptoJS.enc.Utf8);
+
+      if (!decrypted) {
+        alert("Clave incorrecta o archivo dañado.");
+        return;
+      }
+
+      const nuevaVentana = window.open("", "_blank");
+      nuevaVentana.document.open();
+      nuevaVentana.document.write(decrypted);
+      nuevaVentana.document.close();
+    } catch (e) {
+      alert("Error al cargar o desencriptar el archivo.");
+      console.error(e);
+    }
+  }
+</script>
+
+
+
+
+
+
+
+
+
 </body>
 </html>
