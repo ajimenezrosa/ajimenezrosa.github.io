@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ruta DBA en Platzi — Alex Jiménez</title>
+
+<style>
+:root{
+--bg:#0b1220;--panel:#0f1a2e;--text:#e8eefc;--muted:#aab7d6;
+--line:rgba(255,255,255,.10);
+--brand:#7c5cff;--brand2:#2dd4bf;
+--radius:18px;
+--shadow:0 14px 40px rgba(0,0,0,.35);
+}
+body{
+margin:0;
+font-family:system-ui;
+background:
+radial-gradient(900px 500px at 10% 10%, rgba(124,92,255,.20), transparent 60%),
+radial-gradient(800px 500px at 90% 20%, rgba(45,212,191,.18), transparent 55%),
+linear-gradient(180deg,var(--bg),#070b14);
+color:var(--text);
+}
+.container{max-width:1100px;margin:auto;padding:28px}
+
+.profile{
+display:flex;
+gap:22px;
+align-items:center;
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+border:1px solid var(--line);
+border-radius:22px;
+padding:22px;
+box-shadow:var(--shadow);
+margin-bottom:28px;
+flex-wrap:wrap;
+}
+
+.profile img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid transparent;
+background:
+linear-gradient(135deg,var(--brand),var(--brand2)) border-box;
+}
+
+.profile h1{
+margin:0;
+font-size:26px;
+}
+
+.profile p{
+margin:6px 0 0;
+color:var(--muted);
+line-height:1.5;
+max-width:700px;
+}
+
+.badges{
+margin-top:10px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.badge{
+padding:6px 12px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.12);
+font-size:12px;
+background:rgba(255,255,255,.04);
+}
+
+.search{
+padding:12px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:white;
+margin-bottom:18px;
+width:260px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:16px;
+}
+
+.card{
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+border:1px solid var(--line);
+border-radius:18px;
+padding:16px;
+box-shadow:var(--shadow);
+}
+
+.card h3{margin:6px 0}
+.card p{color:var(--muted);font-size:13px}
+
+.btn{
+display:inline-block;
+margin-top:10px;
+padding:10px 14px;
+border-radius:12px;
+background:linear-gradient(135deg,var(--brand),var(--brand2));
+color:#071024;
+font-weight:700;
+text-decoration:none;
+}
+
+.section-title{
+margin:28px 0 12px;
+font-size:18px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- PERFIL ALEX -->
+<section class="profile">
+
+<img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Alex Jiménez DBA">
+
+<div>
+<h1>Alex Jiménez — Database Administrator</h1>
+
+<p>
+Administrador de Bases de Datos especializado en <strong>SQL Server</strong>, con experiencia en 
+entornos productivos críticos, automatización de mantenimiento, optimización de rendimiento 
+y alta disponibilidad. En expansión avanzada hacia <strong>PostgreSQL</strong>, <strong>MySQL</strong> 
+y administración de servidores <strong>Linux (Red Hat/Fedora)</strong>.
+</p>
+
+<div class="badges">
+<span class="badge">SQL Server Expert</span>
+<span class="badge">PostgreSQL</span>
+<span class="badge">MySQL</span>
+<span class="badge">Linux Server</span>
+<span class="badge">DBA Production</span>
+</div>
+</div>
+
+</section>
+
+<input class="search" id="search" placeholder="Buscar cursos...">
+
+<h2 class="section-title">Rutas Platzi</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Ruta SQL & PostgreSQL</h3>
+<p>Ruta completa para dominar SQL y PostgreSQL.</p>
+<a class="btn" href="https://platzi.com/ruta/datos-sql/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>Ruta Bases de Datos para Web</h3>
+<p>SQL, MySQL, PostgreSQL y NoSQL.</p>
+<a class="btn" href="https://platzi.com/ruta/bases-de-datos-para-web/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>Ruta Administración Linux</h3>
+<p>Administración de servidores Linux.</p>
+<a class="btn" href="https://platzi.com/ruta/administracion-de-servidores-linux/" target="_blank">Abrir</a>
+</div>
+
+</div>
+
+<h2 class="section-title">Cursos Directos</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Fundamentos de Bases de Datos</h3>
+<a class="btn" href="https://platzi.com/cursos/bases-datos/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>SQL y MySQL</h3>
+<a class="btn" href="https://platzi.com/cursos/sql-mysql/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>PostgreSQL</h3>
+<a class="btn" href="https://platzi.com/cursos/postgresql/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>PostgreSQL Aplicado</h3>
+<a class="btn" href="https://platzi.com/cursos/postgresql-datos/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>Administración Linux</h3>
+<a class="btn" href="https://platzi.com/cursos/linux/" target="_blank">Abrir</a>
+</div>
+
+<div class="card">
+<h3>Terminal Linux</h3>
+<a class="btn" href="https://platzi.com/cursos/terminal/" target="_blank">Abrir</a>
+</div>
+
+<div>
+
+  <div class="card">
+  <h3>Microsoft SQL Server Professional Certificate — Coursera</h3>
+  <p>Fundamentos sólidos de SQL: consultas, filtros, joins y lógica relacional desde nivel base a intermedio.</p>
+  <a class="btn" href="https://www.coursera.org/learn/sql-foundations/home/module/1" target="_blank">
+    Abrir en Coursera
+  </a>
+</div>
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+<script>
+const input=document.getElementById("search");
+const cards=[...document.querySelectorAll(".card")];
+input.oninput=()=>{
+const q=input.value.toLowerCase();
+cards.forEach(c=>{
+c.style.display=c.innerText.toLowerCase().includes(q)?"":"none";
+});
+};
+</script>
+</body>
+</html>

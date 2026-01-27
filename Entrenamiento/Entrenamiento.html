@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ruta DBA — Alex Jiménez</title>
+
+<style>
+:root{
+--bg:#0b1220;--text:#e8eefc;--muted:#aab7d6;
+--line:rgba(255,255,255,.10);
+--brand:#7c5cff;--brand2:#2dd4bf;
+--shadow:0 14px 40px rgba(0,0,0,.35);
+}
+body{
+margin:0;
+font-family:system-ui;
+background:
+radial-gradient(900px 500px at 10% 10%, rgba(124,92,255,.20), transparent 60%),
+radial-gradient(800px 500px at 90% 20%, rgba(45,212,191,.18), transparent 55%),
+linear-gradient(180deg,var(--bg),#070b14);
+color:var(--text);
+}
+.container{max-width:1100px;margin:auto;padding:28px}
+
+.profile{
+display:flex;gap:22px;align-items:center;
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+border:1px solid var(--line);
+border-radius:22px;padding:22px;
+box-shadow:var(--shadow);margin-bottom:28px;flex-wrap:wrap;
+}
+.profile img{
+width:120px;height:120px;border-radius:50%;object-fit:cover;
+border:3px solid transparent;
+background:linear-gradient(135deg,var(--brand),var(--brand2)) border-box;
+}
+.profile p{color:var(--muted);max-width:700px}
+
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.badge{
+padding:6px 12px;border-radius:999px;
+border:1px solid rgba(255,255,255,.12);
+font-size:12px;background:rgba(255,255,255,.04);
+}
+
+.search{
+padding:12px;border-radius:999px;border:1px solid var(--line);
+background:rgba(255,255,255,.06);color:white;margin-bottom:20px;width:260px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:16px;
+}
+
+.card{
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+border:1px solid var(--line);
+border-radius:18px;
+padding:16px;
+box-shadow:var(--shadow);
+}
+.card p{color:var(--muted);font-size:13px}
+
+.btn{
+display:inline-block;margin-top:10px;padding:10px 14px;
+border-radius:12px;
+background:linear-gradient(135deg,var(--brand),var(--brand2));
+color:#071024;font-weight:700;text-decoration:none;
+}
+
+.section-title{
+margin:32px 0 12px;
+font-size:20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<section class="profile">
+<img src="https://avatars.githubusercontent.com/u/7384546?v=4">
+<div>
+<h1>Alex Jiménez — Database Administrator</h1>
+<p>
+DBA especializado en SQL Server en producción, optimización de rendimiento, automatización y alta disponibilidad.
+En crecimiento avanzado hacia PostgreSQL, MySQL, Cloud Azure y administración Linux.
+</p>
+<div class="badges">
+<span class="badge">SQL Server</span>
+<span class="badge">PostgreSQL</span>
+<span class="badge">MySQL</span>
+<span class="badge">Linux</span>
+<span class="badge">Azure</span>
+</div>
+</div>
+</section>
+
+<input class="search" id="search" placeholder="Buscar cursos...">
+
+<!-- PLATZI BASES DE DATOS -->
+<h2 class="section-title">Platzi — Bases de Datos</h2>
+<div class="cards">
+<div class="card"><h3>Fundamentos de Bases de Datos</h3><a class="btn" href="https://platzi.com/cursos/bases-datos/" target="_blank">Abrir</a></div>
+<div class="card"><h3>SQL y MySQL</h3><a class="btn" href="https://platzi.com/cursos/sql-mysql/" target="_blank">Abrir</a></div>
+<div class="card"><h3>PostgreSQL</h3><a class="btn" href="https://platzi.com/cursos/postgresql/" target="_blank">Abrir</a></div>
+<div class="card"><h3>PostgreSQL Aplicado</h3><a class="btn" href="https://platzi.com/cursos/postgresql-datos/" target="_blank">Abrir</a></div>
+</div>
+
+<!-- PLATZI CLOUD -->
+<h2 class="section-title">Platzi — Cloud & Azure</h2>
+<div class="cards">
+<div class="card"><h3>Fundamentos de Cloud Computing</h3><a class="btn" href="https://platzi.com/cursos/cloud/" target="_blank">Abrir</a></div>
+<div class="card"><h3>Azure Fundamentals</h3><a class="btn" href="https://platzi.com/cursos/azure-fundamentals/" target="_blank">Abrir</a></div>
+<div class="card"><h3>Administración de Azure</h3><a class="btn" href="https://platzi.com/cursos/azure-admin/" target="_blank">Abrir</a></div>
+</div>
+
+<!-- PLATZI SISTEMAS -->
+<h2 class="section-title">Platzi — Sistemas Operativos & Linux</h2>
+<div class="cards">
+<div class="card"><h3>Terminal Linux</h3><a class="btn" href="https://platzi.com/cursos/terminal/" target="_blank">Abrir</a></div>
+<div class="card"><h3>Administración Linux</h3><a class="btn" href="https://platzi.com/cursos/linux/" target="_blank">Abrir</a></div>
+<div class="card"><h3>Manejo de Recursos Linux</h3><a class="btn" href="https://platzi.com/cursos/servidores-linux/" target="_blank">Abrir</a></div>
+</div>
+
+<!-- COURSERA -->
+<h2 class="section-title">Coursera — Bases de Datos</h2>
+<div class="cards">
+<div class="card">
+<h3>SQL Foundations</h3>
+<p>Curso completo de fundamentos SQL en Coursera.</p>
+<a class="btn" href="https://www.coursera.org/learn/sql-foundations/home/module/1" target="_blank">
+Abrir en Coursera
+</a>
+</div>
+</div>
+
+</div>
+
+<script>
+const input=document.getElementById("search");
+const cards=[...document.querySelectorAll(".card")];
+input.oninput=()=>{
+const q=input.value.toLowerCase();
+cards.forEach(c=>{
+c.style.display=c.innerText.toLowerCase().includes(q)?"":"none";
+});
+};
+</script>
+</body>
+</html>
