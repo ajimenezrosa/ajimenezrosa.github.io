@@ -125,6 +125,8 @@ code {
 <a href="#failover">Failover</a>
 <a href="#monitor">Monitoreo</a>
 <a href="#security">Hardening</a>
+<a href="#Auditoría">Auditoría de Logins Fallidos en PostgreSQL 17 (Fedora) — Inserción en Tabla</a>
+
 </nav>
 
 <main>
@@ -2760,6 +2762,245 @@ idle_in_transaction_session_timeout = 5min</code></pre>
 <code>Firewall Linux</code>
 <code>Auditoría PGAudit</code>
 </section> -->
+
+
+<!-- =========================
+     SECTION ID: Auditoría
+     Auditoría de Logins Fallidos en PostgreSQL
+     ========================= -->
+<section id="Auditoría" class="section-auditoria">
+
+  <header class="auditoria-header">
+    <h2>Auditoría de Logins Fallidos en PostgreSQL 17</h2>
+    <p>
+      Implementación para registrar automáticamente en una tabla los intentos fallidos de autenticación
+      al servidor PostgreSQL, leyendo eventos desde los logs del sistema e insertándolos en
+      <code>auditoria.failed_logins</code>.
+    </p>
+  </header>
+
+  <hr />
+
+  <article class="auditoria-block">
+    <h3>1) Objetivo</h3>
+    <ul>
+      <li>Registrar fecha y hora del evento (event_time)</li>
+      <li>Usuario (username)</li>
+      <li>Dirección IP (client_ip)</li>
+      <li>Mensaje de error (error_message)</li>
+      <li>Línea original del log (log_line)</li>
+      <li>Fecha de inserción (inserted_at)</li>
+    </ul>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>2) Creación del esquema y tabla</h3>
+
+    <h4>2.1 Crear esquema y tabla</h4>
+    <pre><code class="language-sql">CREATE SCHEMA IF NOT EXISTS auditoria;
+
+CREATE TABLE auditoria.failed_logins (
+	id bigserial NOT NULL,
+	event_time timestamp NULL,
+	username text NULL,
+	database_name text NULL,
+	client_ip text NULL,
+	error_message text NULL,
+	log_line text NULL,
+	inserted_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	CONSTRAINT failed_logins_pkey PRIMARY KEY (id)
+);</code></pre>
+
+    <h4>2.2 Constraint UNIQUE (requerido para ON CONFLICT)</h4>
+    <pre><code class="language-sql">ALTER TABLE auditoria.failed_logins
+ADD CONSTRAINT failed_logins_log_line_unique UNIQUE (log_line);</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>3) Crear usuario <code>auditoria</code> con password del script</h3>
+
+    <pre><code class="language-sql">CREATE ROLE auditoria
+LOGIN
+PASSWORD 'Auditoria123#'
+NOSUPERUSER
+NOCREATEDB
+NOCREATEROLE
+NOREPLICATION;</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>4) Permisos necesarios</h3>
+
+    <pre><code class="language-sql">GRANT CONNECT ON DATABASE postgres TO auditoria;
+
+GRANT USAGE ON SCHEMA auditoria TO auditoria;
+
+GRANT INSERT, SELECT ON auditoria.failed_logins TO auditoria;
+
+GRANT USAGE, SELECT ON SEQUENCE auditoria.failed_logins_id_seq TO auditoria;</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>5) Configurar autenticación en <code>pg_hba.conf</code></h3>
+
+    <p>Editar el archivo:</p>
+    <pre><code class="language-bash">sudo nano /var/lib/pgsql/17/data/pg_hba.conf</code></pre>
+
+    <p>Agregar (recomendado SCRAM):</p>
+    <pre><code class="language-conf">host    postgres    auditoria    127.0.0.1/32    scram-sha-256
+host    postgres    auditoria    ::1/128         scram-sha-256</code></pre>
+
+    <p>Reiniciar el servicio:</p>
+    <pre><code class="language-bash">sudo systemctl restart postgresql-17</code></pre>
+
+    <p>Probar conexión manual:</p>
+    <pre><code class="language-bash">PGPASSWORD='Auditoria123#' psql -U auditoria -d postgres -h localhost -p 5432 -c "SELECT now();"</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>6) Script para cargar logins fallidos</h3>
+
+    <p>Crear el archivo:</p>
+    <pre><code class="language-bash">nano load_failed_logins.sh</code></pre>
+
+    <p>Contenido del script:</p>
+    <pre><code class="language-bash">#!/bin/bash
+
+LOG_DIR="/var/lib/pgsql/17/data/log"
+
+export PGPASSWORD='Auditoria123#'
+
+for logfile in $LOG_DIR/postgresql-*.log
+do
+
+grep "password authentication failed" "$logfile" | while read line
+do
+
+EVENT_TIME=$(echo "$line" | awk '{print $1" "$2}')
+
+USERNAME=$(echo "$line" | sed -n 's/.*user "\([^"]*\)".*/\1/p')
+
+IP=$(echo "$line" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+
+psql -U auditoria -d postgres -h localhost -p 5432 &lt;&lt;EOF
+
+INSERT INTO auditoria.failed_logins
+(event_time, username, client_ip, error_message, log_line)
+VALUES
+(
+'$EVENT_TIME',
+'$USERNAME',
+'$IP',
+'password authentication failed',
+\$\$$line\$\$
+)
+ON CONFLICT (log_line) DO NOTHING;
+
+EOF
+
+done
+
+done</code></pre>
+
+    <p>Dar permisos de ejecución:</p>
+    <pre><code class="language-bash">chmod +x load_failed_logins.sh</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>7) Ejecución recomendada (por permisos de lectura de logs)</h3>
+
+    <p>
+      Los logs suelen pertenecer a <code>postgres</code>. Para evitar problemas de permisos de lectura, ejecuta:
+    </p>
+
+    <pre><code class="language-bash">sudo -u postgres ./load_failed_logins.sh</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>8) Validación en la tabla</h3>
+
+    <pre><code class="language-sql">SELECT
+id,
+event_time,
+username,
+client_ip,
+inserted_at
+FROM auditoria.failed_logins
+ORDER BY inserted_at DESC;</code></pre>
+  </article>
+
+  <article class="auditoria-block">
+    <h3>9) Ubicación de logs</h3>
+    <pre><code class="language-bash">/var/lib/pgsql/17/data/log/</code></pre>
+  </article>
+
+  <footer class="auditoria-footer">
+    <p><strong>ID de sección:</strong> <code>Auditoría</code></p>
+  </footer>
+
+</section>
+
+<!-- =========================
+     ESTILOS (opcionales)
+     Puedes mover esto a tu CSS principal
+     ========================= -->
+<style>
+  .section-auditoria{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px;
+    line-height: 1.55;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .auditoria-header h2{
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+  }
+  .auditoria-header p{
+    margin: 0;
+    opacity: .9;
+  }
+  .auditoria-block{
+    margin: 22px 0;
+  }
+  .auditoria-block h3{
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+  }
+  .auditoria-block h4{
+    margin: 14px 0 8px 0;
+    font-size: 1.05rem;
+  }
+  pre{
+    overflow: auto;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.12);
+    background: rgba(0,0,0,.04);
+    margin: 10px 0 0 0;
+  }
+  code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: .95em;
+  }
+  hr{
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,.15);
+  }
+  .auditoria-footer{
+    margin-top: 18px;
+    opacity: .9;
+  }
+</style>
+
+
+<!-- Auditoría -->
+
+
+
+
+
 
 </main>
 </body>
