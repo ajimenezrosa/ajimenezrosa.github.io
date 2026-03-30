@@ -12,6 +12,7 @@
 --brand:#7c5cff;--brand2:#2dd4bf;
 --shadow:0 14px 40px rgba(0,0,0,.35);
 }
+
 body{
 margin:0;
 font-family:system-ui;
@@ -21,8 +22,10 @@ radial-gradient(800px 500px at 90% 20%, rgba(45,212,191,.18), transparent 55%),
 linear-gradient(180deg,var(--bg),#070b14);
 color:var(--text);
 }
+
 .container{max-width:1100px;margin:auto;padding:28px}
 
+/* PERFIL */
 .profile{
 display:flex;gap:22px;align-items:center;
 background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
@@ -30,40 +33,60 @@ border:1px solid var(--line);
 border-radius:22px;padding:22px;
 box-shadow:var(--shadow);margin-bottom:28px;flex-wrap:wrap;
 }
+
 .profile img{
 width:120px;height:120px;border-radius:50%;object-fit:cover;
 border:3px solid transparent;
 background:linear-gradient(135deg,var(--brand),var(--brand2)) border-box;
 }
+
 .profile p{color:var(--muted);max-width:700px}
 
 .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
 .badge{
 padding:6px 12px;border-radius:999px;
 border:1px solid rgba(255,255,255,.12);
 font-size:12px;background:rgba(255,255,255,.04);
 }
 
+/* BUSCADOR */
 .search{
 padding:12px;border-radius:999px;border:1px solid var(--line);
 background:rgba(255,255,255,.06);color:white;margin-bottom:20px;width:260px;
 }
 
+/* GRID (2 POR FILA) */
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+grid-template-columns:repeat(2,1fr);
 gap:16px;
 }
 
+@media (max-width:768px){
+.cards{
+grid-template-columns:1fr;
+}
+}
+
+/* TARJETAS */
 .card{
 background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
 border:1px solid var(--line);
 border-radius:18px;
 padding:16px;
 box-shadow:var(--shadow);
+transition:0.3s;
 }
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+
 .card p{color:var(--muted);font-size:13px}
 
+/* BOTÓN */
 .btn{
 display:inline-block;margin-top:10px;padding:10px 14px;
 border-radius:12px;
@@ -71,6 +94,7 @@ background:linear-gradient(135deg,var(--brand),var(--brand2));
 color:#071024;font-weight:700;text-decoration:none;
 }
 
+/* TÍTULOS */
 .section-title{
 margin:32px 0 12px;
 font-size:20px;
@@ -81,14 +105,16 @@ font-size:20px;
 <body>
 <div class="container">
 
+<!-- PERFIL -->
 <section class="profile">
 <img src="https://avatars.githubusercontent.com/u/7384546?v=4">
 <div>
-<h1>Jose Alejandro Jiménez — Database Administrator</h1>
+<h1>José Alejandro Jiménez — Database Administrator</h1>
 <p>
-DBA especializado en SQL Server en producción, optimización de rendimiento, automatización y alta disponibilidad.
-En crecimiento avanzado hacia PostgreSQL, MySQL, Cloud Azure y administración Linux.
+DBA especializado en SQL Server, optimización de rendimiento, automatización y alta disponibilidad.
+En crecimiento hacia PostgreSQL, Cloud y Linux.
 </p>
+
 <div class="badges">
 <span class="badge">SQL Server</span>
 <span class="badge">PostgreSQL</span>
@@ -96,108 +122,107 @@ En crecimiento avanzado hacia PostgreSQL, MySQL, Cloud Azure y administración L
 <span class="badge">Linux</span>
 <span class="badge">Azure</span>
 </div>
+
 </div>
 </section>
 
 <input class="search" id="search" placeholder="Buscar cursos...">
 
 <!-- COURSERA -->
-<!-- COURSERA -->
-<h2 class="section-title">Coursera — Bases de Datos</h2>
-
-<div class="cards">
-  <div class="card">
-    
-    <!-- Badge de completado -->
-    <span style="
-      display:inline-block;
-      background-color:#28a745;
-      color:white;
-      padding:5px 10px;
-      border-radius:20px;
-      font-size:12px;
-      font-weight:bold;
-      margin-bottom:10px;
-    ">
-      ✔ Curso Finalizado
-    </span>
-
-    <h3>SQL Foundations</h3>
-    <p>Curso completo de fundamentos SQL en Coursera.</p>
-
-    <a class="btn" href="https://www.coursera.org/account/accomplishments/specialization/certificate/NYHZ14GR1VHL" target="_blank">
-      Ver Certificado
-    </a>
-
-  </div>
-</div>
-
-
-
-<!-- AZURE - CURSO BPD -->
-<h2 class="section-title">AZURE -ENTRENAMIENTO - DB</h2>
-<div class="cards">
-<div class="card">
-<h3>SQL AZURE</h3>
-<p>Curso completo de AZURE -.</p>
-<a class="btn" href="https://www.youtube.com/watch?v=orwWx0_KEcA&list=PLahhVEj9XNTd6H2vpsvm_kBSMsMw9EMUL&index=3" target="_blank">
-Abrir en Coursera
-</a>
-</div>
-</div>
-
-
-<!-- COURSERA -->
 <h2 class="section-title">Coursera — Bases de Datos</h2>
 <div class="cards">
+
 <div class="card">
+<span style="background:#28a745;padding:5px 10px;border-radius:20px;font-size:12px;">✔ Finalizado</span>
 <h3>SQL Foundations</h3>
-<p>Database Design and Basic SQL in PostgreSQL en Coursera.</p>
-<a class="btn" href="https://www.coursera.org/programs/aula-popular-hrova?authProvider=bpd" target="_blank">
-Abrir en Coursera
+<p>Curso completo de fundamentos SQL en Coursera.</p>
+<a class="btn" href="https://www.coursera.org/account/accomplishments/specialization/certificate/NYHZ14GR1VHL" target="_blank">
+Ver Certificado
 </a>
-
-</div>
 </div>
 
+<div class="card">
+<h3>Database Design PostgreSQL</h3>
+<p>Diseño de bases de datos y SQL en PostgreSQL.</p>
+<a class="btn" href="https://www.coursera.org/programs/aula-popular-hrova?authProvider=bpd" target="_blank">
+Abrir Curso
+</a>
+</div>
 
+</div>
 
+<!-- AZURE -->
+<h2 class="section-title">Azure / SQL</h2>
+<div class="cards">
 
+<div class="card">
+<h3>SQL Azure</h3>
+<p>Curso completo de Azure SQL y servicios en la nube.</p>
+<a class="btn" href="https://www.youtube.com/watch?v=orwWx0_KEcA&list=PLahhVEj9XNTd6H2vpsvm_kBSMsMw9EMUL&index=3" target="_blank">
+Ver Curso
+</a>
+</div>
 
-<!-- COURSERA -->
+<div class="card">
+<h3>Azure Fundamentals</h3>
+<p>Introducción a servicios cloud de Microsoft Azure.</p>
+<a class="btn" href="#" target="_blank">
+Próximamente
+</a>
+</div>
+
+</div>
+
+<!-- REACT NATIVE -->
+<h2 class="section-title">React Native</h2>
+<div class="cards">
+
+<div class="card">
+<h3>React Native — Apps iOS & Android</h3>
+<p>Aprende a crear aplicaciones móviles reales con React Native y React desde cero.</p>
+<a class="btn" href="https://www.udemy.com/course/react-native-crea-aplicaciones-moviles-reales-ios-y-android/learn/lecture/19589728#overview" target="_blank">
+Ver Curso 🚀
+</a>
+</div>
+
+<div class="card">
+<h3>React Native Básico</h3>
+<p>Conceptos fundamentales para empezar en desarrollo móvil.</p>
+<a class="btn" href="#" target="_blank">
+Próximamente
+</a>
+</div>
+
+</div>
+
+<!-- GOOGLE -->
 <h2 class="section-title">Google Skills</h2>
 <div class="cards">
+
 <div class="card">
-<h3>Developing a Google SRE Culture/h3>
-<p>Developing a Google SRE Culture.</p>
+<h3>Developing a Google SRE Culture</h3>
+<p>Aprende principios de Site Reliability Engineering.</p>
 <a class="btn" href="https://www.skills.google/paths/20/course_templates/95" target="_blank">
-Abrir en Google Skills
+Abrir Curso
 </a>
 </div>
+
+<div class="card">
+<h3>Google Cloud Basics</h3>
+<p>Introducción a servicios de Google Cloud Platform.</p>
+<a class="btn" href="#" target="_blank">
+Próximamente
+</a>
 </div>
 
-
-
 </div>
 
-
-
-
 </div>
-
-
-
-
-
-
-
-
-
-
 
 <script>
 const input=document.getElementById("search");
 const cards=[...document.querySelectorAll(".card")];
+
 input.oninput=()=>{
 const q=input.value.toLowerCase();
 cards.forEach(c=>{
@@ -205,5 +230,6 @@ c.style.display=c.innerText.toLowerCase().includes(q)?"":"none";
 });
 };
 </script>
+
 </body>
 </html>
