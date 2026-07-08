@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Menu</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .profile {
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        .profile img {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .profile p {
+            font-size: 16px;
+            color: #333;
+            margin-top: 10px;
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 800px;
+        }
+        .menu button {
+            background: transparent;
+            border: none;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        .menu button:hover {
+            transform: scale(1.1);
+        }
+        .menu img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+        }
+        @media (max-width: 600px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+
+
+
+<body>
+    <div class="profile">
+        <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Jose Alejandro Jimenez Rosa" width="220">
+        <p><strong>Jose Alejandro Jimenez Rosa</strong><br>Database Administrator <br>Specialized in SQL High Availability</p>
+     
+
+<a href="../Database-Linux-Master-Roadmap/index.html"
+   target="_blank"
+   class="roadmap-btn">
+
+    <i class="fa-solid fa-map"></i>
+
+    <div>
+        <span class="title">Roadmap Oracle Database</span>
+        <span class="subtitle">Plan Maestro de Estudios 2027–2030</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-right"></i>
+
+</a>
+
+        <section id="about">
+  <!-- <h2>About Me</h2> -->
+  <p>
+    <strong>Database Administrator</strong> with extensive experience in 
+    <strong>SQL Server, PostgreSQL, MongoDB, and Oracle</strong>. 
+    Currently teaching at <strong>Universidad Católica Santo Domingo</strong>, where I lecture on 
+    <strong>SQL Server Databases</strong>, <strong>Data Structures</strong>, and 
+    <strong>Mobile Application Development using JavaScript</strong>. 
+    I actively maintain technical documentation on <strong>GitHub</strong>, focusing on 
+    <strong>database systems</strong> and <strong>PowerShell scripts</strong> for database administration.
+  </p>
+</section>
+
+    </div>
+    <div class="menu">
+        <button><a href="/SQL_Server/sqlserver.html" target="_blank"><img src="https://cdn-icons-png.flaticon.com/128/5968/5968554.png" alt="SQL"></a></button>
+        <button><a href="/oracle/Oracle.html" target="_blank"><img src="https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img/https://licenseq.com/wp-content/uploads/2024/12/oracle-logo.jpg" alt="SQL"></a></button>
+        <button><a href="/oracleRAC/index.html" target="_blank"><img src="https://viswaonlinetrainings.com/wp-content/uploads/2022/10/Oracle-RAC.jpg" alt="SQL"></a></button>
+      
+        <button><a href="../mongoDB/index.html" target="_blank"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT0IJxz7RfKHyQmNINeqUhPszlKxuh5CuHV4fgssuriw&s=10" alt="MongoDB"></a></button>
+       <button><a href="../MongoDB-Aggregation-Framework/index.html" target="_blank"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZsaVGcAmsQ7gRxgrLaqKfa24Efj9-QONl1GjhXiyJsg&s" alt="MongoDB-Aggregation-Framework"></a></button>
+       
+        <button><a href="../PowerShell/powershell.html" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png" alt="PowerShell"></a></button>
+        <!-- <button><a href="../Manuales_procedimientos/index.html" target="_blank"><img src="https://i0.wp.com/yoamoenfermeriablog.com/wp-content/uploads/2018/02/SmartSelectImage_2018-02-05-13-35-58.png" alt="Manual"></a></button> -->
+        <button><a href="../postgresSql/sqlserver.html" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Database-postgres.svg" alt="PostgreSQL"></a></button>
+        <button><a href="../AOAG - Setup and Configuration-offline lab manuals/AOAGSOLUTION.html" target="_blank"><img src="https://www.shutterstock.com/image-illustration/database-networking-concept-connected-metal-260nw-105928622.jpg" alt="AOAG"></a></button>
+        <button><a href="../AOAG_SOLUTION/AOAGSOLUTION.html" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1998/1998530.png" alt="AOAG"></a></button>
+    </div>
+</body>
+</html>
