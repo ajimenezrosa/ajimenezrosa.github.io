@@ -1,195 +1,1290 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SQL Server - Resolución de Problemas</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-    }
-    .menu {
-      width: 250px;
-      background: #f3f6f8;
-      color: #000;
-      padding: 20px;
-      overflow-y: auto;
-      position: fixed;
-      height: 100%;
-    }
-    .profile {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .profile img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 3px solid #000;
-    }
-    .profile h2 {
-      font-size: 16px;
-      margin: 10px 0 5px;
-    }
-    .profile p {
-      font-size: 12px;
-      margin: 0;
-    }
-    .menu h1, .menu p {
-      font-size: 14px;
-      text-align: center;
-    }
-    .menu input[type="password"] {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .menu ul {
-      list-style: none;
-      padding: 0;
-    }
-    .menu li {
-      margin: 10px 0;
-    }
-    .menu a {
-      text-decoration: none;
-      color: white;
-      display: block;
-      padding: 10px;
-      background: #345aad;
-      border-radius: 5px;
-      transition: 0.3s;
-      font-size: 13px;
-    }
-    .menu a:hover {
-      background: #555;
-    }
-    .content {
-      margin-left: 270px;
-      padding: 20px;
-      flex: 1;
-      background: white;
-      height: 100vh;
-      overflow-y: auto;
-    }
-    #markdown-viewer {
-      max-width: 900px;
-      margin: auto;
-    }
-    pre {
-      background-color: #f0f0f0;
-      padding: 1em;
-      border-radius: 6px;
-      overflow-x: auto;
-      position: relative;
-    }
-    pre code {
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-      color: #222;
-    }
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background-color: #ccc;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      padding: 4px 8px;
-      cursor: pointer;
-      z-index: 1;
-    }
-    .copy-btn:hover {
-      background-color: #bbb;
-    }
-  </style>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>PostgreSQL - Administración y Resolución de Problemas</title>
+
+<!-- Librería para desencriptar los archivos -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<!-- Librería para convertir Markdown a HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+
+<style>
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#1e1e1e;
+  color:#d4d4d4;
+}
+
+/* =========================================================
+   PANTALLA DE ACCESO
+========================================================= */
+
+#login{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:30px 20px;
+  text-align:center;
+  background:
+    radial-gradient(
+      circle at top,
+      #1e3a5f 0%,
+      #132b43 36%,
+      #111827 72%,
+      #080b12 100%
+    );
+}
+
+.login-box{
+  width:100%;
+  max-width:740px;
+  padding:40px;
+  background:#1f2937;
+  border:1px solid #29465b;
+  border-radius:16px;
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.03);
+}
+
+.login-box h1{
+  margin:0 0 8px;
+  color:#ffffff;
+  font-size:34px;
+}
+
+.login-box h2{
+  margin:0 0 22px;
+  color:#60a5fa;
+  font-size:20px;
+  font-weight:normal;
+}
+
+.login-description{
+  max-width:640px;
+  margin:20px auto;
+  color:#cbd5e1;
+  line-height:1.7;
+  font-size:15px;
+}
+
+.profile img{
+  width:180px;
+  height:180px;
+  object-fit:cover;
+  border-radius:50%;
+  margin:12px 0 16px;
+  border:4px solid #336791;
+  box-shadow:0 8px 25px rgba(0,0,0,.45);
+}
+
+.profile p{
+  margin:0;
+  color:#dbeafe;
+  line-height:1.6;
+}
+
+.profile strong{
+  color:#ffffff;
+  font-size:18px;
+}
+
+.login-form{
+  max-width:520px;
+  margin:28px auto 0;
+}
+
+.password-container{
+  position:relative;
+}
+
+input[type="password"],
+input[type="text"]{
+  width:100%;
+  padding:14px 48px 14px 15px;
+  border:1px solid #4b5563;
+  border-radius:9px;
+  outline:none;
+  background:#111827;
+  color:#ffffff;
+  font-size:15px;
+  transition:.2s;
+}
+
+input[type="password"]:focus,
+input[type="text"]:focus{
+  border-color:#60a5fa;
+  box-shadow:0 0 0 3px rgba(96,165,250,.2);
+}
+
+.toggle-password{
+  position:absolute;
+  top:50%;
+  right:13px;
+  transform:translateY(-50%);
+  margin:0;
+  padding:4px;
+  border:none;
+  background:transparent;
+  color:#94a3b8;
+  font-size:19px;
+  cursor:pointer;
+}
+
+.toggle-password:hover{
+  color:#ffffff;
+  background:transparent;
+}
+
+#submit-button{
+  width:100%;
+  margin-top:14px;
+  padding:13px 24px;
+  border:none;
+  border-radius:9px;
+  background:#336791;
+  color:#ffffff;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.2s;
+}
+
+#submit-button:hover{
+  background:#28557a;
+  transform:translateY(-1px);
+}
+
+#submit-button:active{
+  transform:translateY(0);
+}
+
+#submit-button:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+#error-message{
+  min-height:22px;
+  margin:13px 0 0;
+  color:#fca5a5;
+  font-weight:bold;
+  font-size:14px;
+}
+
+/* =========================================================
+   APLICACIÓN PRINCIPAL
+========================================================= */
+
+#app{
+  display:none;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* =========================================================
+   MENÚ LATERAL
+========================================================= */
+
+#sidebar{
+  width:390px;
+  min-width:390px;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  background:#1e1e1e;
+  color:#d4d4d4;
+  border-right:1px solid #333333;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+.sidebar-header{
+  padding:15px 16px;
+  background:#252526;
+  border-bottom:1px solid #333333;
+}
+
+.sidebar-header h2{
+  margin:0;
+  color:#ffffff;
+  font-size:17px;
+}
+
+.sidebar-profile{
+  padding:18px 15px;
+  text-align:center;
+  background:#1e1e1e;
+  border-bottom:1px solid #333333;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.sidebar-profile img{
+  display:block;
+  width:90px;
+  height:90px;
+  object-fit:cover;
+  margin:0 auto 10px;
+  border-radius:50%;
+  border:3px solid #336791;
+}
+
+.sidebar-profile strong{
+  color:#ffffff;
+  font-size:14px;
+}
+
+.sidebar-profile-description{
+  margin-top:8px;
+  color:#9ca3af;
+  font-size:12px;
+}
+
+.folder{
+  padding:11px 15px;
+  background:#252526;
+  color:#60a5fa;
+  font-weight:bold;
+  font-size:14px;
+  border-bottom:1px solid #333333;
+}
+
+.menu-container{
+  flex:1;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#555555 #1e1e1e;
+}
+
+.menu-container::-webkit-scrollbar{
+  width:10px;
+}
+
+.menu-container::-webkit-scrollbar-track{
+  background:#1e1e1e;
+}
+
+.menu-container::-webkit-scrollbar-thumb{
+  background:#4b4b4b;
+  border-radius:5px;
+}
+
+.menu-container::-webkit-scrollbar-thumb:hover{
+  background:#606060;
+}
+
+#menu{
+  list-style:none;
+  margin:0;
+  padding:4px 0 18px;
+}
+
+#menu li{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px 9px 20px;
+  cursor:pointer;
+  font-size:14px;
+  border-left:3px solid transparent;
+  transition:
+    background-color .15s,
+    color .15s,
+    border-color .15s;
+}
+
+#menu li:hover{
+  background:#2a2d2e;
+}
+
+#menu li.active{
+  color:#ffffff;
+  background:#37373d;
+  border-left-color:#336791;
+}
+
+.file-icon{
+  width:20px;
+  flex-shrink:0;
+  text-align:center;
+}
+
+.file-name{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.sidebar-footer{
+  padding:10px 14px;
+  background:#336791;
+  color:#ffffff;
+  font-size:12px;
+  text-align:center;
+}
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+========================================================= */
+
+#content{
+  flex:1;
+  height:100vh;
+  overflow-y:auto;
+  background:#ffffff;
+  color:#1f2937;
+  padding:35px;
+  scrollbar-width:thin;
+}
+
+#content-container{
+  width:100%;
+  max-width:1050px;
+  margin:auto;
+  padding-bottom:70px;
+  line-height:1.75;
+}
+
+#content-container h1{
+  margin-top:0;
+  padding-bottom:12px;
+  color:#1f4f75;
+  border-bottom:2px solid #bfdbfe;
+  font-size:32px;
+}
+
+#content-container h2{
+  margin-top:35px;
+  padding-bottom:8px;
+  color:#28557a;
+  border-bottom:1px solid #bfdbfe;
+}
+
+#content-container h3{
+  margin-top:28px;
+  color:#336791;
+}
+
+#content-container h4{
+  color:#334155;
+}
+
+#content-container p{
+  margin:13px 0;
+}
+
+#content-container ul,
+#content-container ol{
+  padding-left:28px;
+}
+
+#content-container li{
+  margin:6px 0;
+}
+
+#content-container a{
+  color:#2563eb;
+  text-decoration:none;
+}
+
+#content-container a:hover{
+  text-decoration:underline;
+}
+
+#content-container blockquote{
+  margin:20px 0;
+  padding:12px 18px;
+  border-left:5px solid #336791;
+  background:#eff6ff;
+  color:#334155;
+}
+
+#content-container table{
+  width:100%;
+  margin:20px 0;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:8px;
+  box-shadow:0 1px 4px rgba(15,23,42,.12);
+}
+
+#content-container th,
+#content-container td{
+  padding:11px 13px;
+  text-align:left;
+  border:1px solid #cbd5e1;
+}
+
+#content-container th{
+  color:#ffffff;
+  background:#336791;
+}
+
+#content-container tr:nth-child(even){
+  background:#f8fafc;
+}
+
+#content-container img{
+  max-width:100%;
+  height:auto;
+  border-radius:8px;
+}
+
+/* =========================================================
+   BLOQUES DE CÓDIGO
+========================================================= */
+
+pre{
+  position:relative;
+  margin:22px 0;
+  padding:20px 15px 15px;
+  overflow-x:auto;
+  background:#0f172a;
+  color:#e2e8f0;
+  border:1px solid #1e293b;
+  border-radius:9px;
+  box-shadow:0 4px 12px rgba(15,23,42,.18);
+}
+
+pre code{
+  display:block;
+  padding-top:12px;
+  color:#e2e8f0;
+  background:transparent;
+  font-family:Consolas,Monaco,"Courier New",monospace;
+  font-size:13px;
+  line-height:1.6;
+}
+
+code{
+  padding:2px 5px;
+  color:#be123c;
+  background:#f1f5f9;
+  border-radius:4px;
+  font-family:Consolas,Monaco,"Courier New",monospace;
+}
+
+.copy-button{
+  position:absolute;
+  top:8px;
+  right:8px;
+  margin:0;
+  padding:6px 11px;
+  border:1px solid #475569;
+  border-radius:5px;
+  background:#1e293b;
+  color:#ffffff;
+  font-size:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.copy-button:hover{
+  background:#336791;
+  border-color:#336791;
+}
+
+.copy-button.copied{
+  background:#15803d;
+  border-color:#15803d;
+}
+
+/* =========================================================
+   MENSAJES DE ESTADO
+========================================================= */
+
+.loading-message{
+  padding:20px;
+  color:#1f4f75;
+  background:#eff6ff;
+  border-left:5px solid #336791;
+  border-radius:6px;
+}
+
+.error-box{
+  padding:20px;
+  color:#991b1b;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  border-left:5px solid #dc2626;
+  border-radius:7px;
+}
+
+.welcome-card{
+  padding:30px;
+  background:linear-gradient(135deg,#eff6ff,#ffffff);
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  box-shadow:0 8px 25px rgba(15,23,42,.08);
+}
+
+.welcome-card h1{
+  color:#1f4f75;
+}
+
+/* =========================================================
+   BOTÓN PARA MOSTRAR EL MENÚ EN MÓVILES
+========================================================= */
+
+#mobile-menu-button{
+  display:none;
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:1001;
+  width:44px;
+  height:44px;
+  margin:0;
+  padding:0;
+  border:none;
+  border-radius:8px;
+  background:#336791;
+  color:#ffffff;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+
+#sidebar-overlay{
+  display:none;
+}
+
+/* =========================================================
+   DISEÑO RESPONSIVO
+========================================================= */
+
+@media(max-width:900px){
+  #mobile-menu-button{
+    display:block;
+  }
+
+  #sidebar{
+    position:fixed;
+    top:0;
+    left:-390px;
+    z-index:1000;
+    transition:left .25s ease;
+    box-shadow:8px 0 25px rgba(0,0,0,.4);
+  }
+
+  #sidebar.open{
+    left:0;
+  }
+
+  #sidebar-overlay{
+    position:fixed;
+    inset:0;
+    z-index:999;
+    background:rgba(0,0,0,.55);
+  }
+
+  #sidebar-overlay.visible{
+    display:block;
+  }
+
+  #content{
+    width:100%;
+    padding:75px 22px 30px;
+  }
+}
+
+@media(max-width:500px){
+  .login-box{
+    padding:28px 18px;
+  }
+
+  .login-box h1{
+    font-size:26px;
+  }
+
+  .profile img{
+    width:145px;
+    height:145px;
+  }
+
+  #sidebar{
+    width:88%;
+    min-width:0;
+    left:-100%;
+  }
+
+  #content{
+    padding-left:15px;
+    padding-right:15px;
+  }
+
+  #content-container h1{
+    font-size:26px;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="menu">
+
+<!-- =======================================================
+     PANTALLA DE ACCESO
+======================================================= -->
+
+<section id="login">
+  <div class="login-box">
+
+    <h1>PostgreSQL</h1>
+    <h2>Administración y Resolución de Problemas</h2>
+
     <div class="profile">
-      <img src="https://avatars.githubusercontent.com/u/7384546?v=4" alt="Foto de perfil" />
-      <h2>José Alejandro Jiménez Rosa</h2>
-      <p>📘 Guía de Administración de PostgreSQL.</p>
+      <img
+        src="https://avatars.githubusercontent.com/u/7384546?v=4"
+        alt="José Alejandro Jiménez Rosa"
+      >
+
+      <p>
+        <strong>José Alejandro Jiménez Rosa</strong><br>
+        Database Administrator y docente universitario<br>
+        SQL Server · PostgreSQL · MongoDB · Oracle
+      </p>
     </div>
-    <h1>Resolución de Problemas</h1>
-    <p>Introduce la clave de desencriptación</p>
-    <input type="password" id="claveInput" placeholder="Escribe la clave aquí..." />
 
-    <ul>
-      <li><a href="#" onclick="loadEncryptedMarkdown('Introducción')">Introducción</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('Backup')">Backup</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('ParticionadodeTablas')">Particionado de Tablas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('GestióndeRolesyPermisos')">Gestión de Roles y Permisos</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('mantenimientosprogramados')">Plan Maestro de Mantenimiento para PostgreSQL</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('DBLinkTransaccionesyBackup')">DBLink, Transacciones y Backup</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('ReplicaciónPostgreSQL')">Replicación PostgreSQL</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('SeleccionarRegistros')">📑 Consultas SQL Prácticas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('InstalaciónyAdministracióndelServidor')">🖥️ Instalación y Administración del Servidor</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('RecursosyGuíasExternas')">📚 Recursos y Guías Externas</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('TCPSV')">📚 TCPSV</a></li>
-      <li><a href="#" onclick="loadEncryptedMarkdown('Equivalente a SQL Server Always On Availability Groups (AG)')">📚 Equivalente a SQL Server Always On Availability Groups (AG)</a></li>
-      
-    </ul>
+    <p class="login-description">
+      Guía técnica para la instalación, administración,
+      seguridad, respaldos, mantenimiento, replicación,
+      optimización y resolución de problemas en PostgreSQL.
+    </p>
+
+    <div class="login-form">
+
+      <div class="password-container">
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Ingrese la clave de desencriptación"
+          autocomplete="current-password"
+        >
+
+        <button
+          type="button"
+          id="toggle-password"
+          class="toggle-password"
+          aria-label="Mostrar u ocultar contraseña"
+          title="Mostrar u ocultar contraseña"
+        >
+          👁
+        </button>
+      </div>
+
+      <button type="button" id="submit-button">
+        Ingresar a la documentación
+      </button>
+
+      <p id="error-message"></p>
+
+    </div>
+
   </div>
+</section>
 
-  <div class="content">
-    <div id="markdown-viewer">Selecciona una opción del menú para ver la documentación.</div>
-  </div>
+<!-- =======================================================
+     APLICACIÓN PRINCIPAL
+======================================================= -->
 
-  <script>
-    async function loadEncryptedMarkdown(name) {
-      const password = document.getElementById("claveInput").value.trim();
-      if (!password) {
-        alert("Por favor, escribe la clave de desencriptación.");
+<div id="app">
+
+  <button
+    type="button"
+    id="mobile-menu-button"
+    aria-label="Abrir menú"
+    title="Abrir menú"
+  >
+    ☰
+  </button>
+
+  <div id="sidebar-overlay"></div>
+
+  <aside id="sidebar">
+
+    <div class="sidebar-header">
+      <h2>🐘 PostgreSQL Administration</h2>
+    </div>
+
+    <div class="sidebar-profile">
+      <img
+        src="https://avatars.githubusercontent.com/u/7384546?v=4"
+        alt="José Alejandro Jiménez Rosa"
+      >
+
+      <strong>José Alejandro Jiménez Rosa</strong><br>
+      Database Administrator<br>
+      SQL Server · PostgreSQL · MongoDB · Oracle
+
+      <div class="sidebar-profile-description">
+        Administración, backups, roles, mantenimiento,
+        particionado, replicación y alta disponibilidad.
+      </div>
+    </div>
+
+    <div class="folder">
+      📂 PostgreSQL-Administration-Guide
+    </div>
+
+    <div class="menu-container">
+      <ul id="menu"></ul>
+    </div>
+
+    <div class="sidebar-footer">
+      PostgreSQL Knowledge Base
+    </div>
+
+  </aside>
+
+  <main id="content">
+    <div id="content-container">
+
+      <div class="welcome-card">
+        <h1>Bienvenido</h1>
+
+        <p>
+          Seleccione una categoría del menú lateral para consultar
+          la documentación técnica de PostgreSQL.
+        </p>
+
+        <ul>
+          <li>Introducción y arquitectura de PostgreSQL.</li>
+          <li>Backups y recuperación de bases de datos.</li>
+          <li>Particionado de tablas.</li>
+          <li>Administración de roles y permisos.</li>
+          <li>Mantenimiento preventivo y programado.</li>
+          <li>DBLink y manejo de transacciones.</li>
+          <li>Replicación y alta disponibilidad.</li>
+          <li>Consultas SQL administrativas.</li>
+          <li>Instalación y administración del servidor.</li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* =========================================================
+   LISTA DE DOCUMENTOS CIFRADOS
+========================================================= */
+
+const files = [
+  {
+    title: "Introducción a PostgreSQL",
+    icon: "📘",
+    file: "Introducción.enc.txt"
+  },
+  {
+    title: "Backup y recuperación",
+    icon: "💾",
+    file: "Backup.enc.txt"
+  },
+  {
+    title: "Particionado de tablas",
+    icon: "🧩",
+    file: "ParticionadodeTablas.enc.txt"
+  },
+  {
+    title: "Gestión de roles y permisos",
+    icon: "👥",
+    file: "GestióndeRolesyPermisos.enc.txt"
+  },
+  {
+    title: "Plan maestro de mantenimiento para PostgreSQL",
+    icon: "🛠️",
+    file: "mantenimientosprogramados.enc.txt"
+  },
+  {
+    title: "DBLink, transacciones y backup",
+    icon: "🔗",
+    file: "DBLinkTransaccionesyBackup.enc.txt"
+  },
+  {
+    title: "Replicación PostgreSQL",
+    icon: "🔄",
+    file: "ReplicaciónPostgreSQL.enc.txt"
+  },
+  {
+    title: "Consultas SQL prácticas",
+    icon: "📑",
+    file: "SeleccionarRegistros.enc.txt"
+  },
+  {
+    title: "Instalación y administración del servidor",
+    icon: "🖥️",
+    file: "InstalaciónyAdministracióndelServidor.enc.txt"
+  },
+  {
+    title: "Recursos y guías externas",
+    icon: "📚",
+    file: "RecursosyGuíasExternas.enc.txt"
+  },
+  {
+    title: "TCPSV",
+    icon: "🌐",
+    file: "TCPSV.enc.txt"
+  },
+  {
+    title: "Equivalente a SQL Server Always On Availability Groups",
+    icon: "🛡️",
+    file: "Equivalente a SQL Server Always On Availability Groups (AG).enc.txt"
+  }
+];
+
+/* =========================================================
+   REFERENCIAS DEL DOM
+========================================================= */
+
+const login = document.getElementById("login");
+const app = document.getElementById("app");
+
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebar-overlay");
+const mobileMenuButton = document.getElementById("mobile-menu-button");
+
+const menu = document.getElementById("menu");
+const content = document.getElementById("content-container");
+const contentArea = document.getElementById("content");
+
+const passwordInput = document.getElementById("password-input");
+const submitButton = document.getElementById("submit-button");
+const togglePasswordButton = document.getElementById("toggle-password");
+const errorMessage = document.getElementById("error-message");
+
+let password = "";
+let activeFile = null;
+
+/* =========================================================
+   CONFIGURACIÓN DE SHOWDOWN
+========================================================= */
+
+const converter = new showdown.Converter({
+  tables:true,
+  strikethrough:true,
+  tasklists:true,
+  ghCodeBlocks:true,
+  simplifiedAutoLink:true,
+  openLinksInNewWindow:true,
+  emoji:true
+});
+
+/* =========================================================
+   EVENTOS DE ACCESO
+========================================================= */
+
+submitButton.addEventListener("click",loginUser);
+
+passwordInput.addEventListener("keydown",function(event){
+  if(event.key === "Enter"){
+    loginUser();
+  }
+});
+
+passwordInput.addEventListener("input",function(){
+  errorMessage.textContent = "";
+});
+
+togglePasswordButton.addEventListener("click",function(){
+  const passwordIsHidden = passwordInput.type === "password";
+
+  passwordInput.type = passwordIsHidden
+    ? "text"
+    : "password";
+
+  togglePasswordButton.textContent = passwordIsHidden
+    ? "🙈"
+    : "👁";
+});
+
+/* =========================================================
+   EVENTOS DEL MENÚ MÓVIL
+========================================================= */
+
+mobileMenuButton.addEventListener("click",toggleMobileMenu);
+sidebarOverlay.addEventListener("click",closeMobileMenu);
+
+function toggleMobileMenu(){
+  sidebar.classList.toggle("open");
+  sidebarOverlay.classList.toggle("visible");
+}
+
+function closeMobileMenu(){
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("visible");
+}
+
+/* =========================================================
+   INICIO DE SESIÓN
+========================================================= */
+
+async function loginUser(){
+  password = passwordInput.value.trim();
+
+  if(!password){
+    errorMessage.textContent = "Debe ingresar una clave.";
+    passwordInput.focus();
+    return;
+  }
+
+  if(files.length === 0){
+    errorMessage.textContent = "No existen documentos configurados.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Validando clave...";
+  errorMessage.textContent = "";
+
+  try{
+    /*
+      Se intenta abrir el primer documento antes de mostrar
+      la aplicación para comprobar que la contraseña sea válida.
+    */
+
+    const firstMarkdown = await fetchAndDecrypt(
+      files[0].file,
+      password
+    );
+
+    login.style.display = "none";
+    app.style.display = "flex";
+
+    buildMenu();
+
+    renderMarkdown(
+      firstMarkdown,
+      files[0].title
+    );
+
+    setActiveMenuItem(0);
+    activeFile = files[0].file;
+  }
+  catch(error){
+    errorMessage.textContent = error.message;
+    passwordInput.select();
+  }
+  finally{
+    submitButton.disabled = false;
+    submitButton.textContent = "Ingresar a la documentación";
+  }
+}
+
+/* =========================================================
+   CREACIÓN DEL MENÚ
+========================================================= */
+
+function buildMenu(){
+  menu.innerHTML = "";
+
+  files.forEach((item,index)=>{
+    const li = document.createElement("li");
+
+    li.title = item.title;
+
+    li.innerHTML = `
+      <span class="file-icon">${item.icon}</span>
+      <span class="file-name">${escapeHtml(item.title)}</span>
+    `;
+
+    li.addEventListener("click",async function(){
+      if(activeFile === item.file){
+        closeMobileMenu();
         return;
       }
 
-      const file = name + ".enc.txt";
-      try {
-        const res = await fetch(file);
-        if (!res.ok) throw new Error("Archivo no encontrado.");
-        const encrypted = await res.text();
+      await loadFile(item,index);
+      closeMobileMenu();
+    });
 
-        const bytes = CryptoJS.AES.decrypt(encrypted, password);
-        const markdown = bytes.toString(CryptoJS.enc.Utf8);
-        if (!markdown) throw new Error("Clave incorrecta o contenido vacío.");
+    menu.appendChild(li);
+  });
+}
 
-        const html = marked.parse(markdown);
-        document.getElementById("markdown-viewer").innerHTML = html;
-        addCopyButtons();
-        document.getElementById("markdown-viewer").scrollIntoView({ behavior: "smooth" });
-      } catch (error) {
-        document.getElementById("markdown-viewer").innerHTML =
-          `<p style="color:red;">❌ ${error.message}</p>`;
+/* =========================================================
+   CARGA DEL DOCUMENTO
+========================================================= */
+
+async function loadFile(item,index){
+  content.innerHTML = `
+    <div class="loading-message">
+      <strong>Cargando:</strong>
+      ${escapeHtml(item.title)}
+    </div>
+  `;
+
+  try{
+    const markdown = await fetchAndDecrypt(
+      item.file,
+      password
+    );
+
+    renderMarkdown(markdown,item.title);
+    setActiveMenuItem(index);
+    activeFile = item.file;
+
+    contentArea.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+  }
+  catch(error){
+    content.innerHTML = `
+      <div class="error-box">
+        <h2>No se pudo cargar el documento</h2>
+
+        <p>
+          <strong>Documento:</strong>
+          ${escapeHtml(item.title)}
+        </p>
+
+        <p>
+          <strong>Archivo:</strong>
+          ${escapeHtml(item.file)}
+        </p>
+
+        <p>${escapeHtml(error.message)}</p>
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   OBTENER Y DESENCRIPTAR ARCHIVOS
+========================================================= */
+
+async function fetchAndDecrypt(fileName,decryptionPassword){
+  let response;
+
+  try{
+    response = await fetch(fileName,{
+      cache:"no-store"
+    });
+  }
+  catch(error){
+    throw new Error(
+      "No fue posible comunicarse con el servidor."
+    );
+  }
+
+  if(!response.ok){
+    throw new Error(
+      `No se encontró el archivo ${fileName}.`
+    );
+  }
+
+  const encryptedText = (await response.text()).trim();
+
+  if(!encryptedText){
+    throw new Error(
+      `El archivo ${fileName} está vacío.`
+    );
+  }
+
+  let markdown;
+
+  try{
+    const bytes = CryptoJS.AES.decrypt(
+      encryptedText,
+      decryptionPassword
+    );
+
+    markdown = bytes.toString(
+      CryptoJS.enc.Utf8
+    );
+  }
+  catch(error){
+    throw new Error(
+      "No se pudo desencriptar el archivo."
+    );
+  }
+
+  if(!markdown || !markdown.trim()){
+    throw new Error(
+      "Clave incorrecta o archivo cifrado dañado."
+    );
+  }
+
+  return markdown;
+}
+
+/* =========================================================
+   MOSTRAR EL MARKDOWN
+========================================================= */
+
+function renderMarkdown(markdown,title){
+  const html = converter.makeHtml(markdown);
+
+  content.innerHTML = html;
+
+  /*
+    Si el documento no contiene un encabezado principal,
+    se agrega automáticamente el título del menú.
+  */
+
+  if(!content.querySelector("h1")){
+    const heading = document.createElement("h1");
+    heading.textContent = title;
+    content.prepend(heading);
+  }
+
+  addCopyButtons();
+  configureExternalLinks();
+}
+
+/* =========================================================
+   MARCAR LA OPCIÓN ACTIVA
+========================================================= */
+
+function setActiveMenuItem(index){
+  document
+    .querySelectorAll("#menu li")
+    .forEach((element,itemIndex)=>{
+      element.classList.toggle(
+        "active",
+        itemIndex === index
+      );
+    });
+}
+
+/* =========================================================
+   BOTONES PARA COPIAR CÓDIGO
+========================================================= */
+
+function addCopyButtons(){
+  document
+    .querySelectorAll("#content-container pre")
+    .forEach(pre=>{
+      if(pre.querySelector(".copy-button")){
+        return;
       }
-    }
 
-    function addCopyButtons() {
-      const pres = document.querySelectorAll('#markdown-viewer pre');
-      pres.forEach((pre) => {
-        if (pre.querySelector('.copy-btn')) return;
-        const button = document.createElement('button');
-        button.className = 'copy-btn';
-        button.innerText = 'Copiar';
-        button.onclick = () => {
-          const code = pre.querySelector('code').innerText;
-          navigator.clipboard.writeText(code).then(() => {
-            button.innerText = '¡Copiado!';
-            setTimeout(() => button.innerText = 'Copiar', 2000);
-          });
-        };
-        pre.appendChild(button);
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.textContent = "Copiar";
+      button.className = "copy-button";
+
+      button.addEventListener("click",async function(){
+        const codeElement = pre.querySelector("code");
+
+        const textToCopy = codeElement
+          ? codeElement.innerText
+          : getPreTextWithoutButton(pre);
+
+        try{
+          await navigator.clipboard.writeText(textToCopy);
+          showCopiedState(button);
+        }
+        catch(error){
+          fallbackCopyText(textToCopy);
+          showCopiedState(button);
+        }
       });
-    }
-  </script>
+
+      pre.appendChild(button);
+    });
+}
+
+function showCopiedState(button){
+  button.textContent = "Copiado";
+  button.classList.add("copied");
+
+  setTimeout(function(){
+    button.textContent = "Copiar";
+    button.classList.remove("copied");
+  },1500);
+}
+
+function getPreTextWithoutButton(pre){
+  const clone = pre.cloneNode(true);
+  const button = clone.querySelector(".copy-button");
+
+  if(button){
+    button.remove();
+  }
+
+  return clone.innerText;
+}
+
+function fallbackCopyText(text){
+  const textarea = document.createElement("textarea");
+
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+
+  document.body.appendChild(textarea);
+
+  textarea.select();
+  document.execCommand("copy");
+
+  textarea.remove();
+}
+
+/* =========================================================
+   CONFIGURACIÓN DE ENLACES EXTERNOS
+========================================================= */
+
+function configureExternalLinks(){
+  document
+    .querySelectorAll("#content-container a")
+    .forEach(link=>{
+      const href = link.getAttribute("href");
+
+      if(
+        href &&
+        (
+          href.startsWith("http://") ||
+          href.startsWith("https://")
+        )
+      ){
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+    });
+}
+
+/* =========================================================
+   SEGURIDAD BÁSICA PARA LOS TEXTOS DEL MENÚ
+========================================================= */
+
+function escapeHtml(value){
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+</script>
+
 </body>
 </html>
+```
