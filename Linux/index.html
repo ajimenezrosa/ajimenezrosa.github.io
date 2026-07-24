@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manual RHCSA - Red Hat Enterprise Linux</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+
+<style>
+:root{
+  --redhat-red:#ee0000;
+  --redhat-dark:#151515;
+  --sidebar-bg:#1f1f1f;
+  --sidebar-secondary:#292929;
+  --sidebar-hover:#333333;
+  --sidebar-active:#3b3b3b;
+  --border-color:#404040;
+  --text-light:#d4d4d4;
+  --text-muted:#a3a3a3;
+  --content-bg:#ffffff;
+  --content-text:#1f2937;
+  --success:#16a34a;
+  --danger:#dc2626;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  height:100%;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+body{
+  background:var(--redhat-dark);
+  color:var(--text-light);
+}
+
+/* =========================================================
+   PANTALLA DE ACCESO
+========================================================= */
+
+#login{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:25px;
+  background:
+    linear-gradient(rgba(15,15,15,.88),rgba(15,15,15,.95)),
+    radial-gradient(circle at top,#4b0000 0%,#151515 55%);
+}
+
+.login-box{
+  width:100%;
+  max-width:720px;
+  padding:40px;
+  border-radius:18px;
+  background:#202020;
+  border-top:5px solid var(--redhat-red);
+  box-shadow:0 15px 45px rgba(0,0,0,.55);
+}
+
+.redhat-logo{
+  width:95px;
+  height:95px;
+  margin:0 auto 20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:50%;
+  background:var(--redhat-red);
+  color:white;
+  font-size:45px;
+  box-shadow:0 8px 25px rgba(238,0,0,.3);
+}
+
+.login-box h1{
+  margin:0 0 8px;
+  color:#ffffff;
+  font-size:32px;
+}
+
+.login-box h2{
+  margin:0 0 25px;
+  color:#fca5a5;
+  font-size:19px;
+  font-weight:500;
+}
+
+.profile{
+  margin:25px 0;
+}
+
+.profile img{
+  width:150px;
+  height:150px;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid var(--redhat-red);
+}
+
+.profile p{
+  line-height:1.6;
+  color:#d1d5db;
+}
+
+.course-description{
+  max-width:570px;
+  margin:20px auto;
+  color:#cbd5e1;
+  line-height:1.7;
+}
+
+.password-container{
+  max-width:480px;
+  margin:25px auto 0;
+}
+
+.password-wrapper{
+  position:relative;
+}
+
+input[type="password"],
+input[type="text"]{
+  width:100%;
+  padding:14px 52px 14px 15px;
+  border-radius:9px;
+  border:1px solid #555;
+  outline:none;
+  background:#111111;
+  color:#ffffff;
+  font-size:15px;
+}
+
+input:focus{
+  border-color:var(--redhat-red);
+  box-shadow:0 0 0 3px rgba(238,0,0,.17);
+}
+
+.toggle-password{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  color:#d1d5db;
+  cursor:pointer;
+  font-size:18px;
+  padding:5px;
+}
+
+#submit-button{
+  width:100%;
+  margin-top:14px;
+  padding:14px 25px;
+  border:none;
+  border-radius:9px;
+  background:var(--redhat-red);
+  color:#ffffff;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.2s;
+}
+
+#submit-button:hover{
+  background:#cc0000;
+  transform:translateY(-1px);
+}
+
+#error-message{
+  min-height:22px;
+  margin-top:12px;
+  color:#f87171;
+  font-weight:bold;
+}
+
+/* =========================================================
+   APLICACIÓN
+========================================================= */
+
+#app{
+  display:none;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+#sidebar{
+  width:390px;
+  min-width:390px;
+  display:flex;
+  flex-direction:column;
+  background:var(--sidebar-bg);
+  border-right:1px solid var(--border-color);
+  transition:.25s;
+}
+
+.sidebar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 17px;
+  background:#181818;
+  border-bottom:3px solid var(--redhat-red);
+}
+
+.sidebar-header h2{
+  margin:0;
+  color:#ffffff;
+  font-size:17px;
+}
+
+.sidebar-header button{
+  margin:0;
+  padding:6px 9px;
+  border:none;
+  border-radius:5px;
+  background:#333333;
+  color:white;
+  cursor:pointer;
+}
+
+.sidebar-profile{
+  padding:18px;
+  text-align:center;
+  border-bottom:1px solid var(--border-color);
+  background:#202020;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.sidebar-profile img{
+  width:82px;
+  height:82px;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 10px;
+  border-radius:50%;
+  border:3px solid var(--redhat-red);
+}
+
+.sidebar-profile strong{
+  color:#ffffff;
+}
+
+.repository-name{
+  padding:11px 16px;
+  background:#171717;
+  color:#fca5a5;
+  font-weight:bold;
+  font-size:14px;
+  border-bottom:1px solid var(--border-color);
+}
+
+.search-container{
+  padding:12px;
+  border-bottom:1px solid var(--border-color);
+  background:#202020;
+}
+
+#search-input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #444;
+  border-radius:7px;
+  background:#131313;
+  color:#ffffff;
+  outline:none;
+}
+
+#search-input:focus{
+  border-color:var(--redhat-red);
+}
+
+.modules-container{
+  flex:1;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#555 #222;
+}
+
+/* =========================================================
+   MÓDULOS
+========================================================= */
+
+.module{
+  border-bottom:1px solid var(--border-color);
+}
+
+.module-header{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:12px 15px;
+  border:none;
+  border-left:4px solid transparent;
+  background:var(--sidebar-secondary);
+  color:#ffffff;
+  text-align:left;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.module-header:hover{
+  background:#323232;
+  border-left-color:var(--redhat-red);
+}
+
+.module-header.open{
+  background:#303030;
+  border-left-color:var(--redhat-red);
+}
+
+.module-arrow{
+  width:15px;
+  color:#fca5a5;
+  transition:transform .2s;
+}
+
+.module-header.open .module-arrow{
+  transform:rotate(90deg);
+}
+
+.module-icon{
+  color:var(--redhat-red);
+}
+
+.module-title{
+  flex:1;
+}
+
+.module-count{
+  min-width:28px;
+  padding:2px 7px;
+  text-align:center;
+  border-radius:12px;
+  background:#171717;
+  color:#d1d5db;
+  font-size:11px;
+}
+
+.module-pages{
+  display:none;
+  list-style:none;
+  margin:0;
+  padding:0;
+  background:#1b1b1b;
+}
+
+.module-pages.open{
+  display:block;
+}
+
+.module-pages li{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:9px 12px 9px 31px;
+  border-left:4px solid transparent;
+  color:#d4d4d4;
+  cursor:pointer;
+  font-size:13px;
+  line-height:1.4;
+  transition:.15s;
+}
+
+.module-pages li:hover{
+  background:var(--sidebar-hover);
+}
+
+.module-pages li.active{
+  background:var(--sidebar-active);
+  border-left-color:var(--redhat-red);
+  color:#ffffff;
+}
+
+.file-icon{
+  width:18px;
+  flex-shrink:0;
+  color:#fca5a5;
+}
+
+.file-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+#content{
+  flex:1;
+  overflow-y:auto;
+  background:var(--content-bg);
+  color:var(--content-text);
+  padding:36px;
+}
+
+#content-container{
+  max-width:1050px;
+  margin:auto;
+  line-height:1.75;
+}
+
+#content-container h1{
+  padding-bottom:12px;
+  border-bottom:3px solid var(--redhat-red);
+  color:#111827;
+}
+
+#content-container h2{
+  margin-top:35px;
+  padding-left:12px;
+  border-left:5px solid var(--redhat-red);
+  color:#1f2937;
+}
+
+#content-container h3{
+  color:#374151;
+}
+
+#content-container a{
+  color:#c40000;
+}
+
+#content-container blockquote{
+  margin:20px 0;
+  padding:12px 18px;
+  border-left:5px solid var(--redhat-red);
+  background:#fff1f2;
+  color:#4b5563;
+}
+
+#content-container table{
+  width:100%;
+  margin:22px 0;
+  border-collapse:collapse;
+}
+
+#content-container th,
+#content-container td{
+  padding:10px 12px;
+  border:1px solid #d1d5db;
+  text-align:left;
+}
+
+#content-container th{
+  background:#fee2e2;
+}
+
+#content-container img{
+  max-width:100%;
+  border-radius:8px;
+}
+
+pre{
+  position:relative;
+  margin:22px 0;
+  padding:19px;
+  overflow-x:auto;
+  border-left:5px solid var(--redhat-red);
+  border-radius:8px;
+  background:#111827;
+  color:#e5e7eb;
+}
+
+code{
+  font-family:Consolas,"Courier New",monospace;
+}
+
+p code,
+li code,
+td code{
+  padding:2px 5px;
+  border-radius:4px;
+  background:#f3f4f6;
+  color:#be123c;
+}
+
+pre code{
+  padding:0;
+  background:transparent;
+  color:inherit;
+}
+
+.copy-button{
+  position:absolute;
+  top:8px;
+  right:8px;
+  margin:0;
+  padding:6px 10px;
+  border:none;
+  border-radius:5px;
+  background:var(--redhat-red);
+  color:#ffffff;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.copy-button:hover{
+  background:#cc0000;
+}
+
+.welcome-card{
+  padding:30px;
+  border:1px solid #e5e7eb;
+  border-top:5px solid var(--redhat-red);
+  border-radius:12px;
+  background:#ffffff;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.welcome-card h1{
+  margin-top:0;
+}
+
+.welcome-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;
+  margin-top:25px;
+}
+
+.welcome-item{
+  padding:20px;
+  border-radius:10px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+}
+
+.welcome-item strong{
+  display:block;
+  margin-bottom:8px;
+  color:#b91c1c;
+}
+
+.loading{
+  padding:25px;
+  text-align:center;
+}
+
+.error-box{
+  padding:20px;
+  border-left:5px solid var(--danger);
+  border-radius:7px;
+  background:#fef2f2;
+  color:#991b1b;
+}
+
+/* =========================================================
+   BOTÓN MÓVIL
+========================================================= */
+
+#mobile-menu-button{
+  display:none;
+  position:fixed;
+  top:14px;
+  left:14px;
+  z-index:1001;
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:8px;
+  background:var(--redhat-red);
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+}
+
+.sidebar-overlay{
+  display:none;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+  #mobile-menu-button{
+    display:block;
+  }
+
+  #sidebar{
+    position:fixed;
+    top:0;
+    left:-400px;
+    z-index:1000;
+    height:100vh;
+    box-shadow:8px 0 30px rgba(0,0,0,.5);
+  }
+
+  #sidebar.mobile-open{
+    left:0;
+  }
+
+  .sidebar-overlay{
+    position:fixed;
+    inset:0;
+    z-index:999;
+    background:rgba(0,0,0,.65);
+  }
+
+  .sidebar-overlay.visible{
+    display:block;
+  }
+
+  #content{
+    padding:75px 20px 30px;
+  }
+}
+
+@media(max-width:480px){
+  #sidebar{
+    width:92%;
+    min-width:92%;
+  }
+
+  .login-box{
+    padding:28px 20px;
+  }
+
+  .login-box h1{
+    font-size:26px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =======================================================
+     PANTALLA DE LOGIN
+======================================================= -->
+
+<div id="login">
+
+  <div class="login-box">
+
+    <div class="redhat-logo">🎩</div>
+
+    <h1>Manual de preparación RHCSA</h1>
+    <h2>Red Hat Certified System Administrator</h2>
+
+    <div class="profile">
+      <img
+        src="https://avatars.githubusercontent.com/u/7384546?v=4"
+        alt="Alejandro Jiménez"
+      >
+
+      <p>
+        <strong>Jose Alejandro Jimenez Rosa</strong><br>
+        Database Administrator<br>
+        Linux · SQL Server · PostgreSQL · MongoDB · Oracle
+      </p>
+    </div>
+
+    <p class="course-description">
+      Manual práctico para la preparación del examen RHCSA,
+      administración de Red Hat Enterprise Linux, usuarios,
+      permisos, almacenamiento, servicios, redes, seguridad,
+      contenedores y automatización.
+    </p>
+
+    <div class="password-container">
+
+      <div class="password-wrapper">
+
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Ingrese la clave de desencriptación"
+          autocomplete="current-password"
+        >
+
+        <button
+          type="button"
+          class="toggle-password"
+          id="toggle-password"
+          title="Mostrar u ocultar contraseña"
+        >
+          👁
+        </button>
+
+      </div>
+
+      <button id="submit-button">
+        Ingresar al manual
+      </button>
+
+      <p id="error-message"></p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =======================================================
+     APLICACIÓN
+======================================================= -->
+
+<div id="app">
+
+  <button id="mobile-menu-button" title="Abrir menú">
+    ☰
+  </button>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <aside id="sidebar">
+
+    <div class="sidebar-header">
+      <h2>🎩 Manual RHCSA</h2>
+
+      <button id="close-mobile-sidebar" title="Cerrar menú">
+        ✕
+      </button>
+    </div>
+
+    <div class="sidebar-profile">
+
+      <img
+        src="https://avatars.githubusercontent.com/u/7384546?v=4"
+        alt="Alejandro Jiménez"
+      >
+
+      <strong>Jose Alejandro Jimenez Rosa</strong><br>
+      Database Administrator<br>
+      Linux · SQL Server · PostgreSQL<br>
+      MongoDB · Oracle
+
+    </div>
+
+    <div class="repository-name">
+      📂 RHCSA-Red-Hat-Manual
+    </div>
+
+    <div class="search-container">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Buscar clase o tema..."
+      >
+    </div>
+
+    <div
+      id="modules-container"
+      class="modules-container"
+    ></div>
+
+  </aside>
+
+  <main id="content">
+
+    <div id="content-container">
+
+      <div class="welcome-card">
+
+        <h1>Bienvenido al manual RHCSA</h1>
+
+        <p>
+          Seleccione una clase dentro de los módulos del menú lateral.
+        </p>
+
+        <div class="welcome-grid">
+
+          <div class="welcome-item">
+            <strong>📁 Organización</strong>
+            Contenido organizado por módulos y objetivos del examen.
+          </div>
+
+          <div class="welcome-item">
+            <strong>🔐 Seguridad</strong>
+            Los archivos Markdown pueden mantenerse cifrados con AES.
+          </div>
+
+          <div class="welcome-item">
+            <strong>⌨️ Práctica</strong>
+            Incluye comandos, ejemplos y ejercicios para laboratorios.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+/*
+=============================================================
+CONFIGURACIÓN DE LOS MÓDULOS Y ARCHIVOS
+=============================================================
+
+Cada módulo tiene esta estructura:
+
+{
+  title: "Nombre del módulo",
+  icon: "📁",
+  open: true,
+  pages: [
+    {
+      title: "Nombre de la página",
+      file: "archivo.enc.txt"
+    }
+  ]
+}
+
+Puedes agregar todos los módulos y páginas que necesites.
+*/
+
+const modules = [
+
+  {
+    title: "Módulo 1: Introducción a RHCSA y RHEL",
+    icon: "🎓",
+    open: true,
+
+    pages: [
+      {
+        title: "1. Introducción al examen RHCSA",
+        file: "01-introduccion-rhcsa.enc.txt"
+      },
+      {
+        title: "2. Instalación de Red Hat Enterprise Linux",
+        file: "02-instalacion-rhel.enc.txt"
+      },
+      {
+        title: "3. Acceso a la consola y terminal",
+        file: "03-acceso-consola-terminal.enc.txt"
+      },
+      {
+        title: "4. Uso de la ayuda y documentación",
+        file: "04-ayuda-documentacion.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 2: Administración de archivos",
+    icon: "📂",
+    open: false,
+
+    pages: [
+      {
+        title: "5. Navegación por el sistema de archivos",
+        file: "05-navegacion-sistema-archivos.enc.txt"
+      },
+      {
+        title: "6. Crear, copiar, mover y eliminar archivos",
+        file: "06-administracion-archivos.enc.txt"
+      },
+      {
+        title: "7. Enlaces duros y enlaces simbólicos",
+        file: "07-enlaces-linux.enc.txt"
+      },
+      {
+        title: "8. Buscar archivos con find y locate",
+        file: "08-busqueda-archivos.enc.txt"
+      },
+      {
+        title: "9. Compresión y archivado con tar",
+        file: "09-compresion-archivado.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 3: Usuarios, grupos y permisos",
+    icon: "👥",
+    open: false,
+
+    pages: [
+      {
+        title: "10. Administración de usuarios",
+        file: "10-administracion-usuarios.enc.txt"
+      },
+      {
+        title: "11. Administración de grupos",
+        file: "11-administracion-grupos.enc.txt"
+      },
+      {
+        title: "12. Permisos tradicionales de Linux",
+        file: "12-permisos-linux.enc.txt"
+      },
+      {
+        title: "13. Permisos especiales SUID, SGID y Sticky Bit",
+        file: "13-permisos-especiales.enc.txt"
+      },
+      {
+        title: "14. Listas de control de acceso ACL",
+        file: "14-acl-linux.enc.txt"
+      },
+      {
+        title: "15. Configuración de sudo",
+        file: "15-configuracion-sudo.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 4: Procesos y servicios",
+    icon: "⚙️",
+    open: false,
+
+    pages: [
+      {
+        title: "16. Administración de procesos",
+        file: "16-administracion-procesos.enc.txt"
+      },
+      {
+        title: "17. Prioridad de procesos con nice y renice",
+        file: "17-prioridad-procesos.enc.txt"
+      },
+      {
+        title: "18. Administración de servicios con systemd",
+        file: "18-systemd-servicios.enc.txt"
+      },
+      {
+        title: "19. Análisis de registros con journalctl",
+        file: "19-journalctl-logs.enc.txt"
+      },
+      {
+        title: "20. Programación de tareas con cron y at",
+        file: "20-cron-at.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 5: Almacenamiento local",
+    icon: "💾",
+    open: false,
+
+    pages: [
+      {
+        title: "21. Discos, particiones y sistemas de archivos",
+        file: "21-discos-particiones.enc.txt"
+      },
+      {
+        title: "22. Crear sistemas de archivos XFS y EXT4",
+        file: "22-sistemas-archivos.enc.txt"
+      },
+      {
+        title: "23. Montaje persistente con fstab",
+        file: "23-montaje-fstab.enc.txt"
+      },
+      {
+        title: "24. Administración de LVM",
+        file: "24-administracion-lvm.enc.txt"
+      },
+      {
+        title: "25. Ampliar volúmenes y sistemas de archivos",
+        file: "25-ampliar-volumenes.enc.txt"
+      },
+      {
+        title: "26. Administración de swap",
+        file: "26-administracion-swap.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 6: Redes en Red Hat",
+    icon: "🌐",
+    open: false,
+
+    pages: [
+      {
+        title: "27. Conceptos fundamentales de redes",
+        file: "27-conceptos-redes.enc.txt"
+      },
+      {
+        title: "28. Configuración de red con nmcli",
+        file: "28-configuracion-nmcli.enc.txt"
+      },
+      {
+        title: "29. Configuración de hostname y DNS",
+        file: "29-hostname-dns.enc.txt"
+      },
+      {
+        title: "30. Diagnóstico de conectividad",
+        file: "30-diagnostico-red.enc.txt"
+      },
+      {
+        title: "31. Rutas estáticas",
+        file: "31-rutas-estaticas.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 7: Seguridad del sistema",
+    icon: "🔐",
+    open: false,
+
+    pages: [
+      {
+        title: "32. Configuración del firewall con firewalld",
+        file: "32-firewalld.enc.txt"
+      },
+      {
+        title: "33. Introducción a SELinux",
+        file: "33-introduccion-selinux.enc.txt"
+      },
+      {
+        title: "34. Contextos y booleanos de SELinux",
+        file: "34-contextos-selinux.enc.txt"
+      },
+      {
+        title: "35. Diagnóstico de problemas SELinux",
+        file: "35-diagnostico-selinux.enc.txt"
+      },
+      {
+        title: "36. Configuración básica de SSH",
+        file: "36-configuracion-ssh.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 8: Software y repositorios",
+    icon: "📦",
+    open: false,
+
+    pages: [
+      {
+        title: "37. Administración de paquetes RPM",
+        file: "37-administracion-rpm.enc.txt"
+      },
+      {
+        title: "38. Instalación de software con DNF",
+        file: "38-administracion-dnf.enc.txt"
+      },
+      {
+        title: "39. Configuración de repositorios",
+        file: "39-configuracion-repositorios.enc.txt"
+      },
+      {
+        title: "40. Uso de módulos de aplicaciones",
+        file: "40-modulos-aplicaciones.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 9: Arranque y recuperación",
+    icon: "🚀",
+    open: false,
+
+    pages: [
+      {
+        title: "41. Proceso de arranque de Linux",
+        file: "41-proceso-arranque.enc.txt"
+      },
+      {
+        title: "42. Targets de systemd",
+        file: "42-targets-systemd.enc.txt"
+      },
+      {
+        title: "43. Recuperación de contraseña root",
+        file: "43-recuperacion-root.enc.txt"
+      },
+      {
+        title: "44. Solución de problemas de arranque",
+        file: "44-problemas-arranque.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 10: Contenedores",
+    icon: "📦",
+    open: false,
+
+    pages: [
+      {
+        title: "45. Introducción a Podman",
+        file: "45-introduccion-podman.enc.txt"
+      },
+      {
+        title: "46. Crear y administrar contenedores",
+        file: "46-administrar-contenedores.enc.txt"
+      },
+      {
+        title: "47. Imágenes y registros de contenedores",
+        file: "47-imagenes-registros.enc.txt"
+      },
+      {
+        title: "48. Almacenamiento persistente en Podman",
+        file: "48-almacenamiento-podman.enc.txt"
+      },
+      {
+        title: "49. Contenedores como servicios systemd",
+        file: "49-podman-systemd.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 11: Automatización con Bash",
+    icon: "🧩",
+    open: false,
+
+    pages: [
+      {
+        title: "50. Variables y estructuras de Bash",
+        file: "50-variables-bash.enc.txt"
+      },
+      {
+        title: "51. Condicionales y bucles",
+        file: "51-condicionales-bucles.enc.txt"
+      },
+      {
+        title: "52. Creación de scripts administrativos",
+        file: "52-scripts-administrativos.enc.txt"
+      }
+    ]
+  },
+
+  {
+    title: "Módulo 12: Laboratorios RHCSA",
+    icon: "🧪",
+    open: false,
+
+    pages: [
+      {
+        title: "53. Laboratorio de usuarios y permisos",
+        file: "53-laboratorio-usuarios.enc.txt"
+      },
+      {
+        title: "54. Laboratorio de almacenamiento LVM",
+        file: "54-laboratorio-lvm.enc.txt"
+      },
+      {
+        title: "55. Laboratorio de redes",
+        file: "55-laboratorio-redes.enc.txt"
+      },
+      {
+        title: "56. Laboratorio de SELinux y firewall",
+        file: "56-laboratorio-seguridad.enc.txt"
+      },
+      {
+        title: "57. Simulación completa del examen RHCSA",
+        file: "57-simulacion-examen-rhcsa.enc.txt"
+      }
+    ]
+  }
+
+];
+
+/* =========================================================
+   REFERENCIAS DEL DOM
+========================================================= */
+
+const login = document.getElementById("login");
+const app = document.getElementById("app");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+const modulesContainer = document.getElementById("modules-container");
+const content = document.getElementById("content-container");
+
+const passwordInput = document.getElementById("password-input");
+const submitButton = document.getElementById("submit-button");
+const togglePasswordButton = document.getElementById("toggle-password");
+const errorMessage = document.getElementById("error-message");
+
+const searchInput = document.getElementById("search-input");
+const mobileMenuButton = document.getElementById("mobile-menu-button");
+const closeMobileSidebar = document.getElementById("close-mobile-sidebar");
+
+let password = "";
+let currentFile = null;
+
+const converter = new showdown.Converter({
+  tables:true,
+  strikethrough:true,
+  tasklists:true,
+  simplifiedAutoLink:true,
+  openLinksInNewWindow:true
+});
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+submitButton.addEventListener("click",loginUser);
+
+passwordInput.addEventListener("keydown",function(event){
+  if(event.key === "Enter"){
+    loginUser();
+  }
+});
+
+togglePasswordButton.addEventListener("click",function(){
+
+  const currentType = passwordInput.getAttribute("type");
+
+  if(currentType === "password"){
+    passwordInput.setAttribute("type","text");
+    togglePasswordButton.textContent = "🙈";
+  }else{
+    passwordInput.setAttribute("type","password");
+    togglePasswordButton.textContent = "👁";
+  }
+
+});
+
+searchInput.addEventListener("input",function(){
+  buildModules(searchInput.value);
+});
+
+mobileMenuButton.addEventListener("click",openMobileMenu);
+closeMobileSidebar.addEventListener("click",closeMobileMenu);
+sidebarOverlay.addEventListener("click",closeMobileMenu);
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function loginUser(){
+
+  password = passwordInput.value.trim();
+
+  if(!password){
+    errorMessage.textContent = "Debe ingresar una clave.";
+    passwordInput.focus();
+    return;
+  }
+
+  errorMessage.textContent = "";
+
+  login.style.display = "none";
+  app.style.display = "flex";
+
+  buildModules();
+
+  /*
+  Carga automáticamente la primera página.
+  Comenta esta línea si deseas mostrar solamente la bienvenida.
+  */
+
+  const firstPage = getFirstPage();
+
+  if(firstPage){
+    loadPage(firstPage.file,firstPage.title);
+  }
+}
+
+/* =========================================================
+   CONSTRUIR LOS MÓDULOS
+========================================================= */
+
+function buildModules(searchText = ""){
+
+  modulesContainer.innerHTML = "";
+
+  const normalizedSearch = normalizeText(searchText);
+
+  modules.forEach((module,moduleIndex)=>{
+
+    const filteredPages = module.pages.filter(page=>{
+
+      if(!normalizedSearch){
+        return true;
+      }
+
+      const pageText = normalizeText(
+        module.title + " " + page.title
+      );
+
+      return pageText.includes(normalizedSearch);
+    });
+
+    if(normalizedSearch && filteredPages.length === 0){
+      return;
+    }
+
+    const moduleElement = document.createElement("section");
+    moduleElement.className = "module";
+
+    const moduleHeader = document.createElement("button");
+    moduleHeader.type = "button";
+    moduleHeader.className = "module-header";
+
+    const shouldOpen =
+      normalizedSearch.length > 0 ||
+      module.open === true;
+
+    if(shouldOpen){
+      moduleHeader.classList.add("open");
+    }
+
+    moduleHeader.innerHTML = `
+      <span class="module-arrow">▶</span>
+      <span class="module-icon">${module.icon || "📁"}</span>
+      <span class="module-title">${escapeHtml(module.title)}</span>
+      <span class="module-count">${filteredPages.length}</span>
+    `;
+
+    const pagesList = document.createElement("ul");
+    pagesList.className = "module-pages";
+
+    if(shouldOpen){
+      pagesList.classList.add("open");
+    }
+
+    filteredPages.forEach(page=>{
+
+      const pageItem = document.createElement("li");
+
+      pageItem.dataset.file = page.file;
+
+      pageItem.innerHTML = `
+        <span class="file-icon">📄</span>
+        <span class="file-name">${escapeHtml(page.title)}</span>
+      `;
+
+      if(currentFile === page.file){
+        pageItem.classList.add("active");
+      }
+
+      pageItem.addEventListener("click",function(){
+
+        document
+          .querySelectorAll(".module-pages li")
+          .forEach(item=>item.classList.remove("active"));
+
+        pageItem.classList.add("active");
+
+        loadPage(page.file,page.title);
+        closeMobileMenu();
+      });
+
+      pagesList.appendChild(pageItem);
+    });
+
+    moduleHeader.addEventListener("click",function(){
+
+      const isOpen = moduleHeader.classList.contains("open");
+
+      if(isOpen){
+        moduleHeader.classList.remove("open");
+        pagesList.classList.remove("open");
+      }else{
+        moduleHeader.classList.add("open");
+        pagesList.classList.add("open");
+      }
+
+      modules[moduleIndex].open = !isOpen;
+    });
+
+    moduleElement.appendChild(moduleHeader);
+    moduleElement.appendChild(pagesList);
+
+    modulesContainer.appendChild(moduleElement);
+  });
+
+  if(modulesContainer.children.length === 0){
+
+    modulesContainer.innerHTML = `
+      <div style="
+        padding:25px 18px;
+        text-align:center;
+        color:#a3a3a3;
+      ">
+        No se encontraron páginas.
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   CARGAR Y DESENCRIPTAR ARCHIVOS
+========================================================= */
+
+async function loadPage(fileName,title){
+
+  currentFile = fileName;
+
+  content.innerHTML = `
+    <div class="loading">
+      <h2>Cargando contenido</h2>
+      <p>${escapeHtml(title)}</p>
+    </div>
+  `;
+
+  try{
+
+    const response = await fetch(encodeURI(fileName),{
+      cache:"no-store"
+    });
+
+    if(!response.ok){
+      throw new Error(
+        `No se pudo cargar el archivo "${fileName}". Código HTTP: ${response.status}`
+      );
+    }
+
+    const encryptedContent = await response.text();
+
+    if(!encryptedContent.trim()){
+      throw new Error("El archivo está vacío.");
+    }
+
+    const bytes = CryptoJS.AES.decrypt(
+      encryptedContent.trim(),
+      password
+    );
+
+    const markdown = bytes.toString(CryptoJS.enc.Utf8);
+
+    if(!markdown){
+      throw new Error(
+        "La clave es incorrecta o el archivo cifrado está dañado."
+      );
+    }
+
+    const html = converter.makeHtml(markdown);
+
+    content.innerHTML = html;
+
+    addCopyButtons();
+    markCurrentPage();
+    document.getElementById("content").scrollTop = 0;
+
+  }catch(error){
+
+    console.error(error);
+
+    content.innerHTML = `
+      <div class="error-box">
+        <h2>Error al abrir la página</h2>
+        <p>${escapeHtml(error.message)}</p>
+
+        <p>
+          Verifique que:
+        </p>
+
+        <ul>
+          <li>El archivo exista en la misma ruta del HTML.</li>
+          <li>El nombre del archivo sea exactamente correcto.</li>
+          <li>La clave de desencriptación sea válida.</li>
+          <li>El sitio se ejecute mediante un servidor web.</li>
+        </ul>
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
+   MARCAR PÁGINA ACTIVA
+========================================================= */
+
+function markCurrentPage(){
+
+  document
+    .querySelectorAll(".module-pages li")
+    .forEach(item=>{
+
+      item.classList.toggle(
+        "active",
+        item.dataset.file === currentFile
+      );
+
+      if(item.dataset.file === currentFile){
+
+        const pagesList = item.closest(".module-pages");
+        const moduleHeader = pagesList.previousElementSibling;
+
+        pagesList.classList.add("open");
+        moduleHeader.classList.add("open");
+      }
+    });
+}
+
+/* =========================================================
+   BOTONES PARA COPIAR COMANDOS
+========================================================= */
+
+function addCopyButtons(){
+
+  document.querySelectorAll("pre").forEach(pre=>{
+
+    if(pre.querySelector(".copy-button")){
+      return;
+    }
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = "Copiar";
+    button.className = "copy-button";
+
+    button.addEventListener("click",async function(){
+
+      const codeElement = pre.querySelector("code");
+
+      const textToCopy = codeElement
+        ? codeElement.innerText
+        : pre.innerText.replace("Copiar","");
+
+      try{
+
+        await navigator.clipboard.writeText(textToCopy);
+
+        button.textContent = "Copiado ✓";
+
+        setTimeout(()=>{
+          button.textContent = "Copiar";
+        },1500);
+
+      }catch(error){
+
+        console.error("No se pudo copiar:",error);
+
+        button.textContent = "Error";
+
+        setTimeout(()=>{
+          button.textContent = "Copiar";
+        },1500);
+      }
+    });
+
+    pre.appendChild(button);
+  });
+}
+
+/* =========================================================
+   BÚSQUEDA
+========================================================= */
+
+function normalizeText(text){
+
+  return String(text)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .trim();
+}
+
+/* =========================================================
+   MENÚ MÓVIL
+========================================================= */
+
+function openMobileMenu(){
+  sidebar.classList.add("mobile-open");
+  sidebarOverlay.classList.add("visible");
+}
+
+function closeMobileMenu(){
+  sidebar.classList.remove("mobile-open");
+  sidebarOverlay.classList.remove("visible");
+}
+
+/* =========================================================
+   FUNCIONES AUXILIARES
+========================================================= */
+
+function getFirstPage(){
+
+  for(const module of modules){
+
+    if(module.pages && module.pages.length > 0){
+      return module.pages[0];
+    }
+  }
+
+  return null;
+}
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+</script>
+
+</body>
+</html>
