@@ -1174,7 +1174,57 @@ Contribution
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
+
+<button onclick="desencriptarYMostrar()">
+    🔓 Abrir documentación
+</button>
+
 <script>
+async function desencriptarYMostrar() {
+
+    // Frase de desencriptación fija
+    const clave = "Se Tu Mismo Todos Los Demas Papeles Ya Estan Tomados";
+
+    try {
+        const response = await fetch("Menu/index.html.enc.txt");
+        const encrypted = await response.text();
+
+        const decrypted = CryptoJS.AES.decrypt(encrypted, clave)
+            .toString(CryptoJS.enc.Utf8);
+
+        if (!decrypted) {
+            alert("No fue posible desencriptar el contenido.");
+            return;
+        }
+
+        // Abrir en una nueva pestaña
+        const nuevaVentana = window.open("", "_blank");
+        nuevaVentana.document.open();
+        nuevaVentana.document.write(decrypted);
+        nuevaVentana.document.close();
+
+        // Si prefieres abrir en la misma pestaña, reemplaza el bloque anterior por:
+        // document.open();
+        // document.write(decrypted);
+        // document.close();
+
+    } catch (e) {
+        console.error(e);
+        alert("Error al abrir el archivo.");
+    }
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+<!-- <script>
   async function desencriptarYMostrar() {
     const clave = prompt("Introduce la clave:");
 
@@ -1204,4 +1254,4 @@ Contribution
       console.error(e);
     }
   }
-</script>
+</script> -->
