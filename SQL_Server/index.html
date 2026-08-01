@@ -331,6 +331,95 @@ input[type="text"]:focus{
   text-overflow:ellipsis;
 }
 
+/* =========================================================
+   MÓDULOS DESPLEGABLES DEL MENÚ
+========================================================= */
+
+.menu-module{
+  border-bottom:1px solid #2f2f2f;
+}
+
+.module-button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 14px;
+  border:0;
+  background:#252526;
+  color:#f3f4f6;
+  text-align:left;
+  cursor:pointer;
+}
+
+.module-button:hover,
+.module-button.active{
+  background:#2d2d30;
+}
+
+.module-button-main{
+  display:flex;
+  min-width:0;
+  align-items:center;
+  gap:9px;
+}
+
+.module-button-title{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:600;
+}
+
+.module-count{
+  flex-shrink:0;
+  color:#9ca3af;
+  font-size:11px;
+}
+
+.module-arrow{
+  flex-shrink:0;
+  color:#9ca3af;
+  transition:transform .2s ease;
+}
+
+.module-button[aria-expanded="true"] .module-arrow{
+  transform:rotate(180deg);
+}
+
+.module-files{
+  display:none;
+  list-style:none;
+  margin:0;
+  padding:4px 0 7px;
+  background:#1e1e1e;
+}
+
+.module-files.open{
+  display:block;
+}
+
+.module-files li{
+  padding-left:34px !important;
+}
+
+.module-files li.pending{
+  cursor:not-allowed !important;
+  opacity:.46;
+}
+
+.module-files li.pending:hover{
+  background:transparent !important;
+}
+
+.document-status{
+  margin-left:auto;
+  color:#f59e0b;
+  font-size:10px;
+}
+
 .sidebar-footer{
   padding:10px 14px;
   background:#007acc;
@@ -772,103 +861,701 @@ code{
 
 <script>
 /* =========================================================
-   LISTA DE DOCUMENTOS CIFRADOS
+   BASE DE CONOCIMIENTO PRIVADA DE SQL SERVER
+   Documentos cifrados organizados por módulos
 ========================================================= */
 
-const files = [
+const modules = [
   {
-    title: "Administración",
-    file: "administracion.enc.txt"
+    id: "inicio",
+    title: "Inicio y accesos rápidos",
+    icon: "🏠",
+    description: "Información general, procedimientos frecuentes y accesos rápidos.",
+    documents: [
+      {
+        title: "Panel principal del DBA",
+        file: "panel_dba.enc.txt",
+        tags: ["inicio", "resumen", "dba"],
+        description: "Accesos rápidos, servidores importantes y procedimientos frecuentes.",
+        status: "pending"
+      },
+      {
+        title: "Checklist diario del DBA",
+        file: "checklist_diario.enc.txt",
+        tags: ["checklist", "monitoreo", "operaciones"],
+        description: "Validaciones recomendadas al iniciar la jornada.",
+        status: "pending"
+      },
+      {
+        title: "Directorio de servidores y ambientes",
+        file: "inventario_servidores.enc.txt",
+        tags: ["inventario", "servidores", "ambientes"],
+        description: "Inventario técnico de servidores, instancias, versiones y responsables.",
+        status: "pending"
+      }
+    ]
   },
-  {
-    title: "Manejo de Índices",
-    file: "indices.enc.txt"
-  },
-  {
-    title: "Memoria y Caché de SQL Server",
-    file: "memoria_cache.enc.txt"
-  },
-  {
-    title: "Mantenimiento de Índices",
-    file: "mantenimiento_indices.enc.txt"
-  },
-  {
-    title: "Recuperación y Backup",
-    file: "recuperacion_backup.enc.txt"
-  },
-  {
-    title: "Backup y Auditoria en SQL Server",
-    file: "Backup and Auditing in SQL Server.enc.txt"
-  },
-  {
-    title: "Performance",
-    file: "performance.enc.txt"
-  },
-  {
-    title: "Auditoría y Seguridad",
-    file: "auditoria_seguridad.enc.txt"
-  },
-  {
-    title: "Consultas Especiales",
-    file: "consultas_especiales.enc.txt"
-  },
-  {
-    title: "Genesis y Soluflex",
-    file: "genesis_soluflex.enc.txt"
-  },
-  {
-    title: "Notificaciones de SQL Mail",
-    file: "sqlmail.enc.txt"
-  },
-  {
-    title: "Central Telefónica",
-    file: "central_telefonica.enc.txt"
-  },
-  {
-    title: "Dominio de Windows",
-    file: "dominio_windows.enc.txt"
-  },
-  {
-    title: "Administración de Jobs",
-    file: "jobs.enc.txt"
-  },
-  {
-    title: "Always On y Replicación",
-    file: "alwayson_replicacion.enc.txt"
-  },
-  {
-    title: "Scripts de Monitoreo",
-    file: "scripts_monitoreo.enc.txt"
-  },
-  {
-    title: "Auditoría de Ambientes",
-    file: "auditoria_ambientes.enc.txt"
-  },
-  {
-    title: "Configuraciones Post-Instalación",
-    file: "postinstalacion.enc.txt"
-  },
-  {
-    title: "El Poder de tu Alter Ego",
-    file: "alterego.enc.txt"
-  }
-
-  /*
-  Puede habilitar estas opciones cuando tenga los documentos:
 
   {
-    title: "Consultas de Índices",
-    file: "consultas_indices.enc.txt"
+    id: "administracion",
+    title: "Administración de SQL Server",
+    icon: "🛠️",
+    description: "Administración general de instancias, bases de datos y configuraciones.",
+    documents: [
+      {
+        title: "Administración general",
+        file: "administracion.enc.txt",
+        tags: ["administración", "instancias", "bases de datos"],
+        description: "Comandos y procedimientos generales de administración.",
+        status: "available"
+      },
+      {
+        title: "Configuraciones post-instalación",
+        file: "postinstalacion.enc.txt",
+        tags: ["instalación", "configuración", "checklist"],
+        description: "Configuraciones recomendadas después de instalar SQL Server.",
+        status: "available"
+      },
+      {
+        title: "Configuración de instancias",
+        file: "configuracion_instancias.enc.txt",
+        tags: ["sp_configure", "instancia", "configuración"],
+        description: "Configuraciones de memoria, paralelismo, red y opciones de servidor.",
+        status: "pending"
+      },
+      {
+        title: "Administración de bases de datos",
+        file: "administracion_bases_datos.enc.txt",
+        tags: ["database", "archivos", "propiedades"],
+        description: "Creación, modificación, movimiento y administración de bases de datos.",
+        status: "pending"
+      },
+      {
+        title: "Administración de TempDB",
+        file: "tempdb.enc.txt",
+        tags: ["tempdb", "rendimiento", "configuración"],
+        description: "Configuración, diagnóstico y solución de problemas de TempDB.",
+        status: "pending"
+      },
+      {
+        title: "Administración de Jobs",
+        file: "jobs.enc.txt",
+        tags: ["jobs", "sql agent", "automatización"],
+        description: "Creación, monitoreo y solución de problemas de SQL Server Agent.",
+        status: "available"
+      },
+      {
+        title: "SQL Server en Linux",
+        file: "sqlserver_linux.enc.txt",
+        tags: ["linux", "systemctl", "mssql"],
+        description: "Instalación, configuración, logs, backups y troubleshooting en Linux.",
+        status: "pending"
+      }
+    ]
   },
+
   {
-    title: "Análisis de Procedimientos Almacenados",
-    file: "procedimientos.enc.txt"
+    id: "performance",
+    title: "Rendimiento y optimización",
+    icon: "⚡",
+    description: "Diagnóstico y solución de problemas de rendimiento.",
+    documents: [
+      {
+        title: "Performance",
+        file: "performance.enc.txt",
+        tags: ["performance", "tuning", "rendimiento"],
+        description: "Guía general para diagnóstico y optimización.",
+        status: "available"
+      },
+      {
+        title: "Memoria y caché de SQL Server",
+        file: "memoria_cache.enc.txt",
+        tags: ["memoria", "buffer pool", "caché"],
+        description: "Diagnóstico de memoria, caché, presión y configuración máxima.",
+        status: "available"
+      },
+      {
+        title: "Diagnóstico de CPU",
+        file: "diagnostico_cpu.enc.txt",
+        tags: ["cpu", "scheduler", "queries"],
+        description: "Consultas para identificar consumo elevado de CPU.",
+        status: "pending"
+      },
+      {
+        title: "Diagnóstico de I/O",
+        file: "diagnostico_io.enc.txt",
+        tags: ["io", "latencia", "discos"],
+        description: "Análisis de latencia, archivos y subsistema de almacenamiento.",
+        status: "pending"
+      },
+      {
+        title: "Bloqueos y sesiones",
+        file: "bloqueos_sesiones.enc.txt",
+        tags: ["blocking", "sessions", "locks"],
+        description: "Identificación y solución de bloqueos activos.",
+        status: "pending"
+      },
+      {
+        title: "Deadlocks",
+        file: "deadlocks.enc.txt",
+        tags: ["deadlock", "extended events", "xml"],
+        description: "Captura, interpretación y prevención de deadlocks.",
+        status: "pending"
+      },
+      {
+        title: "Wait Statistics",
+        file: "wait_statistics.enc.txt",
+        tags: ["waits", "performance", "diagnóstico"],
+        description: "Interpretación de esperas y recomendaciones de solución.",
+        status: "pending"
+      },
+      {
+        title: "Query Store",
+        file: "query_store.enc.txt",
+        tags: ["query store", "planes", "regresiones"],
+        description: "Configuración y uso de Query Store para identificar regresiones.",
+        status: "pending"
+      },
+      {
+        title: "Planes de ejecución",
+        file: "planes_ejecucion.enc.txt",
+        tags: ["execution plan", "queries", "tuning"],
+        description: "Lectura y análisis de planes de ejecución.",
+        status: "pending"
+      },
+      {
+        title: "Estadísticas",
+        file: "estadisticas.enc.txt",
+        tags: ["statistics", "cardinality", "optimizer"],
+        description: "Actualización, análisis y mantenimiento de estadísticas.",
+        status: "pending"
+      },
+      {
+        title: "Análisis de procedimientos almacenados",
+        file: "procedimientos.enc.txt",
+        tags: ["stored procedures", "performance", "código"],
+        description: "Revisión de rendimiento y dependencias de procedimientos.",
+        status: "pending"
+      }
+    ]
   },
+
   {
-    title: "Documentación Foglight",
-    file: "foglight.enc.txt"
+    id: "indices",
+    title: "Índices y estadísticas",
+    icon: "📚",
+    description: "Diseño, diagnóstico y mantenimiento de índices.",
+    documents: [
+      {
+        title: "Manejo de índices",
+        file: "indices.enc.txt",
+        tags: ["índices", "diseño", "administración"],
+        description: "Conceptos, creación y administración de índices.",
+        status: "available"
+      },
+      {
+        title: "Mantenimiento de índices",
+        file: "mantenimiento_indices.enc.txt",
+        tags: ["rebuild", "reorganize", "fragmentación"],
+        description: "Procesos de mantenimiento, reorganización y reconstrucción.",
+        status: "available"
+      },
+      {
+        title: "Consultas de índices",
+        file: "consultas_indices.enc.txt",
+        tags: ["dmv", "índices", "consultas"],
+        description: "Consultas para revisar uso, tamaño, fragmentación y actividad.",
+        status: "pending"
+      },
+      {
+        title: "Índices faltantes",
+        file: "indices_faltantes.enc.txt",
+        tags: ["missing indexes", "dmv", "tuning"],
+        description: "Análisis responsable de recomendaciones de índices faltantes.",
+        status: "pending"
+      },
+      {
+        title: "Índices duplicados y redundantes",
+        file: "indices_duplicados.enc.txt",
+        tags: ["duplicados", "redundantes", "limpieza"],
+        description: "Detección de índices duplicados, solapados o sin uso.",
+        status: "pending"
+      },
+      {
+        title: "Índices de llaves foráneas",
+        file: "indices_foreign_keys.enc.txt",
+        tags: ["foreign keys", "índices", "integridad"],
+        description: "Identificación de llaves foráneas sin índices de soporte.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "backup",
+    title: "Backup, restauración y recuperación",
+    icon: "💾",
+    description: "Protección, restauración y recuperación de bases de datos.",
+    documents: [
+      {
+        title: "Recuperación y backup",
+        file: "recuperacion_backup.enc.txt",
+        tags: ["backup", "restore", "recovery"],
+        description: "Procedimientos generales de respaldo y recuperación.",
+        status: "available"
+      },
+      {
+        title: "Backup y auditoría en SQL Server",
+        file: "Backup and Auditing in SQL Server.enc.txt",
+        tags: ["backup", "auditoría", "seguridad"],
+        description: "Controles y auditoría relacionados con los respaldos.",
+        status: "available"
+      },
+      {
+        title: "Restauraciones paso a paso",
+        file: "restauraciones.enc.txt",
+        tags: ["restore", "full", "differential", "log"],
+        description: "Restauraciones completas, diferenciales y transaccionales.",
+        status: "pending"
+      },
+      {
+        title: "Recuperación a un punto en el tiempo",
+        file: "point_in_time_recovery.enc.txt",
+        tags: ["point in time", "transaction log", "recovery"],
+        description: "Recuperación de bases de datos a una fecha y hora determinadas.",
+        status: "pending"
+      },
+      {
+        title: "Validación de backups",
+        file: "validacion_backups.enc.txt",
+        tags: ["restore verifyonly", "checksum", "validación"],
+        description: "Validación lógica y restauraciones de prueba.",
+        status: "pending"
+      },
+      {
+        title: "Modelos de recuperación",
+        file: "modelos_recuperacion.enc.txt",
+        tags: ["simple", "full", "bulk logged"],
+        description: "Selección y administración de modelos de recuperación.",
+        status: "pending"
+      },
+      {
+        title: "Plan de recuperación ante desastres",
+        file: "disaster_recovery.enc.txt",
+        tags: ["dr", "rpo", "rto"],
+        description: "Procedimientos, responsables, RPO, RTO y pruebas de recuperación.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "alta-disponibilidad",
+    title: "Alta disponibilidad y replicación",
+    icon: "🔄",
+    description: "Always On, clústeres, replicación y continuidad operacional.",
+    documents: [
+      {
+        title: "Always On y replicación",
+        file: "alwayson_replicacion.enc.txt",
+        tags: ["always on", "replicación", "ha"],
+        description: "Administración y solución de problemas de alta disponibilidad.",
+        status: "available"
+      },
+      {
+        title: "Always On Availability Groups",
+        file: "alwayson_ag.enc.txt",
+        tags: ["availability groups", "listener", "replica"],
+        description: "Configuración, monitoreo y troubleshooting de grupos de disponibilidad.",
+        status: "pending"
+      },
+      {
+        title: "Windows Server Failover Cluster",
+        file: "wsfc.enc.txt",
+        tags: ["wsfc", "cluster", "quorum"],
+        description: "Nodos, recursos, quorum y resolución de fallos del clúster.",
+        status: "pending"
+      },
+      {
+        title: "Listeners y conectividad",
+        file: "listeners_conectividad.enc.txt",
+        tags: ["listener", "dns", "puertos"],
+        description: "Configuración y solución de problemas de listeners.",
+        status: "pending"
+      },
+      {
+        title: "Log Shipping",
+        file: "log_shipping.enc.txt",
+        tags: ["log shipping", "standby", "restore"],
+        description: "Configuración, monitoreo y recuperación de Log Shipping.",
+        status: "pending"
+      },
+      {
+        title: "Replicación transaccional",
+        file: "replicacion_transaccional.enc.txt",
+        tags: ["publisher", "subscriber", "distribution"],
+        description: "Administración y solución de errores de replicación.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "seguridad",
+    title: "Seguridad, auditoría y cumplimiento",
+    icon: "🔐",
+    description: "Usuarios, permisos, auditoría, cifrado y controles de seguridad.",
+    documents: [
+      {
+        title: "Auditoría y seguridad",
+        file: "auditoria_seguridad.enc.txt",
+        tags: ["auditoría", "seguridad", "permisos"],
+        description: "Controles y procedimientos generales de seguridad.",
+        status: "available"
+      },
+      {
+        title: "Auditoría de ambientes",
+        file: "auditoria_ambientes.enc.txt",
+        tags: ["auditoría", "ambientes", "inventario"],
+        description: "Validación de configuraciones y controles por ambiente.",
+        status: "available"
+      },
+      {
+        title: "Logins, usuarios y roles",
+        file: "logins_usuarios_roles.enc.txt",
+        tags: ["logins", "users", "roles"],
+        description: "Creación, eliminación, permisos y solución de usuarios huérfanos.",
+        status: "pending"
+      },
+      {
+        title: "Permisos efectivos",
+        file: "permisos_efectivos.enc.txt",
+        tags: ["permissions", "roles", "security"],
+        description: "Consultas para determinar permisos directos y heredados.",
+        status: "pending"
+      },
+      {
+        title: "Cifrado y certificados",
+        file: "cifrado_certificados.enc.txt",
+        tags: ["tde", "certificados", "encryption"],
+        description: "TDE, certificados, claves maestras y respaldos de seguridad.",
+        status: "pending"
+      },
+      {
+        title: "SQL Server Audit",
+        file: "sql_server_audit.enc.txt",
+        tags: ["audit", "compliance", "eventos"],
+        description: "Configuración y consulta de auditorías nativas.",
+        status: "pending"
+      },
+      {
+        title: "Cuentas de servicio",
+        file: "cuentas_servicio.enc.txt",
+        tags: ["service accounts", "gmsa", "seguridad"],
+        description: "Administración segura de cuentas de servicio.",
+        status: "pending"
+      },
+      {
+        title: "Dominio de Windows",
+        file: "dominio_windows.enc.txt",
+        tags: ["active directory", "dominio", "windows"],
+        description: "Integración de SQL Server con Active Directory.",
+        status: "available"
+      }
+    ]
+  },
+
+  {
+    id: "monitoreo",
+    title: "Monitoreo y alertas",
+    icon: "📊",
+    description: "Monitoreo proactivo, alertas, métricas y herramientas.",
+    documents: [
+      {
+        title: "Scripts de monitoreo",
+        file: "scripts_monitoreo.enc.txt",
+        tags: ["scripts", "monitoreo", "dmv"],
+        description: "Scripts para monitorear el estado general de SQL Server.",
+        status: "available"
+      },
+      {
+        title: "Notificaciones de SQL Mail",
+        file: "sqlmail.enc.txt",
+        tags: ["database mail", "alertas", "correo"],
+        description: "Configuración y solución de problemas de Database Mail.",
+        status: "available"
+      },
+      {
+        title: "Documentación Foglight",
+        file: "foglight.enc.txt",
+        tags: ["foglight", "monitoreo", "alertas"],
+        description: "Configuración, métricas y diagnóstico mediante Foglight.",
+        status: "pending"
+      },
+      {
+        title: "Extended Events",
+        file: "extended_events.enc.txt",
+        tags: ["extended events", "diagnóstico", "eventos"],
+        description: "Sesiones para capturar errores, bloqueos, deadlocks y consultas.",
+        status: "pending"
+      },
+      {
+        title: "PerfMon",
+        file: "perfmon.enc.txt",
+        tags: ["perfmon", "windows", "contadores"],
+        description: "Contadores recomendados para CPU, memoria, discos y SQL Server.",
+        status: "pending"
+      },
+      {
+        title: "Grafana y Prometheus",
+        file: "grafana_prometheus.enc.txt",
+        tags: ["grafana", "prometheus", "dashboard"],
+        description: "Monitoreo visual de SQL Server y sistemas Linux.",
+        status: "pending"
+      },
+      {
+        title: "Health Check de SQL Server",
+        file: "health_check.enc.txt",
+        tags: ["health check", "diagnóstico", "servidor"],
+        description: "Evaluación integral de configuración, rendimiento y riesgos.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "troubleshooting",
+    title: "Troubleshooting e incidentes",
+    icon: "🚨",
+    description: "Guías prácticas para responder a incidentes de producción.",
+    documents: [
+      {
+        title: "Consultas especiales",
+        file: "consultas_especiales.enc.txt",
+        tags: ["consultas", "diagnóstico", "utilidades"],
+        description: "Colección de consultas especiales para administración y soporte.",
+        status: "available"
+      },
+      {
+        title: "Servidor lento",
+        file: "servidor_lento.enc.txt",
+        tags: ["lentitud", "cpu", "io", "blocking"],
+        description: "Procedimiento ordenado para diagnosticar lentitud general.",
+        status: "pending"
+      },
+      {
+        title: "SQL Server no inicia",
+        file: "sqlserver_no_inicia.enc.txt",
+        tags: ["startup", "errorlog", "servicio"],
+        description: "Diagnóstico de errores de inicio del servicio.",
+        status: "pending"
+      },
+      {
+        title: "Problemas de conectividad",
+        file: "problemas_conectividad.enc.txt",
+        tags: ["conexión", "puertos", "dns", "tls"],
+        description: "Resolución de errores de red, certificados y autenticación.",
+        status: "pending"
+      },
+      {
+        title: "Base de datos en Suspect",
+        file: "database_suspect.enc.txt",
+        tags: ["suspect", "emergency", "dbcc"],
+        description: "Procedimiento seguro para diagnosticar bases en estado Suspect.",
+        status: "pending"
+      },
+      {
+        title: "Transaction Log lleno",
+        file: "transaction_log_lleno.enc.txt",
+        tags: ["log full", "log reuse", "vlf"],
+        description: "Diagnóstico de crecimiento y falta de reutilización del log.",
+        status: "pending"
+      },
+      {
+        title: "Errores de corrupción",
+        file: "corrupcion_dbcc.enc.txt",
+        tags: ["dbcc checkdb", "corrupción", "recovery"],
+        description: "Evaluación y respuesta ante errores de integridad.",
+        status: "pending"
+      },
+      {
+        title: "Espacio en disco",
+        file: "espacio_disco.enc.txt",
+        tags: ["disk", "growth", "capacity"],
+        description: "Respuesta ante discos llenos y crecimiento inesperado.",
+        status: "pending"
+      },
+      {
+        title: "Guía de análisis del Error Log",
+        file: "errorlog.enc.txt",
+        tags: ["errorlog", "errores", "diagnóstico"],
+        description: "Filtros y consultas para interpretar los logs de SQL Server.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "automatizacion",
+    title: "Automatización y mantenimiento",
+    icon: "🤖",
+    description: "Automatización con T-SQL, PowerShell, Bash y SQL Server Agent.",
+    documents: [
+      {
+        title: "Mantenimiento automatizado",
+        file: "mantenimiento_automatizado.enc.txt",
+        tags: ["automatización", "mantenimiento", "jobs"],
+        description: "Estrategias para automatizar tareas recurrentes.",
+        status: "pending"
+      },
+      {
+        title: "PowerShell para SQL Server",
+        file: "powershell_sqlserver.enc.txt",
+        tags: ["powershell", "dbatools", "automatización"],
+        description: "Scripts para inventario, backups, validaciones y administración.",
+        status: "pending"
+      },
+      {
+        title: "Bash para SQL Server en Linux",
+        file: "bash_sqlserver.enc.txt",
+        tags: ["bash", "linux", "cron"],
+        description: "Automatización de mantenimiento y respaldos desde Linux.",
+        status: "pending"
+      },
+      {
+        title: "Planes de mantenimiento",
+        file: "planes_mantenimiento.enc.txt",
+        tags: ["maintenance plans", "jobs", "backups"],
+        description: "Diseño y revisión de planes de mantenimiento.",
+        status: "pending"
+      },
+      {
+        title: "Limpieza y retención",
+        file: "limpieza_retencion.enc.txt",
+        tags: ["cleanup", "retención", "archivos"],
+        description: "Limpieza segura de backups, logs y archivos antiguos.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "cambios",
+    title: "Cambios, despliegues y documentación",
+    icon: "📝",
+    description: "Control de cambios, despliegues y evidencias técnicas.",
+    documents: [
+      {
+        title: "Checklist de cambios",
+        file: "checklist_cambios.enc.txt",
+        tags: ["change management", "checklist", "producción"],
+        description: "Validaciones antes, durante y después de un cambio.",
+        status: "pending"
+      },
+      {
+        title: "Plan de reversa",
+        file: "plan_reversa.enc.txt",
+        tags: ["rollback", "reversa", "cambios"],
+        description: "Plantilla para documentar procedimientos de reversa.",
+        status: "pending"
+      },
+      {
+        title: "Plantilla de incidentes",
+        file: "plantilla_incidentes.enc.txt",
+        tags: ["incidente", "rCA", "postmortem"],
+        description: "Registro de impacto, causa raíz, solución y prevención.",
+        status: "pending"
+      },
+      {
+        title: "Procedimientos operativos",
+        file: "procedimientos_operativos.enc.txt",
+        tags: ["runbook", "procedimientos", "operaciones"],
+        description: "Runbooks y procedimientos repetibles de administración.",
+        status: "pending"
+      },
+      {
+        title: "Historial de cambios",
+        file: "historial_cambios.enc.txt",
+        tags: ["historial", "cambios", "auditoría"],
+        description: "Registro cronológico de modificaciones realizadas.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "aplicaciones",
+    title: "Aplicaciones y ambientes especiales",
+    icon: "🏢",
+    description: "Documentación específica de aplicaciones y plataformas internas.",
+    documents: [
+      {
+        title: "Genesis y Soluflex",
+        file: "genesis_soluflex.enc.txt",
+        tags: ["genesis", "soluflex", "aplicaciones"],
+        description: "Procedimientos y consultas relacionadas con estas plataformas.",
+        status: "available"
+      },
+      {
+        title: "Central Telefónica",
+        file: "central_telefonica.enc.txt",
+        tags: ["telefonía", "aplicación", "soporte"],
+        description: "Documentación de bases de datos de la central telefónica.",
+        status: "available"
+      },
+      {
+        title: "Mapa de aplicaciones y bases de datos",
+        file: "mapa_aplicaciones.enc.txt",
+        tags: ["aplicaciones", "dependencias", "bases de datos"],
+        description: "Relación entre aplicaciones, servidores, instancias y bases de datos.",
+        status: "pending"
+      },
+      {
+        title: "Contactos y responsables",
+        file: "contactos_responsables.enc.txt",
+        tags: ["contactos", "soporte", "escalamiento"],
+        description: "Equipos responsables y rutas de escalamiento.",
+        status: "pending"
+      }
+    ]
+  },
+
+  {
+    id: "laboratorio",
+    title: "Laboratorio y aprendizaje",
+    icon: "🧪",
+    description: "Pruebas, ejemplos, notas técnicas y desarrollo profesional.",
+    documents: [
+      {
+        title: "Laboratorios de SQL Server",
+        file: "laboratorios_sqlserver.enc.txt",
+        tags: ["laboratorio", "práctica", "sql"],
+        description: "Ejercicios y simulaciones para probar procedimientos.",
+        status: "pending"
+      },
+      {
+        title: "Scripts reutilizables",
+        file: "scripts_reutilizables.enc.txt",
+        tags: ["scripts", "utilidades", "toolkit"],
+        description: "Biblioteca personal de scripts validados.",
+        status: "pending"
+      },
+      {
+        title: "Notas y descubrimientos",
+        file: "notas_descubrimientos.enc.txt",
+        tags: ["notas", "investigación", "aprendizaje"],
+        description: "Hallazgos técnicos y soluciones descubiertas.",
+        status: "pending"
+      },
+      {
+        title: "El poder de tu Alter Ego",
+        file: "alterego.enc.txt",
+        tags: ["alter ego", "desarrollo", "argus"],
+        description: "Documentación personal del alter ego profesional Argus.",
+        status: "available"
+      }
+    ]
   }
-  */
 ];
 
 /* =========================================================
@@ -948,6 +1635,40 @@ function closeMobileMenu(){
 }
 
 /* =========================================================
+   UTILIDADES PARA LOS MÓDULOS
+========================================================= */
+
+function getAvailableDocuments(){
+  return modules.flatMap(module =>
+    module.documents
+      .filter(document => document.status === "available")
+      .map(document => ({
+        ...document,
+        moduleId: module.id,
+        moduleTitle: module.title
+      }))
+  );
+}
+
+function findDocumentByFile(fileName){
+  for(const module of modules){
+    const documentItem = module.documents.find(
+      document => document.file === fileName
+    );
+
+    if(documentItem){
+      return {
+        ...documentItem,
+        moduleId: module.id,
+        moduleTitle: module.title
+      };
+    }
+  }
+
+  return null;
+}
+
+/* =========================================================
    INICIO DE SESIÓN
 ========================================================= */
 
@@ -960,38 +1681,32 @@ async function loginUser(){
     return;
   }
 
-  if(files.length === 0){
-    errorMessage.textContent = "No existen documentos configurados.";
+  const availableDocuments = getAvailableDocuments();
+
+  if(availableDocuments.length === 0){
+    errorMessage.textContent = "No existen documentos disponibles configurados.";
     return;
   }
+
+  const firstDocumentData = availableDocuments[0];
 
   submitButton.disabled = true;
   submitButton.textContent = "Validando clave...";
   errorMessage.textContent = "";
 
   try{
-    /*
-      Se intenta abrir el primer archivo antes de mostrar la aplicación.
-      Esto permite comprobar inmediatamente si la contraseña es válida.
-    */
-
     const firstDocument = await fetchAndDecrypt(
-      files[0].file,
+      firstDocumentData.file,
       password
     );
 
     login.style.display = "none";
     app.style.display = "flex";
 
-    buildMenu();
-
-    renderMarkdown(
-      firstDocument,
-      files[0].title
-    );
-
-    setActiveMenuItem(0);
-    activeFile = files[0].file;
+    buildMenu(firstDocumentData.moduleId);
+    renderMarkdown(firstDocument, firstDocumentData.title);
+    setActiveMenuItem(firstDocumentData.file);
+    activeFile = firstDocumentData.file;
   }
   catch(error){
     errorMessage.textContent = error.message;
@@ -1004,33 +1719,88 @@ async function loginUser(){
 }
 
 /* =========================================================
-   CREACIÓN DEL MENÚ
+   CREACIÓN DEL MENÚ DESPLEGABLE
 ========================================================= */
 
-function buildMenu(){
+function buildMenu(initialOpenModuleId = null){
   menu.innerHTML = "";
 
-  files.forEach((item,index)=>{
-    const li = document.createElement("li");
+  modules.forEach((module, moduleIndex) => {
+    const moduleWrapper = document.createElement("li");
+    moduleWrapper.className = "menu-module";
+    moduleWrapper.style.display = "block";
+    moduleWrapper.style.padding = "0";
+    moduleWrapper.style.borderLeft = "0";
 
-    li.title = item.title;
+    const availableCount = module.documents.filter(
+      document => document.status === "available"
+    ).length;
 
-    li.innerHTML = `
-      <span class="file-icon">📄</span>
-      <span class="file-name">${escapeHtml(item.title)}</span>
+    const moduleButton = document.createElement("button");
+    moduleButton.type = "button";
+    moduleButton.className = "module-button";
+
+    const shouldOpen = initialOpenModuleId
+      ? module.id === initialOpenModuleId
+      : moduleIndex === 0;
+
+    moduleButton.setAttribute("aria-expanded", String(shouldOpen));
+    moduleButton.innerHTML = `
+      <span class="module-button-main">
+        <span>${escapeHtml(module.icon)}</span>
+        <span class="module-button-title">${escapeHtml(module.title)}</span>
+      </span>
+      <span class="module-count">${availableCount}/${module.documents.length}</span>
+      <span class="module-arrow">⌄</span>
     `;
 
-    li.addEventListener("click", async ()=>{
-      if(activeFile === item.file){
-        closeMobileMenu();
-        return;
+    const documentsList = document.createElement("ul");
+    documentsList.className = `module-files${shouldOpen ? " open" : ""}`;
+
+    module.documents.forEach(item => {
+      const documentLi = document.createElement("li");
+      const isAvailable = item.status === "available";
+
+      documentLi.dataset.file = item.file;
+      documentLi.title = isAvailable
+        ? item.title
+        : `${item.title} — documento pendiente`;
+
+      if(!isAvailable){
+        documentLi.classList.add("pending");
       }
 
-      await loadFile(item,index);
-      closeMobileMenu();
+      documentLi.innerHTML = `
+        <span class="file-icon">${isAvailable ? "📄" : "🕓"}</span>
+        <span class="file-name">${escapeHtml(item.title)}</span>
+        ${isAvailable ? "" : '<span class="document-status">Pendiente</span>'}
+      `;
+
+      if(isAvailable){
+        documentLi.addEventListener("click", async event => {
+          event.stopPropagation();
+
+          if(activeFile === item.file){
+            closeMobileMenu();
+            return;
+          }
+
+          await loadFile(item);
+          closeMobileMenu();
+        });
+      }
+
+      documentsList.appendChild(documentLi);
     });
 
-    menu.appendChild(li);
+    moduleButton.addEventListener("click", () => {
+      const isOpen = documentsList.classList.toggle("open");
+      moduleButton.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    moduleWrapper.appendChild(moduleButton);
+    moduleWrapper.appendChild(documentsList);
+    menu.appendChild(moduleWrapper);
   });
 }
 
@@ -1038,7 +1808,7 @@ function buildMenu(){
    CARGA DE ARCHIVOS
 ========================================================= */
 
-async function loadFile(item,index){
+async function loadFile(item){
   content.innerHTML = `
     <div class="loading-message">
       <strong>Cargando:</strong>
@@ -1053,7 +1823,7 @@ async function loadFile(item,index){
     );
 
     renderMarkdown(markdown,item.title);
-    setActiveMenuItem(index);
+    setActiveMenuItem(item.file);
     activeFile = item.file;
 
     document.getElementById("content").scrollTo({
@@ -1066,19 +1836,36 @@ async function loadFile(item,index){
       <div class="error-box">
         <h2>No se pudo cargar el documento</h2>
 
-        <p>
-          <strong>Documento:</strong>
-          ${escapeHtml(item.title)}
-        </p>
-
-        <p>
-          <strong>Archivo:</strong>
-          ${escapeHtml(item.file)}
-        </p>
-
+        <p><strong>Documento:</strong> ${escapeHtml(item.title)}</p>
+        <p><strong>Archivo:</strong> ${escapeHtml(item.file)}</p>
         <p>${escapeHtml(error.message)}</p>
       </div>
     `;
+  }
+}
+
+/* =========================================================
+   MARCAR OPCIÓN ACTIVA
+========================================================= */
+
+function setActiveMenuItem(fileName){
+  document.querySelectorAll("#menu .module-files li").forEach(element => {
+    element.classList.toggle(
+      "active",
+      element.dataset.file === fileName
+    );
+  });
+
+  const activeElement = document.querySelector(
+    `#menu .module-files li[data-file="${CSS.escape(fileName)}"]`
+  );
+
+  if(activeElement){
+    const moduleFiles = activeElement.closest(".module-files");
+    const moduleButton = moduleFiles?.previousElementSibling;
+
+    moduleFiles?.classList.add("open");
+    moduleButton?.setAttribute("aria-expanded", "true");
   }
 }
 
@@ -1161,21 +1948,6 @@ function renderMarkdown(markdown,title){
 
   addCopyButtons();
   configureExternalLinks();
-}
-
-/* =========================================================
-   MARCAR OPCIÓN ACTIVA
-========================================================= */
-
-function setActiveMenuItem(index){
-  document
-    .querySelectorAll("#menu li")
-    .forEach((element,itemIndex)=>{
-      element.classList.toggle(
-        "active",
-        itemIndex === index
-      );
-    });
 }
 
 /* =========================================================
