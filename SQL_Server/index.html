@@ -909,6 +909,13 @@ const modules = [
         description: "Comandos y procedimientos generales de administración.",
         status: "available"
       },
+            {
+        title: "Administración Alejanjandro Jimenez DBA",
+        file: "administracion_1.enc.txt",
+        tags: ["administración", "instancias", "bases de datos"],
+        description: "Comandos y procedimientos generales de administración.",
+        status: "available"
+      },
       {
         title: "Configuraciones post-instalación",
         file: "postinstalacion.enc.txt",
@@ -1035,6 +1042,20 @@ const modules = [
         file: "procedimientos.enc.txt",
         tags: ["stored procedures", "performance", "código"],
         description: "Revisión de rendimiento y dependencias de procedimientos.",
+        status: "available"
+      },
+      {
+        title: "Diagnóstico de Stored Procedures Lentos y Verificación",
+        file: "storesprocedurelentosyvalidaciones.enc.txt",
+        tags: ["stored procedures", "performance", "código"],
+        description: "Diagnóstico de Stored Procedures Lentos y Verificación.",
+        status: "available"
+      },
+      {
+        title: "Monitoreo y Diagnóstico Automatizado de SQL Server",
+        file: "storesprocedurelentosyvalidacionesEnterpirse.enc.txt",
+        tags: ["stored procedures", "performance", "código"],
+        description: "Monitoreo y Diagnóstico Automatizado de SQL Server.",
         status: "available"
       }
     ]
@@ -1169,12 +1190,20 @@ const modules = [
         description: "Configuración, monitoreo y troubleshooting de grupos de disponibilidad.",
         status: "pending"
       },
+            {
+        title: "Monitoreo de Transacciones de Escritura Espejadas",
+        file: "monitoreotransaccionesespejadassqlserver.enc.txt",
+        tags: ["availability groups", "listener", "replica"],
+        description: "Configuración, monitoreo y troubleshooting de grupos de disponibilidad.",
+        status: "available"
+      },
+   
       {
-        title: "Windows Server Failover Cluster",
-        file: "wsfc.enc.txt",
+        title: "Configuración de READ_COMMITTED_SNAPSHOT en SQL Server",
+        file: "readcommitsnapshot.enc.txt",
         tags: ["wsfc", "cluster", "quorum"],
-        description: "Nodos, recursos, quorum y resolución de fallos del clúster.",
-        status: "pending"
+        description: "El comando que veremos a continuación permite habilitar el nivel de aislamiento READ_COMMITTED_SNAPSHOT en una base de datos de SQL Server, una funcionalidad que mejora el rendimiento de las transacciones al evitar bloqueos innecesarios en las operaciones de lectura..",
+        status: "available"
       },
       {
         title: "Listeners y conectividad",
@@ -1343,6 +1372,7 @@ const modules = [
         description: "Procedimiento ordenado para diagnosticar lentitud general.",
         status: "pending"
       },
+        
       {
         title: "SQL Server no inicia",
         file: "sqlserver_no_inicia.enc.txt",
@@ -1391,7 +1421,30 @@ const modules = [
         tags: ["errorlog", "errores", "diagnóstico"],
         description: "Filtros y consultas para interpretar los logs de SQL Server.",
         status: "pending"
+      },
+          {
+        title: "7. Consultas Especiales",
+        file: "consultas_especiales.enc.txt",
+        tags: ["lentitud", "cpu", "io", "blocking"],
+        description: "Procedimiento ordenado para diagnosticar lentitud general.",
+        status: "available"
+      },
+       
+      {
+        title: "Interacción con el Dominio de Windows",
+        file: "dominio_windows.enc.txt",
+        tags: ["lentitud", "cpu", "io", "blocking"],
+        description: "Procedimiento ordenado para diagnosticar lentitud general.",
+        status: "available"
+      },
+      {
+        title: "SQL Server First Responder Kit",
+        file: "firstresponse.enc.txt",
+        tags: ["lentitud", "cpu", "io", "blocking"],
+        description: "Procedimiento ordenado para diagnosticar lentitud general.",
+        status: "available"
       }
+
     ]
   },
 
@@ -1489,20 +1542,14 @@ const modules = [
     icon: "🏢",
     description: "Documentación específica de aplicaciones y plataformas internas.",
     documents: [
-      {
-        title: "Genesis y Soluflex",
-        file: "genesis_soluflex.enc.txt",
-        tags: ["genesis", "soluflex", "aplicaciones"],
-        description: "Procedimientos y consultas relacionadas con estas plataformas.",
-        status: "available"
-      },
-      {
-        title: "Central Telefónica",
-        file: "central_telefonica.enc.txt",
-        tags: ["telefonía", "aplicación", "soporte"],
-        description: "Documentación de bases de datos de la central telefónica.",
-        status: "available"
-      },
+
+      // {
+      //   title: "Central Telefónica",
+      //   file: "central_telefonica.enc.txt",
+      //   tags: ["telefonía", "aplicación", "soporte"],
+      //   description: "Documentación de bases de datos de la central telefónica.",
+      //   status: "available"
+      // },
       {
         title: "Mapa de aplicaciones y bases de datos",
         file: "mapa_aplicaciones.enc.txt",
@@ -1555,8 +1602,152 @@ const modules = [
         status: "available"
       }
     ]
-  }
-];
+  },
+
+{
+  id: "foglight",
+  title: "Monitoreo con Foglight",
+  icon: "📊",
+  description: "Instalación, configuración, administración, monitoreo y solución de problemas utilizando Foglight para SQL Server.",
+  documents: [
+    {
+      title: "Introducción a Foglight",
+      file: "foglight_introduccion.enc.txt",
+      tags: ["foglight", "monitoreo", "introducción"],
+      description: "Conceptos fundamentales, arquitectura, componentes y capacidades principales de Foglight.",
+      status: "available"
+    },
+    {
+      title: "Instalación y actualización de Foglight",
+      file: "foglight.enc.txt",
+      tags: ["instalación", "actualización", "configuración"],
+      description: "Procedimientos para instalar, actualizar y validar los componentes de Foglight.",
+      status: "available"
+    },
+    {
+      title: "Configuración de servidores SQL Server",
+      file: "foglight_configuracion_sqlserver.enc.txt",
+      tags: ["sql server", "agentes", "instancias"],
+      description: "Registro de instancias, configuración de agentes, credenciales y validación de conectividad.",
+      status: "pending"
+    },
+    {
+      title: "Dashboards y monitoreo",
+      file: "foglight_dashboards.enc.txt",
+      tags: ["dashboards", "monitoreo", "métricas"],
+      description: "Uso de dashboards para analizar CPU, memoria, I/O, sesiones, bloqueos, consultas y bases de datos.",
+      status: "pending"
+    },
+    {
+      title: "Alarmas y notificaciones",
+      file: "foglight_alarmas.enc.txt",
+      tags: ["alarmas", "alertas", "notificaciones"],
+      description: "Configuración, personalización y administración de alarmas y notificaciones de Foglight.",
+      status: "pending"
+    },
+    {
+      title: "Monitoreo de rendimiento SQL Server",
+      file: "foglight_rendimiento_sqlserver.enc.txt",
+      tags: ["rendimiento", "performance", "sql server"],
+      description: "Diagnóstico de CPU, memoria, almacenamiento, waits, bloqueos y consultas mediante Foglight.",
+      status: "pending"
+    },
+    {
+      title: "Monitoreo de Always On",
+      file: "foglight_alwayson.enc.txt",
+      tags: ["always on", "alta disponibilidad", "réplicas"],
+      description: "Supervisión de Availability Groups, réplicas, sincronización, colas y estado de disponibilidad.",
+      status: "pending"
+    },
+    {
+      title: "Análisis de consultas",
+      file: "foglight_consultas.enc.txt",
+      tags: ["consultas", "sql", "performance"],
+      description: "Identificación de consultas costosas, planes de ejecución, consumo de recursos y regresiones.",
+      status: "pending"
+    },
+    {
+      title: "Reportes y capacidad",
+      file: "foglight_reportes_capacidad.enc.txt",
+      tags: ["reportes", "capacidad", "tendencias"],
+      description: "Creación de reportes, análisis de tendencias, crecimiento y planificación de capacidad.",
+      status: "pending"
+    },
+    {
+      title: "Administración de agentes",
+      file: "foglight_agentes.enc.txt",
+      tags: ["agentes", "foglight agent manager", "administración"],
+      description: "Instalación, actualización, reinicio, validación y troubleshooting de agentes de Foglight.",
+      status: "pending"
+    },
+    {
+      title: "Troubleshooting de Foglight",
+      file: "foglight_troubleshooting.enc.txt",
+      tags: ["troubleshooting", "errores", "diagnóstico"],
+      description: "Diagnóstico de problemas de conectividad, recolección de métricas, agentes, alarmas y rendimiento.",
+      status: "available"
+    },
+    {
+      title: "Comandos y procedimientos útiles",
+      file: "foglight_comandos_procedimientos.enc.txt",
+      tags: ["comandos", "procedimientos", "operaciones"],
+      description: "Biblioteca de comandos, consultas y procedimientos operativos relacionados con Foglight.",
+      status: "pending"
+    },
+    {
+      title: "Notas y casos reales",
+      file: "foglight_notas_casos.enc.txt",
+      tags: ["notas", "casos reales", "soluciones"],
+      description: "Registro de incidentes, hallazgos, configuraciones especiales y soluciones aplicadas.",
+      status: "pending"
+    }
+  ]
+},
+    {
+  id: "inabima",
+  title: "INABIMA",
+  icon: "🏛️",
+  description: "Documentación técnica, procedimientos, incidencias y consultas relacionadas con los sistemas y bases de datos de INABIMA.",
+  documents: [
+          {
+        title: "Genesis y Soluflex",
+        file: "genesis_soluflex.enc.txt",
+        tags: ["genesis", "soluflex", "aplicaciones"],
+        description: "Procedimientos y consultas relacionadas con estas plataformas.",
+        status: "available"
+      },
+    {
+      title: "Instituto Nacional de Bienestar Magisterial QUERIES",
+      file: "SQL_Querying_Inabima.enc.txt",
+      tags: ["inabima", "bases de datos", "administración"],
+      description: "Procedimientos de administración, mantenimiento, validación y monitoreo de las bases de datos de INABIMA.",
+      status: "available"
+    },
+    {
+      title: "10. Central Telefónica INABIMA",
+      file: "central_telefonica.enc.txt",
+      tags: ["incidentes", "troubleshooting", "soluciones"],
+      description: "Registro de incidentes técnicos, análisis de causa raíz y soluciones aplicadas en los ambientes de INABIMA.",
+      status: "available"
+    },
+    {
+      title: "TRANSDOC",
+      file: "transdoc.enc.txt",
+      tags: ["scripts", "consultas", "sql"],
+      description: "Biblioteca de consultas SQL, scripts de diagnóstico y procedimientos reutilizables para INABIMA.",
+      status: "available"
+    },
+    {
+      title: "Inventario y configuraciones",
+      file: "inabima_inventario_configuraciones.enc.txt",
+      tags: ["inventario", "servidores", "configuración"],
+      description: "Inventario técnico de servidores, instancias, bases de datos, ambientes y configuraciones relacionadas con INABIMA.",
+      status: "pending"
+    }
+  ]
+}
+  ]
+;
 
 /* =========================================================
    REFERENCIAS DEL DOM
