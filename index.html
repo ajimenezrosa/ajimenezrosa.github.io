@@ -27,6 +27,438 @@
 <style>
 html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 </style>
+
+<!-- Modern visual refresh: layout/content structure intentionally preserved -->
+<style>
+  :root {
+    --teal-900: #064e4a;
+    --teal-800: #0b665f;
+    --teal-700: #087f73;
+    --teal-600: #0d9488;
+    --teal-500: #14b8a6;
+    --teal-100: #ccfbf1;
+    --teal-50: #f0fdfa;
+    --ink: #1f2937;
+    --muted: #667085;
+    --line: #e7ecef;
+    --surface: #ffffff;
+    --page: #f4f7f8;
+    --shadow: 0 8px 28px rgba(15, 23, 42, .08);
+    --shadow-hover: 0 14px 36px rgba(15, 23, 42, .12);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body.w3-light-grey {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(20,184,166,.08), transparent 32rem),
+      linear-gradient(180deg, #f7fafb 0%, var(--page) 100%) !important;
+    font-size: 15.5px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .w3-content.w3-margin-top {
+    max-width: 1420px !important;
+    margin-top: 30px !important;
+    margin-bottom: 30px !important;
+    padding: 0 18px;
+  }
+
+  .w3-row-padding { margin: 0 -10px; }
+  .w3-row-padding > .w3-third,
+  .w3-row-padding > .w3-twothird { padding: 0 10px; }
+
+  /* Cards */
+  .w3-card,
+  .w3-card-4 {
+    border-radius: var(--radius);
+    border: 1px solid rgba(15,23,42,.06);
+    box-shadow: var(--shadow) !important;
+    overflow: hidden;
+    transition: box-shadow .25s ease, transform .25s ease;
+  }
+
+  .w3-twothird > .w3-container.w3-card:hover {
+    box-shadow: var(--shadow-hover) !important;
+  }
+
+  .w3-white { background: rgba(255,255,255,.98) !important; }
+
+  /* Left profile panel */
+  .w3-third > .w3-white.w3-card-4 {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdfd 100%) !important;
+  }
+
+  .w3-third .w3-display-container {
+    position: relative;
+    overflow: hidden;
+    background: var(--teal-900);
+  }
+
+  .w3-third .w3-display-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 46%, rgba(2,44,42,.72) 100%);
+    pointer-events: none;
+  }
+
+  .w3-third .w3-display-container img {
+    width: 100% !important;
+    display: block;
+    aspect-ratio: 1.12 / 1;
+    object-fit: cover;
+    object-position: center 24%;
+    filter: saturate(.92) contrast(1.02);
+    transform: scale(1.01);
+  }
+
+  .w3-third .w3-display-bottomleft {
+    z-index: 2;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 26px 24px 20px !important;
+  }
+
+  .w3-third .w3-display-bottomleft h2,
+  .w3-third .w3-display-bottomleft .w3-text-teal {
+    color: #fff !important;
+    margin: 0;
+    font-size: clamp(1.65rem, 2.4vw, 2.05rem);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    text-shadow: 0 2px 12px rgba(0,0,0,.35);
+  }
+
+  .w3-third > .w3-white > .w3-container {
+    padding: 22px 24px 26px !important;
+  }
+
+  .w3-third .w3-container > p {
+    margin: 11px 0;
+    color: #4b5563;
+  }
+
+  .w3-third .w3-container > p:first-of-type,
+  .w3-third .w3-container > p:nth-of-type(2),
+  .w3-third .w3-container > p:nth-of-type(3) {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .w3-third .fa.w3-text-teal {
+    color: var(--teal-600) !important;
+  }
+
+  .w3-third p.w3-large {
+    margin-top: 24px !important;
+    padding-top: 2px;
+    color: var(--ink) !important;
+    font-size: 1.03rem !important;
+    letter-spacing: .01em;
+  }
+
+  hr {
+    border: 0 !important;
+    height: 1px;
+    background: linear-gradient(90deg, var(--line), rgba(231,236,239,.35));
+    margin: 24px 0 !important;
+  }
+
+  /* Skill / language bars */
+  .w3-light-grey.w3-round-xlarge,
+  .w3-light-grey.w3-round-xlarge.w3-small {
+    height: 9px !important;
+    overflow: hidden;
+    background: #e8efef !important;
+    border-radius: 999px !important;
+    box-shadow: inset 0 1px 2px rgba(15,23,42,.06);
+  }
+
+  .w3-round-xlarge.w3-teal,
+  .w3-container.w3-center.w3-round-xlarge.w3-teal {
+    min-height: 9px;
+    height: 9px !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    background: linear-gradient(90deg, var(--teal-700), var(--teal-500)) !important;
+  }
+
+  .w3-round-xlarge.w3-teal .w3-center { display: none; }
+
+  /* Main content */
+  .w3-twothird > .w3-container.w3-card {
+    padding: 10px 30px 28px !important;
+  }
+
+  .w3-twothird > .w3-container.w3-card > h2 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 2px 0 14px;
+    padding: 22px 0 18px !important;
+    color: var(--ink) !important;
+    font-size: clamp(1.55rem, 2.3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -.035em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .w3-twothird > .w3-container.w3-card > h2 .fa {
+    color: var(--teal-600) !important;
+    font-size: 1.15em !important;
+    margin-right: 12px !important;
+  }
+
+  .w3-twothird .w3-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .w3-twothird h5 {
+    margin: 22px 0 6px;
+    color: #273142;
+    font-size: 1.04rem;
+    line-height: 1.45;
+  }
+
+  .w3-twothird h5.w3-opacity {
+    opacity: 1 !important;
+  }
+
+  .w3-twothird h5.w3-opacity b {
+    font-weight: 700;
+  }
+
+  .w3-twothird h6 {
+    margin: 8px 0 14px;
+    color: var(--teal-700) !important;
+    font-size: .92rem;
+    font-weight: 600;
+  }
+
+  .w3-twothird h6 > p {
+    display: inline-block;
+    margin: 8px 0 5px;
+    padding: 6px 11px;
+    border-left: 3px solid var(--teal-500);
+    border-radius: 0 8px 8px 0;
+    background: var(--teal-50);
+    color: var(--teal-900);
+    font-weight: 700;
+  }
+
+  .w3-twothird p {
+    color: #46505f;
+    margin: 10px 0 14px;
+  }
+
+  .w3-twothird strong { color: #283444; }
+
+  .w3-twothird ul {
+    margin-top: 10px;
+    margin-bottom: 18px;
+    padding-left: 24px;
+  }
+
+  .w3-twothird ul ul {
+    margin-top: 7px;
+    margin-bottom: 12px;
+    padding-left: 23px;
+  }
+
+  .w3-twothird li {
+    position: relative;
+    margin: 6px 0;
+    padding-left: 3px;
+    color: #46505f;
+  }
+
+  .w3-twothird li::marker { color: var(--teal-600); }
+
+  /* Tags / certificate buttons */
+  .w3-tag.w3-teal {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-700) !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    padding: 4px 10px !important;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(13,148,136,.16);
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+    vertical-align: middle;
+  }
+
+  a.w3-tag.w3-teal:hover {
+    background: var(--teal-900) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(13,148,136,.22);
+  }
+
+  .w3-text-teal { color: var(--teal-700) !important; }
+
+  /* Certification sections */
+  .cert-section {
+    margin: 16px 0 24px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #fff, #fcfefe);
+  }
+
+  .cert-section > h5:first-child { margin-top: 0; }
+
+  /* Footer visual alignment with the refreshed page */
+  .professional-footer {
+    max-width: 1420px;
+    width: calc(100% - 36px) !important;
+    margin: 26px auto 0 !important;
+    padding: 30px 20px !important;
+    border-top: 0 !important;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: linear-gradient(135deg, var(--teal-900), var(--teal-700), var(--teal-600)) !important;
+    box-shadow: 0 -4px 24px rgba(15,23,42,.10) !important;
+  }
+
+  .professional-footer p {
+    margin: 0 0 20px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+
+  .social-buttons { gap: 12px !important; }
+
+  .social-btn {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 14px !important;
+    font-size: 22px !important;
+    background: rgba(255,255,255,.10) !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .social-btn:hover {
+    transform: translateY(-3px) !important;
+    background: #fff !important;
+    color: var(--teal-800) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
+  }
+
+  /* Standalone documentation button */
+  body > button[onclick="desencriptarYMostrar()"] {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 50;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 17px;
+    background: var(--teal-800);
+    color: #fff;
+    font: 600 14px/1 "Roboto", sans-serif;
+    box-shadow: 0 10px 28px rgba(6,78,74,.28);
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+
+  body > button[onclick="desencriptarYMostrar()"]:hover {
+    transform: translateY(-2px);
+    background: var(--teal-900);
+    box-shadow: 0 14px 32px rgba(6,78,74,.34);
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid rgba(20,184,166,.32);
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 993px) {
+    .w3-third { width: 31.5% !important; }
+    .w3-twothird { width: 68.5% !important; }
+  }
+
+  @media (max-width: 992px) {
+    .w3-content.w3-margin-top { padding: 0 12px; }
+    .w3-twothird > .w3-container.w3-card { padding: 8px 22px 24px !important; }
+  }
+
+  @media (max-width: 600px) {
+    body.w3-light-grey { font-size: 15px; }
+
+    .w3-content.w3-margin-top {
+      margin-top: 12px !important;
+      padding: 0 10px;
+    }
+
+    .w3-row-padding { margin: 0; }
+    .w3-row-padding > .w3-third,
+    .w3-row-padding > .w3-twothird { padding: 0; }
+
+    .w3-card, .w3-card-4 { border-radius: 14px; }
+
+    .w3-third .w3-display-container img {
+      aspect-ratio: 1.45 / 1;
+      object-position: center 24%;
+    }
+
+    .w3-third > .w3-white > .w3-container { padding: 19px 18px 22px !important; }
+
+    .w3-twothird > .w3-container.w3-card {
+      padding: 4px 14px 20px !important;
+    }
+
+    .w3-twothird > .w3-container.w3-card > h2 {
+      padding: 17px 2px 14px !important;
+      font-size: 1.42rem;
+    }
+
+    .w3-twothird .w3-container { padding-left: 4px; padding-right: 4px; }
+    .w3-twothird ul { padding-left: 20px; }
+
+    .w3-tag.w3-teal {
+      margin-top: 5px;
+      margin-left: 0 !important;
+    }
+
+    .professional-footer {
+      width: calc(100% - 20px) !important;
+      margin-top: 18px !important;
+      padding: 25px 14px 30px !important;
+      border-radius: 14px 14px 0 0;
+    }
+
+    body > button[onclick="desencriptarYMostrar()"] {
+      right: 14px;
+      bottom: 14px;
+      padding: 11px 14px;
+    }
+  }
+
+  @media print {
+    body.w3-light-grey { background: #fff !important; }
+    .w3-content.w3-margin-top { max-width: none !important; margin: 0 !important; padding: 0; }
+    .w3-card, .w3-card-4 { box-shadow: none !important; }
+    .professional-footer, body > button[onclick="desencriptarYMostrar()"] { display: none !important; }
+  }
+</style>
 <body class="w3-light-grey">
 
 <!-- Page Container -->
@@ -502,7 +934,7 @@ Contribution
   <h5 class="w3-opacity"><b>Professional Certifications</b></h5>
 
   <!-- Platzi -->
-  <section class="cert-section">
+  <!-- <section class="cert-section">
     <h5><b>Platzi</b></h5>
     <h6 class="w3-text-teal">
       <i class="fa fa-calendar fa-fw w3-margin-right"></i>
@@ -666,7 +1098,168 @@ Contribution
     </ul>
   </section>
 
-  <hr>
+  <hr> -->
+
+  <h5><b>Platzi</b></h5>
+<h5>
+  <strong>Certification: Databases for Data Engineers</strong>
+  <a href="https://platzi.com/p/ja.jimenezrosa/ruta/13487-ruta/diploma/detalle/"
+     target="_blank"
+     class="w3-tag w3-teal w3-round"
+     style="margin-left:8px;">
+    <i class="fa fa-certificate"></i> Certificate
+  </a>
+</h5>
+
+<h6>Completed Skills</h6>
+<ul>
+  <li>Relational and NoSQL data modeling.</li>
+  <li>Database design and administration.</li>
+  <li>Advanced SQL queries.</li>
+  <li>PostgreSQL administration.</li>
+  <li>MongoDB administration.</li>
+  <li>Index creation and optimization.</li>
+  <li>ETL process design.</li>
+  <li>Database integration in data engineering projects.</li>
+  <li>Query performance optimization.</li>
+  <li>Transaction management and data consistency.</li>
+  <li>Database security and access control.</li>
+  <li>Data backup, recovery, and availability.</li>
+  <li>Database preparation for data analysis and processing.</li>
+</ul>
+
+<h6><b>Database, Data Engineering, and Cloud Specialization Path</b></h6>
+<ul>
+  <li>
+    Database Fundamentals
+    <span class="w3-tag w3-teal w3-round">Current</span>
+  </li>
+
+  <li>
+    Database and SQL Fundamentals
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/13017-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Databases with SQL [Mar-2025]
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/11324-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Practical SQL
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/2059-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    PostgreSQL
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/1480-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    PostgreSQL Applied to Data Science [Sep-2024]
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/1780-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Database Management with SQL Server
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/12869-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+</ul>
+
+<h6><b>NoSQL Databases and MongoDB Path</b></h6>
+<ul>
+  <li>
+    NoSQL Databases
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/10267-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Introduction to MongoDB
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/4987-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Data Modeling in MongoDB
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/5356-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    MongoDB: Aggregation Framework
+    <span class="w3-tag w3-teal w3-round">Current</span>
+  </li>
+</ul>
+
+<h6><b>Cloud, DevOps, and Infrastructure</b></h6>
+<ul>
+  <li>
+    Introduction to Cloud Computing [Jun-2025]
+    <a href="https://platzi.com/p/ja.jimenezrosa/curso/8031-course/diploma/detalle/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+
+  <li>
+    Docker
+    <a href="https://platzi.com/cursos/docker/bienvenida-al-curso/"
+       target="_blank"
+       class="w3-tag w3-teal w3-round"
+       style="margin-left:8px;">
+      <i class="fa fa-certificate"></i> Certificate
+    </a>
+  </li>
+</ul>
+
+
+
+
 
   <!-- General Skills Learning Path -->
   <section class="cert-section">
