@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -337,6 +337,97 @@ input[type="text"]:focus{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+
+/* =========================================================
+   MENÚ POR MÓDULOS / CATEGORÍAS
+========================================================= */
+
+.menu-module{
+  border-bottom:1px solid #2f2f33;
+}
+
+.module-header{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:11px 14px;
+  border:0;
+  border-left:3px solid transparent;
+  background:#232326;
+  color:#e5e7eb;
+  font-family:"Segoe UI",Arial,sans-serif;
+  font-size:13px;
+  font-weight:700;
+  text-align:left;
+  cursor:pointer;
+  transition:background-color .15s,color .15s,border-color .15s;
+}
+
+.module-header:hover{
+  background:#2a2d2e;
+  color:#ffffff;
+}
+
+.module-header.open{
+  color:#38bdf8;
+  border-left-color:#0284c7;
+  background:#29292d;
+}
+
+.module-icon{
+  width:21px;
+  flex-shrink:0;
+  text-align:center;
+}
+
+.module-title{
+  flex:1;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.module-count{
+  min-width:24px;
+  padding:2px 7px;
+  border-radius:999px;
+  background:#33343a;
+  color:#9ca3af;
+  font-size:11px;
+  font-weight:600;
+  text-align:center;
+}
+
+.module-arrow{
+  width:16px;
+  color:#9ca3af;
+  text-align:center;
+  transition:transform .18s ease;
+}
+
+.module-header.open .module-arrow{
+  transform:rotate(90deg);
+  color:#38bdf8;
+}
+
+.module-items{
+  display:none;
+  list-style:none;
+  margin:0;
+  padding:2px 0 5px;
+  background:#1e1e1e;
+}
+
+.module-items.open{
+  display:block;
+}
+
+.module-items li{
+  padding-left:32px !important;
+  font-size:13px !important;
 }
 
 .sidebar-footer{
@@ -792,91 +883,151 @@ code{
 
 <script>
 /* =========================================================
-   LISTA DE DOCUMENTOS CIFRADOS
+   LISTA DE DOCUMENTOS CIFRADOS ORGANIZADOS POR MÓDULOS
 ========================================================= */
 
-const files = [
+const menuModules = [
   {
-    title: "Auditoría SQL Server con PowerShell y reporte HTML",
+    id: "sqlserver-powershell",
+    category: "SQL Server con PowerShell",
     icon: "🗄️",
-    file: "AuditoríaSQLServerPowerShell.enc.txt"
+    items: [
+      {
+        title: "Auditoría SQL Server con PowerShell y reporte HTML",
+        icon: "🗄️",
+        file: "AuditoríaSQLServerPowerShell.enc.txt",
+        description: "Auditoría automatizada de instancias SQL Server mediante PowerShell con generación de reportes HTML."
+      },
+      {
+        title: "Extracción y documentación de SQL Server",
+        icon: "📑",
+        file: "ExtracciónyDocumentación.enc.txt",
+        description: "Automatización para extraer información técnica y generar documentación de SQL Server."
+      },
+      {
+        title: "Envío automatizado de backups SQL por correo",
+        icon: "📧",
+        file: "enviarlosarchivosdecarpetasporcorreo.enc.txt",
+        description: "Automatización para localizar backups de SQL Server y enviarlos o reportarlos mediante correo electrónico."
+      },
+      {
+        title: "Reportes e informes técnicos",
+        icon: "📊",
+        file: "ReporteseInformesTécnicos.enc.txt",
+        description: "Generación automatizada de reportes técnicos mediante PowerShell."
+      }
+    ]
   },
   {
-    title: "PSHTML - Reporte de Active Directory",
-    icon: "📊",
-    file: "PSHTML-AD-Report.enc.txt"
+    id: "alta-disponibilidad",
+    category: "Alta Disponibilidad y Failover",
+    icon: "🔄",
+    items: [
+      {
+        title: "Administración de alta disponibilidad",
+        icon: "🧰",
+        file: "AdministracióndeAltaDisponibilidad.enc.txt",
+        description: "Scripts y procedimientos relacionados con SQL Server Always On y Windows Failover Cluster."
+      },
+      {
+        title: "Configurar HostRecordTTL del Listener",
+        icon: "🌐",
+        file: "hostrecordTTL.enc.txt",
+        description: "Configuración de HostRecordTTL y parámetros relacionados con el Listener de Availability Groups."
+      },
+      {
+        title: "Verificación de Failover y reporte HTML",
+        icon: "🔁",
+        file: "verificar_Failover_html.enc.txt",
+        description: "Validación de eventos de failover en SQL Server y generación automática de reportes HTML."
+      }
+    ]
   },
   {
-    title: "Reporte de Active Directory",
+    id: "monitoreo-windows",
+    category: "Monitoreo de Windows",
+    icon: "🖥️",
+    items: [
+      {
+        title: "Monitoreo de actividades del sistema operativo",
+        icon: "📋",
+        file: "actividad_sistema_operativo.enc.txt",
+        description: "Consulta de eventos de Windows para investigar reinicios, errores, servicios, discos y eventos del sistema."
+      },
+      {
+        title: "Reporte HTML del espacio de discos por correo",
+        icon: "💽",
+        file: "reporteespaciodicscos.enc.txt",
+        description: "Monitoreo del espacio disponible en discos y generación de reportes HTML enviados por correo."
+      },
+      {
+        title: "Depuración y limpieza de discos",
+        icon: "🧹",
+        file: "depuraarchivos.enc.txt",
+        description: "Automatización para localizar y eliminar archivos antiguos o innecesarios."
+      }
+    ]
+  },
+  {
+    id: "active-directory",
+    category: "Active Directory",
     icon: "👥",
-    file: "powershellactivedirectory.enc.txt"
+    items: [
+      {
+        title: "Reporte de Active Directory con PowerShell",
+        icon: "👥",
+        file: "powershellactivedirectory.enc.txt",
+        description: "Consulta y generación de información administrativa de Active Directory mediante PowerShell."
+      },
+      {
+        title: "PSHTML - Reporte de Active Directory",
+        icon: "📊",
+        file: "PSHTML-AD-Report.enc.txt",
+        description: "Generación de reportes HTML de Active Directory utilizando PowerShell y PSHTML."
+      }
+    ]
   },
   {
-    title: "Extracción y documentación",
-    icon: "📑",
-    file: "ExtracciónyDocumentación.enc.txt"
-  },
-  {
-    title: "Envío automatizado de backups SQL por correo",
-    icon: "📧",
-    file: "enviarlosarchivosdecarpetasporcorreo.enc.txt"
-  },
-  {
-    title: "Reporte HTML del espacio de discos por correo",
-    icon: "💽",
-    file: "reporteespaciodicscos.enc.txt"
-  },
-  {
-    title: "Mover archivos y enviar reporte por correo",
+    id: "archivos-automatizacion",
+    category: "Archivos y Automatización",
     icon: "📁",
-    file: "copiararchivosEnvviarcorreo.enc.txt"
+    items: [
+      {
+        title: "Mover archivos y enviar reporte por correo",
+        icon: "📁",
+        file: "copiararchivosEnvviarcorreo.enc.txt",
+        description: "Automatización para mover o copiar archivos y enviar un reporte del proceso por correo electrónico."
+      }
+    ]
   },
   {
-    title: "Reportes e informes técnicos",
-    icon: "📊",
-    file: "ReporteseInformesTécnicos.enc.txt"
-  },
-  {
-    title: "Administración de alta disponibilidad",
-    icon: "🧰",
-    file: "AdministracióndeAltaDisponibilidad.enc.txt"
-  },
-  {
-    title: "Seguridad y auditoría",
+    id: "seguridad-auditoria",
+    category: "Seguridad y Auditoría",
     icon: "🔐",
-    file: "SeguridadyAuditoría.enc.txt"
-  },
-  {
-    title: "Depuración y limpieza de discos",
-    icon: "🧹",
-    file: "depuraarchivos.enc.txt"
-  },
-  {
-    title: "Configurar el parámetro HostRecordTTL",
-    icon: "🧹",
-    file: "hostrecordTTL.enc.txt"
-  },
-  {
-    title: "Monitoreo de Actividades del Sistema Operativo",
-    icon: "🧹",
-    file: "actividad_sistema_operativo.enc.txt"
-  },
-  {
-    title: "Verificación de Failover de SQL Server y Generación de Reporte HTML",
-    icon: "🧹",
-    file: "verificar_Failover_html.enc.txt"
+    items: [
+      {
+        title: "Seguridad y auditoría",
+        icon: "🔐",
+        file: "SeguridadyAuditoría.enc.txt",
+        description: "Scripts y procedimientos relacionados con seguridad, auditoría y controles administrativos."
+      }
+    ]
   }
-  // ,
-  // {
-  //   title: "Verificación de Failover de SQL Server y Generación de Reporte HTML",
-  //   icon: "🧹",
-  //   file: "verificar_Failover_html.enc.txt"
-  // }
-
-
-
-
 ];
+
+/*
+  Lista plana auxiliar.
+  Se mantiene porque el proceso de login necesita abrir el primer documento
+  para validar la contraseña antes de mostrar la aplicación.
+*/
+const files = menuModules.flatMap((module, moduleIndex) =>
+  module.items.map((item, itemIndex) => ({
+    ...item,
+    moduleId: module.id,
+    moduleIndex,
+    itemIndex
+  }))
+);
 
 /* =========================================================
    REFERENCIAS DEL DOM
@@ -1023,27 +1174,72 @@ async function loginUser(){
 function buildMenu(){
   menu.innerHTML = "";
 
-  files.forEach((item,index)=>{
-    const li = document.createElement("li");
+  let globalIndex = 0;
 
-    li.title = item.title;
+  menuModules.forEach((module,moduleIndex)=>{
+    const moduleContainer = document.createElement("li");
+    moduleContainer.className = "menu-module";
+    moduleContainer.style.display = "block";
+    moduleContainer.style.padding = "0";
+    moduleContainer.style.borderLeft = "0";
 
-    li.innerHTML = `
-      <span class="file-icon">${item.icon}</span>
-      <span class="file-name">${escapeHtml(item.title)}</span>
+    const header = document.createElement("button");
+    header.type = "button";
+    header.className = "module-header";
+    header.setAttribute("aria-expanded",moduleIndex === 0 ? "true" : "false");
+
+    header.innerHTML = `
+      <span class="module-icon">${module.icon}</span>
+      <span class="module-title">${escapeHtml(module.category)}</span>
+      <span class="module-count">${module.items.length}</span>
+      <span class="module-arrow">▶</span>
     `;
 
-    li.addEventListener("click",async function(){
-      if(activeFile === item.file){
-        closeMobileMenu();
-        return;
-      }
+    const itemsList = document.createElement("ul");
+    itemsList.className = "module-items";
 
-      await loadFile(item,index);
-      closeMobileMenu();
+    if(moduleIndex === 0){
+      header.classList.add("open");
+      itemsList.classList.add("open");
+    }
+
+    header.addEventListener("click",function(){
+      const isOpen = header.classList.toggle("open");
+      itemsList.classList.toggle("open",isOpen);
+      header.setAttribute("aria-expanded",String(isOpen));
     });
 
-    menu.appendChild(li);
+    module.items.forEach(item=>{
+      const currentIndex = globalIndex;
+      const li = document.createElement("li");
+
+      li.dataset.fileIndex = currentIndex;
+      li.title = item.description
+        ? `${item.title} — ${item.description}`
+        : item.title;
+
+      li.innerHTML = `
+        <span class="file-icon">${item.icon}</span>
+        <span class="file-name">${escapeHtml(item.title)}</span>
+      `;
+
+      li.addEventListener("click",async function(){
+        if(activeFile === item.file){
+          closeMobileMenu();
+          return;
+        }
+
+        await loadFile(item,currentIndex);
+        closeMobileMenu();
+      });
+
+      itemsList.appendChild(li);
+      globalIndex++;
+    });
+
+    moduleContainer.appendChild(header);
+    moduleContainer.appendChild(itemsList);
+    menu.appendChild(moduleContainer);
   });
 }
 
@@ -1184,13 +1380,31 @@ function renderMarkdown(markdown,title){
 
 function setActiveMenuItem(index){
   document
-    .querySelectorAll("#menu li")
-    .forEach((element,itemIndex)=>{
+    .querySelectorAll("#menu .module-items li")
+    .forEach(element=>{
       element.classList.toggle(
         "active",
-        itemIndex === index
+        Number(element.dataset.fileIndex) === index
       );
     });
+
+  const activeItem = document.querySelector(
+    `#menu .module-items li[data-file-index="${index}"]`
+  );
+
+  if(activeItem){
+    const itemsList = activeItem.closest(".module-items");
+    const moduleContainer = activeItem.closest(".menu-module");
+    const header = moduleContainer
+      ? moduleContainer.querySelector(".module-header")
+      : null;
+
+    if(itemsList && header){
+      itemsList.classList.add("open");
+      header.classList.add("open");
+      header.setAttribute("aria-expanded","true");
+    }
+  }
 }
 
 /* =========================================================
@@ -1308,4 +1522,3 @@ function escapeHtml(value){
 
 </body>
 </html>
-```
